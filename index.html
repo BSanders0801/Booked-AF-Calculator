@@ -465,7 +465,7 @@ render();
  const scoreboard=['Money that came in','Money that stayed yours','How full your book was',rebook<75?'New clients who booked appointment #2':'Real days off you protected',(a.move==='rare'||a.move==='one')?'Days you intentionally moved your body':'Movement/recovery days you protected'];
  return{headline:d[0],intro:d[1],money,futureNote,bodyNote,lifeNote,freedom,chair,weeks:plans[path]||plans.money,scoreboard,goalName,goalYears,goalAmount,goalMonthly,goalMath,tenureMessage,mindNote,next3,finish:'Thirty days from now, run this again. Keep what made your money, body or life better. Change what did not.'};
 }
-const state={answers:{},index:-1,view:'intro',name:'',done:{},deepAnswers:{},deepIndex:0,deepPreview:false};const app=document.getElementById('app');const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const state={answers:{},index:-1,view:'intro',name:'',done:{},deepAnswers:{},deepIndex:0,deepPreview:false,goals:[],goalAmounts:{},goalYears:{},checkin:false};const app=document.getElementById('app');const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const deliveryKey='booked-af-delivery-v1';
 function emailCopy(r,name){
  const money=r.opportunity?("\n\nTHE MONEY OPPORTUNITY\n"+r.opportunity.title+"\n"+r.opportunity.body+(r.opportunity.gain?"\n"+r.opportunity.monthly+" more per month • "+r.opportunity.annual+" more per year":"")+"\n"+r.opportunity.math):"";
