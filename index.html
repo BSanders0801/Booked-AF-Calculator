@@ -26,14 +26,78 @@ if(state.view==='teaser'){const r=read();app.innerHTML=`<div class="eyebrow">You
 if(state.view==='email'){app.innerHTML=`<div class="eyebrow">One quick thing</div><h2>Want your Read with your name on it?</h2><p>First name and email are optional. Your full Read opens here either way. Email delivery is coming later.</p><form id="form"><label for="name">First name</label><input class="input" id="name" autocomplete="given-name" maxlength="60" placeholder="Your first name"><label for="email">Email</label><input class="input" id="email" type="email" autocomplete="email" placeholder="you@example.com"><p class="error" id="error"></p><div class="actions"><button type="submit" class="primary">SHOW MY FULL READ →</button></div></form><button class="subtle" id="skip">Continue without email</button><p class="fine">This preview does not store or send your email.</p>`;document.getElementById('form').onsubmit=e=>{e.preventDefault();const field=document.getElementById('email');if(field.value&&!field.checkValidity()){document.getElementById('error').textContent='Check that email address and try again.';field.focus();return}state.name=document.getElementById('name').value.trim().slice(0,60);state.view='result';render()};document.getElementById('skip').onclick=()=>{state.view='result';render()};return}
 if(state.view==='plan'){const r=read();app.innerHTML=`<div class="eyebrow">Your first 7 days</div><span class="tag">${r.stage}</span><h2>Start small. Start this week.</h2><p class="lead">Three moves from your Read. Do them in order, at your own pace.</p>${r.items.map((item,i)=>`<div class="card"><div class="number">MOVE 0${i+1}</div><h3>${item.title}</h3><p>${item.action}</p><label class="checkline"><input type="checkbox" data-task="${item.id}" ${state.done[item.id]?'checked':''}> Done</label></div>`).join('')}<div class="card"><h3>Keep going</h3><p>Once you’ve tried these moves, revisit your Read and see what changed. BOOKED AF is building more tools for the next stage.</p></div><div class="actions"><button class="primary" id="save">SAVE OR PRINT MY PLAN</button><button class="secondary" id="backread">← BACK TO MY READ</button></div>`;app.querySelectorAll('[data-task]').forEach(el=>el.onchange=()=>{state.done[el.dataset.task]=el.checked});document.getElementById('save').onclick=()=>window.print();document.getElementById('backread').onclick=()=>{state.view='result';render()};window.scrollTo(0,0);return}
 const r=read();app.innerHTML=`<div class="eyebrow">${state.name?esc(state.name)+', your':'Your'} BOOKED AF Read</div><span class="tag">${r.stage}</span><h2>Here’s what to work on first.</h2><p class="lead">${r.intro}</p>${r.items.map((item,i)=>`<div class="card"><div class="number">0${i+1} / 03</div><h3>${item.title}</h3><p>${item.body}</p><p><strong>Start here:</strong> ${item.action}</p></div>`).join('')}<div class="card"><h3>BUY BACK YOUR DAY</h3><p>${r.day}</p></div><p class="fine">This is a starting point based on your answers, not a promise of income. We haven’t worked out your actual take-home pay or work costs yet.</p><div class="actions"><button class="primary" id="plan">SHOW MY FIRST 7 DAYS →</button></div><div class="actions"><button class="secondary" id="edit">EDIT ANSWERS</button><button class="secondary" id="restart">START OVER</button></div>`;document.getElementById('plan').onclick=()=>{state.view='plan';render()};document.getElementById('edit').onclick=()=>{state.view='question';state.index=0;render()};document.getElementById('restart').onclick=()=>{state.answers={};state.done={};state.name='';state.index=-1;state.view='intro';render()}}
-function read(){const a=state.answers;const stages={building:'BUILDING',busy:'GETTING BUSY',demand:'IN DEMAND',booked:'BOOKED AF'};const stage=stages[a.stage]||'BUILDING';const items=[];const add=(id,title,short,body,action,score)=>items.push({id,title,short,body,action,score});
-add('book','Give your book a steadier pulse','A fuller book starts with knowing where the gaps are.','Your schedule has room to grow. You don’t need to fill every hour at once; start with the empty spots that show up again and again.','Pick one slow day. Ask three happy clients to rebook before they leave, and make it easy for them to send a friend.',(a.full==='under25'?9:a.full==='half'?7:a.full==='threequarters'?3:0)+(a.stage==='building'?2:0));
-add('price','Make each workday count','Look at what a normal day earns before adding more hours.','A busy calendar can still leave you underpaid. Your average client spend and the mix of services you do are worth a closer look.','Write down your last ten service totals. Find the average and look for work you’re pricing too low.',(a.full==='full'?7:a.full==='threequarters'?5:2)+(a.spend==='75'?3:a.spend==='unknown'?2:0));
-add('money','Find out what you actually keep','Money coming in and money for you are different numbers.','You deserve a clear picture of what your work pays you after the costs of doing it. That matters whether you’re on commission, independent, or both.','Look at one recent month. Write down what came in, what work cost you, and what actually landed in your pocket.',(a.income==='unknown'?9:3)+(a.goal==='unknown'?4:0)+(a.setup==='independent'||a.setup==='mixed'?2:0));
-add('time','Protect your time off','Your time off needs a place on the calendar.','You told us how much time you took off and how much you want. Let’s make a plan for the difference.','Put the next two days off on your calendar. Then work out what you’d need to set aside each workweek to pay for them.',(a.timeoff==='none'?7:a.timeoff==='one'?5:a.timeoff==='two'?2:0)+(a.dayback==='yes'?4:a.dayback==='maybe'?2:0)+(a.wantoff==='six'||a.wantoff==='flex'?2:0));
-add('body','Build a schedule your body can live with','The chair shouldn’t get every good hour you have.','More clients and more days are not the only way forward. If your workweek is packed, the next move is to protect your energy while keeping the money you need.','Choose one boundary for next week: a real break, a firm finish time, or one fewer squeezed-in appointment.',(a.days==='5'?7:a.days==='4'?4:1)+(a.clients==='7'?4:a.clients==='5'?2:0)+(a.dayback==='yes'?2:0));
-add('retail','Make the home care conversation easier','Give clients a way to keep the result they came for.','If you recommend products, make those recommendations part of the service rather than a sales speech.','For your next five clients, recommend one product and explain exactly what it helps them do at home.',a.retail==='never'?5:a.retail==='sometimes'?3:0);
-if(a.days==='0'||a.clients==='0'){items.find(x=>x.id==='book').score+=4;items.find(x=>x.id==='price').score-=3;items.find(x=>x.id==='retail').score-=5}
-items.sort((x,y)=>y.score-x.score);const top=items.slice(0,3);const intro=stage==='BOOKED AF'?'Your book is in demand. Let’s make your schedule and income work better for you.':stage==='BUILDING'?'You’re building your book. Here’s where to focus first.':'You’ve got momentum. Here’s where to focus next.';const day=a.dayback==='yes'?'You’d take one less workday in a heartbeat. Start by comparing what a typical day brings in with what you actually keep, then plan how to replace that amount before changing your schedule.':a.dayback==='maybe'?'You’re open to more space in your week. Pick a lighter day and see what it would take to protect it without guessing about money.':'You like your schedule. Keep it, and use your next moves to make those days pay and feel better.';return{stage,top:top[0],items:top,intro,day}}
+function read(){
+  const a=state.answers;
+  const stage=({building:'BUILDING',busy:'GETTING BUSY',demand:'IN DEMAND',booked:'BOOKED AF'})[a.stage]||'BUILDING';
+  const starting=a.days==='0'||a.clients==='0';
+  const packed=a.full==='full'||a.full==='threequarters';
+  const longWeek=a.days==='5'||a.clients==='7';
+  const wantsMoreTime=a.dayback==='yes'||a.dayback==='maybe'||a.wantoff==='six'||a.wantoff==='flex';
+  const items=[];
+  const add=(id,title,short,body,action,score)=>items.push({id,title,short,body,action,score});
+
+  add('book',starting?'Build your first book':'Give your book a steadier pulse',
+    starting?'Your first clients need a simple path to find you.':'A fuller book starts with knowing where the gaps are.',
+    starting?'You’re not behind. You’re at the beginning, and a clear first offer beats waiting for a full calendar.':
+      a.full==='under25'?'Your book has plenty of room. Start with one repeatable way to fill your quietest day.':
+      'Your book has some openings. Find the days that stay quiet, then give happy clients an easy reason to come back.',
+    starting?'Write down the service you want to be known for. Invite five people to book or refer someone who wants it.':
+      'Pick one slow day. Ask three happy clients to rebook before they leave, and make it easy for them to send a friend.',
+    (a.full==='under25'?9:a.full==='half'?7:a.full==='threequarters'?3:0)+(a.stage==='building'?2:0)+(starting?5:0));
+
+  add('price',a.spend==='unknown'?'Know what a workday pays':'Make each workday count',
+    a.spend==='unknown'?'Start with what clients actually spend.':'Look at what a normal day earns before adding more hours.',
+    a.spend==='unknown'?'You don’t need a perfect spreadsheet. You do need to know what a client typically spends before you can decide whether more appointments are worth it.':
+      packed?'Your book is busy. Before squeezing in another guest, look at what your services bring in and which ones take the most time.':
+      'Your average client spend and the mix of services you do are worth a closer look.',
+    a.spend==='unknown'?'Write down the service total from your next five clients. Divide the total by five. That’s your starting point.':
+      'Write down your last ten service totals. Find the average and look for work you’re pricing too low.',
+    (a.full==='full'?7:a.full==='threequarters'?5:2)+(a.spend==='75'?3:a.spend==='unknown'?3:0)-(starting?5:0));
+
+  add('money',starting?'Make a money plan before your book fills':'Find out what you actually keep',
+    'Money coming in and money for you are different numbers.',
+    starting?'Your first pay structure will shape what you take home. Learn what the salon keeps, what supplies cost you, and when you get paid.':
+      a.setup==='employee'?'The services you do and the paycheck you take home are different numbers. Get clear on your commission or hourly pay, tips, and any costs you cover.':
+      'What clients pay you is only the beginning. Subtract the costs of working before deciding what is actually yours.',
+    starting?'Compare two possible work setups. Write down what each pays you and what you would pay for supplies or space.':
+      'Look at one recent month. Write down what came in, what work cost you, and what actually landed in your pocket.',
+    (a.income==='unknown'?9:3)+(a.goal==='unknown'?4:0)+(a.setup==='independent'||a.setup==='mixed'?2:0));
+
+  add('time',starting?'Decide what your workweek should look like':'Protect your time off',
+    'Your time off needs a place on the calendar.',
+    starting?'You can build a book without promising every hour of your life to it. Decide what a sustainable week looks like before it fills up.':
+      a.timeoff==='none'?'You took almost no time off last year. Your next break needs a date and a way to pay for it.':
+      'You know how much time you took off and how much you want. Make a plan for the gap.',
+    starting?'Choose the days you want to work and one day you want to protect. Put that boundary on your calendar now.':
+      'Put the next two days off on your calendar. Then work out what you’d need to set aside each workweek to pay for them.',
+    (a.timeoff==='none'?7:a.timeoff==='one'?5:a.timeoff==='two'?2:0)+(a.dayback==='yes'?4:a.dayback==='maybe'?2:0)+(a.wantoff==='six'||a.wantoff==='flex'?2:0)-(starting?2:0));
+
+  add('body',starting?'Build a week your body can live with':'Build a schedule your body can live with',
+    'The chair shouldn’t get every good hour you have.',
+    starting?'It is easier to protect breaks and finish times before your calendar fills than to claw them back later.':
+      longWeek?'Your days are full. More clients are not the only way forward if you want energy left for your life.':
+      'You can protect your energy without waiting until you feel burned out.',
+    starting?'Choose your ideal finish time and a real break. Block both on a sample workweek.':
+      'Choose one boundary for next week: a real break, a firm finish time, or one fewer squeezed-in appointment.',
+    (a.days==='5'?7:a.days==='4'?4:1)+(a.clients==='7'?4:a.clients==='5'?2:0)+(a.dayback==='yes'?2:0)-(starting?2:0));
+
+  if(!starting&&a.retail!=='na')add('retail','Make the home care conversation easier',
+    'Give clients a way to keep the result they came for.',
+    'A useful product recommendation can help the client keep their result at home. Make it part of your service, not a sales speech.',
+    'For your next five clients, recommend one product and explain exactly what it helps them do at home.',
+    a.retail==='never'?5:a.retail==='sometimes'?3:0);
+
+  items.sort((x,y)=>y.score-x.score);
+  const top=items.slice(0,3);
+  const intro=starting?'You’re building your book. Your first moves should help you get clients and set up a workweek you can actually live with.':
+    packed&&wantsMoreTime?'Your book has momentum. Let’s make those workdays pay well and leave more room for your life.':
+    stage==='BOOKED AF'?'You’re in demand. Let’s make your schedule and income work better for you.':
+    stage==='BUILDING'?'You’re building your book. Here’s where to focus first.':'You’ve got momentum. Here’s where to focus next.';
+  const day=starting?'Build the schedule you want now, before you feel pressured to take every appointment.':
+    a.dayback==='yes'?'You’d take one less workday in a heartbeat. Compare what a typical day brings in with what you actually keep, then plan how to replace that amount before changing your schedule.':
+    a.dayback==='maybe'?'You’re open to more space in your week. Pick a lighter day and see what it would take to protect it without guessing about money.':
+    'You like your schedule. Keep it, and use your next moves to make those days pay and feel better.';
+  return{stage,top:top[0],items:top,intro,day};
+}
 render();
 </script></body></html>
