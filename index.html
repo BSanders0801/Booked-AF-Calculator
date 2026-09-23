@@ -28,7 +28,7 @@ if(state.view==='question'){const q=questions[state.index],selected=state.answer
 if(state.view==='teaser'){const r=read();app.innerHTML=`<div class="eyebrow">Your BOOKED AF Breakdown</div><h1>OKAY. WE<br>FOUND <span class="pink">SOME THINGS.</span></h1><p class="lead">You’re <strong>${r.stage}</strong>. Your first move: <strong>${r.top.title}</strong></p><div class="card"><div class="number">01 / 03</div><h3>${r.top.title}</h3><p>${r.top.short}</p></div><p>There are two more pieces to your Breakdown, plus a simple first step for each.</p><button class="primary" id="show">SHOW ME THE FULL BREAKDOWN →</button><div><button class="subtle" id="skip">Continue without email</button></div>`;document.getElementById('show').onclick=()=>{state.view='email';render()};document.getElementById('skip').onclick=()=>{state.view='result';render()};return}
 if(state.view==='email'){app.innerHTML=`<div class="eyebrow">One quick thing</div><h2>Want your Breakdown in your inbox?</h2><p>Enter your email and we’ll send your personalized Breakdown and first 7 days. You can see it here without giving us an email, too.</p><form id="form" method="POST" action="https://formsubmit.co/hello@bookedandfabulous.com"><label for="name">First name</label><input class="input" id="name" name="name" autocomplete="given-name" maxlength="60" placeholder="Your first name"><label for="email">Email</label><input class="input" id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"><input type="hidden" name="_subject" value="New BOOKED AF Breakdown signup"><input type="hidden" name="_next" value="https://bookedandfabulous.com/?breakdown=sent"><input type="hidden" name="stage"><input type="hidden" name="breakdown"><input type="hidden" name="_autoresponse"><input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-10000px" aria-hidden="true"><p class="error" id="error"></p><div class="actions"><button type="submit" class="primary">EMAIL MY BREAKDOWN →</button></div></form><button class="subtle" id="skip">Continue without email</button><p class="fine">Sending uses FormSubmit, which delivers your result to you and your signup to BOOKED AF. You may see a quick spam check.</p>`;document.getElementById('form').onsubmit=e=>{const form=e.currentTarget,field=document.getElementById('email');if(!field.checkValidity()){e.preventDefault();document.getElementById('error').textContent='Check that email address and try again.';field.focus();return}state.name=document.getElementById('name').value.trim().slice(0,60);const r=read(),copy=emailCopy(r,state.name);form.elements.stage.value=r.stage;form.elements.breakdown.value=copy;form.elements._autoresponse.value=copy;try{sessionStorage.setItem(deliveryKey,JSON.stringify({answers:state.answers,name:state.name}))}catch(err){}};document.getElementById('skip').onclick=()=>{state.view='result';render()};return}
 if(state.view==='plan'){const r=read();app.innerHTML=`<div class="eyebrow">Your first 7 days</div><span class="tag">${r.stage}</span><h2>Start small. Start this week.</h2><p class="lead">Three moves from your Breakdown. Do them in order, at your own pace.</p>${r.items.map((item,i)=>`<div class="card"><div class="number">MOVE 0${i+1}</div><h3>${item.title}</h3><p>${item.action}</p><label class="checkline"><input type="checkbox" data-task="${item.id}" ${state.done[item.id]?'checked':''}> Done</label></div>`).join('')}<div class="card"><h3>Keep going</h3><p>Once you’ve tried these moves, revisit your Breakdown and see what changed. BOOKED AF is building more tools for the next stage.</p></div><div class="actions"><button class="primary" id="save">SAVE OR PRINT MY PLAN</button><button class="secondary" id="backread">← BACK TO MY BREAKDOWN</button></div>`;app.querySelectorAll('[data-task]').forEach(el=>el.onchange=()=>{state.done[el.dataset.task]=el.checked});document.getElementById('save').onclick=()=>window.print();document.getElementById('backread').onclick=()=>{state.view='result';render()};window.scrollTo(0,0);return}
-const r=read();app.innerHTML=`${state.emailSent?'<div class="card" role="status"><strong>Your Breakdown is on its way.</strong> Check your inbox (and spam folder) for the email.</div>':''}<div class="eyebrow">${state.name?esc(state.name)+', your':'Your'} BOOKED AF Breakdown</div><span class="tag">${r.stage}</span><h2>Here’s what to work on first.</h2><p class="lead">${r.intro}</p>${r.items.map((item,i)=>`<div class="card"><div class="number">0${i+1} / 03</div><h3>${item.title}</h3><p>${item.body}</p><p><strong>Start here:</strong> ${item.action}</p></div>`).join('')}<div class="card"><h3>BUY BACK YOUR DAY</h3><p>${r.day}</p></div><p class="fine">This is a starting point based on your answers, not a promise of income. We haven’t worked out your actual take-home pay or work costs yet.</p><div class="actions"><button class="primary" id="plan">SHOW MY FIRST 7 DAYS →</button></div><div class="actions"><button class="secondary" id="edit">EDIT ANSWERS</button><button class="secondary" id="restart">START OVER</button></div>`;document.getElementById('plan').onclick=()=>{state.view='plan';render()};document.getElementById('edit').onclick=()=>{state.view='question';state.index=0;render()};document.getElementById('restart').onclick=()=>{state.answers={};state.done={};state.name='';state.emailSent=false;sessionStorage.removeItem(deliveryKey);state.index=-1;state.view='intro';render()}}
+const r=read();app.innerHTML=`${state.emailSent?'<div class="card" role="status"><strong>Your Breakdown is on its way.</strong> Check your inbox (and spam folder) for the email.</div>':''}<div class="eyebrow">${state.name?esc(state.name)+', your':'Your'} BOOKED AF Breakdown</div><span class="tag">${r.stage}</span><h2>Here’s what to work on first.</h2><p class="lead">${r.intro}</p>${r.items.map((item,i)=>`<div class="card"><div class="number">0${i+1} / 03</div><h3>${item.title}</h3><p>${item.body}</p><p><strong>Start here:</strong> ${item.action}</p></div>`).join('')}${r.opportunity?`<div class="card"><div class="number">THE MONEY OPPORTUNITY</div><h3>${r.opportunity.title}</h3><p>${r.opportunity.body}</p>${r.opportunity.gain?`<p><strong>${r.opportunity.monthly}</strong> more per month • <strong>${r.opportunity.annual}</strong> more per year</p>`:""}<p class="fine">${r.opportunity.math}</p></div>`:""}<div class="card"><h3>BUY BACK YOUR DAY</h3><p>${r.day}</p></div><p class="fine">This is a starting point based on your answers, not a promise of income. We haven’t worked out your actual take-home pay or work costs yet.</p><div class="actions"><button class="primary" id="plan">SHOW MY FIRST 7 DAYS →</button></div><div class="actions"><button class="secondary" id="edit">EDIT ANSWERS</button><button class="secondary" id="restart">START OVER</button></div>`;document.getElementById('plan').onclick=()=>{state.view='plan';render()};document.getElementById('edit').onclick=()=>{state.view='question';state.index=0;render()};document.getElementById('restart').onclick=()=>{state.answers={};state.done={};state.name='';state.emailSent=false;sessionStorage.removeItem(deliveryKey);state.index=-1;state.view='intro';render()}}
 function read(){
  const a=state.answers, items=[]; const stage=({building:'BUILDING',busy:'GETTING BUSY',demand:'IN DEMAND',booked:'BOOKED AF'})[a.stage]||'BUILDING';
  const starting=a.days==='0'||a.clients==='0', packed=a.full==='full'||a.full==='threequarters';
@@ -54,7 +54,46 @@ function read(){
  while(chosen.length<3){const id=['fill','money','time'].find(x=>!chosen.some(i=>i.id===x));const d=defs[id];chosen.push({id,title:d[0],short:d[1],body:d[2],action:d[3],score:0});}
  const top=chosen[0],intro=top.id==='fill'?'First priority: build demand before trying to optimize a business that is still growing.':top.short;
  const day=a.dayback==='yes'?'You said you’d take a day back in a heartbeat. Good. We’re going to treat that as a business goal, not a fantasy.':a.dayback==='maybe'?'You’re open to more room in your week. We’ll look for it without gambling with your income.':'You like your schedule. Great. The goal is to make those days work better for you.';
- return{stage,top,items:chosen,intro,day};
+ let opportunity=null;
+ if(!starting&&days&&clients&&spend){
+  const monthlyClients=days*clients*4.33,currentMonthly=monthlyClients*spend;
+  let gain=0,title='',body='',math='';
+  if(top.id==='cheap'){const bump=spend<100?20:spend<200?25:spend<350?35:50;gain=monthlyClients*bump;title='Make the clients you already have worth more.';body='You do not need another workday for this example. Here is what a modest increase in average client spend could do at your current pace.';math=Math.round(monthlyClients)+' clients/month × 
+}
+render();
+</script></body></html>
++bump+' more per client';}
+  else if(top.id==='fill'){const extra=fill<30?2:fill<60?1:0;if(extra){gain=extra*4.33*spend;title='A few more right-fit clients can move the needle.';body='This models just '+extra+' additional client'+(extra>1?'s':'')+' per week—not a packed schedule.';math=extra+' extra client'+(extra>1?'s':'')+'/week × 4.33 weeks × 
+}
+render();
+</script></body></html>
++spend+' average spend';}}
+  else if(top.id==='return'&&a.newclients!=='0'&&a.newclients!=='unknown'){const n=+a.newclients||0,extra=Math.max(1,Math.round(n*.25));gain=extra*spend;title='Keeping more of the clients you already found adds up.';body='This models a small improvement in new clients making appointment #2, without spending more to find strangers.';math=extra+' additional return visit'+(extra>1?'s':'')+'/month × 
+}
+render();
+</script></body></html>
++spend+' average spend';}
+  else if((top.id==='time'||top.id==='life')&&days>=4){gain=clients*spend*4.33;title='Put a dollar number on the day you want back.';body='This is roughly what one of your current workdays produces each month. That becomes the number to replace before dropping the day.';math=clients+' clients/day × 
+}
+render();
+</script></body></html>
++spend+' × 4.33 weeks';}
+  else if(top.id==='money'){title='First, find the leak.';body='Your answers say the priority is not promising more revenue. It is figuring out how much of your current production actually stays yours.';math='Estimated service production at your current pace: 
+}
+render();
+</script></body></html>
++Math.round(currentMonthly).toLocaleString()+'/month before work costs.';}
+  if(title)opportunity={title,body,gain:gain>0,monthly:'
+}
+render();
+</script></body></html>
++Math.round(gain).toLocaleString(),annual:'
+}
+render();
+</script></body></html>
++Math.round(gain*12).toLocaleString(),math};
+ }
+ return{stage,top,items:chosen,intro,day,opportunity};
 }
 render();
 </script></body></html>
