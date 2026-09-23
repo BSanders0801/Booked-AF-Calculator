@@ -56,42 +56,13 @@ function read(){
  const day=a.dayback==='yes'?'You said you’d take a day back in a heartbeat. Good. We’re going to treat that as a business goal, not a fantasy.':a.dayback==='maybe'?'You’re open to more room in your week. We’ll look for it without gambling with your income.':'You like your schedule. Great. The goal is to make those days work better for you.';
  let opportunity=null;
  if(!starting&&days&&clients&&spend){
-  const monthlyClients=days*clients*4.33,currentMonthly=monthlyClients*spend;
-  let gain=0,title='',body='',math='';
-  if(top.id==='cheap'){const bump=spend<100?20:spend<200?25:spend<350?35:50;gain=monthlyClients*bump;title='Make the clients you already have worth more.';body='You do not need another workday for this example. Here is what a modest increase in average client spend could do at your current pace.';math=Math.round(monthlyClients)+' clients/month × 
-}
-render();
-</script></body></html>
-+bump+' more per client';}
-  else if(top.id==='fill'){const extra=fill<30?2:fill<60?1:0;if(extra){gain=extra*4.33*spend;title='A few more right-fit clients can move the needle.';body='This models just '+extra+' additional client'+(extra>1?'s':'')+' per week—not a packed schedule.';math=extra+' extra client'+(extra>1?'s':'')+'/week × 4.33 weeks × 
-}
-render();
-</script></body></html>
-+spend+' average spend';}}
-  else if(top.id==='return'&&a.newclients!=='0'&&a.newclients!=='unknown'){const n=+a.newclients||0,extra=Math.max(1,Math.round(n*.25));gain=extra*spend;title='Keeping more of the clients you already found adds up.';body='This models a small improvement in new clients making appointment #2, without spending more to find strangers.';math=extra+' additional return visit'+(extra>1?'s':'')+'/month × 
-}
-render();
-</script></body></html>
-+spend+' average spend';}
-  else if((top.id==='time'||top.id==='life')&&days>=4){gain=clients*spend*4.33;title='Put a dollar number on the day you want back.';body='This is roughly what one of your current workdays produces each month. That becomes the number to replace before dropping the day.';math=clients+' clients/day × 
-}
-render();
-</script></body></html>
-+spend+' × 4.33 weeks';}
-  else if(top.id==='money'){title='First, find the leak.';body='Your answers say the priority is not promising more revenue. It is figuring out how much of your current production actually stays yours.';math='Estimated service production at your current pace: 
-}
-render();
-</script></body></html>
-+Math.round(currentMonthly).toLocaleString()+'/month before work costs.';}
-  if(title)opportunity={title,body,gain:gain>0,monthly:'
-}
-render();
-</script></body></html>
-+Math.round(gain).toLocaleString(),annual:'
-}
-render();
-</script></body></html>
-+Math.round(gain*12).toLocaleString(),math};
+  const monthlyClients=days*clients*4.33,currentMonthly=monthlyClients*spend; let gain=0,title="",body="",math="";
+  if(top.id==="cheap"){const bump=spend<100?20:spend<200?25:spend<350?35:50;gain=monthlyClients*bump;title="Make the clients you already have worth more.";body="You do not need another workday for this example. Here is what a modest increase in average client spend could do at your current pace.";math=Math.round(monthlyClients)+" clients/month × $"+bump+" more per client";}
+  else if(top.id==="fill"){const extra=fill<30?2:fill<60?1:0;if(extra){gain=extra*4.33*spend;title="A few more right-fit clients can move the needle.";body="This models just "+extra+" additional client"+(extra>1?"s":"")+" per week—not a packed schedule.";math=extra+" extra client"+(extra>1?"s":"")+"/week × 4.33 weeks × $"+spend;}}
+  else if(top.id==="return"&&a.newclients!=="0"&&a.newclients!=="unknown"){const n=+a.newclients||0,extra=Math.max(1,Math.round(n*.25));gain=extra*spend;title="Keeping more of the clients you already found adds up.";body="This models a small improvement in new clients making appointment #2, without spending more to find strangers.";math=extra+" additional return visit"+(extra>1?"s":"")+"/month × $"+spend;}
+  else if((top.id==="time"||top.id==="life")&&days>=4){gain=clients*spend*4.33;title="Put a dollar number on the day you want back.";body="This is roughly what one current workday produces each month. That becomes the number to replace before dropping the day.";math=clients+" clients/day × $"+spend+" × 4.33 weeks";}
+  else if(top.id==="money"){title="First, find the leak.";body="Your answers say the priority is not promising more revenue. It is figuring out how much of your current production actually stays yours.";math="Estimated service production at your current pace: $"+Math.round(currentMonthly).toLocaleString()+"/month before work costs.";}
+  if(title)opportunity={title,body,gain:gain>0,monthly:gain>0?"$"+Math.round(gain).toLocaleString():"",annual:gain>0?"$"+Math.round(gain*12).toLocaleString():"",math};
  }
  return{stage,top,items:chosen,intro,day,opportunity};
 }
