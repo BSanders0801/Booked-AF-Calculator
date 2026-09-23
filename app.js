@@ -76,11 +76,37 @@ function deepRead(){
  if(path==='money'&&a.service==='color')d.weeks[0]=['PRICE TIME + PRODUCT TOGETHER','Compare service price with total appointment time and major color cost. High product use can make two identical-looking tickets pay very differently.'];
  if(path==='time'&&(profile.body==='other'||profile.body==='exit')){d.i='This is bigger than getting Friday off. We are starting to reduce how much of your future income requires your body to be physically behind the chair.';d.weeks[3]=['BUILD THE OFF-CHAIR BRIDGE','Choose one realistic future income lane — education, ownership, digital tools, consulting, team leverage, or another skill — and define the first tiny test.'];}
  if(a.vacation==='panic'||a.vacation==='never'){d.weeks.push(['PAY YOURSELF TO DISAPPEAR','Create a separate Time-Off Fund and treat it like a work cost. Future vacations should already have income waiting for them before you leave.']);}
+ // Prioritized roadmap: what matters now, what comes next, and what can wait.
+ const roadmap=[];
+ const addRoad=(phase,title,why,action)=>roadmap.push({phase,title,why,action});
+ if(path==='clients'){
+  addRoad('NOW','CREATE DEMAND BEFORE POLISHING THE BRAND','Open chair time is the expensive problem.','Spend 48 hours on direct conversations, reactivation, qualified referrals, and local partnerships.');
+  addRoad('NEXT','BUILD TWO REPEATABLE CLIENT SOURCES','A book built on one source is fragile.','Keep the two sources creating completed appointments and repeat them weekly for 30 days.');
+  addRoad('LATER','MAKE YOUR PROOF EASY TO FIND','Strong work should keep selling when you are not actively asking.','Turn your best results into a simple searchable portfolio with service, location, and a clear booking path.');
+ } else if(path==='rebook'){
+  addRoad('NOW','FIX APPOINTMENT #2','Marketing harder before fixing retention makes every new client more expensive.','Prescribe the next visit and track reserved versus completed appointments.');
+  addRoad('NEXT','BUILD THE RETURN SYSTEM','A good client relationship should not depend on them remembering you at exactly the right week.','Create maintenance timelines and follow-up for people who leave without reserving.');
+  addRoad('LATER','TURN RETENTION INTO REFERRALS','Happy returning clients are one of your strongest sources of qualified new people.','Add a natural introduction ask after the relationship is established.');
+ } else if(path==='money'){
+  addRoad('NOW','FIND THE WORST MATH','The fastest improvement may be hiding inside work you already do.','Compare time, price, and major product cost across core services and find the weakest one.');
+  addRoad('NEXT','REDESIGN THE SERVICE MIX','Not every appointment deserves equal access to prime hours.','Protect higher-value work and repair, reprice, reposition, or reduce the weakest work.');
+  addRoad('LATER','AUTOMATE WHERE EXTRA MONEY GOES','Making more does not build security if every stronger month disappears.','Create automatic destinations for cushion, time off, taxes, and Future You.');
+ } else if(path==='time'){
+  addRoad('NOW','CALCULATE THE FREEDOM NUMBER','You cannot safely remove time until you know what that time produces.','Price the day or block you want back and identify the production that must be replaced.');
+  addRoad('NEXT','COMPRESS VALUE, NOT CHAOS','The goal is more value per remaining hour, not five days of exhaustion squeezed into four.','Remove dead gaps, overruns, and low-value prime-time work before reducing days.');
+  addRoad('LATER','REDUCE DEPENDENCE ON YOUR BODY','A sustainable career eventually needs options beyond adding chair hours.','Test one realistic off-chair income or leverage path without gambling current income.');
+ } else {
+  addRoad('NOW','KNOW WHAT ACTUALLY STAYS YOURS','Sales are not useful if you cannot see what survives the cost of working.','Rebuild one normal month as money in, work costs, and money kept.');
+  addRoad('NEXT','FIX THE BIGGEST CONTROLLABLE LEAK','Tiny cuts feel productive while large leaks keep draining the business.','Rank cost buckets and improve the largest controllable one first.');
+  addRoad('LATER','GIVE FUTURE MONEY A JOB','Security is built before money reaches the spending account.','Create automatic buckets for cushion, time off, taxes, and long-term Future You goals.');
+ }
+ if(a.cushion==='none')roadmap.unshift({phase:'PROTECT',title:'BUILD BREATHING ROOM WHILE WE FIX THE BUSINESS',why:'With no cushion, one bad week can force desperate business decisions.',action:'Send a small fixed piece of every payout to a separate emergency bucket while you work the primary plan.'});
+ if((profile.body==='other'||profile.body==='exit')&&!roadmap.some(x=>x.title.includes('BODY')))roadmap.push({phase:'FUTURE',title:'START THE OFF-CHAIR BRIDGE',why:'Your future income should not require your body to produce every dollar.',action:'Choose one off-chair lane and run the smallest possible real-world test before investing heavily.'});
  let moneyTitle='KNOW YOUR STARTING NUMBER',money='Based on what you entered, clients are paying about $'+monthly.toLocaleString()+'.';
  if(keep!==null) money+=' At roughly '+keep+'% kept after work costs, that points to about $'+Math.round(monthly*keep/100).toLocaleString()+' before personal taxes and living expenses.';
  else money+=' First assignment: figure out what actually stays yours. If that number surprises you, welcome to the club.';
  let target=path==='money'&&monthly?'A 10% improvement in production at the same schedule would be about 
- return{headline:d.h,intro:d.i,moneyTitle,money,target,weeks:d.weeks,watchTitle:'THE NUMBERS THAT MATTER',watch:d.watch,finish:'Run the numbers again in 30 days. Keep what worked. Dump what only kept you busy.',free,profile};
+ return{headline:d.h,intro:d.i,moneyTitle,money,target,weeks:d.weeks,watchTitle:'THE NUMBERS THAT MATTER',watch:d.watch,finish:'Run the numbers again in 30 days. Keep what worked. Dump what only kept you busy.',free,profile,roadmap};
 }
 const state={answers:{},index:-1,view:'intro',name:'',done:{},deepAnswers:{},deepIndex:0,deepPreview:false};const app=document.getElementById('app');const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const deliveryKey='booked-af-delivery-v1';
