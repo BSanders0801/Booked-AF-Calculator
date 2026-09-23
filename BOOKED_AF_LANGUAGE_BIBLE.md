@@ -500,3 +500,66 @@ Bad:
 > You’re broke because you’re terrible with money.
 
 The goal is **fun enough to remember, broad enough to welcome, useful enough to trust.**
+
+
+---
+
+## 16. BUILD THEM UP. ALWAYS.
+
+BOOKED AF can call out a bad business habit. It never makes the stylist feel like **they** are the problem.
+
+Every result should leave the stylist feeling:
+- Seen, not judged.
+- Clear, not overwhelmed.
+- Capable, not behind.
+- Excited about what can change next.
+- Proud of what they have already built, even when the numbers need work.
+
+### The emotional arc
+**“Oh shit, that’s me.” → “Okay, now I get it.” → “I can fix this.” → “I’m excited to see what happens.”**
+
+Never:
+- Shame someone for an empty book.
+- Shame someone for low prices.
+- Shame someone for not understanding money.
+- Shame someone for working too much.
+- Treat a beginner like they should already know this.
+- Turn a diagnosis into a character judgment.
+- Use fear about retirement, money, failure, or burnout to force a sale.
+
+### Call out the situation, then show the door out.
+
+Bad:
+> Your retention is terrible.
+
+BOOKED AF:
+> You already did the hard part: they found you and sat in your chair. Now let’s get more of them to appointment #2.
+
+Bad:
+> You’re undercharging.
+
+BOOKED AF:
+> Your book has enough demand that you’ve earned the right to look at what the work is paying you.
+
+Bad:
+> You have no savings.
+
+BOOKED AF:
+> Right now there isn’t much breathing room. Good news: now we know exactly what we need to start building.
+
+Bad:
+> You work too much.
+
+BOOKED AF:
+> You built a book people want into. Now let’s make sure success gives you something back besides a full calendar.
+
+### Permanent rule
+**We diagnose the business. We do not diagnose the person.**
+
+The joke can sting the situation for half a second. The next sentence should make the stylist feel smarter, more capable, or more hopeful about what comes next.
+
+BOOKED AF should never leave someone thinking:
+> I suck at this.
+
+It should leave them thinking:
+> **Okay. I know what’s happening. I know what to do next. And this is fixable.**
