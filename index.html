@@ -94,7 +94,7 @@ function read(){
  const chosen=[];for(const [id,score] of ranked){if(chosen.length===3)break;if(score<=0)continue;const d=defs[id];chosen.push({id,title:d[0],short:d[1],body:d[2],action:d[3],score});}
  while(chosen.length<3){const id=['fill','money','time'].find(x=>!chosen.some(i=>i.id===x));const d=defs[id];chosen.push({id,title:d[0],short:d[1],body:d[2],action:d[3],score:0});}
  const top=chosen[0],intro=top.id==='fill'?'First priority: build demand before trying to optimize a business that is still growing.':top.short;
- const day=earlyBook?'You’re building a book that can eventually give you choices.':a.dayback==='yes'?'You said you’d take a day back in a heartbeat. Good. We’re going to treat that as a business goal, not a fantasy.':a.dayback==='maybe'?'You’re open to more room in your week. We’ll look for it without gambling with your income.':'You like your schedule. Great. The goal is to make those days work better for you.';
+ const day=earlyBook?'You’re building a book that can eventually give you choices — what you charge, who you work with, when you work, and how much of your life belongs to the salon.':a.dayback==='yes'?'You said you’d take a day back in a heartbeat. Good. We’re going to treat that as a business goal, not a fantasy.':a.dayback==='maybe'?'You’re open to more room in your week. We’ll look for it without gambling with your income.':'You like your schedule. Great. The goal is to make those days work better for you.';
  let opportunity=null;
  if(!starting&&days&&clients&&spend){
   const monthlyClients=days*clients*4.33,currentMonthly=monthlyClients*spend; let gain=0,title="",body="",math="";
