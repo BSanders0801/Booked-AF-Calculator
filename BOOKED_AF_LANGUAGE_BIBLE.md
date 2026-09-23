@@ -452,3 +452,51 @@ The clarity keeps them reading.
 The math makes them trust us.
 The results make them pay.
 The usefulness makes them tell another stylist.
+
+
+---
+
+## 15. THE MIDWEST TEST
+
+BOOKED AF is **PG-13 at the front door, looser once you’re inside, and sharpest in the paid Deep Dive.**
+
+We are not wholesome. We are also not trying to shock people for sport.
+
+The test:
+> **Your coolest stylist friend in LA should laugh. Your favorite stylist in suburban Michigan shouldn’t clutch her pearls. If both would send it to the group chat, we nailed it.**
+
+### Front door
+Cheeky, clever, confident, immediately welcoming.
+- “Your book has secrets. Let’s spill.” = yes.
+- Mild dating / nightlife innuendo = yes when clever.
+- Profanity as the first impression = no.
+- Graphic sexual humor = no.
+- Aggressive “calling out” = no.
+
+### Inside the Breakdown
+We have more permission.
+- “Your calendar needs a safe word.”
+- “That big number looks great naked.”
+- “Stop having one-night stands with your clients.”
+
+Use these as seasoning, not every sentence.
+
+### Paid Deep Dive
+They bought into the personality. We can be sharper, drier, and more candid—but never vulgar, cruel, or confusing.
+
+### The permanent rule
+**Make fun of the situation. Never make fun of the stylist.**
+
+Good:
+> Your calendar needs a safe word.
+
+Bad:
+> You’re an idiot for working six days.
+
+Good:
+> That $15K month looks great naked. Now let’s put the expenses back on.
+
+Bad:
+> You’re broke because you’re terrible with money.
+
+The goal is **fun enough to remember, broad enough to welcome, useful enough to trust.**
