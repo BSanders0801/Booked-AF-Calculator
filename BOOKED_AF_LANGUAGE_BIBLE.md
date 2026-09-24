@@ -71,6 +71,73 @@ If a funny line makes the instruction harder to understand, kill the funny line.
 
 ---
 
+## 2A. THE SIMPLICITY STANDARD
+
+**If somebody has to reread it, we wrote it wrong.**
+
+BOOKED AF is built for hairstylists of every age, education level, career stage, income level, and background. Nobody should need business training to understand what we mean.
+
+Every lesson, result, tool, question, email, page, and book section follows the same order:
+
+**1. SAY THE IDEA.**  
+Use normal words. One idea at a time.
+
+**2. EXPLAIN WHAT IT MEANS.**  
+Keep it short. Do not hide the point inside clever language.
+
+**3. SHOW A REAL SALON EXAMPLE.**  
+Use normal numbers and situations from behind the chair.
+
+**4. GIVE ONE CLEAR NEXT STEP.**  
+The person should know exactly what to do next.
+
+### The math rule
+
+If BOOKED AF can do the math, **BOOKED AF does the math.**
+
+Do not tell the stylist to calculate, rank, analyze, compare, estimate, or break down numbers when the product can do it for them.
+
+Bad:
+> Calculate what each block produces, rank your lowest-value hours, and replace the lost production.
+
+BOOKED AF:
+> Tell us what you made and how many hours you worked. We’ll show you which hours made the most money.
+
+Then show an example:
+> You made $800 in 8 hours. That averages $100 an hour. But if the first 4 hours made $600 and the last 4 made $200, the whole day is not the problem. Those last 4 hours may be.
+
+### The no-homework rule
+
+Never hand somebody a business-school assignment disguised as advice.
+
+Avoid instructions like:
+- calculate your production
+- rank your services by profitability
+- analyze your service mix
+- identify your highest-value hours
+- determine your utilization
+- segment your clients
+- optimize your schedule
+
+Translate them:
+- Tell us what you made and how long you worked. We’ll do the math.
+- Tell us what you charged, how long it took, and roughly what the product cost. We’ll compare the services.
+- Tell us which clients came back. We’ll show you the pattern.
+- Tell us what days feel slow, packed, or exhausting. We’ll help you see what is happening.
+
+### The reread test
+
+Before anything ships, ask:
+
+- Could a brand-new stylist understand this?
+- Could a veteran stylist who has never taken a business class understand this?
+- Could somebody understand it after a ten-hour salon day without reading it three times?
+- If there is math, did we either do it for them or show exactly how it works?
+- Does the example make the idea easier, not longer?
+- Is the next step obvious?
+
+If the answer to any of those is no, simplify it again.
+
 ## 3. OUR LANGUAGE
 
 These phrases belong to BOOKED AF and should be repeated enough to become recognizable.
