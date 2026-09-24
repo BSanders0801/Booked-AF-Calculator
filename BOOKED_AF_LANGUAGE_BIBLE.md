@@ -56,7 +56,7 @@ Good:
 > Your book is packed and somehow your bank account missed the memo.
 
 Then:
-> Pull your last 10 service totals. Find what the average client spends and which services take the most time for the least money.
+> Enter the price, time, and product cost for a few real appointments. BOOKED AF will show what each one pays you.
 
 Bad:
 > LOL you’re broke.
@@ -101,10 +101,10 @@ Bad:
 > Calculate what each block produces, rank your lowest-value hours, and replace the lost production.
 
 BOOKED AF:
-> Tell us what you made and how many hours you worked. We’ll show you which hours made the most money.
+> Choose a normal workday. Tell us what clients paid, how you get paid, and what you spent on supplies. We’ll show what that day pays you.
 
 Then show an example:
-> You made $800 in 8 hours. That averages $100 an hour. But if the first 4 hours made $600 and the last 4 made $200, the whole day is not the problem. Those last 4 hours may be.
+> Based on what you entered, that day leaves you about $320 before tax and other bills. If you work that day every week, that is about $1,387 a month.
 
 ### The no-homework rule
 
@@ -161,10 +161,10 @@ Example:
 > That four-hour service bringing in $180? We found a Money Suck.
 
 ### THE FREEDOM NUMBER
-The amount of money a stylist needs to replace before removing a workday or block of time.
+The money a normal workday leaves the stylist after the pay split and work costs they entered. BOOKED AF computes it. Never ask the stylist to work it out.
 
 Example:
-> Friday brings in about $1,900 a month. That’s your Freedom Number. Replace that before Friday disappears from the schedule.
+> Chair Math shows what a normal Friday pays you after the work costs you enter. Check that number against real pay before changing your schedule.
 
 ### APPOINTMENT #2
 Our shorthand for retention. Getting a new client is nice. Getting them back is a business.
@@ -249,7 +249,7 @@ Voice:
 
 **Utilization** → How full is your book?
 
-**Average ticket** → What does your average client spend?
+**Average ticket** → About what does one client usually pay?
 
 **Gross revenue** → How much money came in? / What clients paid.
 
@@ -416,7 +416,7 @@ Never shame the user.
 If a question could make a stylist stop and think “what exactly do you mean?”, give a tiny example.
 
 Example — average client spend:
-> If one client spends $150 and another spends $350, don’t overthink it. Give us your best normal average.
+> What does one client usually pay for services? Pick the closest range. “I don’t know” is fine.
 
 Example — work costs:
 > Think color, backbar, assistant, rent, card fees, software—whatever you pay because you do hair.
@@ -425,7 +425,7 @@ Example — money kept:
 > Clients paid $10K. Work cost you $4K. Roughly $6K was left before personal taxes and life.
 
 Example — Freedom Number:
-> If your Fridays average $450 and you work four Fridays a month, your Freedom Number is about $1,800/month.
+> Choose the day you want back. Enter what clients pay that day, your pay setup, tips, and work costs. BOOKED AF shows what you would need to replace each month.
 
 Examples should clarify, not create another paragraph of homework.
 
