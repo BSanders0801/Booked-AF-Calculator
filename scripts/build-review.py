@@ -10,6 +10,9 @@ setup='''window.BOOKED_AF_REVIEW=true;window.fetch=()=>Promise.reject(new Error(
 s=s.replace('<script src="day-math.js?v=1" defer></script>','<script>'+setup+'</script><script>'+ (root/'day-math.js').read_text()+'</script>')
 for name in ['breakdown-core','site-content','app','site-ui']:
  s=re.sub(r'<script src="'+name+r'\.js\?[^\"]+" defer></script>',lambda m:'<script>'+ (root/(name+'.js')).read_text()+'</script>',s)
+# Embed founder portrait in static and dynamically rendered pages.
+portrait='data:image/svg+xml;base64,'+base64.b64encode((root/'assets/bradley-founder.svg').read_bytes()).decode()
+s=s.replace('assets/bradley-founder.svg',portrait)
 # Offline review cannot request CAPTCHA scripts or submit an email.
 s=s.replace("function loadEmailVerification() {", "function loadEmailVerification() { if(window.BOOKED_AF_REVIEW) return Promise.reject(new Error('Email sending is unavailable in this review copy')); ")
 (root/'review/BOOKED_AF_Redesign_Preview.html').write_text(s)
