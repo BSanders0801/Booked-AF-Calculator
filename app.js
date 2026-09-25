@@ -403,7 +403,7 @@ function mountEmailVerification(form, error) {
  container.style.margin = '16px 0';
  error.before(container);
  let widget, token = '', disposed = false;
- const notice = message => { if (form.isConnected && form.dataset.sending !== 'true') error.textContent = message; };
+ const notice = message => { if (form.isConnected && form.dataset.sending !== 'true' && !error.dataset.submission) error.textContent = message; };
  const verification = {
   token: () => token,
   reset: () => { token = ''; if (!disposed && widget !== undefined) window.turnstile.reset(widget); }
@@ -442,12 +442,14 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
    error.focus(); return;
   }
   error.textContent = '';
+  delete error.dataset.submission;
   form.dataset.sending = 'true';
   form.setAttribute('aria-busy', 'true');
   button.disabled = true;
   button.textContent = pendingText;
   let timeout;
   let failure = failureText;
+  let failureCode = 'connection';
   try {
    const data = new FormData(form);
    const values = prepare(data);
@@ -467,6 +469,7 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
     redirect: 'error',
     credentials: 'omit'
    });
+   failureCode = String(response.status);
    if (response.status === 429) {
     failure = 'Email sign-ups need a short break. Your details are still here. Please try again in a few minutes.';
     throw new Error('Rate limited');
@@ -489,8 +492,9 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
    else if (err instanceof TypeError) failure = 'We couldn’t connect to save your email. Your details are still here. Please try again.';
    console.warn('BOOKED AF email submission:', err.name, err.message);
    if (form.isConnected) {
+    error.dataset.submission = 'true';
     verification.reset();
-    error.textContent = failure;
+    error.textContent = failure + ' (Reference: ' + failureCode + ')';
     error.focus();
    }
   } finally {
