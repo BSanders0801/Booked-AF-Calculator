@@ -377,14 +377,70 @@ function emailCopy(r,name){
  "\n\nThis is a starting point based on your answers, not a promise of income.\n\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com";
 }
 // Lead requests stay in the background. Never navigate to the form provider.
-// FormData uses the browser's normal form encoding and needs no JSON preflight.
+// Send validated form details to our email Worker after Turnstile verification.
+const emailServiceUrl = 'https://booked-af-email.wild-recipe-42df.workers.dev';
+const emailSiteKey = '0x4AAAAAAFDEaTJ_ybTjAuWb';
+let turnstileLoading;
+let disposeEmailWidget = () => {};
+function loadEmailVerification() {
+ if (window.turnstile) return Promise.resolve(window.turnstile);
+ if (turnstileLoading) return turnstileLoading;
+ turnstileLoading = new Promise((resolve, reject) => {
+  const script = document.createElement('script');
+  const timer = setTimeout(failed, 15000);
+  function failed() {
+   clearTimeout(timer); script.remove(); turnstileLoading = null;
+   reject(new Error('Verification could not load. Please refresh and try again.'));
+  }
+  window.bookedTurnstileReady = () => { clearTimeout(timer); resolve(window.turnstile); };
+  script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=bookedTurnstileReady';
+  script.async = true; script.onerror = failed; document.head.appendChild(script);
+ });
+ return turnstileLoading;
+}
+function mountEmailVerification(form, error) {
+ const container = document.createElement('div');
+ container.style.margin = '16px 0';
+ error.before(container);
+ let widget, token = '', disposed = false;
+ const notice = message => { if (form.isConnected && form.dataset.sending !== 'true') error.textContent = message; };
+ const verification = {
+  token: () => token,
+  reset: () => { token = ''; if (!disposed && widget !== undefined) window.turnstile.reset(widget); }
+ };
+ disposeEmailWidget = () => {
+  disposed = true; token = '';
+  if (widget !== undefined) window.turnstile.remove(widget);
+ };
+ loadEmailVerification().then(api => {
+  if (disposed || !form.isConnected) return;
+  widget = api.render(container, {
+   sitekey: emailSiteKey, action: 'booked_email', size: 'flexible',
+   callback: value => { token = value; notice(''); },
+   'expired-callback': () => { token = ''; notice('Verification expired. Please verify again.'); },
+   'error-callback': () => { token = ''; notice('Verification could not finish. Please refresh and try again.'); },
+   'timeout-callback': () => { token = ''; notice('Verification timed out. Please try again.'); }
+  });
+ }).catch(() => notice('Verification could not load. Please refresh and try again.'));
+ return verification;
+}
 function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complete}) {
+ const verification = mountEmailVerification(form, document.getElementById(errorId));
  form.onsubmit = async event => {
   event.preventDefault();
   if (form.dataset.sending === 'true' || !form.reportValidity()) return;
   const button = form.querySelector('button[type="submit"]');
   const error = document.getElementById(errorId);
   const label = button.textContent;
+  const firstName = form.elements.namedItem('name').value.trim();
+  if (!/^[\p{L}\p{M} '\u2019-]*$/u.test(firstName)) {
+   error.textContent = 'Please use letters, spaces, apostrophes, or hyphens for your first name.';
+   error.focus(); return;
+  }
+  if (!verification.token()) {
+   error.textContent = 'Please complete the verification below before submitting.';
+   error.focus(); return;
+  }
   error.textContent = '';
   form.dataset.sending = 'true';
   form.setAttribute('aria-busy', 'true');
@@ -396,16 +452,17 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
    const data = new FormData(form);
    const values = prepare(data);
    data.set('email', String(data.get('email') || '').trim().toLowerCase());
-   data.set('_captcha', 'false');
-   data.set('_url', location.origin + location.pathname);
+
    // This is a temporary draft, never proof that the address has been received.
    try { sessionStorage.setItem('booked-af-email-draft', JSON.stringify({form: form.id, name: data.get('name'), email: data.get('email'), answers: state.answers})); } catch (err) {}
    const controller = new AbortController();
    timeout = setTimeout(() => controller.abort(), 30000);
-   const response = await fetch('https://formsubmit.co/ajax/hello@bookedandfabulous.com', {
+   const response = await fetch(emailServiceUrl, {
     method: 'POST',
-    headers: {'Accept': 'application/json'},
-    body: data,
+    headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+    body: JSON.stringify({type: form.id === 'interest' ? 'founding' : 'breakdown',
+     email: data.get('email'), name: firstName, answers: state.answers,
+     token: verification.token(), honey: data.get('_honey') || ''}),
     signal: controller.signal,
     redirect: 'error',
     credentials: 'omit'
@@ -414,6 +471,9 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
     failure = 'Email sign-ups need a short break. Your details are still here. Please try again in a few minutes.';
     throw new Error('Rate limited');
    }
+   if (response.status === 403) failure = 'Verification expired. Please verify again and resubmit.';
+   if (response.status === 503) failure = 'Email is temporarily unavailable. Your details are still here. Please try again shortly.';
+   if (response.status === 400) failure = 'Please check your name and email. If this continues, restart the questionnaire.';
    if (!response.ok) throw new Error('Submission failed: ' + response.status);
    const result = await response.json();
    if (result.success !== true && result.success !== 'true') throw new Error('Submission not accepted');
@@ -429,6 +489,7 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
    else if (err instanceof TypeError) failure = 'We couldn’t connect to save your email. Your details are still here. Please try again.';
    console.warn('BOOKED AF email submission:', err.name, err.message);
    if (form.isConnected) {
+    verification.reset();
     error.textContent = failure;
     error.focus();
    }
@@ -458,10 +519,10 @@ try {
   state.view = draft.form === 'form' ? 'email' : 'paid';
  }
 } catch (err) {}
-function render(){if(state.view!=='intro')app.classList.remove('intro-screen');document.getElementById('bar').style.width=(state.view==='question'?Math.round((state.index)/questions.length*100):state.view==='intro'?0:100)+'%';if(state.view==='intro'){app.classList.add('intro-screen');app.innerHTML=`<section class="intro-hero"><p class="intro-topline">BUILD YOUR FUTURE NOW.</p><h1 class="intro-wordmark">BOOKED <b>AF</b></h1><p class="intro-promise"><span>MAKE MORE.</span><span>WORK LESS.</span><span>LIVE BETTER.</span></p><button class="primary intro-cta" id="start">START YOUR BREAKDOWN →</button></section><section class="intro-after"><div class="intro-kicker">THE 3-MINUTE BOOKED AF BREAKDOWN</div><h2 class="intro-title">LOVE YOUR CAREER.<br>KEEP YOUR LIFE.<span class="future">BUILD YOUR FUTURE.</span></h2><p class="intro-thesis">You learned how to do hair.<br><span class="pink">Nobody taught you what to do with the career it creates.</span></p><p class="intro-copy">More money. Better clients. Fewer stupid hours. A body that still works. Money for Future You.</p><div class="intro-manifesto intro-quote"><h3>“I’ll figure it out later” is not a retirement plan.</h3></div><p class="intro-note">Built by a hairdresser with almost 30 years behind the chair—and the financial mistakes to prove it.</p></section>`;document.getElementById('start').onclick=()=>{app.classList.remove('intro-screen');state.index=0;state.view='question';render()};return}
+function render(){disposeEmailWidget();disposeEmailWidget=()=>{};if(state.view!=='intro')app.classList.remove('intro-screen');document.getElementById('bar').style.width=(state.view==='question'?Math.round((state.index)/questions.length*100):state.view==='intro'?0:100)+'%';if(state.view==='intro'){app.classList.add('intro-screen');app.innerHTML=`<section class="intro-hero"><p class="intro-topline">BUILD YOUR FUTURE NOW.</p><h1 class="intro-wordmark">BOOKED <b>AF</b></h1><p class="intro-promise"><span>MAKE MORE.</span><span>WORK LESS.</span><span>LIVE BETTER.</span></p><button class="primary intro-cta" id="start">START YOUR BREAKDOWN →</button></section><section class="intro-after"><div class="intro-kicker">THE 3-MINUTE BOOKED AF BREAKDOWN</div><h2 class="intro-title">LOVE YOUR CAREER.<br>KEEP YOUR LIFE.<span class="future">BUILD YOUR FUTURE.</span></h2><p class="intro-thesis">You learned how to do hair.<br><span class="pink">Nobody taught you what to do with the career it creates.</span></p><p class="intro-copy">More money. Better clients. Fewer stupid hours. A body that still works. Money for Future You.</p><div class="intro-manifesto intro-quote"><h3>“I’ll figure it out later” is not a retirement plan.</h3></div><p class="intro-note">Built by a hairdresser with almost 30 years behind the chair—and the financial mistakes to prove it.</p></section>`;document.getElementById('start').onclick=()=>{app.classList.remove('intro-screen');state.index=0;state.view='question';render()};return}
 if(state.view==='question'){let q=questions[state.index];while(q&&q.when&&!q.when(state.answers)){state.index++;q=questions[state.index]}if(!q){state.view='teaser';render();return}const selected=state.answers[q.id],visible=questions.filter((x,i)=>i<=state.index&&(!x.when||x.when(state.answers))).length,total=questions.filter(x=>!x.when||x.when(state.answers)).length;app.innerHTML=`<div class="eyebrow">Question ${visible} of ${total}</div><h2>${q.title}</h2>${q.note?`<p>${q.note}</p>`:''}<div class="choices">${q.choices.map(([value,label,detail])=>`<button type="button" class="choice ${selected===value?'selected':''}" data-value="${value}" aria-pressed="${selected===value}">${label}${detail?`<small>${detail}</small>`:''}</button>`).join('')}</div><div class="actions"><button class="secondary" id="back">← BACK</button><button class="primary" id="next" ${selected===undefined?'disabled':''}>${state.index===questions.length-1?'SEE MY BREAKDOWN →':'NEXT →'}</button></div>`;app.querySelectorAll('.choice').forEach(el=>el.onclick=()=>{state.answers[q.id]=el.dataset.value;render()});document.getElementById('back').onclick=()=>{if(state.index===0)state.view='intro';else state.index--;render()};document.getElementById('next').onclick=()=>{if(state.answers[q.id]===undefined)return;let next=state.index+1;while(next<questions.length&&questions[next].when&&!questions[next].when(state.answers))next++;if(next>=questions.length)state.view='teaser';else state.index=next;render()};return}
 if(state.view==='teaser'){const r=read();app.innerHTML=`<div class="eyebrow">Your BOOKED AF Breakdown</div><h1>${voice('result',1,'OKAY. WE FOUND SOME THINGS.')}</h1><p class="lead">You’re <strong>${r.stage}</strong>. Your first move: <strong>${r.top.title}</strong></p><div class="card"><div class="number">01 / 03</div><h3>${r.top.title}</h3><p>${r.top.short}</p></div><p>${r.items.length>1?`There ${r.items.length===2?'is one more piece':'are two more pieces'} to your Breakdown, plus a simple first step for each.`:'This is the main thing worth fixing first. We’re not inventing extra problems just to fill boxes.'}</p><button class="primary" id="show">SHOW ME THE FULL BREAKDOWN →</button><div><button class="subtle" id="skip">Continue without email</button></div>`;document.getElementById('show').onclick=()=>{state.view='email';render()};document.getElementById('skip').onclick=()=>{state.view='result';render()};return}
-if(state.view==='email'){app.innerHTML=`<section class="capture-shell"><div class="capture-wordmark">BOOKED <b>AF</b></div><div class="capture-rule"></div><div class="eyebrow">YOUR BREAKDOWN IS READY</div><h2 class="capture-title">Your next move, without the noise.</h2><p class="capture-copy">Drop your email below and we’ll open your full Breakdown right here—your priorities, your next moves, and your 7-day plan.</p><form id="form" class="capture-form" onsubmit="return false"><label for="name">FIRST NAME</label><input class="input" id="name" name="name" autocomplete="given-name" maxlength="60" placeholder="Bradley"><label for="email">EMAIL</label><input class="input" id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"><input type="hidden" name="_subject" value="BOOKED AF • New Breakdown Lead"><input type="hidden" name="_template" value="box"><input type="hidden" name="stage"><input type="hidden" name="breakdown"><input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" hidden aria-hidden="true"><p class="error" id="error" role="alert" tabindex="-1"></p><button type="submit" class="primary capture-cta">UNLOCK MY BREAKDOWN →</button></form><button class="subtle capture-skip" id="skip">Skip email and show me now</button><p class="capture-note">Your full Breakdown opens here immediately. Save it, share it, or come back to the plan when you’re ready.</p></section>`;bindLeadForm(document.getElementById('form'), {
+if(state.view==='email'){app.innerHTML=`<section class="capture-shell"><div class="capture-wordmark">BOOKED <b>AF</b></div><div class="capture-rule"></div><div class="eyebrow">YOUR BREAKDOWN IS READY</div><h2 class="capture-title">Your next move, without the noise.</h2><p class="capture-copy">Drop your email below and we’ll send your full Breakdown and open it right here—your priorities, your next moves, and your 7-day plan.</p><form id="form" class="capture-form" onsubmit="return false"><label for="name">FIRST NAME</label><input class="input" id="name" name="name" autocomplete="given-name" maxlength="60" placeholder="Bradley"><label for="email">EMAIL</label><input class="input" id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"><input type="hidden" name="_subject" value="BOOKED AF • New Breakdown Lead"><input type="hidden" name="_template" value="box"><input type="hidden" name="stage"><input type="hidden" name="breakdown"><input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" hidden aria-hidden="true"><p class="error" id="error" role="alert" tabindex="-1"></p><button type="submit" class="primary capture-cta">UNLOCK MY BREAKDOWN →</button></form><button class="subtle capture-skip" id="skip">Skip email and show me now</button><p class="capture-note">Your full Breakdown opens here immediately. Save it, share it, or come back to the plan when you’re ready.</p></section>`;bindLeadForm(document.getElementById('form'), {
  errorId: 'error',
  pendingText: 'OPENING YOUR BREAKDOWN…',
  failureText: 'Your email hasn’t been saved yet. Please try again in a moment. Your details and answers are still here.',
