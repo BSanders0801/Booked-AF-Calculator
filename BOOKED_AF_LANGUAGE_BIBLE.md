@@ -130,7 +130,7 @@ Translate them:
 Before anything ships, ask:
 
 - Could a brand-new stylist understand this?
-- Could a veteran stylist who has never taken a business class understand this?
+- Could a stylist who has been behind the chair for years understand this without business-school language?
 - Could somebody understand it after a ten-hour salon day without reading it three times?
 - If there is math, did we either do it for them or show exactly how it works?
 - Does the example make the idea easier, not longer?
@@ -149,7 +149,7 @@ The free 3-minute diagnostic. It tells you what is actually worth fixing first.
 The paid next layer. Your actual numbers, clients, prices, schedule, and personalized 30-day plan.
 
 ### SALON MATH
-Complicated business math translated into numbers a working stylist can actually use.
+Complicated business math translated into numbers a hairstylist can actually use.
 
 Definition:
 > The math you need without pretending you went to business school.
@@ -207,7 +207,7 @@ Use only when demand supports it.
 Voice:
 > You’re busy enough. The money just isn’t matching the amount of work you’re doing.
 
-Do not use this for Baby Stylists just because their average ticket is low.
+Do not use this for someone who is BUILDING just because their average ticket is low.
 
 ### THE REVOLVING DOOR
 New clients are arriving but not enough become regulars.
@@ -233,7 +233,7 @@ Voice:
 
 Early-stage alternate:
 **KNOW YOUR MONEY NOW**
-Do not make a Baby Stylist sound like they misplaced a fortune they never made.
+Do not make someone who is BUILDING sound like they misplaced a fortune they never made.
 
 ### BUY BACK YOUR LIFE
 Advanced result.
