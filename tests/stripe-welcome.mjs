@@ -20,7 +20,7 @@ test('sends one welcome for a verified paid Deep Dive checkout',async()=>{
     assert.equal(response.status,200);
     const body=JSON.parse(sent.body);
     assert.equal(body.to[0],'alex@example.com');
-    assert.equal(body.subject,'Welcome to BOOKED AF. Your Deep Dive starts now.');
+    assert.equal(body.subject,'You’re in. Let’s make some moves.');
     assert.match(body.text,/START MY DEEP DIVE: https:\/\/bookedandfabulous.com\/\?deepdive=paid&session_id=cs_test_123/);
     assert.equal(sent.headers['Idempotency-Key'],'booked-deep-dive-cs_test_123');
   } finally {globalThis.fetch=original}
