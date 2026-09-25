@@ -1,7 +1,7 @@
 // Shared by the website and the self-contained email Worker.
 const SHORT_SCHEMA = 'short-v1';
 const shortQuestions = [
- {id:'goal',title:'What would you most like to improve right now?',choices:[['clients','More clients in my chair'],['money','More money from the work I already do'],['return','More clients coming back'],['keep','Knowing where my money goes'],['time','A shorter work week'],['stable','Having money saved for slow months and time off']]},
+ {id:'goal',title:'WHAT ARE WE FIXING FIRST?',choices:[['clients','I need more clients in my chair.'],['money','I want to earn more without adding more hours.'],['return','I want clients who keep coming back.'],['keep','I make money. Where does it all go?'],['time','I love doing hair. I’d also like a life.'],['stable','I need money saved for when life happens.']]},
  {id:'full',title:'How busy are you most weeks?',choices:[['notyet','I’m not taking clients yet'],['under25','I have a few clients and lots of openings'],['half','I’m booked about half the time'],['threequarters','I’m busy, with a few openings'],['full','I’m fully booked or close to it']]},
  {id:'days',title:'How many days a week do you currently take appointments?',choices:[['0','I’m not taking appointments yet'],['1','1 day'],['2','2 days'],['3','3 days'],['4','4 days'],['5','5 days'],['6','6–7 days']]},
  {id:'spend',title:'About how much does a client usually pay for one visit?',note:'Include their hair services. Leave out tips and products they take home. Choose the closest answer.',choices:[['notyet','I’m not taking clients yet'],['unknown','I’m not sure'],['75','Under $100'],['150','$100–$199'],['275','$200–$349'],['400','$350 or more']]},
