@@ -355,7 +355,7 @@ async function limitedJSON(request) {
 }
 
 const deepDiveUrl = 'https://bookedandfabulous.com/?deepdive=paid';
-const welcomeSubject = 'Welcome to BOOKED AF. Your Deep Dive starts now.';
+const welcomeSubject = 'You’re in. Let’s make some moves.';
 const deepDivePaymentLinkId = 'plink_1UJbGMK8mAQwUniDbDofJPiQ';
 
 async function verifyStripeSignature(body, header, secret) {
