@@ -356,6 +356,7 @@ async function limitedJSON(request) {
 
 const deepDiveUrl = 'https://bookedandfabulous.com/?deepdive=paid';
 const welcomeSubject = 'Welcome to BOOKED AF. Your Deep Dive starts now.';
+const deepDivePaymentLinkId = 'plink_1UJbGMK8mAQwUniDbDofJPiQ';
 
 async function verifyStripeSignature(body, header, secret) {
   const values = Object.fromEntries((header || '').split(',').map(part => part.trim().split('=', 2)));
@@ -370,7 +371,7 @@ async function verifyStripeSignature(body, header, secret) {
 
 async function stripeWelcome(request, env) {
   if (request.method !== 'POST') return new Response('Method not allowed', {status:405});
-  if (!env.STRIPE_WEBHOOK_SECRET || !env.STRIPE_PAYMENT_LINK_ID || !env.RESEND_API_KEY) return new Response('Not configured', {status:503});
+  if (!env.STRIPE_WEBHOOK_SECRET || !env.RESEND_API_KEY) return new Response('Not configured', {status:503});
   let body;
   try {
     body = await request.text();
@@ -380,11 +381,12 @@ async function stripeWelcome(request, env) {
   try { event = JSON.parse(body); } catch { return new Response('Invalid JSON', {status:400}); }
   if (!['checkout.session.completed','checkout.session.async_payment_succeeded'].includes(event.type)) return new Response('Ignored');
   const session = event.data?.object;
-  if (session?.payment_status !== 'paid' || session?.payment_link !== env.STRIPE_PAYMENT_LINK_ID || session?.currency !== 'usd' || session?.amount_total !== 4900) return new Response('Ignored');
+  if (session?.payment_status !== 'paid' || session?.payment_link !== deepDivePaymentLinkId || session?.currency !== 'usd' || session?.amount_total !== 4900) return new Response('Ignored');
   const email = session.customer_details?.email || session.customer_email;
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return new Response('Missing customer email', {status:422});
   const firstName = String(session.customer_details?.name || '').trim().split(/\s+/)[0].slice(0, 60);
   const greeting = firstName ? 'Hey ' + firstName + ',' : 'Hey,';
+  const customerDeepDiveUrl = deepDiveUrl + '&session_id=' + encodeURIComponent(session.id);
   const text = `${greeting}
 
 Welcome to BOOKED AF. You’re officially part of the family.
@@ -393,12 +395,12 @@ You’ve already done the first big thing: decided your career should give you m
 
 Some changes will help now. Others will give Future You more money, time, and choices. We’re here for both.
 
-START MY DEEP DIVE: ${deepDiveUrl}
+START MY DEEP DIVE: ${customerDeepDiveUrl}
 
 Love your career. Keep your life.
 Bradley
 BOOKED AF`;
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:#fff"><tr><td align="center" style="padding:8px 26px;background:#000;border-bottom:4px solid #ff1686"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF" style="display:block;width:100%;max-width:400px;height:auto"></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="font-size:28px;line-height:1.2">${welcomeSubject}</h1><p>${esc(greeting)}</p><p>Welcome to BOOKED AF. You’re officially part of the family.</p><p>You’ve already done the first big thing: decided your career should give you more than a full book and tired feet. Now we’ll look at what’s happening in <em>your</em> business and build a 30-day plan you can actually use.</p><p>Some changes will help now. Others will give Future You more money, time, and choices. We’re here for both.</p><p style="margin:30px 0"><a href="${deepDiveUrl}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">START MY DEEP DIVE →</a></p><p>Love your career. Keep your life.<br>Bradley<br>BOOKED AF</p></td></tr><tr><td style="padding:20px 26px;background:#111114;color:#ddd;font-size:12px">You received this email because you purchased the BOOKED AF Deep Dive.<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a></td></tr></table></td></tr></table></body></html>`;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:#fff"><tr><td align="center" style="padding:8px 26px;background:#000;border-bottom:4px solid #ff1686"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF" style="display:block;width:100%;max-width:400px;height:auto"></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="font-size:28px;line-height:1.2">${welcomeSubject}</h1><p>${esc(greeting)}</p><p>Welcome to BOOKED AF. You’re officially part of the family.</p><p>You’ve already done the first big thing: decided your career should give you more than a full book and tired feet. Now we’ll look at what’s happening in <em>your</em> business and build a 30-day plan you can actually use.</p><p>Some changes will help now. Others will give Future You more money, time, and choices. We’re here for both.</p><p style="margin:30px 0"><a href="${customerDeepDiveUrl}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">START MY DEEP DIVE →</a></p><p>Love your career. Keep your life.<br>Bradley<br>BOOKED AF</p></td></tr><tr><td style="padding:20px 26px;background:#111114;color:#ddd;font-size:12px">You received this email because you purchased the BOOKED AF Deep Dive.<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a></td></tr></table></td></tr></table></body></html>`;
   try {
     const response = await fetch('https://api.resend.com/emails', {
       method:'POST',
@@ -412,9 +414,32 @@ BOOKED AF`;
   } catch { return new Response('Email delivery failed', {status:502}); }
 }
 
+async function verifyCheckout(request, env) {
+  const origin = request.headers.get('Origin') || '';
+  const headers = {'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Vary':'Origin'};
+  if (ORIGINS.has(origin)) Object.assign(headers, {'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'GET, OPTIONS'});
+  const reply = (data, status=200) => new Response(JSON.stringify(data), {status,headers});
+  if (!ORIGINS.has(origin)) return reply({paid:false},403);
+  if (request.method === 'OPTIONS') return new Response(null,{status:204,headers});
+  if (request.method !== 'GET') return reply({paid:false},405);
+  const sessionId = new URL(request.url).searchParams.get('session_id');
+  if (!/^cs_(?:live|test)_[A-Za-z0-9]+$/.test(sessionId||'')) return reply({paid:false},400);
+  if (!env.STRIPE_SECRET_KEY) return reply({paid:false,error:'Payment check is unavailable.'},503);
+  try {
+    const response = await fetch('https://api.stripe.com/v1/checkout/sessions/'+encodeURIComponent(sessionId), {
+      headers:{Authorization:'Bearer '+env.STRIPE_SECRET_KEY},
+      signal:AbortSignal.timeout(8000)
+    });
+    if (!response.ok) return reply({paid:false},response.status===404?404:502);
+    const session = await response.json();
+    return reply({paid:session.status==='complete' && session.payment_status==='paid' && session.payment_link===deepDivePaymentLinkId && session.currency==='usd' && session.amount_total===4900});
+  } catch { return reply({paid:false,error:'Payment check is unavailable.'},503); }
+}
+
 export default {
   async fetch(request, env) {
     if (new URL(request.url).pathname === '/stripe-webhook') return stripeWelcome(request, env);
+    if (new URL(request.url).pathname === '/verify-checkout') return verifyCheckout(request, env);
     const origin = request.headers.get('Origin') || '';
     const headers = {'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Vary':'Origin'};
     if (ORIGINS.has(origin)) Object.assign(headers, {'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type'});
