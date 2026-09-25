@@ -23,7 +23,7 @@ Other existing worktrees have uncommitted work; those files were not overwritten
 
 ## Before public release
 1. Review desktop and mobile rendering at 320, 375, 390, 430 and 1280px, keyboard flow, enlarged text and print output. Run a measured mobile performance/accessibility audit.
-2. Choose Bradley's own founder portrait. Current build uses the real logo and founder text, with no fake portrait or stock imagery.
+2. Review the refined founder portrait and bio in the homepage and Meet Bradley page. Source: Bradley's supplied IMG_6330, with a restrained built-in image edit and 4:5 crop. Bio credentials checked against Bradley_Sanders_Master_Resume.pdf, version 2 (September 17). No brand endorsement is implied.
 3. Confirm actual access duration, support scope and refund terms; turn the factual data explanation into a complete reviewed privacy policy. No unapproved promises were added.
 4. Test payment confirmation -> return -> paid intake -> plan -> welcome email -> reopen from email in a test environment. Unit tests are not a real delivery test. Worker source has not been redeployed here.
 5. Verify live social destinations and apply approved branding to Stripe checkout; this branch does not modify Stripe account settings.
