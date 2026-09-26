@@ -31,35 +31,35 @@ const careerSampleData = {
     tab:'BRIDAL + EVENTS',
     label:'BRIDAL + EVENTS',
     stage:'GETTING BUSY',
-    snapshot:'The booking fee is only part of the job. Travel, early call times, assistants, and weekends count too.',
+    snapshot:'The wedding-day fee is only part of the job. The trial, travel, early call time, assistants, setup, wedding morning, and trip home all count.',
     fix:'PRICE THE WHOLE DAY. NOT JUST THE HAIR.',
-    fixBody:'A three-hour service can still own six hours of your day. Price the job you actually have to do.',
+    fixBody:'The trial, travel, early call time, assistants, setup, wedding morning, and trip home all belong in the math. A three-hour service can own six hours of your day.',
     steps:[
       ['COUNT DOOR-TO-DOOR TIME.','Include prep, packing, travel, setup, the service, cleanup, and the trip home.'],
       ['SEPARATE WHAT THE CLIENT PAYS BACK.','Parking, mileage, hotel, assistants, and other reimbursed costs should not masquerade as your earnings.'],
       ['CHECK THE TERMS BEFORE THE DATE.','Make travel, deposits, cancellations, assistants, and extra time clear before the event arrives.']
     ],
-    watch:'What one event actually pays for the total time it takes from you.'
+    watch:'What the wedding actually paid you for every hour it took — not just the hours your hands were in someone’s hair.'
   },
   education: {
     tab:'EDUCATION + BRAND',
     label:'EDUCATION + BRAND',
     stage:'IN DEMAND',
-    snapshot:'The teaching day is paid. Prep, travel, kit work, and follow-up may not be.',
-    fix:'COUNT THE WHOLE GIG.',
-    fixBody:'The value of an education day changes when it takes two days of your life to deliver it.',
+    snapshot:'The class, launch, trade show, or brand day is paid. Prep, travel, model work, setup, breakdown, and follow-up may not be.',
+    fix:'COUNT THE WHOLE ASSIGNMENT.',
+    fixBody:'If one paid education day takes two days of your life to deliver it, that belongs in the math.',
     steps:[
       ['TRACK THE TIME NOBODY SEES.','Count deck prep, model prep, kit packing, travel, setup, teaching, breakdown, and follow-up.'],
       ['SEPARATE TRAVEL FROM PAY.','Keep reimbursed travel and expenses separate from the money you are actually earning for the work.'],
       ['COMPARE GIGS THE SAME WAY.','Use total time and what stayed yours so a flashy job does not automatically look like the best job.']
     ],
-    watch:'What the gig pays for the total time away — not just the hours you are teaching.'
+    watch:'What the brand work actually pays for every hour it takes from you — not just the hours you’re teaching.'
   },
   owner: {
-    tab:'SALON OWNER / MANAGER',
-    label:'SALON OWNER / MANAGER',
+    tab:'SALON LEADERSHIP',
+    label:'SALON OWNER',
     stage:'IN DEMAND',
-    snapshot:'Revenue is moving. So are payroll, rent, product, software, and the bills nobody sees.',
+    snapshot:'Revenue is moving. So are payroll, rent, product, software, taxes, and the bills nobody sees.',
     fix:'STOP CONFUSING SALES WITH YOUR PAY.',
     fixBody:'A busy salon can still leave the owner wondering where the money went.',
     steps:[
@@ -68,15 +68,35 @@ const careerSampleData = {
       ['FIND ONE LEAK YOU CAN CONTROL.','Pick one recurring cost, waste problem, or pricing gap and verify it before changing ten things at once.']
     ],
     watch:'What the business actually leaves after the real costs — not the sales total.'
+  },
+  manager: {
+    tab:'SALON LEADERSHIP',
+    label:'SALON MANAGER',
+    stage:'IN DEMAND',
+    snapshot:'You’re responsible for sales, staffing, client experience, labor, retail, and everyone else’s fires. Your paycheck may not move when all those numbers do.',
+    fix:'KNOW WHAT YOU’RE ACTUALLY BEING PAID TO CARRY.',
+    fixBody:'Salary, hours, bonus structure, targets, and responsibility all belong in the equation.',
+    steps:[
+      ['COUNT THE WHOLE ROLE.','Track the hours you are actually working, including early starts, late finishes, staff issues, and admin that follows you home.'],
+      ['READ THE COMP PLAN.','Know exactly how salary or hourly pay, bonuses, targets, commissions, and incentives are calculated.'],
+      ['MATCH RESPONSIBILITY TO PAY.','Write down what you are actually responsible for now. If the role grew, compare that scope with what your compensation is built to cover.']
+    ],
+    watch:'What your role actually pays for the hours and responsibility it demands.'
   }
 };
+const careerSampleTopKeys=['chair','session','events','education','owner'];
 function careerSampleTabs() {
-  return '<div class="baf-sample-tabs" role="group" aria-label="Choose a hair career sample">'+Object.entries(careerSampleData).map(([key,item])=>'<button type="button" class="baf-sample-tab" data-career-sample="'+key+'" aria-pressed="'+(key==='chair'?'true':'false')+'">'+item.tab+'</button>').join('')+'</div>';
+  return '<div class="baf-sample-tabs" role="group" aria-label="Choose a hair career sample">'+careerSampleTopKeys.map(key=>{const item=careerSampleData[key];return '<button type="button" class="baf-sample-tab" data-career-sample="'+key+'" aria-pressed="'+(key==='chair'?'true':'false')+'">'+item.tab+'</button>';}).join('')+'</div>';
+}
+function leadershipSampleTabs(key) {
+  if(!['owner','manager'].includes(key)) return '';
+  return '<div class="baf-leadership-tabs" role="group" aria-label="Choose salon leadership role"><button type="button" data-career-sample-detail="owner" aria-pressed="'+(key==='owner')+'">OWNER</button><button type="button" data-career-sample-detail="manager" aria-pressed="'+(key==='manager')+'">MANAGER</button></div>';
 }
 function careerSamplePanel(key='chair',mode='full') {
   const s=careerSampleData[key]||careerSampleData.chair;
-  if(mode==='compact') return '<div class="baf-sample-panel" data-sample-key="'+key+'"><p class="baf-kicker">'+s.label+' · '+s.stage+'</p><p><strong>YOUR WORK RIGHT NOW</strong></p><p>'+s.snapshot+'</p><h3>'+s.fix+'</h3><p>'+s.fixBody+'</p><p class="baf-kicker" style="margin-top:20px">WATCH THIS</p><p>'+s.watch+'</p><button class="baf-outline cursor-interaction" data-nav="sample" style="color:#20151d;border-color:#705363;margin-top:12px">See the full sample →</button></div>';
-  return '<div class="baf-sheet baf-sample-panel" data-sample-key="'+key+'"><p class="baf-kicker">EXAMPLE ONLY · '+s.label+'</p><p><strong>YOUR WORK RIGHT NOW / '+s.stage+'</strong></p><p>'+s.snapshot+'</p><h3>FIX THIS FIRST</h3><p><strong>'+s.fix+'</strong></p><p>'+s.fixBody+'</p><p class="baf-kicker" style="margin-top:24px">DO THESE 3 THINGS</p><ol>'+s.steps.map(step=>'<li><strong>'+step[0]+'</strong><br>'+step[1]+'</li>').join('')+'</ol><p class="baf-kicker" style="margin-top:24px">WATCH THIS</p><p>'+s.watch+'</p><button class="baf-outline cursor-interaction" data-nav="question" style="color:#20151d;border-color:#705363;margin-top:20px">Get my own free Breakdown →</button></div>';
+  const leadership=leadershipSampleTabs(key);
+  if(mode==='compact') return '<div class="baf-sample-panel" data-sample-key="'+key+'">'+leadership+'<p class="baf-kicker">'+s.label+' · '+s.stage+'</p><p><strong>YOUR WORK RIGHT NOW</strong></p><p>'+s.snapshot+'</p><h3>'+s.fix+'</h3><p>'+s.fixBody+'</p><p class="baf-kicker" style="margin-top:20px">WATCH THIS</p><p>'+s.watch+'</p><button class="baf-outline cursor-interaction" data-nav="sample" style="color:#20151d;border-color:#705363;margin-top:12px">See the full sample →</button></div>';
+  return '<div class="baf-sheet baf-sample-panel" data-sample-key="'+key+'">'+leadership+'<p class="baf-kicker">EXAMPLE ONLY · '+s.label+'</p><p><strong>YOUR WORK RIGHT NOW / '+s.stage+'</strong></p><p>'+s.snapshot+'</p><h3>FIX THIS FIRST</h3><p><strong>'+s.fix+'</strong></p><p>'+s.fixBody+'</p><p class="baf-kicker" style="margin-top:24px">DO THESE 3 THINGS</p><ol>'+s.steps.map(step=>'<li><strong>'+step[0]+'</strong><br>'+step[1]+'</li>').join('')+'</ol><p class="baf-kicker" style="margin-top:24px">WATCH THIS</p><p>'+s.watch+'</p><button class="baf-outline cursor-interaction" data-nav="question" style="color:#20151d;border-color:#705363;margin-top:20px">Get my own free Breakdown →</button></div>';
 }
 const sitePages = {
   "intro": `
