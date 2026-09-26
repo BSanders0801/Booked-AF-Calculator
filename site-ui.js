@@ -15,7 +15,23 @@
   function validAnswers(answers, schema) {
     if (!answers || typeof answers !== 'object' || Array.isArray(answers)) return {};
     const list = schema === SHORT_SCHEMA ? shortQuestions : legacyQuestions;
-    return Object.fromEntries(list.filter(q => q.choices.some(c => c[0] === answers[q.id])).map(q => [q.id, answers[q.id]]));
+    const clean = {};
+    for (const q of list) {
+      const allowed = new Set(q.choices.map(choice => choice[0]));
+      const raw = answers[q.id];
+      if (q.multi) {
+        if (!Array.isArray(raw)) continue;
+        let values = [...new Set(raw.filter(value => allowed.has(value)))];
+        if (Array.isArray(q.exclusive)) {
+          const exclusive = values.find(value => q.exclusive.includes(value));
+          if (exclusive) values = [exclusive];
+        }
+        if (values.length) clean[q.id] = values;
+      } else if (allowed.has(raw)) {
+        clean[q.id] = raw;
+      }
+    }
+    return clean;
   }
   function hasCompleteResult() {
     if (!Object.keys(state.answers).length) return false;
