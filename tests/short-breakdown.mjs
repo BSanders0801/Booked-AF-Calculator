@@ -7,7 +7,7 @@ const c=vm.createContext({});vm.runInContext(core+'\nglobalThis.api={shortQuesti
 const {shortQuestions:qs,shortVisibleQuestions:visible,validateShortAnswers:validate,buildShortBreakdown:build}=c.api;
 const answer=goal=>Object.fromEntries(visible({goal}).map(q=>[q.id,q.id==='goal'?goal:q.choices[0][0]]));
 let cases=0;
-for(const [goal,count] of Object.entries({clients:10,return:8,money:9,keep:8,time:9,stable:9})){
+for(const [goal,count] of Object.entries({clients:8,return:6,money:8,keep:6,time:6,stable:6})){
  const a=answer(goal);assert.equal(visible(a).length,count);
  for(const q of visible(a)){
   const missing={...a};delete missing[q.id];assert.throws(()=>validate(missing));
@@ -18,6 +18,9 @@ for(const [goal,count] of Object.entries({clients:10,return:8,money:9,keep:8,tim
 assert(!('savings' in validate({...answer('clients'),savings:'solid'})));
 assert.throws(()=>validate({...answer('clients'),days:'999'}));
 assert.match(build({...answer('money'),paymodel:'hourly'}).plan.steps[0].body,/payslip/);
+assert.equal(visible({...answer('money'),paymodel:'hourly'}).length,6);
+assert(!('servicehours' in validate({...answer('money'),paymodel:'hourly'})));
+assert(!('workcosts' in validate({...answer('money'),paymodel:'hourly'})));
 assert.equal(build({...answer('clients'),days:'4',full:'full',spend:'150'}).stage,'BOOKED AF');
 const multiClients={...answer('clients'),visibility:['social','referrals'],marketing:['social','local']};
 assert.deepEqual(Array.from(validate(multiClients).visibility),['social','referrals']);
