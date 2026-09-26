@@ -25,7 +25,7 @@
     try {
       const saved = JSON.parse(localStorage.getItem(key) || 'null');
       if (!saved || saved.version !== 1 || !Number.isFinite(saved.savedAt) || Date.now() - saved.savedAt > maxAge) return;
-      if (deepEntry === 'paid') return;
+      if (next30Entry === 'paid') return;
       restoreSchema(saved.schema);
       state.answers = validAnswers(saved.answers, state.schema);
       state.done = Object.fromEntries(Object.entries(saved.done || {}).filter(([k,v]) => /^[a-zA-Z0-9_-]{1,50}$/.test(k) && typeof v === 'boolean'));
@@ -218,7 +218,7 @@
     if (e.target.matches('[data-task]')) { save(); checklistStatus(); }
   });
   window.addEventListener('popstate', () => {
-    if (deepEntry === 'paid') return;
+    if (next30Entry === 'paid') return;
     restoringHistory = true; applyRoute(location.hash); render(); restoringHistory = false;
   });
   restore();
