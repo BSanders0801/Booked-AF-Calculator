@@ -14,7 +14,7 @@ for(const [goal,count] of Object.entries({clients:8,return:6,money:8,keep:6,time
   const missing={...a};delete missing[q.id];assert.throws(()=>validate(missing));
   for(const [value] of q.choices){const b=complete({...a,[q.id]:value});if(q.id==='goal')continue;const r=build(b);assert.equal(r.plan.steps.length,3);assert(!JSON.stringify(r).includes('undefined'));assert.equal(r.opportunity,null);cases++;}
  }
- assert.equal(build(a).schema,'short-v1');
+ assert.equal(build(a).schema,'short-v2');
 }
 assert(!('savings' in validate({...answer('clients'),savings:'solid'})));
 assert.throws(()=>validate({...answer('clients'),days:'999'}));
@@ -43,10 +43,10 @@ vm.runInContext(workerSource.replace('export default','globalThis.worker ='),wc)
 const env={RESEND_API_KEY:'mock',TURNSTILE_SECRET_KEY:'mock'};
 const request=data=>new Request('https://example.test',{method:'POST',headers:{Origin:'https://bookedandfabulous.com','Content-Type':'application/json'},body:JSON.stringify({name:'Bradley',email:'test@example.com',type:'breakdown',token:'mock',...data})});
 for(const goal of ['clients','money','return','keep','time','stable']){
- const a=answer(goal);const response=await wc.worker.fetch(request({schema:'short-v1',answers:a}),env);assert.equal(response.status,200);const sent=JSON.parse(calls.at(-1).opts.body);assert.equal(sent.text,c.api.shortEmailCopy(build(a),'Bradley'));assert(sent.html.includes('assets/booked-af-logo.png'));
+ const a=answer(goal);const response=await wc.worker.fetch(request({schema:'short-v2',answers:a}),env);assert.equal(response.status,200);const sent=JSON.parse(calls.at(-1).opts.body);assert.equal(sent.text,c.api.shortEmailCopy(build(a),'Bradley'));assert(sent.html.includes('assets/booked-af-logo.png'));
 }
 assert.equal((await wc.worker.fetch(request({schema:'bogus',answers:answer('clients')}),env)).status,400);
-assert.equal((await wc.worker.fetch(request({schema:'short-v1',answers:{goal:'time'}}),env)).status,400);
+assert.equal((await wc.worker.fetch(request({schema:'short-v2',answers:{goal:'time'}}),env)).status,400);
 const legacy=vm.runInContext('Object.fromEntries(questions.filter(q=>!q.when).map(q=>[q.id,q.choices[0][0]]))',wc);
 vm.runInContext('globalThis.legacyQuestions=questions',wc);
 for(const q of wc.legacyQuestions)if(q.when&&q.when(legacy))legacy[q.id]=q.choices[0][0];
@@ -55,7 +55,7 @@ assert.equal((await wc.worker.fetch(request({answers:legacy}),env)).status,200);
 for(const goal of ['clients','return','money','keep','time','stable']){
  const els=new Map();const element=id=>{if(!els.has(id))els.set(id,{style:{},classList:{remove(){},add(){}},querySelectorAll(){return[]},innerHTML:''});return els.get(id)};
  const storage={getItem(){return null},setItem(){},removeItem(){}};
- const ac=vm.createContext({console,URLSearchParams,AbortSignal,fetch:async()=>Response.json({ready:true,schemas:['short-v1']}),document:{getElementById:element},localStorage:storage,sessionStorage:storage,location:{search:'',pathname:'/',hash:''},history:{},navigator:{},setTimeout,clearTimeout});
+ const ac=vm.createContext({console,URLSearchParams,AbortSignal,fetch:async()=>Response.json({ready:true,schemas:['short-v2']}),document:{getElementById:element},localStorage:storage,sessionStorage:storage,location:{search:'',pathname:'/',hash:''},history:{},navigator:{},setTimeout,clearTimeout});
  vm.runInContext(core+'\n'+fs.readFileSync('app.js','utf8'),ac);
  await element('start').onclick();
  vm.runInContext('state.answers='+JSON.stringify(answer(goal))+';render()',ac);
