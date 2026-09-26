@@ -28,3 +28,29 @@ body .screen details>p,body .screen details>.card,body .screen details>.actions{
 body .screen details>.card:first-of-type{margin-top:20px}
 body .screen details>.actions{margin-bottom:20px}
 @media(max-width:650px){body .screen details>summary{padding:16px}body .screen details>p,body .screen details>.card,body .screen details>.actions{margin-left:14px;margin-right:14px}}
+
+/* Homepage hierarchy: statement first, samples second. */
+body .baf-hero-clean{display:block;padding:82px 6% 74px;background:radial-gradient(ellipse at 70% 0,#301322,transparent 66%)}
+body .baf-hero-clean .baf-hero-copy{max-width:800px;padding:0}
+body .baf-hero-clean h1{font-size:clamp(58px,8.2vw,104px);line-height:.88;letter-spacing:-.065em;max-width:820px;margin-bottom:30px}
+body .baf-hero-clean .baf-subhead{font-size:clamp(22px,2.6vw,30px);line-height:1.18;margin-bottom:22px}
+body .baf-hero-clean .baf-actions{margin-top:30px}
+body .baf-career-section{background:linear-gradient(180deg,#120d11,#0c0a0c);padding-top:62px;padding-bottom:62px}
+body .baf-career-section>h2{max-width:760px;font-size:clamp(42px,6vw,72px);line-height:.95;margin-bottom:18px}
+body .baf-career-section>.baf-subhead{max-width:760px}
+body .baf-career-section .baf-sample-tabs{margin:30px 0 24px;display:flex;gap:10px;flex-wrap:wrap}
+body .baf-career-section .baf-sample-tab{color:#faf7f8;border-color:#786471;background:#171117}
+body .baf-career-section .baf-sample-tab[aria-pressed=true]{background:#ff338e;color:#13080e;border-color:#ff338e}
+body .baf-career-stage{max-width:860px}
+body .baf-career-stage .baf-sample-panel{background:#eee9ed;color:#20151d;padding:32px;border-radius:5px;box-shadow:10px 10px 0 #59243e}
+body .baf-career-stage .baf-sample-panel p{color:#57434f}
+body .baf-career-stage .baf-sample-panel .baf-kicker{color:#9e1451}
+body .baf-career-stage .baf-sample-panel h3{font-size:clamp(27px,3.3vw,40px);line-height:1.02}
+@media(max-width:650px){
+  body .baf-hero-clean{padding:52px 6% 48px}
+  body .baf-hero-clean h1{font-size:clamp(50px,15vw,76px)}
+  body .baf-career-section{padding-top:42px;padding-bottom:46px}
+  body .baf-career-section .baf-sample-tabs{display:grid;grid-template-columns:1fr}
+  body .baf-career-section .baf-sample-tab:last-child{grid-column:auto}
+  body .baf-career-stage .baf-sample-panel{padding:24px;box-shadow:7px 7px 0 #59243e}
+}
