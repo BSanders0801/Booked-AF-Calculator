@@ -67,11 +67,104 @@ function validateShortAnswers(input) {
  return Object.fromEntries(shortVisibleQuestions(clean).map(q=>[q.id,clean[q.id]]));
 }
 function shortStage(a) {
- const key=a.days==='0'||a.full==='notyet'?'building':({under25:'building',half:'busy',threequarters:'demand',full:'booked'})[a.full]||'building';
+ const chair=a.primarywork==='chair';
+ const stopped=chair?a.days==='0'||a.full==='notyet':a.workdays==='0'||a.workload==='notyet';
+ const load=chair?a.full:a.workload;
+ const key=stopped?'building':chair?({under25:'building',half:'busy',threequarters:'demand',full:'booked'})[load]||'building':({light:'building',half:'busy',busy:'demand',full:'booked'})[load]||'building';
  return {key,label:({building:'BUILDING',busy:'GETTING BUSY',demand:'IN DEMAND',booked:'BOOKED AF'})[key]};
 }
+function buildOutsideChairBreakdown(a) {
+ const stage=shortStage(a).label;
+ const starting=a.workdays==='0'||a.workload==='notyet';
+ const room=['light','half'].includes(a.workload), packed=a.workload==='full';
+ const steps=[], reasons=[];
+ const step=(title,body)=>steps.push({id:'short-'+a.goal+'-'+steps.length,day:['1','2-3','4-6'][steps.length],title,body});
+ const role=({session:'session, editorial, or commercial work',events:'bridal or event work',education:'education or brand work',management:'salon ownership or management',mix:'a mix of different kinds of hair work',notearning:'hair work that is not currently bringing in income'})[a.primarywork]||'hair work';
+ let id,title,summary,check,rule,nextTool='daymath';
+
+ if(a.goal==='clients') {
+  id='fill'; title=packed?'CHOOSE THE WORK YOU WANT MORE OF.':'GET MORE OF THE RIGHT WORK COMING IN.';
+  reasons.push(starting?'You are not booking paid work right now. We need one clear way for the right people to understand what they can hire you for.':packed?'You said your calendar is already as full as you want it. More work only helps if it is the kind you actually want.':'You want more paid work in '+role+(room?', and there is room for it.':'.'));
+  const sources=Array.isArray(a.jobsource)?a.jobsource:[a.jobsource];
+  const outreach=Array.isArray(a.outreach)?a.outreach:[a.outreach];
+  const sourceLabels={agency:'an agency or representation',repeat:'repeat clients or brands',referrals:'referrals and word of mouth',social:'social media or your portfolio',direct:'direct outreach from brands, producers, planners, or clients',none:'no consistent source yet',unknown:'a source you have not tracked yet'};
+  reasons.push(sources.includes('none')?'You said paid work is not coming in consistently yet.':sources.includes('unknown')?'You are not sure yet where paid work is coming from.':'You said paid work is finding you through '+sources.map(v=>sourceLabels[v]).filter(Boolean).join(', ')+'.');
+  step('MAKE IT OBVIOUS WHAT PEOPLE CAN HIRE YOU FOR.','Choose the kind of paid work you want more of. Make sure your portfolio, bio, or booking contact shows that clearly without making someone hunt for it.');
+  if(outreach.includes('none')) step('MAKE ONE REAL CONTACT.','Choose one person, agency, past client, producer, planner, brand, or company that could realistically hire or refer you. Send one clear message about the work you want.');
+  else step('FOLLOW THE SOURCE THAT HAS ACTUALLY PAID YOU.','Look at your last few paid jobs. Note how each one found you. Put this week behind the source that produced real paid work, not just attention.');
+  step('TRACK THE NEXT FIVE OPPORTUNITIES.','For each inquiry, hold, booking, or referral, write down where it came from and whether it turned into paid work. BOOKED AF needs the real pattern, not the loudest platform.');
+  summary='Make the work you want easy to understand, then track what actually turns into paid jobs.';
+  check='Look at the next five real opportunities. Which source produced a paid booking, not just a conversation?';
+  rule='More inquiries are useful only when they lead to work you actually want and can fit into your life.';
+ } else if(a.goal==='return') {
+  id='return'; title=starting||a.repeatwork==='new'?'BUILD THE FOLLOW-UP INTO THE JOB.':'GET MORE OF THE RIGHT PEOPLE TO HIRE YOU AGAIN.';
+  reasons.push(starting||a.repeatwork==='new'?'It is too early to judge repeat work. We can build a follow-up habit from the start.':a.repeatwork==='most'?'You said most of the right clients already come back. The goal is protecting that relationship without becoming annoying.':a.repeatwork==='unknown'?'You have not tracked repeat work yet. That is the first thing to fix.':'You want more repeat work, and you said some people who hire you do not come back.');
+  const follow=Array.isArray(a.repeatfollow)?a.repeatfollow:[a.repeatfollow];
+  step('CLOSE THE JOB LIKE YOU WANT ANOTHER ONE.','Send a short thank-you after the job and make it easy for the person who hired you to find your contact information again.');
+  if(follow.includes('agency')) step('KNOW WHO OWNS THE FOLLOW-UP.','If your agency handles the relationship, know what they do after the job and when it makes sense for you to stay visible without stepping on that relationship.');
+  else if(follow.includes('none')) step('DO ONE SIMPLE FOLLOW-UP.','Reach out once after the job. Thank them, mention that you would love to work together again, and then let the relationship breathe.');
+  else step('KEEP THE FOLLOW-UP THAT FEELS NATURAL.','You already do some follow-up. Keep the pieces that lead to repeat bookings and remove anything that feels like busywork.');
+  step('MARK THE NEXT FIVE REPEAT OPPORTUNITIES.','For the next five jobs, note whether the client, brand, planner, producer, or team had hired you before. That gives us a real repeat-work picture.');
+  summary='Make it easy for good clients and teams to remember you, rehire you, and refer you.';
+  check='Watch the next five paid jobs and note how many came from someone who had hired you before.';
+  rule='A repeat client is valuable. Chasing every past contact is not the goal.';
+ } else if(a.goal==='money') {
+  id='money'; title='MAKE THE WORK YOU ALREADY DO PAY BETTER.';
+  const styles=Array.isArray(a.paystyle)?a.paystyle:[a.paystyle];
+  const expenses=Array.isArray(a.workexpenses)?a.workexpenses:[a.workexpenses];
+  reasons.push('You want more money without simply adding more work. Your '+role+' can have a very different real value once time, fees, travel, assistants, products, and payment delays are included.');
+  if(a.primarywork==='session'&&a.sessionagency==='yes') reasons.push('You said an agency takes a cut from your rate, so we need to use what actually stays yours.');
+  if(a.paywait==='90'||a.paywait==='long') reasons.push('You also wait a long time to get paid. That is a cash-flow problem even when the job itself pays well.');
+  step('CHECK ONE REAL JOB FROM START TO FINISH.','Use the agreed pay, every paid and unpaid hour, and every cost that truly stayed yours. Do not count reimbursed money as income.');
+  step('SEPARATE THE MONEY INTO THE RIGHT BUCKETS.',expenses.includes('team')||expenses.includes('travel')||expenses.includes('hair')?'Separate what you earned, what you fronted and expect back, money that passed through you for someone else, and expenses you actually had to absorb.':'Separate what you earned from the work costs you actually paid.');
+  step('COMPARE IT WITH A SECOND JOB.','Pick another recent job and do the same check. The better-paying job is not always the one with the biggest headline rate.');
+  summary='Compare what the work really paid you after the time and costs around it.';
+  check='After two real jobs, compare what actually stayed yours and how much time each one took.';
+  rule='A day rate, project fee, salary, or invoice total is not the same thing as what the work paid you per hour or per day.';
+ } else if(a.goal==='keep') {
+  id='money'; title='FIND OUT WHERE THE MONEY IS ACTUALLY GOING.';
+  const expenses=Array.isArray(a.workexpenses)?a.workexpenses:[a.workexpenses];
+  reasons.push('You earn through '+role+'. We need to separate real income from reimbursements, pass-through money, and costs before deciding that you are spending too much.');
+  if(a.primarywork==='session'&&['often','sometimes'].includes(a.sessionfront)) reasons.push('You said you sometimes front money for jobs. That money is tied up until the client reimburses you, even when it is not ultimately your expense.');
+  step('PICK ONE NORMAL MONTH.','Gather the payments that actually reached you, plus the work bills and reimbursements from that same period. Do not use invoice totals alone.');
+  step('SEPARATE EARNINGS FROM MONEY THAT WAS NEVER REALLY YOURS.',expenses.includes('team')?'If client money came through you to pay an assistant or someone else, mark it separately. Also separate reimbursements from actual earnings.':'Keep reimbursements separate from earnings, and keep business costs separate from personal spending.');
+  step('CHECK ONE COST OR DELAY YOU CAN CHANGE.','Choose one recurring cost, payment delay, unnecessary purchase, or job expense you can actually verify. Make one change and check the next real statement or payment.');
+  summary='Get a clean picture of what stayed yours before trying to cut everything.';
+  check='Did the amount you actually kept change, or did money simply move through your account differently?';
+  rule='Money hitting your account is not automatically income you got to keep.';
+ } else if(a.goal==='time') {
+  id='time'; title='GET MORE OF YOUR WEEK BACK WITHOUT PRETENDING THE WORK TAKES LESS TIME.';
+  const leak=({travel:'travel and getting to the job',prep:'prep, shopping, kit work, or fittings',waiting:'waiting around before or during jobs',longday:'paid days that turn into very long days',admin:'invoices, email, scheduling, and follow-up',none:'very little unpaid time',unknown:'time you have not tracked yet'})[a.timeleak];
+  reasons.push('Your work is not only the hours somebody sees. You said the biggest time issue is '+leak+'.');
+  step('TRACK ONE FULL JOB, NOT JUST THE PAID PART.','Start the clock with the first required prep, message, shopping trip, or travel and stop when the job is genuinely finished. Keep paid and unpaid time separate.');
+  step('CHOOSE THE TIME YOU WANT BACK.','Pick one block of time you want protected each week. Do not remove paid work yet; first see what is actually eating the surrounding hours.');
+  step('CHECK WHAT THAT TIME IS WORTH.','Compare one normal job or workday with the total time it required. Then decide whether the schedule, fee, travel terms, or workflow needs to change.');
+  summary='Protect your time using the full job, not just the hours on the call sheet or invoice.';
+  check='After one week, compare paid time with total work time. Which unpaid piece is taking the most from your week?';
+  rule='A shorter schedule is only better if the same workload is not being crammed into fewer, worse days.';
+ } else {
+  id='money'; title='GIVE YOURSELF SOME BREATHING ROOM.';
+  const goals={emergency:'a slow month or emergency',timeoff:'time off',retire:'later life',body:'less dependence on your body for income',unknown:'a first savings goal'};
+  reasons.push(a.savings==='none'?'You said you do not have savings to cover a slowdown yet. Start with the basics that need protecting.':a.savings==='unknown'?'You are not sure how long savings would cover you. Start by finding what is set aside and what it needs to cover.':a.savings==='solid'?'You already have six months or more set aside. We can focus on the next goal you chose.':'You have some savings set aside. The next step is deciding what you need that money to protect.');
+  step('NAME WHAT THE MONEY IS FOR.','You chose '+goals[a.futurefear]+'. Keep money for upcoming bills separate from money genuinely set aside for that goal.');
+  if(a.futurehabit==='catchup') step('CHECK WHAT IS LEFT BEFORE MOVING MONEY.','Check the bills due before your next payment and what you actually have available. Start with one income or work-cost change; do not schedule a savings transfer that leaves a bill unpaid.');
+  else if(a.futurehabit==='save') step('CHECK THAT YOUR ROUTINE FITS THE GOAL.','Keep the savings routine that is already working. Check what it is for and whether upcoming bills will need any of that money.');
+  else step('USE EACH PAYDAY AS THE CHECK-IN.','When money arrives, check upcoming bills first. If there is money available after those are covered, choose a manageable amount for the goal.');
+  step('REPEAT THE CHECK WHEN YOU GET PAID AGAIN.','Irregular work needs a repeatable habit more than a perfect monthly number. Check the goal again the next time money comes in.');
+  summary='Build a repeatable habit around the money you actually have available.';
+  check='Did you check the bills and take one step toward the goal? If nothing was available to save, record that honestly and focus on income or costs next.';
+  rule='A savings plan should fit your real pay and bills. These answers do not tell us a safe transfer amount.';
+ }
+ const intro=reasons.join(' '), top={id,title,short:intro,body:summary,action:steps[0].body};
+ const plan={intro:summary,steps,checkTitle:'WHAT CHANGED THIS WEEK?',check,rule};
+ return {schema:SHORT_SCHEMA,stage,top,items:[top],intro,showTime:a.goal==='time',opportunity:null,
+  day:'Want to check what one job or workday pays? Enter the real pay, total time, and costs. BOOKED AF does the math.',
+  fix:{title,body:intro,first:steps[0].body,then:steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:rule},plan,nextTool};
+}
 function buildShortBreakdown(input) {
- const a=validateShortAnswers(input), stage=shortStage(a).label;
+ const a=validateShortAnswers(input);
+ if(a.primarywork!=='chair') return buildOutsideChairBreakdown(a);
+ const stage=shortStage(a).label;
  const starting=a.days==='0'||a.full==='notyet'||a.spend==='notyet';
  const room=['under25','half'].includes(a.full), packed=a.full==='full';
  const steps=[], reasons=[];
