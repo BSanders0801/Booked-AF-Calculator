@@ -145,7 +145,7 @@ These phrases belong to BOOKED AF and should be repeated enough to become recogn
 ### THE BREAKDOWN
 The free 3-minute diagnostic. It tells you what is actually worth fixing first.
 
-### THE DEEP DIVE
+### BOOKED AF: YOUR NEXT 30
 The paid next layer. Your actual numbers, clients, prices, schedule, and personalized 30-day plan.
 
 ### SALON MATH
@@ -368,7 +368,7 @@ Good:
 - SHOW ME MY FIRST 7 DAYS →
 - SEND ME MY BREAKDOWN →
 - GET INTO MY NUMBERS →
-- I WANT THE DEEP DIVE →
+- BUILD MY NEXT 30 →
 - BUILD MY 30-DAY PLAN →
 - SHOW ME THE MONEY →
 - START OVER
@@ -463,12 +463,12 @@ Focus on money kept, time, body, sustainability, and freedom.
 
 ---
 
-## 12. THE DEEP DIVE PROMISE
+## 12. YOUR NEXT 30 PROMISE
 
 Free Breakdown:
 **What is actually worth fixing first?**
 
-Paid Deep Dive:
+Paid plan:
 **What exactly do I do about it for the next 30 days?**
 
 Never inflate the paid product with vague promises.
@@ -525,7 +525,7 @@ The usefulness makes them tell another stylist.
 
 ## 15. THE MIDWEST TEST
 
-BOOKED AF is **PG-13 at the front door, looser once you’re inside, and sharpest in the paid Deep Dive.**
+BOOKED AF is **PG-13 at the front door, looser once you’re inside, and sharpest in the Your Next 30.**
 
 We are not wholesome. We are also not trying to shock people for sport.
 
@@ -548,7 +548,7 @@ We have more permission.
 
 Use these as seasoning, not every sentence.
 
-### Paid Deep Dive
+### Your Next 30
 They bought into the personality. We can be sharper, drier, and more candid—but never vulgar, cruel, or confusing.
 
 ### The permanent rule
