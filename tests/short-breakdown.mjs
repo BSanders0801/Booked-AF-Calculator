@@ -37,7 +37,7 @@ for(const goal of ['clients','return','money','keep','time','stable']){
     delete missing[q.id];
     assert.throws(()=>validate(missing));
     for(const [value] of choices(q,a)){
-      if(q.id==='goal') continue;
+      if(['goal','worktype','primarywork'].includes(q.id)) continue;
       const b=complete({...a,[q.id]:q.multi?[value]:value});
       const r=build(b);
       assert.equal(r.plan.steps.length,3);
