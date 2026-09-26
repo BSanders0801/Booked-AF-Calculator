@@ -58,8 +58,9 @@ for(const goal of ['clients','return','money','keep','time','stable']){
  const ac=vm.createContext({console,URLSearchParams,AbortSignal,fetch:async()=>Response.json({ready:true,schemas:['short-v2']}),document:{getElementById:element},localStorage:storage,sessionStorage:storage,location:{search:'',pathname:'/',hash:''},history:{},navigator:{},setTimeout,clearTimeout});
  vm.runInContext(core+'\n'+fs.readFileSync('app.js','utf8'),ac);
  await element('start').onclick();
- vm.runInContext('state.answers='+JSON.stringify(answer(goal))+';render()',ac);
- const count=visible(answer(goal)).length;
+ const navAnswers=complete({goal});
+ vm.runInContext('state.answers='+JSON.stringify(navAnswers)+';render()',ac);
+ const count=visible(navAnswers).length;
  for(let i=1;i<count;i++)element('next').onclick();
  assert(element('app').innerHTML.includes('SEE MY BREAKDOWN'));
  element('back').onclick();assert(element('app').innerHTML.includes('Question '+(count-1)+' of '+count));
