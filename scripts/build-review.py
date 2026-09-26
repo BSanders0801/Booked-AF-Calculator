@@ -3,6 +3,7 @@ from pathlib import Path
 import base64,re
 root=Path(__file__).resolve().parents[1]
 s=(root/'index.html').read_text()
+s=s.replace('</head>', '<meta name="robots" content="noindex,nofollow"></head>', 1)
 s=s.replace('<link rel="stylesheet" href="site.css?v=redesign-1">','<style>'+(root/'site.css').read_text()+'</style>')
 logo='data:image/png;base64,'+base64.b64encode((root/'assets/booked-af-logo.png').read_bytes()).decode()
 s=s.replace('src="assets/booked-af-logo.png"',f'src="{logo}"',1)
