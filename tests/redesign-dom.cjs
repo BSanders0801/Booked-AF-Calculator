@@ -48,7 +48,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   d.click('header [data-nav="intro"]');d.click('header [data-nav="resume"]');
   await tick();assert(d.$('#form'));d.network.accept=true;d.$('#email').value='test@example.test';
   await d.$('#form').onsubmit({preventDefault(){}});
-  assert.match(d.$('#app').textContent,/YOUR 3 MOVES THIS WEEK/);assert.equal(d.network.posts,2);
+  assert.match(d.$('#app').textContent,/DO THESE 3 THINGS/);assert.equal(d.network.posts,2);
   d.click('#plan');d.click('[data-task]');assert.match(d.$('#checklist-status').textContent,/1 of 3/);
   const saved=JSON.parse(d.w.localStorage.getItem(savedKey));
   const delivery=JSON.parse(d.w.sessionStorage.getItem(deliveryKey));
