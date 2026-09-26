@@ -647,3 +647,11 @@ Use these exact roles:
 - National Educator with John Paul Mitchell Systems.
 
 Bradley provided in-salon education to salons across the country. Emphasize this hands-on education work. Do not describe his L’Oréal role as National Educator or replace either title with platform artist.
+
+## 19. BRADLEY'S ROOTS AND NATIONAL NETWORK - SEPTEMBER 25, 2026
+
+- Bradley is from Greenville, South Carolina.
+- He lived in Charlotte, North Carolina, where he owned and operated Groove, a Paul Mitchell focus salon.
+- He has also lived in New York City, Miami, Las Vegas, and Chicago. He now lives in Los Angeles.
+- He has a network of hairdressers across the United States.
+- Keep his work as a colorist in New York distinct from his ownership of Groove in Charlotte. Do not imply he led the New York salons where he worked as a colorist.
