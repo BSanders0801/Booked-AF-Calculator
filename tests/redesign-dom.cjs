@@ -45,7 +45,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   assert.match(d.$('#app').textContent,/YOUR CAREER\.YOUR RULES\./);
   assert.equal(d.w.document.querySelectorAll('[data-career-sample]').length,5);
   d.click('[data-career-sample="events"]');
-  assert.match(d.$('[data-career-sample-panel]').textContent,/wedding actually paid you/i);
+  assert.match(d.$('[data-career-sample-panel]').textContent,/Hair, makeup, or both/i);assert.match(d.$('[data-career-sample-panel]').textContent,/wedding actually paid you/i);
   d.click('[data-career-sample="education"]');
   assert.match(d.$('[data-career-sample-panel]').textContent,/COUNT THE WHOLE ASSIGNMENT/);
   d.click('[data-career-sample="owner"]');
