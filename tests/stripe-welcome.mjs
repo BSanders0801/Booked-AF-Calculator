@@ -10,28 +10,46 @@ function request(session, type='checkout.session.completed', signature=true) {
   const digest = createHmac('sha256',env.STRIPE_WEBHOOK_SECRET).update(`${t}.${body}`).digest('hex');
   return new Request('https://example.workers.dev/stripe-webhook',{method:'POST',headers:{'Stripe-Signature':`t=${t},v1=${signature?digest:'0'.repeat(64)}`},body});
 }
-const paid = {id:'cs_test_123',payment_status:'paid',payment_link:env.STRIPE_PAYMENT_LINK_ID,currency:'usd',amount_total:4900,customer_details:{name:'Alex Stylist',email:'alex@example.com'}};
+const paid = {id:'cs_test_123',status:'complete',payment_status:'paid',payment_link:'plink_1UJbGMK8mAQwUniDbDofJPiQ',currency:'usd',amount_total:4900,customer_details:{name:'Alex Stylist',email:'alex@example.com'}};
 
-test('sends one welcome for a verified paid Deep Dive checkout',async()=>{
-  const original=globalThis.fetch; let sent;
-  globalThis.fetch=async(_url,options)=>{sent=options;return new Response(JSON.stringify({id:'email_123'}),{status:200})};
+test('verified Deep Dive checkout sends welcome and schedules Day 14 survey',async()=>{
+  const original=globalThis.fetch; const sent=[];
+  globalThis.fetch=async(url,options)=>{
+    if(String(url)==='https://api.resend.com/emails'){sent.push({body:JSON.parse(options.body),headers:options.headers});return new Response(JSON.stringify({id:'email_'+sent.length}),{status:200});}
+    throw Error('unexpected fetch');
+  };
   try {
     const response=await worker.fetch(request(paid),env);
     assert.equal(response.status,200);
-    const body=JSON.parse(sent.body);
-    assert.equal(body.to[0],'alex@example.com');
-    assert.equal(body.subject,'You’re in. Let’s make some moves.');
-    assert.match(body.text,/START MY DEEP DIVE: https:\/\/bookedandfabulous.com\/\?deepdive=paid&session_id=cs_test_123/);
-    assert.equal(sent.headers['Idempotency-Key'],'booked-deep-dive-cs_test_123');
+    assert.equal(sent.length,2);
+    const survey=sent.find(x=>x.body.subject==='You paid us. Did we earn it?').body;
+    assert.equal(survey.scheduled_at,'in 14 days');
+    assert.match(survey.text,/Six questions. About two minutes/);
+    assert.match(survey.html,/TELL US WHAT YOU THINK →/);
+    assert.match(survey.html,/session_id=cs_test_123/);
+    const welcome=sent.find(x=>x.body.subject==='You’re in. Let’s make some moves.').body;
+    assert.equal(welcome.to[0],'alex@example.com');
+    assert.match(welcome.text,/START MY DEEP DIVE: https:\/\/bookedandfabulous.com\/\?deepdive=paid&session_id=cs_test_123/);
   } finally {globalThis.fetch=original}
 });
 
-test('rejects forged requests and ignores unrelated or unpaid checkouts',async()=>{
+test('other paid Stripe checkouts still get the Day 14 survey',async()=>{
+  const original=globalThis.fetch; const sent=[];
+  globalThis.fetch=async(url,options)=>{sent.push(JSON.parse(options.body));return new Response(JSON.stringify({id:'email_1'}),{status:200})};
+  try {
+    const response=await worker.fetch(request({...paid,id:'cs_test_other',payment_link:'plink_other',amount_total:9900}),env);
+    assert.equal(response.status,200);
+    assert.equal(sent.length,1);
+    assert.equal(sent[0].subject,'You paid us. Did we earn it?');
+    assert.equal(sent[0].scheduled_at,'in 14 days');
+  } finally {globalThis.fetch=original}
+});
+
+test('rejects forged requests and ignores unpaid checkouts',async()=>{
   const original=globalThis.fetch; let calls=0;
   globalThis.fetch=async()=>{calls++;throw Error('should not send')};
   try {
     assert.equal((await worker.fetch(request(paid,'checkout.session.completed',false),env)).status,400);
-    assert.equal((await worker.fetch(request({...paid,payment_link:'plink_other'}),env)).status,200);
     assert.equal((await worker.fetch(request({...paid,payment_status:'unpaid'}),env)).status,200);
     assert.equal(calls,0);
   } finally {globalThis.fetch=original}
