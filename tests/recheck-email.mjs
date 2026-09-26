@@ -30,9 +30,9 @@ test('Breakdown schedules distinct Day 7 and Day 30 emails and queues Day 60 and
     throw new Error('Unexpected fetch: '+url);
   };
   const payload = {
-    type:'breakdown', email:'alex@example.com', name:'Alex', schema:'short-v4',
+    type:'breakdown', email:'alex@example.com', name:'Alex', schema:'short-v5',
     token:'turnstile-token', honey:'',
-    answers:{worktype:['color','extensions'],primarywork:'chair-color',goal:'clients',full:'under25',days:'3',returning:'some',visibility:['social'],marketing:['social'],network:'local',urgency:'month'}
+    answers:{worktype:['color','extensions'],primarywork:'chair-color',goal:['clients'],full:'under25',days:'3',returning:'some',visibility:['social'],marketing:['social'],network:'local',urgency:'month'}
   };
   try {
     const request = new Request('https://example.workers.dev/',{
@@ -66,7 +66,7 @@ test('Breakdown schedules distinct Day 7 and Day 30 emails and queues Day 60 and
     assert.equal(queued.length,2);
     assert.deepEqual(new Set(queued.map(x=>x.record.kind)),new Set(['60','90']));
     assert.ok(queued.every(x=>x.key.startsWith('followup:')));
-    assert.ok(queued.every(x=>/booked-v3-short-/.test(x.record.idempotencyKey)));
+    assert.ok(queued.every(x=>/booked-v5-short-/.test(x.record.idempotencyKey)));
   } finally { globalThis.fetch = original; }
 });
 
