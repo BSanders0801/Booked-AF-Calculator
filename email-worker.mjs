@@ -588,9 +588,9 @@ async function processLongFollowups(env) {
   } while (cursor);
 }
 
-const deepDiveUrl = 'https://bookedandfabulous.com/?deepdive=paid';
+const next30Url = 'https://bookedandfabulous.com/?next30=paid';
 const welcomeSubject = 'You’re in. Let’s make some moves.';
-const deepDivePaymentLinkIds = new Set(['plink_1UJsjEK8mAQwUniDH9v9XShT','plink_1UJbGMK8mAQwUniDbDofJPiQ']);
+const next30PaymentLinkIds = new Set(['plink_1UJsjEK8mAQwUniDH9v9XShT','plink_1UJbGMK8mAQwUniDbDofJPiQ']);
 
 async function verifyStripeSignature(body, header, secret) {
   const values = Object.fromEntries((header || '').split(',').map(part => part.trim().split('=', 2)));
@@ -641,11 +641,11 @@ async function stripeWelcome(request, env) {
   const firstName = String(session.customer_details?.name || '').trim().split(/\s+/)[0].slice(0, 60);
 
   const surveyScheduled = await schedulePurchaseSurvey(env, session, email, firstName);
-  const isDeepDive = deepDivePaymentLinkIds.has(session.payment_link) && session.currency === 'usd' && session.amount_total === 4900;
-  if (!isDeepDive) return new Response(surveyScheduled ? 'Survey scheduled' : 'Purchase recorded');
+  const isNext30 = next30PaymentLinkIds.has(session.payment_link) && session.currency === 'usd' && session.amount_total === 4900;
+  if (!isNext30) return new Response(surveyScheduled ? 'Survey scheduled' : 'Purchase recorded');
 
   const greeting = firstName ? 'Hey ' + firstName + ',' : 'Hey,';
-  const customerDeepDiveUrl = deepDiveUrl + '&session_id=' + encodeURIComponent(session.id);
+  const customerNext30Url = next30Url + '&session_id=' + encodeURIComponent(session.id);
   const text = `${greeting}
 
 Welcome to BOOKED AF. You’re officially part of the family.
@@ -654,16 +654,16 @@ You’ve already done the first big thing: decided your career should give you m
 
 Some changes will help now. Others will give Future You more money, time, and choices. We’re here for both.
 
-START MY NEXT 30: ${customerDeepDiveUrl}
+START MY NEXT 30: ${customerNext30Url}
 
 Love your career. Keep your life.
 Bradley
 BOOKED AF`;
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:#fff"><tr><td align="center" style="padding:8px 26px;background:#000;border-bottom:4px solid #ff1686"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF" style="display:block;width:100%;max-width:400px;height:auto"></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="font-size:28px;line-height:1.2">${welcomeSubject}</h1><p>${esc(greeting)}</p><p>Welcome to BOOKED AF. You’re officially part of the family.</p><p>You’ve already done the first big thing: decided your career should give you more than a full book and tired feet. Now we’ll look at what’s happening in <em>your</em> business and build a 30-day plan you can actually use.</p><p>Some changes will help now. Others will give Future You more money, time, and choices. We’re here for both.</p><p style="margin:30px 0"><a href="${customerDeepDiveUrl}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">START MY NEXT 30 →</a></p><p>Love your career. Keep your life.<br>Bradley<br>BOOKED AF</p></td></tr><tr><td style="padding:20px 26px;background:#111114;color:#ddd;font-size:12px">You received this email because you purchased BOOKED AF: Your Next 30.<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a></td></tr></table></td></tr></table></body></html>`;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:#fff"><tr><td align="center" style="padding:8px 26px;background:#000;border-bottom:4px solid #ff1686"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF" style="display:block;width:100%;max-width:400px;height:auto"></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="font-size:28px;line-height:1.2">${welcomeSubject}</h1><p>${esc(greeting)}</p><p>Welcome to BOOKED AF. You’re officially part of the family.</p><p>You’ve already done the first big thing: decided your career should give you more than a full book and tired feet. Now we’ll look at what’s happening in <em>your</em> business and build a 30-day plan you can actually use.</p><p>Some changes will help now. Others will give Future You more money, time, and choices. We’re here for both.</p><p style="margin:30px 0"><a href="${customerNext30Url}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">START MY NEXT 30 →</a></p><p>Love your career. Keep your life.<br>Bradley<br>BOOKED AF</p></td></tr><tr><td style="padding:20px 26px;background:#111114;color:#ddd;font-size:12px">You received this email because you purchased BOOKED AF: Your Next 30.<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a></td></tr></table></td></tr></table></body></html>`;
   try {
     const response = await fetch('https://api.resend.com/emails', {
       method:'POST',
-      headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':'booked-deep-dive-'+session.id},
+      headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':'booked-next30-'+session.id},
       body:JSON.stringify({from:FROM,to:[email],reply_to:'hello@bookedandfabulous.com',subject:welcomeSubject,text,html}),
       signal:AbortSignal.timeout(12000)
     });
@@ -691,7 +691,7 @@ async function verifyCheckout(request, env) {
     });
     if (!response.ok) return reply({paid:false},response.status===404?404:502);
     const session = await response.json();
-    return reply({paid:session.status==='complete' && session.payment_status==='paid' && session.payment_link===deepDivePaymentLinkId && session.currency==='usd' && session.amount_total===4900});
+    return reply({paid:session.status==='complete' && session.payment_status==='paid' && next30PaymentLinkIds.has(session.payment_link) && session.currency==='usd' && session.amount_total===4900});
   } catch { return reply({paid:false,error:'Payment check is unavailable.'},503); }
 }
 
