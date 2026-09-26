@@ -16,7 +16,7 @@ function boot({hash='',saved=null,delivery=null,blocked=false,search=''}={}){
    assert.equal(JSON.parse(options.body).email,'test@example.test');
    return {ok:network.accept,status:network.accept?200:503,json:async()=>({success:network.accept})};
   }
-  return {ok:true,json:async()=>url.includes('verify-checkout')?{paid:false}:{ready:true,schemas:['short-v1']}};
+  return {ok:true,json:async()=>url.includes('verify-checkout')?{paid:false}:{ready:true,schemas:['short-v2']}};
  };
  if(saved)w.localStorage.setItem(savedKey,JSON.stringify(saved));
  if(delivery)w.sessionStorage.setItem(deliveryKey,JSON.stringify(delivery));
