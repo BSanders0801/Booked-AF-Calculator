@@ -153,7 +153,7 @@
     }
     if (state.view === 'email') {
       const note = app.querySelector('.capture-note');
-      if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. This request does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
+      if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. We’ll also send a few check-ins over the next 90 days so you can recheck your plan and numbers. This does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
       const heading = app.querySelector('.capture-wordmark');
       if (heading) heading.innerHTML = '<img src="assets/booked-af-logo.png" alt="BOOKED AF - Booked & Fabulous" width="230" height="109" style="max-width:100%;height:auto">';
     }
