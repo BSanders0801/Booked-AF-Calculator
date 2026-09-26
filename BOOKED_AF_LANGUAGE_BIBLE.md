@@ -654,4 +654,8 @@ Bradley provided in-salon education to salons across the country. Emphasize this
 - He lived in Charlotte, North Carolina, where he owned and operated Groove, a Paul Mitchell focus salon.
 - He has also lived in New York City, Miami, Las Vegas, and Chicago. He now lives in Los Angeles.
 - He has a network of hairdressers across the United States.
-- Keep his work as a colorist in New York distinct from his ownership of Groove in Charlotte. Do not imply he led the New York salons where he worked as a colorist.
+- Distinguish his work as a colorist at other New York salons from his co-ownership of HipCat in Brooklyn and ownership of Groove in Charlotte. Do not imply he led the New York salons where he was employed as a colorist.
+
+## 20. HIPCAT OWNERSHIP STORY - SEPTEMBER 25, 2026
+
+Bradley and his business partner worked together at a salon in Brooklyn. When that salon closed, they opened a small salon called HipCat. They later expanded to another location in Miami, which they eventually sold for a profit. Preserve the shared ownership and credit his business partner. Do not infer a personal relationship or name the partner. Keep the former employer's name out of public copy, in line with Bradley's existing preference.
