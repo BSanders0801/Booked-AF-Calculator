@@ -17,7 +17,7 @@
     const list = schema === SHORT_SCHEMA ? shortQuestions : legacyQuestions;
     const clean = {};
     for (const q of list) {
-      const allowed = new Set(q.choices.map(choice => choice[0]));
+      const allowed = new Set((schema === SHORT_SCHEMA ? shortChoices(q, clean) : q.choices).map(choice => choice[0]));
       const raw = answers[q.id];
       if (q.multi) {
         if (!Array.isArray(raw)) continue;
