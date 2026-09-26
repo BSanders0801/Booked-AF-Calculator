@@ -150,12 +150,12 @@ function buildShortBreakdown(input) {
   fix:{title,body:intro,first:steps[0].body,then:steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:rule},plan,nextTool};
 }
 function shortEmailCopy(r,name) {
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR STAGE: '+r.stage+'\n\nYOUR FIRST PRIORITY\n'+r.top.title+'\n\nWHY THIS FIRST\n'+r.intro+'\n\nYOUR THREE MOVES\n'+r.plan.steps.map((s,i)=>(i+1)+'. '+s.title+'\n'+s.body).join('\n\n')+'\n\nAFTER A WEEK\n'+r.plan.check+'\n\nKEEP THIS IN MIND\n'+r.plan.rule+'\n\nThis is a starting point based on your answers. Exact pay and time-off decisions need your actual numbers.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com';
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR BOOK RIGHT NOW: '+r.stage+'\n\nYOUR FIRST PRIORITY\n'+r.top.title+'\n\nWHY THIS FIRST\n'+r.intro+'\n\nYOUR THREE MOVES\n'+r.plan.steps.map((s,i)=>(i+1)+'. '+s.title+'\n'+s.body).join('\n\n')+'\n\nAFTER A WEEK\n'+r.plan.check+'\n\nKEEP THIS IN MIND\n'+r.plan.rule+'\n\nThis is a starting point based on your answers. Exact pay and time-off decisions need your actual numbers.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com';
 }
 // END SHARED BREAKDOWN CORE
 // BOOKED AF email service. No API keys belong in this file.
 const questions=[
-{id:'stage',title:'Where are you with your book right now?',choices:[['building','BUILDING','I’m starting, rebuilding, or still finding my people.'],['busy','GETTING BUSY','Clients are coming in, but it’s not steady yet.'],['demand','IN DEMAND','My book is pretty full.'],['booked','BOOKED AF','I’m busy. I want the money and the life to match.']]},
+{id:'stage',title:'What does your book look like right now?',choices:[['building','BUILDING','I’m starting, rebuilding, or still finding my people.'],['busy','GETTING BUSY','Clients are coming in, but it’s not steady yet.'],['demand','IN DEMAND','My book is pretty full.'],['booked','BOOKED AF','I’m busy. I want the money and the life to match.']]},
 {id:'full',title:'How full is your book most weeks?',choices:[['under25','Less than a quarter'],['half','About halfway'],['threequarters','Mostly full'],['full','Packed, or close to it']]},
 {id:'days',title:'How many days a week are you behind the chair?',choices:[['0','Not behind the chair yet'],['2','1–2 days'],['3','3 days'],['4','4 days'],['5','5 or more days']]},
 {id:'clients',title:'How many clients do you usually see on a workday?',choices:[['0','Not seeing clients yet'],['2','1–2'],['4','3–4'],['6','5–6'],['7','7 or more']]},
@@ -300,7 +300,7 @@ function emailCopy(r,name){
 if(r.schema===SHORT_SCHEMA)return shortEmailCopy(r,name);
  const money=r.opportunity?("\n\nTHE MONEY OPPORTUNITY\n"+r.opportunity.title+"\n"+r.opportunity.body+(r.opportunity.gain?"\n"+r.opportunity.monthly+" more per month • "+r.opportunity.annual+" more per year":"")+"\n"+r.opportunity.math):"";
  const week=r.plan?("\n\nYOUR 7-DAY BOOKED AF PLAN\n"+r.plan.steps.map(step=>"DAY "+step.day+" — "+step.title+"\n"+step.body).join("\n\n")+"\n\nDAY 7 — "+r.plan.checkTitle+"\n"+r.plan.check+"\n\nTHE RULE THIS WEEK\n"+r.plan.rule):"";
- return "THE BOOKED AF BREAKDOWN\n\n"+(name?name+", here’s":"Here’s")+" your Breakdown.\n\nYOUR STAGE: "+r.stage+"\n\n"+r.intro+
+ return "THE BOOKED AF BREAKDOWN\n\n"+(name?name+", here’s":"Here’s")+" your Breakdown.\n\nYOUR BOOK RIGHT NOW: "+r.stage+"\n\n"+r.intro+
  "\n\nWHAT I’D FIX FIRST\n"+r.fix.title+"\n"+r.fix.body+"\n\nDO THIS FIRST\n"+r.fix.first+"\n\nTHEN THIS\n"+r.fix.then+
  "\n\nDON’T DO THIS YET\n"+r.fix.dontTitle+"\n"+r.fix.dont+money+week+
  "\n\nThis is a starting point based on your answers, not a promise of income.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com";
@@ -619,12 +619,12 @@ You’ve already done the first big thing: decided your career should give you m
 
 Some changes will help now. Others will give Future You more money, time, and choices. We’re here for both.
 
-START MY DEEP DIVE: ${customerDeepDiveUrl}
+START MY NEXT 30: ${customerDeepDiveUrl}
 
 Love your career. Keep your life.
 Bradley
 BOOKED AF`;
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:#fff"><tr><td align="center" style="padding:8px 26px;background:#000;border-bottom:4px solid #ff1686"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF" style="display:block;width:100%;max-width:400px;height:auto"></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="font-size:28px;line-height:1.2">${welcomeSubject}</h1><p>${esc(greeting)}</p><p>Welcome to BOOKED AF. You’re officially part of the family.</p><p>You’ve already done the first big thing: decided your career should give you more than a full book and tired feet. Now we’ll look at what’s happening in <em>your</em> business and build a 30-day plan you can actually use.</p><p>Some changes will help now. Others will give Future You more money, time, and choices. We’re here for both.</p><p style="margin:30px 0"><a href="${customerDeepDiveUrl}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">START MY DEEP DIVE →</a></p><p>Love your career. Keep your life.<br>Bradley<br>BOOKED AF</p></td></tr><tr><td style="padding:20px 26px;background:#111114;color:#ddd;font-size:12px">You received this email because you purchased the BOOKED AF Deep Dive.<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a></td></tr></table></td></tr></table></body></html>`;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:#fff"><tr><td align="center" style="padding:8px 26px;background:#000;border-bottom:4px solid #ff1686"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF" style="display:block;width:100%;max-width:400px;height:auto"></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="font-size:28px;line-height:1.2">${welcomeSubject}</h1><p>${esc(greeting)}</p><p>Welcome to BOOKED AF. You’re officially part of the family.</p><p>You’ve already done the first big thing: decided your career should give you more than a full book and tired feet. Now we’ll look at what’s happening in <em>your</em> business and build a 30-day plan you can actually use.</p><p>Some changes will help now. Others will give Future You more money, time, and choices. We’re here for both.</p><p style="margin:30px 0"><a href="${customerDeepDiveUrl}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">START MY NEXT 30 →</a></p><p>Love your career. Keep your life.<br>Bradley<br>BOOKED AF</p></td></tr><tr><td style="padding:20px 26px;background:#111114;color:#ddd;font-size:12px">You received this email because you purchased BOOKED AF: Your Next 30.<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a></td></tr></table></td></tr></table></body></html>`;
   try {
     const response = await fetch('https://api.resend.com/emails', {
       method:'POST',
@@ -767,7 +767,7 @@ export default {
       const name = data.name.trim();
       const result = data.schema===SHORT_SCHEMA?buildShortBreakdown(answers):read(answers);
       const title = data.type === 'breakdown' ? 'Your BOOKED AF Breakdown' : 'You’re on the founding list';
-      const text = data.type === 'breakdown' ? emailCopy(result, name) : `${name ? name + ', you’re' : 'You’re'} on the BOOKED AF Deep Dive founding list.\n\nWe’ve received your request for the $49 founding offer. No payment has been taken. We’ll contact you when checkout is ready.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.`;
+      const text = data.type === 'breakdown' ? emailCopy(result, name) : `${name ? name + ', you’re' : 'You’re'} on the BOOKED AF: Your Next 30 founding list.\n\nWe’ve received your request for the $49 founding offer. No payment has been taken. We’ll contact you when checkout is ready.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.`;
       const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify([email,name,data.type,data.schema||'legacy',answers])));
       const key = 'booked-v3-short-' + [...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
       const response = await fetch('https://api.resend.com/emails', {
