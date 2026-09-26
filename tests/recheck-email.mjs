@@ -30,9 +30,9 @@ test('Breakdown schedules distinct Day 7 and Day 30 emails and queues Day 60 and
     throw new Error('Unexpected fetch: '+url);
   };
   const payload = {
-    type:'breakdown', email:'alex@example.com', name:'Alex', schema:'short-v3',
+    type:'breakdown', email:'alex@example.com', name:'Alex', schema:'short-v4',
     token:'turnstile-token', honey:'',
-    answers:{worktype:['fullservice'],primarywork:'chair',goal:'clients',full:'under25',days:'3',returning:'some',visibility:['social'],marketing:['social'],network:'local',urgency:'month'}
+    answers:{worktype:['color','extensions'],primarywork:'chair-color',goal:'clients',full:'under25',days:'3',returning:'some',visibility:['social'],marketing:['social'],network:'local',urgency:'month'}
   };
   try {
     const request = new Request('https://example.workers.dev/',{
