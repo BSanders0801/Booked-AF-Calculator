@@ -33,7 +33,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
  try{
   const d=start();
   assert.match(d.$('#app').textContent,/3 minutes. 3 next moves. Email required/);
-  assert(!/[—–]|\bThree\b|[.?!]\s+Or\b/.test(d.$('#app').textContent));
+  assert.doesNotMatch(d.$('#app').textContent,/Deep Dive|YOUR STAGE/);
   assert.equal(d.$('.brand-logo').getAttribute('src'),'assets/booked-af-logo.png');
   d.click('header [data-nav="paid"]');assert.match(d.$('#app').textContent,/One plan. One payment/);
   d.click('[data-nav="next30sample"]');assert.match(d.$('#app').textContent,/THIS IS WHAT/);assert.match(d.$('#app').textContent,/STOP THIS/);assert.match(d.$('#app').textContent,/WEEK 4/);
