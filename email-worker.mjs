@@ -150,7 +150,7 @@ function buildShortBreakdown(input) {
   fix:{title,body:intro,first:steps[0].body,then:steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:rule},plan,nextTool};
 }
 function shortEmailCopy(r,name) {
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR BOOK RIGHT NOW: '+r.stage+'\n\nYOUR FIRST PRIORITY\n'+r.top.title+'\n\nWHY THIS FIRST\n'+r.intro+'\n\nYOUR THREE MOVES\n'+r.plan.steps.map((s,i)=>(i+1)+'. '+s.title+'\n'+s.body).join('\n\n')+'\n\nAFTER A WEEK\n'+r.plan.check+'\n\nKEEP THIS IN MIND\n'+r.plan.rule+'\n\nThis is a starting point based on your answers. Exact pay and time-off decisions need your actual numbers.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com';
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR BOOK RIGHT NOW\n'+r.stage+'\n\nFIX THIS FIRST\n'+r.top.title+'\n'+r.intro+'\n\nDO THESE 3 THINGS\n'+r.plan.steps.map((s,i)=>(i+1)+'. '+s.title+'\n'+s.body).join('\n\n')+'\n\nWATCH THIS\n'+r.plan.checkTitle+'\n'+r.plan.check+'\n'+r.plan.rule+'\n\nThis is a starting point based on your answers. Exact pay and time-off decisions need your actual numbers.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com';
 }
 // END SHARED BREAKDOWN CORE
 // BOOKED AF email service. No API keys belong in this file.
@@ -299,10 +299,9 @@ function read(answers){
 function emailCopy(r,name){
 if(r.schema===SHORT_SCHEMA)return shortEmailCopy(r,name);
  const money=r.opportunity?("\n\nTHE MONEY OPPORTUNITY\n"+r.opportunity.title+"\n"+r.opportunity.body+(r.opportunity.gain?"\n"+r.opportunity.monthly+" more per month • "+r.opportunity.annual+" more per year":"")+"\n"+r.opportunity.math):"";
- const week=r.plan?("\n\nYOUR 7-DAY BOOKED AF PLAN\n"+r.plan.steps.map(step=>"DAY "+step.day+" — "+step.title+"\n"+step.body).join("\n\n")+"\n\nDAY 7 — "+r.plan.checkTitle+"\n"+r.plan.check+"\n\nTHE RULE THIS WEEK\n"+r.plan.rule):"";
- return "THE BOOKED AF BREAKDOWN\n\n"+(name?name+", here’s":"Here’s")+" your Breakdown.\n\nYOUR BOOK RIGHT NOW: "+r.stage+"\n\n"+r.intro+
- "\n\nWHAT I’D FIX FIRST\n"+r.fix.title+"\n"+r.fix.body+"\n\nDO THIS FIRST\n"+r.fix.first+"\n\nTHEN THIS\n"+r.fix.then+
- "\n\nDON’T DO THIS YET\n"+r.fix.dontTitle+"\n"+r.fix.dont+money+week+
+ return "THE BOOKED AF BREAKDOWN\n\n"+(name?name+", here’s":"Here’s")+" your Breakdown.\n\nYOUR BOOK RIGHT NOW\n"+r.stage+"\n\nFIX THIS FIRST\n"+r.fix.title+"\n"+r.fix.body+
+ "\n\nDO THESE 3 THINGS\n"+r.plan.steps.map((step,i)=>(i+1)+". "+step.title+"\n"+step.body).join("\n\n")+
+ "\n\nWATCH THIS\n"+r.plan.checkTitle+"\n"+r.plan.check+"\n"+r.plan.rule+money+
  "\n\nThis is a starting point based on your answers, not a promise of income.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com";
 }
 
