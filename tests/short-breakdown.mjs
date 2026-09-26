@@ -6,7 +6,7 @@ const core=fs.readFileSync('breakdown-core.js','utf8');
 const c=vm.createContext({});vm.runInContext(core+'\nglobalThis.api={shortQuestions,shortVisibleQuestions,validateShortAnswers,buildShortBreakdown,shortEmailCopy};',c);
 const {shortQuestions:qs,shortVisibleQuestions:visible,validateShortAnswers:validate,buildShortBreakdown:build}=c.api;
 const answer=goal=>Object.fromEntries(visible({goal}).map(q=>[q.id,q.id==='goal'?goal:q.choices[0][0]]));
-const complete=input=>{const out={...input};let changed=true;while(changed){changed=false;for(const q of visible(out)){if(out[q.id]===undefined){out[q.id]=q.choices[0][0];changed=true;}}}return out;};
+const complete=input=>{const out={...input};let changed=true;while(changed){changed=false;for(const q of visible(out)){if(out[q.id]===undefined){out[q.id]=q.multi?[q.choices[0][0]]:q.choices[0][0];changed=true;}}}return out;};
 let cases=0;
 for(const [goal,count] of Object.entries({clients:8,return:6,money:8,keep:6,time:6,stable:6})){
  const a=answer(goal);assert.equal(visible(a).length,count);
