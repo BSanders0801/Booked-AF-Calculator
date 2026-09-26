@@ -97,12 +97,14 @@
     });
   }
   function renderCareerSample(key='chair') {
-    const sample=careerSampleData[key]||careerSampleData.chair;
+    const actualKey=careerSampleData[key]?key:'chair';
+    const topKey=actualKey==='manager'?'owner':actualKey;
+    const sample=careerSampleData[actualKey];
     document.querySelectorAll('[data-career-sample-panel]').forEach(panel=>{
-      panel.innerHTML=careerSamplePanel(key,panel.dataset.careerSamplePanel||'full');
+      panel.innerHTML=careerSamplePanel(actualKey,panel.dataset.careerSamplePanel||'full');
     });
     document.querySelectorAll('[data-career-sample]').forEach(button=>{
-      button.setAttribute('aria-pressed',String(button.dataset.careerSample===key));
+      button.setAttribute('aria-pressed',String(button.dataset.careerSample===topKey));
     });
     return sample;
   }
@@ -227,6 +229,8 @@
     state.view = view; render();
   }
   document.addEventListener('click', e => {
+    const leadershipButton=e.target.closest('[data-career-sample-detail]');
+    if(leadershipButton){e.preventDefault();renderCareerSample(leadershipButton.dataset.careerSampleDetail);return;}
     const sampleButton=e.target.closest('[data-career-sample]');
     if(sampleButton){e.preventDefault();renderCareerSample(sampleButton.dataset.careerSample);return;}
     const nav = e.target.closest('[data-nav]');
