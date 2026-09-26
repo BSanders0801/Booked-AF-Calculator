@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "description": "DOM-only integration checks for the BOOKED AF redesign",
+  "scripts": {
+    "test": "node redesign-dom.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "30.1.1"
+  }
+}
