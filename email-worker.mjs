@@ -364,6 +364,74 @@ function recheckEmailHTML(name) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(RECHECK_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF — Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(RECHECK_SUBJECT)}</h1><p>${greeting}</p><p>It’s been 30 days since you did your BOOKED AF Breakdown, so it’s time to see what changed.</p><p>Maybe you got busier. Maybe you raised a price. Maybe your rebooking got better. Maybe absolutely nothing changed. That’s okay too. We just need to know what’s actually happening.</p><p>Come back, plug in your new numbers, and let’s see where you are now compared to 30 days ago.</p><p style="margin:30px 0"><a href="${RECHECK_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">RECHECK MY NUMBERS →</a></p><p>This isn’t a report card. Nobody’s getting graded. We’re just figuring out what’s working, what isn’t, and what you should focus on next.</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
 }
 
+
+const RECHECK_60_SUBJECT = '60 days in. What actually stuck?';
+const RECHECK_90_SUBJECT = '90 days later. Apparently we do quarterly reviews now.';
+
+function recheck60EmailCopy(name) {
+  const greeting = name ? 'Hey ' + name + ',' : 'Hey,';
+  return `${greeting}
+
+It’s been 60 days since your first BOOKED AF Breakdown.
+
+By now, something should be getting clearer.
+
+Maybe your book is filling up. Maybe your clients are coming back more often. Maybe you finally raised that price you’ve been thinking about for six months.
+
+Or maybe you tried a few things and discovered exactly what does not work for you. Also useful.
+
+Come back and run your numbers again.
+
+This time, don’t just look at whether they went up or down. Look at what actually changed because of something you did.
+
+CHECK MY 60-DAY NUMBERS: ${RECHECK_URL}
+
+We’re looking for patterns now.
+
+What’s working? What keeps happening? What needs another month? And what can we officially stop wasting our time on?
+
+Bradley
+BOOKED AF
+Love your career. Keep your life.`;
+}
+
+function recheck60EmailHTML(name) {
+  const greeting = name ? 'Hey ' + esc(name) + ',' : 'Hey,';
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(RECHECK_60_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF — Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(RECHECK_60_SUBJECT)}</h1><p>${greeting}</p><p>It’s been 60 days since your first BOOKED AF Breakdown.</p><p>By now, something should be getting clearer.</p><p>Maybe your book is filling up. Maybe your clients are coming back more often. Maybe you finally raised that price you’ve been thinking about for six months.</p><p>Or maybe you tried a few things and discovered exactly what does not work for you. Also useful.</p><p>Come back and run your numbers again.</p><p>This time, don’t just look at whether they went up or down. Look at what actually changed because of something you did.</p><p style="margin:30px 0"><a href="${RECHECK_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">CHECK MY 60-DAY NUMBERS →</a></p><p>We’re looking for patterns now.</p><p>What’s working? What keeps happening? What needs another month? And what can we officially stop wasting our time on?</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
+}
+
+function recheck90EmailCopy(name) {
+  const greeting = name ? 'Hey ' + name + ',' : 'Hey,';
+  return `${greeting}
+
+It’s been 90 days since you first checked in with BOOKED AF.
+
+Three months is enough time to stop calling everything a fluke.
+
+If you’re busier, making more, keeping more, working differently, or finally getting some breathing room, we want to see it.
+
+And if the numbers haven’t moved the way you hoped, that matters too. It usually means we need a different plan—not that you need to work yourself into the ground.
+
+Come back and run your Breakdown again.
+
+SHOW ME MY 90-DAY NUMBERS: ${RECHECK_URL}
+
+Now we can look at the bigger picture.
+
+Are you busier than you were three months ago? Are you making more? Keeping more? Working differently? Or are we still trying to fix the same thing?
+
+Growth is funny like that.
+
+Bradley
+BOOKED AF
+Love your career. Keep your life.`;
+}
+
+function recheck90EmailHTML(name) {
+  const greeting = name ? 'Hey ' + esc(name) + ',' : 'Hey,';
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(RECHECK_90_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF — Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(RECHECK_90_SUBJECT)}</h1><p>${greeting}</p><p>It’s been 90 days since you first checked in with BOOKED AF.</p><p>Three months is enough time to stop calling everything a fluke.</p><p>If you’re busier, making more, keeping more, working differently, or finally getting some breathing room, we want to see it.</p><p>And if the numbers haven’t moved the way you hoped, that matters too. It usually means we need a different plan—not that you need to work yourself into the ground.</p><p>Come back and run your Breakdown again.</p><p style="margin:30px 0"><a href="${RECHECK_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">SHOW ME MY 90-DAY NUMBERS →</a></p><p>Now we can look at the bigger picture.</p><p>Are you busier than you were three months ago? Are you making more? Keeping more? Working differently? Or are we still trying to fix the same thing?</p><p>Growth is funny like that.</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
+}
+
 async function limitedJSON(request) {
   const reader = request.body?.getReader();
   if (!reader) throw new Error('body');
@@ -545,7 +613,61 @@ export default {
           console.error('30-day recheck scheduling failed');
         }
       }
-      return reply({success:true,followupScheduled});
+      let followupScheduled60 = false;
+      let followupScheduled90 = false;
+      if (data.type === 'breakdown') {
+        try {
+          const followup60Response = await fetch('https://api.resend.com/emails', {
+            method:'POST',
+            headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key+'-recheck-60d'},
+            body:JSON.stringify({
+              from:FROM,
+              to:[email],
+              bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],
+              reply_to:'hello@bookedandfabulous.com',
+              subject:RECHECK_60_SUBJECT,
+              text:recheck60EmailCopy(name),
+              html:recheck60EmailHTML(name),
+              scheduled_at:'in 60 days'
+            }),
+            signal:AbortSignal.timeout(12000)
+          });
+          if (followup60Response.ok) {
+            const followup60 = await followup60Response.json();
+            followupScheduled60 = !!followup60.id;
+          } else {
+            console.error('60-day recheck scheduling returned status', followup60Response.status);
+          }
+        } catch (error) {
+          console.error('60-day recheck scheduling failed');
+        }
+        try {
+          const followup90Response = await fetch('https://api.resend.com/emails', {
+            method:'POST',
+            headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key+'-recheck-90d'},
+            body:JSON.stringify({
+              from:FROM,
+              to:[email],
+              bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],
+              reply_to:'hello@bookedandfabulous.com',
+              subject:RECHECK_90_SUBJECT,
+              text:recheck90EmailCopy(name),
+              html:recheck90EmailHTML(name),
+              scheduled_at:'in 90 days'
+            }),
+            signal:AbortSignal.timeout(12000)
+          });
+          if (followup90Response.ok) {
+            const followup90 = await followup90Response.json();
+            followupScheduled90 = !!followup90.id;
+          } else {
+            console.error('90-day recheck scheduling returned status', followup90Response.status);
+          }
+        } catch (error) {
+          console.error('90-day recheck scheduling failed');
+        }
+      }
+      return reply({success:true,followupScheduled,followupScheduled60,followupScheduled90});
     } catch { return reply({success:false,error:'Email could not be sent. Please try again shortly.'}, 502); }
   }
 };
