@@ -568,6 +568,26 @@ async function verifyStripeSignature(body, header, secret) {
   return candidates.some(value => /^[a-f0-9]{64}$/i.test(value) && value.toLowerCase() === expected);
 }
 
+async function schedulePurchaseSurvey(env, session, email, firstName) {
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method:'POST',
+      headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':'booked-survey-14d-'+session.id},
+      body:JSON.stringify({from:FROM,to:[email],reply_to:'hello@bookedandfabulous.com',subject:SURVEY_SUBJECT,text:surveyEmailCopy(firstName,session.id),html:surveyEmailHTML(firstName,session.id),scheduled_at:'in 14 days'}),
+      signal:AbortSignal.timeout(12000)
+    });
+    if (!response.ok) {
+      console.error('14-day survey scheduling returned status', response.status);
+      return false;
+    }
+    const result = await response.json();
+    return !!result.id;
+  } catch {
+    console.error('14-day survey scheduling failed');
+    return false;
+  }
+}
+
 async function stripeWelcome(request, env) {
   if (request.method !== 'POST') return new Response('Method not allowed', {status:405});
   if (!env.STRIPE_WEBHOOK_SECRET || !env.RESEND_API_KEY) return new Response('Not configured', {status:503});
@@ -580,10 +600,15 @@ async function stripeWelcome(request, env) {
   try { event = JSON.parse(body); } catch { return new Response('Invalid JSON', {status:400}); }
   if (!['checkout.session.completed','checkout.session.async_payment_succeeded'].includes(event.type)) return new Response('Ignored');
   const session = event.data?.object;
-  if (session?.payment_status !== 'paid' || session?.payment_link !== deepDivePaymentLinkId || session?.currency !== 'usd' || session?.amount_total !== 4900) return new Response('Ignored');
+  if (session?.payment_status !== 'paid') return new Response('Ignored');
   const email = session.customer_details?.email || session.customer_email;
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return new Response('Missing customer email', {status:422});
   const firstName = String(session.customer_details?.name || '').trim().split(/\s+/)[0].slice(0, 60);
+
+  const surveyScheduled = await schedulePurchaseSurvey(env, session, email, firstName);
+  const isDeepDive = session.payment_link === deepDivePaymentLinkId && session.currency === 'usd' && session.amount_total === 4900;
+  if (!isDeepDive) return new Response(surveyScheduled ? 'Survey scheduled' : 'Purchase recorded');
+
   const greeting = firstName ? 'Hey ' + firstName + ',' : 'Hey,';
   const customerDeepDiveUrl = deepDiveUrl + '&session_id=' + encodeURIComponent(session.id);
   const text = `${greeting}
@@ -609,17 +634,7 @@ BOOKED AF`;
     });
     if (!response.ok) return new Response('Email delivery failed', {status:502});
     const result = await response.json();
-    if (!result.id) return new Response('Email delivery failed', {status:502});
-    try {
-      const surveyResponse = await fetch('https://api.resend.com/emails', {
-        method:'POST',
-        headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':'booked-survey-14d-'+session.id},
-        body:JSON.stringify({from:FROM,to:[email],reply_to:'hello@bookedandfabulous.com',subject:SURVEY_SUBJECT,text:surveyEmailCopy(firstName,session.id),html:surveyEmailHTML(firstName,session.id),scheduled_at:'in 14 days'}),
-        signal:AbortSignal.timeout(12000)
-      });
-      if (!surveyResponse.ok) console.error('14-day survey scheduling returned status', surveyResponse.status);
-    } catch { console.error('14-day survey scheduling failed'); }
-    return new Response('Sent');
+    return result.id ? new Response('Sent') : new Response('Email delivery failed', {status:502});
   } catch { return new Response('Email delivery failed', {status:502}); }
 }
 
