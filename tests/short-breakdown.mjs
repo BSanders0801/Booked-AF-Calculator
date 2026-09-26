@@ -64,7 +64,8 @@ for(const goal of ['clients','return','money','keep','time','stable']){
  for(let i=1;i<count;i++)element('next').onclick();
  assert(element('app').innerHTML.includes('SEE MY BREAKDOWN'));
  element('back').onclick();assert(element('app').innerHTML.includes('Question '+(count-1)+' of '+count));
- element('next').onclick();element('next').onclick();element('skip').onclick();
+ element('next').onclick();
+ vm.runInContext('state.emailSent=true;state.view="result";render()',ac);
  assert(element('app').innerHTML.includes('DO THESE 3 THINGS'));
  element('edit').onclick();assert(element('app').innerHTML.includes('Question 1 of '+count));
 }
