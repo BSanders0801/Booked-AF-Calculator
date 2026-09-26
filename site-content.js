@@ -31,15 +31,15 @@ const careerSampleData = {
     tab:'BRIDAL + EVENTS',
     label:'BRIDAL + EVENTS',
     stage:'GETTING BUSY',
-    snapshot:'The wedding-day fee is only part of the job. The trial, travel, early call time, assistants, setup, wedding morning, and trip home all count.',
-    fix:'PRICE THE WHOLE DAY. NOT JUST THE HAIR.',
-    fixBody:'The trial, travel, early call time, assistants, setup, wedding morning, and trip home all belong in the math. A three-hour service can own six hours of your day.',
+    snapshot:'Hair, makeup, or both — the wedding-day fee is only part of the job. Trials, travel, early call times, assistants, setup, touch-ups, and the trip home all count.',
+    fix:'PRICE THE WHOLE DAY. NOT JUST THE SERVICE.',
+    fixBody:'Hair trials, makeup trials, kit prep, lashes and disposables, travel, early call times, assistants, setup, touch-ups, wedding morning, and the trip home all belong in the math. A three-hour service can own six hours of your day.',
     steps:[
-      ['COUNT DOOR-TO-DOOR TIME.','Include prep, packing, travel, setup, the service, cleanup, and the trip home.'],
+      ['COUNT DOOR-TO-DOOR TIME.','Include hair or makeup prep, packing, travel, setup, services, touch-ups, cleanup, and the trip home.'],
       ['SEPARATE WHAT THE CLIENT PAYS BACK.','Parking, mileage, hotel, assistants, and other reimbursed costs should not masquerade as your earnings.'],
       ['CHECK THE TERMS BEFORE THE DATE.','Make travel, deposits, cancellations, assistants, and extra time clear before the event arrives.']
     ],
-    watch:'What the wedding actually paid you for every hour it took — not just the hours your hands were in someone’s hair.'
+    watch:'What the wedding actually paid you for every hour it took — not just the time your hands were on hair or makeup.'
   },
   education: {
     tab:'EDUCATION + BRAND',
