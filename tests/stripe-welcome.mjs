@@ -12,7 +12,7 @@ function request(session, type='checkout.session.completed', signature=true) {
 }
 const paid = {id:'cs_test_123',status:'complete',payment_status:'paid',payment_link:'plink_1UJbGMK8mAQwUniDbDofJPiQ',currency:'usd',amount_total:4900,customer_details:{name:'Alex Stylist',email:'alex@example.com'}};
 
-test('verified Deep Dive checkout sends welcome and schedules Day 14 survey',async()=>{
+test('verified Your Next 30 checkout sends welcome and schedules Day 14 survey',async()=>{
   const original=globalThis.fetch; const sent=[];
   globalThis.fetch=async(url,options)=>{
     if(String(url)==='https://api.resend.com/emails'){sent.push({body:JSON.parse(options.body),headers:options.headers});return new Response(JSON.stringify({id:'email_'+sent.length}),{status:200});}
@@ -29,7 +29,7 @@ test('verified Deep Dive checkout sends welcome and schedules Day 14 survey',asy
     assert.match(survey.html,/session_id=cs_test_123/);
     const welcome=sent.find(x=>x.body.subject==='You’re in. Let’s make some moves.').body;
     assert.equal(welcome.to[0],'alex@example.com');
-    assert.match(welcome.text,/START MY DEEP DIVE: https:\/\/bookedandfabulous.com\/\?deepdive=paid&session_id=cs_test_123/);
+    assert.match(welcome.text,/START MY NEXT 30: https:\/\/bookedandfabulous.com\/\?deepdive=paid&session_id=cs_test_123/);
   } finally {globalThis.fetch=original}
 });
 
