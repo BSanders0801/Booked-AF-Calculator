@@ -38,7 +38,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   d.click('header [data-nav="paid"]');assert.match(d.$('#app').textContent,/One plan. One payment/);
   d.click('[data-nav="next30sample"]');assert.match(d.$('#app').textContent,/THIS IS WHAT/);assert.match(d.$('#app').textContent,/STOP THIS/);assert.match(d.$('#app').textContent,/WEEK 4/);
   d.click('[data-nav="paid"]');d.click('.checkout-link');assert.match(d.$('#preview-checkout-note').textContent,/Checkout is kept off/);
-  d.click('header [data-nav="question"]');assert.match(d.$('#app').textContent,/WHAT KIND OF HAIR WORK DO YOU DO/);
+  d.click('header [data-nav="question"]');assert.match(d.$('#app').textContent,/WHAT’S YOUR HAIR GAME/);
   for(let i=0;i<20&&d.$('#next');i++){d.click('.choice');d.click('#next');}
   await tick();assert(d.$('#form'));assert(!d.$('#skip'));assert(!d.$('#plan'));
   d.click('#form button[type="submit"]');assert.equal(d.network.posts,0);
