@@ -436,6 +436,16 @@ const checkoutVerifyUrl = emailServiceUrl + '/verify-checkout';
 const shortReady=fetch(emailServiceUrl,{signal:AbortSignal.timeout(5000),credentials:'omit'}).then(r=>r.ok?r.json():{}).then(r=>r.ready===true&&Array.isArray(r.schemas)&&r.schemas.includes(SHORT_SCHEMA)).catch(()=>false);
 function restoreSchema(schema){state.schema=schema===SHORT_SCHEMA?SHORT_SCHEMA:'legacy';questions=state.schema===SHORT_SCHEMA?shortQuestions:legacyQuestions;}
 
+function answersForDelivery(){
+ const answers=JSON.parse(JSON.stringify(state.answers||{}));
+ if(state.schema===SHORT_SCHEMA){
+  const worktype=Array.isArray(answers.worktype)?answers.worktype:[];
+  if(worktype.length===1&&worktype[0]==='owner'&&!answers.primarywork) answers.primarywork='management';
+  delete answers.leadershiprole;
+ }
+ return answers;
+}
+
 const emailSiteKey = '0x4AAAAAAFDEaTJ_ybTjAuWb';
 let turnstileLoading;
 let disposeEmailWidget = () => {};
@@ -520,7 +530,7 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
     method: 'POST',
     headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
     body: JSON.stringify({type: form.id === 'interest' ? 'founding' : 'breakdown',
-     email: data.get('email'), name: firstName, schema: state.schema, answers: state.answers,
+     email: data.get('email'), name: firstName, schema: state.schema, answers: answersForDelivery(),
      token: verification.token(), honey: data.get('_honey') || ''}),
     signal: controller.signal,
     redirect: 'error',
