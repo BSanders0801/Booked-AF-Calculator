@@ -25,7 +25,7 @@
     try {
       const saved = JSON.parse(localStorage.getItem(key) || 'null');
       if (!saved || saved.version !== 1 || !Number.isFinite(saved.savedAt) || Date.now() - saved.savedAt > maxAge) return;
-      if (deepEntry === 'paid' || Object.keys(state.answers).length) return;
+      if (deepEntry === 'paid') return;
       restoreSchema(saved.schema);
       state.answers = validAnswers(saved.answers, state.schema);
       state.done = Object.fromEntries(Object.entries(saved.done || {}).filter(([k,v]) => /^[a-zA-Z0-9_-]{1,50}$/.test(k) && typeof v === 'boolean'));
@@ -104,15 +104,15 @@
     }
     if (state.view === 'email') {
       const note = app.querySelector('.capture-note');
-      if (note) note.innerHTML = 'We use your details to deliver this Breakdown. <a href="#privacy" data-nav="privacy">How your information is used.</a> You can skip email and read your plan now.';
+      if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. This request does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
       const heading = app.querySelector('.capture-wordmark');
-      if (heading) heading.innerHTML = '<img src="assets/booked-af-logo.png" alt="BOOKED AF — Booked & Fabulous" width="230" height="109" style="max-width:100%;height:auto">';
+      if (heading) heading.innerHTML = '<img src="assets/booked-af-logo.png" alt="BOOKED AF - Booked & Fabulous" width="230" height="109" style="max-width:100%;height:auto">';
     }
     document.querySelectorAll('header [data-nav]').forEach(a => {
       const current = a.dataset.nav === state.view || (a.dataset.nav === 'resume' && ['result','plan'].includes(state.view));
       if (current) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
-    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Deep Dive — $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Your Information',sample:'Sample Plan'};
+    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Deep Dive - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Sample Plan'};
     document.title = 'BOOKED AF | ' + (titles[state.view] || 'My next move');
   }
   render = function () {
@@ -120,7 +120,8 @@
     const choice = active?.dataset?.value;
     const screenKey = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? state.deepIndex : '');
     const changed = lastScreen !== screenKey;
-    if (['teaser','result','plan'].includes(state.view) && !hasCompleteResult()) { state.view = 'question'; state.index = Math.max(0,state.index); }
+    if (['teaser','result','plan','email'].includes(state.view) && !hasCompleteResult()) { state.view = 'question'; state.index = Math.max(0,state.index); }
+    if (['teaser','result','plan'].includes(state.view) && !state.emailSent) state.view = 'email';
     app.classList.remove('intro-screen');
     app.classList.toggle('marketing-screen', !!sitePages[state.view]);
     if (sitePages[state.view]) {
@@ -181,3 +182,4 @@
   }
   render();
 })();
+

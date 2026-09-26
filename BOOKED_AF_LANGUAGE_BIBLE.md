@@ -381,7 +381,7 @@ Avoid:
 - Optimize
 - Generate Report
 
-“Continue without email” is acceptable utility copy because clarity matters more than personality there.
+An email submission is required before the personalized Breakdown opens. Do not offer a skip-email option or promise results without email. Explain the use of the email beside the form.
 
 ---
 
@@ -630,3 +630,12 @@ BOOKED AF should never leave someone thinking:
 
 It should leave them thinking:
 > **Okay. I know what’s happening. I know what to do next. And this is fixable.**
+
+
+## 17. WEBSITE COPY RULES - SEPTEMBER 25, 2026
+
+- Use the numeral 3 consistently in public copy.
+- Use regular hyphens only. Do not use long dashes. Rewrite the sentence when that reads better.
+- Do not start a sentence with “Or.”
+- Require email before the personalized Breakdown opens. A successful submission is required; a typed address or a URL parameter is not proof of submission.
+- Explain how email addresses and answers are used. A request for a Breakdown is not automatic consent to a promotional mailing list.
