@@ -1,5 +1,5 @@
 // Shared by the website and the self-contained email Worker.
-const SHORT_SCHEMA = 'short-v1';
+const SHORT_SCHEMA = 'short-v2';
 const shortQuestions = [
  {id:'goal',title:'WHAT ARE WE FIXING FIRST?',choices:[['clients','I need more clients in my chair.'],['money','I want to earn more without adding more hours.'],['return','I want clients who keep coming back.'],['keep','I make money. Where does it all go?'],['time','I love doing hair. I’d also like a life.'],['stable','I need money saved for when life happens.']]},
  {id:'full',title:'How busy are you most weeks?',choices:[['notyet','I’m not taking clients yet'],['under25','I have a few clients and lots of openings'],['half','I’m booked about half the time'],['threequarters','I’m busy, with a few openings'],['full','I’m fully booked or close to it']]},
