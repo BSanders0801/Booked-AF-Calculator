@@ -37,9 +37,8 @@ const deepQuestions=[
 {id:'model',title:'Which best describes how you are paid?',choices:[['commission','Commission'],['hourly','Hourly'],['rent','Booth rent / suite'],['owner','I own the salon'],['mixed','A mix']]},
 {id:'weekly',title:'What does a normal workweek look like?',choices:[['light','1-2 days behind the chair'],['three','3 days'],['four','4 days'],['heavy','5+ days']]},
 {id:'service',title:'Which kind of work brings in most of your service money?',choices:[['color','Color / chemical services'],['cut','Cuts / styling'],['extensions','Extensions'],['mixed','A real mix']]},
-{id:'best',title:'About what does one of your higher-priced appointments cost?',choices:[['150','Under $200'],['300','$200-$399'],['500','$400-$599'],['700','$600+'],['unknown','I need to check.']]},
-{id:'monthly',title:'In a normal month, about how much do clients pay for your services?',choices:[['3000','Under $5,000'],['7500','$5,000-$9,999'],['12500','$10,000-$14,999'],['17500','$15,000+'],['unknown','I need to check.']]},
-{id:'keep',title:'After you pay your work costs, how much money is left for you?',note:'Your best guess is fine. You can also choose “I don’t know.”',choices:[['25','About a quarter or less'],['40','Less than half'],['55','About half'],['70','Most of it'],['unknown','No clue yet']]},
+{id:'monthly',when:a=>a.model!=='hourly',title:'In a normal month, about how much do clients pay for your services?',choices:[['3000','Under $5,000'],['7500','$5,000-$9,999'],['12500','$10,000-$14,999'],['17500','$15,000+'],['unknown','I need to check.']]},
+{id:'keep',when:a=>a.model!=='hourly',title:'After you pay your work costs, how much money is left for you?',note:'Your best guess is fine. You can also choose “I don’t know.”',choices:[['25','About a quarter or less'],['40','Less than half'],['55','About half'],['70','Most of it'],['unknown','No clue yet']]},
 {id:'rebook',title:'How many clients leave with their next appointment booked?',choices:[['25','Less than a quarter'],['50','About half'],['75','Most of them'],['90','Almost everybody'],['unknown','I haven’t kept track.']]},
 {id:'newflow',title:'How many genuinely new clients do you get in a normal month?',choices:[['1','0-2'],['5','3-7'],['10','8-12'],['15','13+'],['unknown','I haven’t kept track.']]},
 {id:'holes',title:'Where are the biggest holes in your schedule?',choices:[['many','All over the place'],['some','A few every week'],['rare','Not many'],['none','Basically none'],['unknown','I need to look at my calendar.']]},
@@ -52,13 +51,13 @@ const deepQuestions=[
 {id:'bodyfuture',when:a=>a.tenure==='15to24'||a.tenure==='legacy'||a.futurefeel==='nervous'||a.futurefeel==='change',title:'How long do you want your income to depend this heavily on your body?',choices:[['love','I love the chair and want to keep going'],['less','I want fewer days eventually'],['other','I want income that is not all behind the chair'],['exit','I want a real path out of full-time chair work']]}
 ];
 function deepRead(){
- const a=state.deepAnswers||{}, free=read(), monthly=a.monthly==='unknown'||!a.monthly?null:+a.monthly, keep=a.keep==='unknown'||!a.keep?null:+a.keep, best=a.best==='unknown'||!a.best?null:+a.best,rebook=a.rebook==='unknown'||!a.rebook?null:+a.rebook,newflow=a.newflow==='unknown'||!a.newflow?null:+a.newflow;
+ const a=state.deepAnswers||{}, free=read(), monthly=a.monthly==='unknown'||!a.monthly?null:+a.monthly, keep=a.keep==='unknown'||!a.keep?null:+a.keep,rebook=a.rebook==='unknown'||!a.rebook?null:+a.rebook,newflow=a.newflow==='unknown'||!a.newflow?null:+a.newflow;
  const profile={experience:a.tenure||'unknown',stage:state.schema===SHORT_SCHEMA?shortStage(state.answers).key:((state.answers&&state.answers.stage)||'building'),pay:a.model||'unknown',service:a.service||'unknown',urgency:a.risk||'steady',future:a.futuregoal||'choice',marketing:a.marketingcomfort||'unknown',budget:a.monthlymarketing||'unknown',body:a.bodyfuture||'unknown'};
  let path=a.target||'help';
  if(path==='help'){
   if(a.pain==='empty'||a.holes==='many'||(newflow!==null&&newflow<=1))path='clients';
   else if(rebook!==null&&rebook<50)path='rebook';
-  else if(a.pain==='costs'||keep===null||(keep!==null&&keep<=40))path='control';
+  else if(a.pain==='costs'||(profile.pay!=='hourly'&&(keep===null||(keep!==null&&keep<=40))))path='control';
   else if(a.pain==='hours'||a.weekly==='heavy')path='time';
   else path='money';
  }
@@ -73,6 +72,19 @@ function deepRead(){
  };
  const d=defs[path]||defs.money;
  // BOOKED AF Brain: turn the diagnosis into a plan that fits the person, not just the problem.
+ if(path==='money'&&profile.pay==='hourly'){
+  d.h='MAKE THE HOURS PAY BETTER.';
+  d.i='You are paid by the hour, so a higher service ticket does not automatically mean a higher paycheck. Your plan starts with the pay rules that actually apply to you.';
+  d.weeks=[['CHECK A REAL PAY PERIOD','Use one recent payslip. Note your hourly rate, paid hours, tips, bonuses, and any unpaid work time.'],['FIND THE LEVER','Ask how raises, bonuses, premium services, education, or higher-paid responsibilities are decided in your workplace.'],['STOP DONATING TIME','Track work you are doing before clock-in, after clock-out, or between paid tasks. Follow your workplace rules and make sure paid time is recorded correctly.'],['CHECK THE NEXT PAYSLIP','After one agreed change, compare the next pay period with the first one. Keep what actually improved your pay or your hours.']];
+  d.watch='Hourly rate + paid hours + tips/bonus + unpaid work time.';
+ }
+ if(path==='clients'&&(a.holes==='none'||a.holes==='rare'))d.i='You want more of the right clients, but your schedule has very few open holes. Build demand to improve your client mix and future openings—not to quietly add another workday.';
+ if(path==='clients'&&(a.holes==='many'||a.holes==='some'))d.i='You have real room in the calendar. The job now is finding which client sources turn that open time into completed appointments.';
+ if(path==='time'){
+  if(a.weekly==='heavy')d.i='You are working five or more chair days. We need to find what those days actually produce before removing one.';
+  else if(a.weekly==='four')d.i='You are working four chair days. We are looking for a cleaner week without squeezing four days of chaos into three.';
+  else d.i='You already have a relatively light chair schedule. The first question is whether the problem is the number of days, the length of those days, or the work packed inside them.';
+ }
  if(path==='clients'){
   if(profile.marketing==='help'){d.i='You do not need to become an influencer. We are building a simple local plan using referrals, nearby businesses, Google, past clients, and real conversations.';d.weeks[0]=['BUILD THE NO-INFLUENCER CLIENT PLAN','List 10 past/warm contacts and 10 complementary local businesses. Those are your first audiences.'];}
   if(profile.marketing==='people')d.weeks[1]=['USE YOUR REAL SUPERPOWER','Have 10 real conversations this week with past clients, friends, neighbors, or happy clients who may know someone who needs you.'];
@@ -80,7 +92,7 @@ function deepRead(){
   if(profile.budget==='0')d.weeks[2]=['SPEND RELATIONSHIPS, NOT MONEY','Before paying for ads, use models, referrals, past clients, nearby businesses, community groups, Google, and other free local places people can find you.'];
   if(profile.budget==='300'||profile.budget==='500'||profile.budget==='more')d.weeks[2]=['TEST ONE LOCAL OFFER','Put a controlled slice of your budget behind one proven service/result for a tightly local audience. Track booked appointments, not clicks.'];
  }
- if(path==='rebook'&&rebook<50){d.i='The goal is not just “rebook more.” We need to find where clients are getting lost: consultation, next-visit plan, checkout, or follow-up. Then fix that step.';}
+ if(path==='rebook'&&rebook!==null&&rebook<50){d.i='The goal is not just “rebook more.” We need to find where clients are getting lost: consultation, next-visit plan, checkout, or follow-up. Then fix that step.';}
  if(path==='money'&&a.service==='extensions')d.weeks[0]=['PRICE THE WHOLE INSTALL','Separate hair cost, supplies, appointment time, and your labor. A giant extension ticket can still hide weak pay for the hours and cash tied up in it.'];
  if(path==='money'&&a.service==='color')d.weeks[0]=['PRICE TIME + PRODUCT TOGETHER','Enter the service price, total time, and color cost in Chair Math. BOOKED AF shows what that appointment pays you.'];
  if(path==='time'&&(profile.body==='other'||profile.body==='exit')){d.i='This is bigger than getting Friday off. We are starting to reduce how much of your future income requires your body to be physically behind the chair.';d.weeks[3]=['BUILD THE OFF-CHAIR BRIDGE','Choose one realistic way your experience could make money away from the chair. Pick one tiny thing you can test first.'];}
@@ -117,6 +129,12 @@ function deepRead(){
  else if(keep===null) money+=' You also do not know exactly what stays yours after work costs yet, so the plan starts by finding that number.';
  let target=path==='money'&&monthly!==null?'Making 10% more with the same schedule would be about '+dollar+Math.round(monthly*.10).toLocaleString()+'/month. This is a planning example, not an income promise.':path==='rebook'?'Your first goal: get more clients to book their next visit than you do now.':path==='clients'?'Your first goal: more of the right people asking to book and becoming paying clients.':path==='time'?'Your first step: use Chair Math to see what the day you want back pays you.':'Your first target: know what you keep, not just what you sell.';
  if(path==='clients'&&profile.urgency==='urgent')target='Your first goal: talk to real potential clients in the next 48 hours and make booking easy. Do that before spending a month “working on your brand.”';
+ else if(profile.urgency==='urgent'&&path==='rebook')target='Start now: use the next five client visits to prescribe the next appointment and track who reserves. We need real behavior this week, not a prettier rebooking script.';
+ else if(profile.urgency==='urgent'&&path==='money')target='Start now: pull one real pay period or appointment today and make one measurable pay change this week.';
+ else if(profile.urgency==='urgent'&&path==='control')target='Start now: rebuild one real month as money in, work costs, and money kept before making another business change.';
+ else if(profile.urgency==='urgent'&&path==='time')target='Start now: price the day or hours you want back before cutting them from the calendar.';
+ else if(profile.urgency==='push')target+=' Make the first change this week, then measure what actually happened.';
+ else if(profile.urgency==='steady')target+=' Keep the first change small enough to repeat for the full 30 days.';
  if((profile.body==='other'||profile.body==='exit')&&path==='time')target+=' Second target: begin one small off-chair income experiment so your body is not the only engine forever.';
  const missions=[];
  const mission=(week,title,tasks,score)=>missions.push({week,title,tasks,score});
@@ -200,7 +218,11 @@ const rescue=[];
  }
 const futurePlan=[];
  const addFuture=(label,title,body,move)=>futurePlan.push({label,title,body,move});
- if(a.cushion==='none'||a.cushion==='month')addFuture('FIRST','BUY YOURSELF BREATHING ROOM','Before Future You gets fancy, Current You needs enough cash that one slow month does not turn every business decision into an emergency.','Open a separate cushion account and send a fixed piece of every payout there until you have at least one month of essential personal + work expenses; then keep building.');
+ const futureGoalLabels={walkaway:'a Walk-Away Fund',home:'buying a home',retirement:'retirement',time:'working fewer days',travel:'travel without money stress',debt:'getting out of debt',income:'another income stream',car:'the car you actually want',choice:'more freedom and choices'};
+ const futureWhenLabels={'1':'within 1 year','3':'within 3 years','5':'within 5 years','10':'over the next 10+ years'};
+ if(a.futuregoal&&a.futurewhen)addFuture('YOUR GOAL','MAKE FUTURE YOU SPECIFIC','You chose '+futureGoalLabels[a.futuregoal]+' and said you want real progress '+futureWhenLabels[a.futurewhen]+'. A goal is easier to fund when it has a number or a milestone attached to it.','This month, write down what “real progress” means for that goal, what it would cost or require, and the first amount or action you can repeat without wrecking Current You.');
+ if(a.cushion==='unknown')addFuture('FIRST','FIND YOUR BREATHING ROOM NUMBER','You are not sure how long your savings would cover you. Before we call the cushion good or bad, find the real number.','Add up one month of essential personal bills plus work costs that continue if you cannot work. Then compare that with money you could actually use in an emergency.');
+ else if(a.cushion==='none'||a.cushion==='month')addFuture('FIRST','BUY YOURSELF BREATHING ROOM','Before Future You gets fancy, Current You needs enough cash that one slow month does not turn every business decision into an emergency.','Open a separate cushion account and send a fixed piece of every payout there until you have at least one month of essential personal + work expenses; then keep building.');
  else addFuture('PROTECT','KEEP THE CUSHION BORING','Emergency money is not investment money, vacation money, or “I deserve it” money. Its job is to make panic less expensive.','Keep your work/life cushion separate and decide the minimum balance you refuse to casually spend below.');
  if(a.vacation==='panic'||a.vacation==='save'||a.vacation==='never')addFuture('LIVE','PAY YOURSELF TO TAKE THE DAMN VACATION','Chair income often stops when you do. Time off becomes easier when the lost work income is funded before the trip exists.','Tell us when you want time off and what you usually take home in a week. BOOKED AF will show an amount to save each payday.');
  if(a.futuremoney==='none'||a.futuremoney==='sometimes')addFuture('FUTURE','STOP SAVING WHAT’S LEFT','There is rarely money “left” at the end of a stylist’s month. Future You needs to get paid before Current You finds another use for it.','Choose a small automatic percentage or fixed amount from every payout for long-term savings. Start survivably small; increase it when the business improves.');
