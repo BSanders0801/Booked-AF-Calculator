@@ -662,4 +662,8 @@ Bradley and his business partner worked together at a salon in Brooklyn. When th
 
 ## 21. BACKGROUND IS NOT AUTOMATICALLY BIO COPY - SEPTEMBER 25, 2026
 
-Bradley shares personal and career history so we have accurate context. Do not automatically add each new fact to the website. Keep the bio short, humble, and in his natural voice, with dry humor. Use only the details that add meaningful credibility. The public bio prioritizes nearly 30 years in hair, his exact education titles and nationwide in-salon teaching, shared salon ownership and the profitable sale of the Miami location, and honest lessons learned. Leave hometowns, lists of cities, salon names, and the full career chronology out unless specifically requested. Preserve those facts as background rather than continually expanding the bio.
+Bradley shares personal and career history so we have accurate context. Do not automatically add each new fact to the website. Keep the bio short, humble, and in his natural voice, with dry humor. Use only the details that add meaningful credibility. The public bio prioritizes nearly 30 years in hair, his exact education titles and nationwide in-salon teaching, and honest lessons learned. Leave hometowns, lists of cities, salon names, and the full career chronology out unless specifically requested. Preserve those facts as background rather than continually expanding the bio.
+
+## 22. PUBLIC BIO REFINEMENT - SEPTEMBER 25, 2026
+
+Keep the business-partner, Brooklyn/Miami salon-opening, and profitable-sale story out of the public bio. Bradley finds that paragraph uninteresting and prefers the shorter education-focused version with the dry humor: “Great hair. Questionable planning.” His ownership history remains background context, not a bio paragraph to restore without a specific request.
