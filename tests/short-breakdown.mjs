@@ -110,7 +110,7 @@ const sessionClients=complete({
 assert.match(build(sessionClients).top.title,/WORK COMING IN/);
 
 const primaryChoices=choices(qs.find(q=>q.id==='primarywork'),{worktype:['color','extensions','education']});
-assert.deepEqual(primaryChoices.map(x=>x[0]),['chair-color','chair-extensions','education','mix','notearning']);
+assert.deepEqual(Array.from(primaryChoices, x=>x[0]),['chair-color','chair-extensions','education','mix','notearning']);
 assert.match(primaryChoices[0][1],/Color clients/);
 const moveChoices=choices(qs.find(q=>q.id==='network'),{...answer('clients'),visibility:['referrals'],marketing:['social','paid'],full:'under25',returning:'notyet'});
 assert(moveChoices.some(x=>x[0]==='past'));
