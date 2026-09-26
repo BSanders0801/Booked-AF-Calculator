@@ -14,8 +14,15 @@ const complete=input=>{
   while(changed){
     changed=false;
     for(const q of visible(out)){
+      const list=choices(q,out), allowed=new Set(list.map(x=>x[0]));
+      if(q.multi&&Array.isArray(out[q.id])){
+        const filtered=out[q.id].filter(v=>allowed.has(v));
+        if(filtered.length!==out[q.id].length){if(filtered.length)out[q.id]=filtered;else delete out[q.id];changed=true;}
+      } else if(!q.multi&&out[q.id]!==undefined&&!allowed.has(out[q.id])){
+        delete out[q.id];changed=true;
+      }
       if(out[q.id]===undefined){
-        const list=choices(q,out); out[q.id]=q.multi?[list[0][0]]:list[0][0];
+        out[q.id]=q.multi?[list[0][0]]:list[0][0];
         changed=true;
       }
     }
