@@ -432,6 +432,71 @@ function recheck90EmailHTML(name) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(RECHECK_90_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF — Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(RECHECK_90_SUBJECT)}</h1><p>${greeting}</p><p>It’s been 90 days since you first checked in with BOOKED AF.</p><p>Three months is enough time to stop calling everything a fluke.</p><p>If you’re busier, making more, keeping more, working differently, or finally getting some breathing room, we want to see it.</p><p>And if the numbers haven’t moved the way you hoped, that matters too. It usually means we need a different plan—not that you need to work yourself into the ground.</p><p>Come back and run your Breakdown again.</p><p style="margin:30px 0"><a href="${RECHECK_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">SHOW ME MY 90-DAY NUMBERS →</a></p><p>Now we can look at the bigger picture.</p><p>Are you busier than you were three months ago? Are you making more? Keeping more? Working differently? Or are we still trying to fix the same thing?</p><p>Growth is funny like that.</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
 }
 
+
+const DAY7_SUBJECT = 'It’s been a week. Did we actually do the things?';
+const DAY7_URL = 'https://bookedandfabulous.com/#my-plan';
+
+function day7EmailCopy(name) {
+  const greeting = name ? 'Hey ' + name + ',' : 'Hey,';
+  return `${greeting}
+
+It’s been a week since your BOOKED AF Breakdown.
+
+So… did we actually do the things?
+
+You had three moves. You do not need a perfect week. I just want you to look at what happened.
+
+Did one thing work? Great. Keep it.
+Did one thing go nowhere? Also useful.
+Did you do none of it because life happened? Welcome to being human.
+
+Come back, open your plan, and finish what still matters.
+
+OPEN MY 7-DAY PLAN: ${DAY7_URL}
+
+This is a business plan, not a guilt trip.
+
+Bradley
+BOOKED AF
+Love your career. Keep your life.`;
+}
+
+function day7EmailHTML(name) {
+  const greeting = name ? 'Hey ' + esc(name) + ',' : 'Hey,';
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(DAY7_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF — Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(DAY7_SUBJECT)}</h1><p>${greeting}</p><p>It’s been a week since your BOOKED AF Breakdown.</p><p>So… did we actually do the things?</p><p>You had three moves. You do not need a perfect week. I just want you to look at what happened.</p><p>Did one thing work? Great. Keep it.<br>Did one thing go nowhere? Also useful.<br>Did you do none of it because life happened? Welcome to being human.</p><p>Come back, open your plan, and finish what still matters.</p><p style="margin:30px 0"><a href="${DAY7_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">OPEN MY 7-DAY PLAN →</a></p><p>This is a business plan, not a guilt trip.</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
+}
+
+const SURVEY_SUBJECT = 'You paid us. Did we earn it?';
+const SURVEY_URL_BASE = 'https://bookedandfabulous.com/?survey=paid&session_id=';
+
+function surveyEmailCopy(name, sessionId) {
+  const greeting = name ? 'Hey ' + name + ',' : 'Hey,';
+  const url = SURVEY_URL_BASE + encodeURIComponent(sessionId) + '#survey';
+  return `${greeting}
+
+You spent money with us. We’d like to know if we earned it.
+
+You’ve had a little time with BOOKED AF now, so tell us what you really think.
+
+What worked? What was confusing? What do you want more of? What should we do better?
+
+Six questions. About two minutes. We promise this isn’t the SAT.
+
+TELL US WHAT YOU THINK: ${url}
+
+The nice answers are lovely. The useful answers are even better.
+
+Bradley
+BOOKED AF
+Love your career. Keep your life.`;
+}
+
+function surveyEmailHTML(name, sessionId) {
+  const greeting = name ? 'Hey ' + esc(name) + ',' : 'Hey,';
+  const url = SURVEY_URL_BASE + encodeURIComponent(sessionId) + '#survey';
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(SURVEY_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background:#000;border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF — Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(SURVEY_SUBJECT)}</h1><p>${greeting}</p><p>You spent money with us. We’d like to know if we earned it.</p><p>You’ve had a little time with BOOKED AF now, so tell us what you really think.</p><p>What worked? What was confusing? What do you want more of? What should we do better?</p><p>Six questions. About two minutes. We promise this isn’t the SAT.</p><p style="margin:30px 0"><a href="${url}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">TELL US WHAT YOU THINK →</a></p><p>The nice answers are lovely. The useful answers are even better.</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you made a purchase from BOOKED AF.</td></tr></table></td></tr></table></body></html>`;
+}
+
 async function limitedJSON(request) {
   const reader = request.body?.getReader();
   if (!reader) throw new Error('body');
@@ -448,6 +513,44 @@ async function limitedJSON(request) {
   const bytes = new Uint8Array(total); let offset = 0;
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
   return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+
+async function queueLongFollowup(env, dueMs, idempotencyKey, kind, email, name) {
+  if (!env.FOLLOWUPS || typeof env.FOLLOWUPS.put !== 'function') return false;
+  const key = 'followup:' + String(dueMs).padStart(13,'0') + ':' + idempotencyKey;
+  await env.FOLLOWUPS.put(key, JSON.stringify({kind,email,name,idempotencyKey}));
+  return true;
+}
+
+async function processLongFollowups(env) {
+  if (!env.FOLLOWUPS || typeof env.FOLLOWUPS.list !== 'function' || !env.RESEND_API_KEY) return;
+  let cursor;
+  const now = Date.now();
+  do {
+    const page = await env.FOLLOWUPS.list({prefix:'followup:', cursor});
+    for (const item of page.keys || []) {
+      const due = Number(item.name.split(':')[1]);
+      if (!Number.isFinite(due) || due > now) continue;
+      const record = await env.FOLLOWUPS.get(item.name, {type:'json'});
+      if (!record) { await env.FOLLOWUPS.delete(item.name); continue; }
+      const is60 = record.kind === '60';
+      const is90 = record.kind === '90';
+      if (!is60 && !is90) { await env.FOLLOWUPS.delete(item.name); continue; }
+      const subject = is60 ? RECHECK_60_SUBJECT : RECHECK_90_SUBJECT;
+      const text = is60 ? recheck60EmailCopy(record.name) : recheck90EmailCopy(record.name);
+      const html = is60 ? recheck60EmailHTML(record.name) : recheck90EmailHTML(record.name);
+      const response = await fetch('https://api.resend.com/emails', {
+        method:'POST',
+        headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':record.idempotencyKey},
+        body:JSON.stringify({from:FROM,to:[record.email],bcc:record.email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],reply_to:'hello@bookedandfabulous.com',subject,text,html}),
+        signal:AbortSignal.timeout(12000)
+      });
+      if (response.ok) await env.FOLLOWUPS.delete(item.name);
+      else console.error('Long follow-up send returned status', response.status);
+    }
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
 }
 
 const deepDiveUrl = 'https://bookedandfabulous.com/?deepdive=paid';
@@ -506,7 +609,17 @@ BOOKED AF`;
     });
     if (!response.ok) return new Response('Email delivery failed', {status:502});
     const result = await response.json();
-    return result.id ? new Response('Sent') : new Response('Email delivery failed', {status:502});
+    if (!result.id) return new Response('Email delivery failed', {status:502});
+    try {
+      const surveyResponse = await fetch('https://api.resend.com/emails', {
+        method:'POST',
+        headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':'booked-survey-14d-'+session.id},
+        body:JSON.stringify({from:FROM,to:[email],reply_to:'hello@bookedandfabulous.com',subject:SURVEY_SUBJECT,text:surveyEmailCopy(firstName,session.id),html:surveyEmailHTML(firstName,session.id),scheduled_at:'in 14 days'}),
+        signal:AbortSignal.timeout(12000)
+      });
+      if (!surveyResponse.ok) console.error('14-day survey scheduling returned status', surveyResponse.status);
+    } catch { console.error('14-day survey scheduling failed'); }
+    return new Response('Sent');
   } catch { return new Response('Email delivery failed', {status:502}); }
 }
 
@@ -532,10 +645,78 @@ async function verifyCheckout(request, env) {
   } catch { return reply({paid:false,error:'Payment check is unavailable.'},503); }
 }
 
+
+async function surveyResponse(request, env) {
+  const origin = request.headers.get('Origin') || '';
+  const headers = {'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Vary':'Origin'};
+  if (ORIGINS.has(origin)) Object.assign(headers, {'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type'});
+  const reply = (data,status=200)=>new Response(JSON.stringify(data),{status,headers});
+  if (!ORIGINS.has(origin)) return reply({success:false},403);
+  if (request.method === 'OPTIONS') return new Response(null,{status:204,headers});
+  if (request.method !== 'POST') return reply({success:false},405);
+  if (!env.STRIPE_SECRET_KEY || !env.RESEND_API_KEY) return reply({success:false,error:'Survey is temporarily unavailable.'},503);
+  if (!request.headers.get('Content-Type')?.startsWith('application/json')) return reply({success:false},415);
+  let data;
+  try { data = await limitedJSON(request); } catch { return reply({success:false,error:'Please check your answers.'},400); }
+  const sessionId = String(data?.session_id || '');
+  const rating = Number(data?.rating);
+  const ease = String(data?.ease || '');
+  const useful = String(data?.useful || '');
+  const recommend = String(data?.recommend || '');
+  const more = Array.isArray(data?.more) ? [...new Set(data.more.map(String))] : [];
+  const comments = String(data?.comments || '').trim();
+  const allowedEase = new Set(['ridiculously easy','pretty easy','questions','throw my phone']);
+  const allowedUseful = new Set(['using it','not yet','a little','not really']);
+  const allowedRecommend = new Set(['absolutely','probably','maybe','not yet','no']);
+  const allowedMore = new Set(['getting more clients','keeping clients','charging and pricing','making more money','where my money goes','working fewer days','marketing without living on Instagram','scripts and templates','classes and education','something else']);
+  if (!/^cs_(?:live|test)_[A-Za-z0-9]+$/.test(sessionId) || !Number.isInteger(rating) || rating < 1 || rating > 5 || !allowedEase.has(ease) || !allowedUseful.has(useful) || !allowedRecommend.has(recommend) || !more.length || more.length > 10 || more.some(v=>!allowedMore.has(v)) || comments.length > 2000) return reply({success:false,error:'Please check your answers.'},400);
+  try {
+    const stripe = await fetch('https://api.stripe.com/v1/checkout/sessions/'+encodeURIComponent(sessionId), {headers:{Authorization:'Bearer '+env.STRIPE_SECRET_KEY},signal:AbortSignal.timeout(8000)});
+    if (!stripe.ok) return reply({success:false,error:'We could not verify this purchase.'},403);
+    const session = await stripe.json();
+    if (session.status !== 'complete' || session.payment_status !== 'paid' || session.currency !== 'usd') return reply({success:false,error:'We could not verify this purchase.'},403);
+    const customerEmail = session.customer_details?.email || session.customer_email || '';
+    const customerName = String(session.customer_details?.name || '').trim();
+    const text = `BOOKED AF CLIENT SURVEY
+
+Customer: ${customerName || 'Not provided'}
+Email: ${customerEmail || 'Not provided'}
+Purchase session: ${sessionId}
+
+1. HOW DID WE DO?
+${rating}/5
+
+2. WAS BOOKED AF EASY TO USE?
+${ease}
+
+3. DID YOU ACTUALLY GET SOMETHING USEFUL?
+${useful}
+
+4. WHAT DO YOU WANT MORE HELP WITH?
+${more.join(', ')}
+
+5. WOULD YOU TELL ANOTHER HAIRDRESSER ABOUT BOOKED AF?
+${recommend}
+
+6. YOUR TURN.
+${comments || 'No additional comments.'}`;
+    const send = await fetch('https://api.resend.com/emails', {
+      method:'POST',
+      headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':'booked-survey-response-'+sessionId},
+      body:JSON.stringify({from:FROM,to:['hello@bookedandfabulous.com'],reply_to:customerEmail || 'hello@bookedandfabulous.com',subject:`BOOKED AF survey — ${rating}/5 — ${customerName || customerEmail || 'customer'}`,text}),
+      signal:AbortSignal.timeout(12000)
+    });
+    if (!send.ok) return reply({success:false,error:'We could not save your survey. Please try again.'},502);
+    const sent = await send.json();
+    return sent.id ? reply({success:true}) : reply({success:false},502);
+  } catch { return reply({success:false,error:'We could not save your survey. Please try again.'},502); }
+}
+
 export default {
   async fetch(request, env) {
     if (new URL(request.url).pathname === '/stripe-webhook') return stripeWelcome(request, env);
     if (new URL(request.url).pathname === '/verify-checkout') return verifyCheckout(request, env);
+    if (new URL(request.url).pathname === '/survey') return surveyResponse(request, env);
     const origin = request.headers.get('Origin') || '';
     const headers = {'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Vary':'Origin'};
     if (ORIGINS.has(origin)) Object.assign(headers, {'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type'});
@@ -585,89 +766,43 @@ export default {
       }
       const sent = await response.json();
       if (!sent.id) return reply({success:false}, 502);
+      let followupScheduled7 = false;
       let followupScheduled = false;
+      let followupQueued60 = false;
+      let followupQueued90 = false;
       if (data.type === 'breakdown') {
+        try {
+          const followup7Response = await fetch('https://api.resend.com/emails', {
+            method:'POST',
+            headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key+'-checkin-7d'},
+            body:JSON.stringify({from:FROM,to:[email],bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],reply_to:'hello@bookedandfabulous.com',subject:DAY7_SUBJECT,text:day7EmailCopy(name),html:day7EmailHTML(name),scheduled_at:'in 7 days'}),
+            signal:AbortSignal.timeout(12000)
+          });
+          if (followup7Response.ok) {
+            const followup7 = await followup7Response.json();
+            followupScheduled7 = !!followup7.id;
+          } else console.error('7-day check-in scheduling returned status', followup7Response.status);
+        } catch { console.error('7-day check-in scheduling failed'); }
         try {
           const followupResponse = await fetch('https://api.resend.com/emails', {
             method:'POST',
             headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key+'-recheck-30d'},
-            body:JSON.stringify({
-              from:FROM,
-              to:[email],
-              bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],
-              reply_to:'hello@bookedandfabulous.com',
-              subject:RECHECK_SUBJECT,
-              text:recheckEmailCopy(name),
-              html:recheckEmailHTML(name),
-              scheduled_at:'in 30 days'
-            }),
+            body:JSON.stringify({from:FROM,to:[email],bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],reply_to:'hello@bookedandfabulous.com',subject:RECHECK_SUBJECT,text:recheckEmailCopy(name),html:recheckEmailHTML(name),scheduled_at:'in 30 days'}),
             signal:AbortSignal.timeout(12000)
           });
           if (followupResponse.ok) {
             const followup = await followupResponse.json();
             followupScheduled = !!followup.id;
-          } else {
-            console.error('30-day recheck scheduling returned status', followupResponse.status);
-          }
-        } catch (error) {
-          console.error('30-day recheck scheduling failed');
-        }
+          } else console.error('30-day recheck scheduling returned status', followupResponse.status);
+        } catch { console.error('30-day recheck scheduling failed'); }
+        const now = Date.now();
+        try { followupQueued60 = await queueLongFollowup(env, now + 60*24*60*60*1000, key+'-recheck-60d', '60', email, name); } catch { console.error('60-day recheck queue failed'); }
+        try { followupQueued90 = await queueLongFollowup(env, now + 90*24*60*60*1000, key+'-recheck-90d', '90', email, name); } catch { console.error('90-day recheck queue failed'); }
       }
-      let followupScheduled60 = false;
-      let followupScheduled90 = false;
-      if (data.type === 'breakdown') {
-        try {
-          const followup60Response = await fetch('https://api.resend.com/emails', {
-            method:'POST',
-            headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key+'-recheck-60d'},
-            body:JSON.stringify({
-              from:FROM,
-              to:[email],
-              bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],
-              reply_to:'hello@bookedandfabulous.com',
-              subject:RECHECK_60_SUBJECT,
-              text:recheck60EmailCopy(name),
-              html:recheck60EmailHTML(name),
-              scheduled_at:'in 60 days'
-            }),
-            signal:AbortSignal.timeout(12000)
-          });
-          if (followup60Response.ok) {
-            const followup60 = await followup60Response.json();
-            followupScheduled60 = !!followup60.id;
-          } else {
-            console.error('60-day recheck scheduling returned status', followup60Response.status);
-          }
-        } catch (error) {
-          console.error('60-day recheck scheduling failed');
-        }
-        try {
-          const followup90Response = await fetch('https://api.resend.com/emails', {
-            method:'POST',
-            headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key+'-recheck-90d'},
-            body:JSON.stringify({
-              from:FROM,
-              to:[email],
-              bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],
-              reply_to:'hello@bookedandfabulous.com',
-              subject:RECHECK_90_SUBJECT,
-              text:recheck90EmailCopy(name),
-              html:recheck90EmailHTML(name),
-              scheduled_at:'in 90 days'
-            }),
-            signal:AbortSignal.timeout(12000)
-          });
-          if (followup90Response.ok) {
-            const followup90 = await followup90Response.json();
-            followupScheduled90 = !!followup90.id;
-          } else {
-            console.error('90-day recheck scheduling returned status', followup90Response.status);
-          }
-        } catch (error) {
-          console.error('90-day recheck scheduling failed');
-        }
-      }
-      return reply({success:true,followupScheduled,followupScheduled60,followupScheduled90});
+      return reply({success:true,followupScheduled7,followupScheduled,followupQueued60,followupQueued90});
     } catch { return reply({success:false,error:'Email could not be sent. Please try again shortly.'}, 502); }
+  },
+  async scheduled(_event, env, ctx) {
+    ctx.waitUntil(processLongFollowups(env));
   }
 };
