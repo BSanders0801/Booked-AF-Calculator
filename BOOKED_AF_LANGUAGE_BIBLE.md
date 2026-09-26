@@ -659,3 +659,7 @@ Bradley provided in-salon education to salons across the country. Emphasize this
 ## 20. HIPCAT OWNERSHIP STORY - SEPTEMBER 25, 2026
 
 Bradley and his business partner worked together at a salon in Brooklyn. When that salon closed, they opened a small salon called HipCat. They later expanded to another location in Miami, which they eventually sold for a profit. Preserve the shared ownership and credit his business partner. Do not infer a personal relationship or name the partner. Keep the former employer's name out of public copy, in line with Bradley's existing preference.
+
+## 21. BACKGROUND IS NOT AUTOMATICALLY BIO COPY - SEPTEMBER 25, 2026
+
+Bradley shares personal and career history so we have accurate context. Do not automatically add each new fact to the website. Keep the bio short, humble, and in his natural voice, with dry humor. Use only the details that add meaningful credibility. The public bio prioritizes nearly 30 years in hair, his exact education titles and nationwide in-salon teaching, shared salon ownership and the profitable sale of the Miami location, and honest lessons learned. Leave hometowns, lists of cities, salon names, and the full career chronology out unless specifically requested. Preserve those facts as background rather than continually expanding the bio.
