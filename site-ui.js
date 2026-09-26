@@ -222,7 +222,7 @@
     restoringHistory = true; applyRoute(location.hash); render(); restoringHistory = false;
   });
   restore();
-  if (deepEntry !== 'paid') {
+  if (next30Entry !== 'paid') {
     if (location.hash) applyRoute(location.hash);
     else if (state.view === 'intro') state.view = 'intro';
   }
