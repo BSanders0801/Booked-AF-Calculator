@@ -17,10 +17,12 @@ for(const [goal,count] of Object.entries({clients:8,return:6,money:8,keep:6,time
 }
 assert(!('savings' in validate({...answer('clients'),savings:'solid'})));
 assert.throws(()=>validate({...answer('clients'),days:'999'}));
-assert.match(build({...answer('money'),paymodel:'hourly'}).plan.steps[0].body,/payslip/);
-assert.equal(visible({...answer('money'),paymodel:'hourly'}).length,6);
-assert(!('servicehours' in validate({...answer('money'),paymodel:'hourly'})));
-assert(!('workcosts' in validate({...answer('money'),paymodel:'hourly'})));
+assert.match(build({...answer('money'),paymodel:'hourly',hourlytime:'sometimes'}).plan.steps[0].body,/payslip/);
+assert.equal(visible({...answer('money'),paymodel:'hourly',hourlytime:'sometimes'}).length,5);
+assert(!('servicehours' in validate({...answer('money'),paymodel:'hourly',hourlytime:'sometimes'})));
+assert(!('workcosts' in validate({...answer('money'),paymodel:'hourly',hourlytime:'sometimes'})));
+assert(!('spend' in validate({...answer('money'),paymodel:'hourly',hourlytime:'sometimes'})));
+assert(!('costs' in validate({...answer('money'),paymodel:'hourly',hourlytime:'sometimes'})));
 assert.equal(build({...answer('clients'),days:'4',full:'full',spend:'150'}).stage,'BOOKED AF');
 const multiClients={...answer('clients'),visibility:['social','referrals'],marketing:['social','local']};
 assert.deepEqual(Array.from(validate(multiClients).visibility),['social','referrals']);
