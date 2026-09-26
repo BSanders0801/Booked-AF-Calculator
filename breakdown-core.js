@@ -2,7 +2,8 @@
 const SHORT_SCHEMA = 'short-v4';
 const shortQuestions = [
  {id:'worktype',multi:true,note:'Pick everything that sounds like your actual career. One lane, five lanes, no judgment.',title:'WHAT’S YOUR HAIR GAME?',choices:[['color','Color is my thing.'],['cut','Cutting + styling.'],['extensions','Extensions.'],['session','Session / editorial / commercial.'],['events','Bridal + events / on-location.'],['education','Education + beauty brand work.'],['owner','I own or manage a salon.'],['inactive','I’m trained or licensed, but I’m not taking clients right now.'],['other','Something else.']]},
- {id:'primarywork',title:'OKAY, BUT WHAT PAYS THE BILLS?',note:'Pick the lane bringing in the most money right now.',choices:a=>{
+ {id:'leadershiprole',when:a=>Array.isArray(a.worktype)&&a.worktype.includes('owner'),title:'ARE YOU THE OWNER OR THE MANAGER?',note:'Those are two very different jobs, so BOOKED AF treats them differently.',choices:[['owner','I own the salon.'],['manager','I manage the salon, but I don’t own it.']]},
+ {id:'primarywork',when:a=>{const w=Array.isArray(a.worktype)?a.worktype:[];return !(w.length===1&&w[0]==='owner');},title:'OKAY, BUT WHAT PAYS THE BILLS?',note:'Pick the lane bringing in the most money right now.',choices:a=>{
    const w=new Set(Array.isArray(a.worktype)?a.worktype:[]);
    const out=[];
    if(w.has('color'))out.push(['chair-color','Color clients.']);
@@ -11,7 +12,7 @@ const shortQuestions = [
    if(w.has('session'))out.push(['session','Session / editorial / commercial jobs.']);
    if(w.has('events'))out.push(['events','Bridal + event / on-location work.']);
    if(w.has('education'))out.push(['education','Education + beauty brand work.']);
-   if(w.has('owner'))out.push(['management','Owning or managing a salon.']);
+   if(w.has('owner'))out.push(['management',a.leadershiprole==='manager'?'Managing a salon.':'Owning a salon.']);
    if(w.has('other'))out.push(['other','Something else.']);
    if(out.length>1)out.push(['mix','It’s a mix. No single lane wins.']);
    out.push(['notearning','Hair isn’t paying me right now.']);
@@ -23,7 +24,8 @@ const shortQuestions = [
    if(lane==='session')return [['clients','I need more paid jobs coming in.'],['money','I want the jobs I already do to pay better.'],['return','I want the right clients and teams to hire me again.'],['keep','Money comes in. Why does so little stay mine?'],['time','I love the work. I’d also like my life back.'],['stable','I need a real safety net.']];
    if(lane==='events')return [['clients','I need more paid bookings.'],['money','I want each booking to pay better.'],['return','I want more referrals and repeat clients.'],['keep','Money comes in. Why does so little stay mine?'],['time','I want the work without losing every weekend.'],['stable','I need a real safety net.']];
    if(lane==='education')return [['clients','I need more paid education or brand work.'],['money','I want the work I do to pay better.'],['return','I want brands and teams to bring me back.'],['keep','Money comes in. Why does so little stay mine?'],['time','I want the work without giving it my whole life.'],['stable','I need a real safety net.']];
-   if(lane==='management')return [['clients','I need more business coming through the door.'],['money','I want the business to make more without eating more of my time.'],['return','I want more clients to come back.'],['keep','The business makes money. Where is it all going?'],['time','I need the business to stop owning my life.'],['stable','I need a real safety net.']];
+   if(lane==='owner')return [['clients','I need more business coming through the door.'],['money','I want the business to make more without eating more of my time.'],['return','I want more clients to come back.'],['keep','The business makes money. Where is it all going?'],['time','I need the business to stop owning my life.'],['stable','I need a real safety net.']];
+   if(lane==='manager')return [['clients','I need more business coming through the door.'],['money','I want my role to pay better for what I’m responsible for.'],['return','I want more clients to come back.'],['keep','I need a clearer grip on the numbers I’m responsible for.'],['time','I need this job to stop following me home.'],['stable','I need a real safety net.']];
    return [['clients','I need more paid work coming in.'],['money','I want to make more without working more.'],['return','I want more of the right people to hire me again.'],['keep','Money comes in. Where is it all going?'],['time','I love the work. I’d also like a life.'],['stable','I need a real safety net.']];
  }}, {id:'full',when:a=>shortLane(a)==='chair',title:'HOW FULL IS YOUR BOOK, REALLY?',choices:[['notyet','Basically empty. I’m just getting started.'],['under25','A few clients. Plenty of room.'],['half','About half full.'],['threequarters','Pretty busy, but I’ve got openings.'],['full','Packed. I’m basically booked.']]},
  {id:'days',when:a=>shortLane(a)==='chair',title:'HOW MANY DAYS A WEEK ARE YOU TAKING CLIENTS?',note:'Count the days you’re available for appointments—even if they’re not full yet.',choices:[['0','I’m not taking appointments yet'],['1','1 day'],['2','2 days'],['3','3 days'],['4','4 days'],['5','5 days'],['6','6-7 days']]},
@@ -74,6 +76,9 @@ const shortQuestions = [
 ];
 function shortLane(a) {
  const p=String(a&&a.primarywork||'');
+ const worktype=Array.isArray(a&&a.worktype)?a.worktype:[];
+ const leadership=String(a&&a.leadershiprole||'');
+ if(p==='management'||(!p&&worktype.length===1&&worktype[0]==='owner')) return leadership==='manager'?'manager':'owner';
  if(p.startsWith('chair-')) return 'chair';
  if(p==='notearning'||p==='mix'||p==='other'||!p) return p||'other';
  return p;
@@ -91,7 +96,7 @@ function chairSnapshot(a) {
  return 'Most of your hair income comes from '+chairPrimaryLabel(a)+'. You have '+dayText+' available each week. '+load;
 }
 function outsideSnapshot(a) {
- const role=({session:'session / editorial / commercial work',events:'bridal + event work',education:'education + beauty brand work',management:'salon ownership or management',mix:'a mix of hair work',other:'other hair work',notearning:'hair work that is not paying you right now'})[shortLane(a)]||'hair work';
+ const role=({session:'session / editorial / commercial work',events:'bridal + event work',education:'education + beauty brand work',owner:'salon ownership',manager:'salon management',management:'salon leadership',mix:'a mix of hair work',other:'other hair work',notearning:'hair work that is not paying you right now'})[shortLane(a)]||'hair work';
  const load=({notyet:'You’re not booking paid work right now.',light:'You have a lot of open time.',half:'You’re working about half as much as you want.',busy:'You’re busy, with some room.',full:'You’re as busy as you want to be or close to it.'})[a.workload]||'';
  return 'Most of your hair income comes from '+role+'. '+load;
 }
@@ -135,7 +140,7 @@ function buildOutsideChairBreakdown(a) {
  const room=['light','half'].includes(a.workload), packed=a.workload==='full';
  const steps=[], reasons=[];
  const step=(title,body)=>steps.push({id:'short-'+a.goal+'-'+steps.length,day:['1','2-3','4-6'][steps.length],title,body});
- const role=({session:'session, editorial, or commercial work',events:'bridal or event work',education:'education or brand work',management:'salon ownership or management',mix:'a mix of different kinds of hair work',notearning:'hair work that is not currently bringing in income'})[a.primarywork]||'hair work';
+ const role=({session:'session, editorial, or commercial work',events:'bridal or event work',education:'education or brand work',owner:'salon ownership',manager:'salon management',management:'salon leadership',mix:'a mix of different kinds of hair work',notearning:'hair work that is not currently bringing in income'})[shortLane(a)]||'hair work';
  let id,title,summary,check,rule,nextTool='daymath';
 
  if(a.goal==='clients') {
