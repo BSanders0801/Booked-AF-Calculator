@@ -188,6 +188,7 @@ function buildShortBreakdown(input) {
 function shortEmailCopy(r,name) {
  return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR BOOK RIGHT NOW\n'+r.stage+'\n\nFIX THIS FIRST\n'+r.top.title+'\n'+r.intro+'\n\nDO THESE 3 THINGS\n'+r.plan.steps.map((s,i)=>(i+1)+'. '+s.title+'\n'+s.body).join('\n\n')+'\n\nWATCH THIS\n'+r.plan.checkTitle+'\n'+r.plan.check+'\n'+r.plan.rule+'\n\nThis is a starting point based on your answers. Exact pay and time-off decisions need your actual numbers.\n\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com';
 }
+
 // END SHARED BREAKDOWN CORE
 // BOOKED AF email service. No API keys belong in this file.
 const questions=[
