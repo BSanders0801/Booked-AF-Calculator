@@ -150,7 +150,7 @@ function buildShortBreakdown(input) {
   fix:{title,body:intro,first:steps[0].body,then:steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:rule},plan,nextTool};
 }
 function shortEmailCopy(r,name) {
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR STAGE: '+r.stage+'\n\nYOUR FIRST PRIORITY\n'+r.top.title+'\n\nWHY THIS FIRST\n'+r.intro+'\n\nYOUR THREE MOVES\n'+r.plan.steps.map((s,i)=>(i+1)+'. '+s.title+'\n'+s.body).join('\n\n')+'\n\nAFTER A WEEK\n'+r.plan.check+'\n\nKEEP THIS IN MIND\n'+r.plan.rule+'\n\nThis is a starting point based on your answers. Exact pay and time-off decisions need your actual numbers.\n\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com';
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR STAGE: '+r.stage+'\n\nYOUR FIRST PRIORITY\n'+r.top.title+'\n\nWHY THIS FIRST\n'+r.intro+'\n\nYOUR THREE MOVES\n'+r.plan.steps.map((s,i)=>(i+1)+'. '+s.title+'\n'+s.body).join('\n\n')+'\n\nAFTER A WEEK\n'+r.plan.check+'\n\nKEEP THIS IN MIND\n'+r.plan.rule+'\n\nThis is a starting point based on your answers. Exact pay and time-off decisions need your actual numbers.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com';
 }
 // END SHARED BREAKDOWN CORE
 // BOOKED AF email service. No API keys belong in this file.
@@ -303,7 +303,7 @@ if(r.schema===SHORT_SCHEMA)return shortEmailCopy(r,name);
  return "THE BOOKED AF BREAKDOWN\n\n"+(name?name+", here’s":"Here’s")+" your Breakdown.\n\nYOUR STAGE: "+r.stage+"\n\n"+r.intro+
  "\n\nWHAT I’D FIX FIRST\n"+r.fix.title+"\n"+r.fix.body+"\n\nDO THIS FIRST\n"+r.fix.first+"\n\nTHEN THIS\n"+r.fix.then+
  "\n\nDON’T DO THIS YET\n"+r.fix.dontTitle+"\n"+r.fix.dont+money+week+
- "\n\nThis is a starting point based on your answers, not a promise of income.\n\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com";
+ "\n\nThis is a starting point based on your answers, not a promise of income.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com";
 }
 
 const ORIGINS = new Set(['https://bookedandfabulous.com', 'https://www.bookedandfabulous.com']);
@@ -334,6 +334,34 @@ function emailHTML(title, text) {
       : `<p style="margin:0 0 18px;line-height:1.7">${lines.map(esc).join('<br>')}</p>`;
   }).join('');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(title)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF — Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:24px"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(title)}</h1>${paragraphs}<p style="margin-top:30px"><a href="https://bookedandfabulous.com" style="color:#d00069;font-weight:bold">BACK TO BOOKED AF →</a></p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br>Love your career. Keep your life.<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email after submitting a request on BOOKED AF.</td></tr></table></td></tr></table></body></html>`;
+}
+
+
+const RECHECK_SUBJECT = '30 days later. Are we rich yet?';
+const RECHECK_URL = 'https://bookedandfabulous.com/#breakdown';
+
+function recheckEmailCopy(name) {
+  const greeting = name ? 'Hey ' + name + ',' : 'Hey,';
+  return `${greeting}
+
+It’s been 30 days since you did your BOOKED AF Breakdown, so it’s time to see what changed.
+
+Maybe you got busier. Maybe you raised a price. Maybe your rebooking got better. Maybe absolutely nothing changed. That’s okay too. We just need to know what’s actually happening.
+
+Come back, plug in your new numbers, and let’s see where you are now compared to 30 days ago.
+
+RECHECK MY NUMBERS: ${RECHECK_URL}
+
+This isn’t a report card. Nobody’s getting graded. We’re just figuring out what’s working, what isn’t, and what you should focus on next.
+
+Bradley
+BOOKED AF
+Love your career. Keep your life.`;
+}
+
+function recheckEmailHTML(name) {
+  const greeting = name ? 'Hey ' + esc(name) + ',' : 'Hey,';
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(RECHECK_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF — Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(RECHECK_SUBJECT)}</h1><p>${greeting}</p><p>It’s been 30 days since you did your BOOKED AF Breakdown, so it’s time to see what changed.</p><p>Maybe you got busier. Maybe you raised a price. Maybe your rebooking got better. Maybe absolutely nothing changed. That’s okay too. We just need to know what’s actually happening.</p><p>Come back, plug in your new numbers, and let’s see where you are now compared to 30 days ago.</p><p style="margin:30px 0"><a href="${RECHECK_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">RECHECK MY NUMBERS →</a></p><p>This isn’t a report card. Nobody’s getting graded. We’re just figuring out what’s working, what isn’t, and what you should focus on next.</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
 }
 
 async function limitedJSON(request) {
@@ -475,7 +503,7 @@ export default {
       const name = data.name.trim();
       const result = data.schema===SHORT_SCHEMA?buildShortBreakdown(answers):read(answers);
       const title = data.type === 'breakdown' ? 'Your BOOKED AF Breakdown' : 'You’re on the founding list';
-      const text = data.type === 'breakdown' ? emailCopy(result, name) : `${name ? name + ', you’re' : 'You’re'} on the BOOKED AF Deep Dive founding list.\n\nWe’ve received your request for the $49 founding offer. No payment has been taken. We’ll contact you when checkout is ready.\n\nBOOKED AF\nLove your career. Keep your life.`;
+      const text = data.type === 'breakdown' ? emailCopy(result, name) : `${name ? name + ', you’re' : 'You’re'} on the BOOKED AF Deep Dive founding list.\n\nWe’ve received your request for the $49 founding offer. No payment has been taken. We’ll contact you when checkout is ready.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.`;
       const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify([email,name,data.type,data.schema||'legacy',answers])));
       const key = 'booked-v3-short-' + [...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
       const response = await fetch('https://api.resend.com/emails', {
@@ -489,7 +517,35 @@ export default {
       }
       const sent = await response.json();
       if (!sent.id) return reply({success:false}, 502);
-      return reply({success:true});
+      let followupScheduled = false;
+      if (data.type === 'breakdown') {
+        try {
+          const followupResponse = await fetch('https://api.resend.com/emails', {
+            method:'POST',
+            headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key+'-recheck-30d'},
+            body:JSON.stringify({
+              from:FROM,
+              to:[email],
+              bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],
+              reply_to:'hello@bookedandfabulous.com',
+              subject:RECHECK_SUBJECT,
+              text:recheckEmailCopy(name),
+              html:recheckEmailHTML(name),
+              scheduled_at:'in 30 days'
+            }),
+            signal:AbortSignal.timeout(12000)
+          });
+          if (followupResponse.ok) {
+            const followup = await followupResponse.json();
+            followupScheduled = !!followup.id;
+          } else {
+            console.error('30-day recheck scheduling returned status', followupResponse.status);
+          }
+        } catch (error) {
+          console.error('30-day recheck scheduling failed');
+        }
+      }
+      return reply({success:true,followupScheduled});
     } catch { return reply({success:false,error:'Email could not be sent. Please try again shortly.'}, 502); }
   }
 };
