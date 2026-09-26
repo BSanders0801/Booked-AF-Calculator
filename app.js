@@ -380,7 +380,7 @@ if(r.schema===SHORT_SCHEMA)return shortEmailCopy(r,name);
 // Lead requests stay in the background. Never navigate to the form provider.
 // Send validated form details to our email Worker after Turnstile verification.
 const emailServiceUrl = 'https://booked-af-email.wild-recipe-42df.workers.dev';
-const deepDiveCheckoutUrl = 'https://buy.stripe.com/4gM00k6Jb4t87xIfwxaAw00';
+const deepDiveCheckoutUrl = 'https://buy.stripe.com/6oU9AU5F72l05pA4RTaAw01';
 const checkoutVerifyUrl = emailServiceUrl + '/verify-checkout';
 const shortReady=fetch(emailServiceUrl,{signal:AbortSignal.timeout(5000),credentials:'omit'}).then(r=>r.ok?r.json():{}).then(r=>r.ready===true&&Array.isArray(r.schemas)&&r.schemas.includes(SHORT_SCHEMA)).catch(()=>false);
 function restoreSchema(schema){state.schema=schema===SHORT_SCHEMA?SHORT_SCHEMA:'legacy';questions=state.schema===SHORT_SCHEMA?shortQuestions:legacyQuestions;}
