@@ -1,5 +1,5 @@
 // Shared by the website and the self-contained email Worker.
-const SHORT_SCHEMA = 'short-v4';
+const SHORT_SCHEMA = 'short-v5';
 const shortQuestions = [
  {id:'worktype',multi:true,note:'Pick everything that sounds like your actual career. One lane, five lanes, no judgment.',title:'WHAT’S YOUR HAIR GAME?',choices:[['color','Color is my thing.'],['cut','Cutting + styling.'],['extensions','Extensions.'],['session','Session / editorial / commercial.'],['events','Bridal + events / on-location.'],['education','Education + beauty brand work.'],['owner','I own or manage a salon.'],['inactive','I’m trained or licensed, but I’m not taking clients right now.'],['other','Something else.']]},
  {id:'leadershiprole',when:a=>Array.isArray(a.worktype)&&a.worktype.includes('owner'),title:'ARE YOU THE OWNER OR THE MANAGER?',note:'Those are two very different jobs, so BOOKED AF treats them differently.',choices:[['owner','I own the salon.'],['manager','I manage the salon, but I don’t own it.']]},
