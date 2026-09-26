@@ -639,3 +639,11 @@ It should leave them thinking:
 - Do not start a sentence with “Or.”
 - Require email before the personalized Breakdown opens. A successful submission is required; a typed address or a URL parameter is not proof of submission.
 - Explain how email addresses and answers are used. A request for a Breakdown is not automatic consent to a promotional mailing list.
+
+## 18. BRADLEY'S EDUCATION CREDENTIALS - SEPTEMBER 25, 2026
+
+Use these exact roles:
+- Artistic Technical Trainer for L’Oréal Professional.
+- National Educator with John Paul Mitchell Systems.
+
+Bradley provided in-salon education to salons across the country. Emphasize this hands-on education work. Do not describe his L’Oréal role as National Educator or replace either title with platform artist.
