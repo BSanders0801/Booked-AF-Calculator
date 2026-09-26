@@ -78,6 +78,12 @@ function deepRead(){
   d.weeks=[['CHECK A REAL PAY PERIOD','Use one recent payslip. Note your hourly rate, paid hours, tips, bonuses, and any unpaid work time.'],['FIND THE LEVER','Ask how raises, bonuses, premium services, education, or higher-paid responsibilities are decided in your workplace.'],['STOP DONATING TIME','Track work you are doing before clock-in, after clock-out, or between paid tasks. Follow your workplace rules and make sure paid time is recorded correctly.'],['CHECK THE NEXT PAYSLIP','After one agreed change, compare the next pay period with the first one. Keep what actually improved your pay or your hours.']];
   d.watch='Hourly rate + paid hours + tips/bonus + unpaid work time.';
  }
+ if(path==='control'&&profile.pay==='hourly'){
+  d.h='KNOW WHAT YOUR JOB ACTUALLY PAYS.';
+  d.i='For an hourly employee, the useful numbers are not salon sales and product cost. Start with your hourly rate, paid hours, tips or bonuses, and any required work happening outside paid time.';
+  d.weeks=[['PULL ONE PAYSLIP','Write down hourly rate, paid hours, tips, bonuses, and deductions you need to understand.'],['COMPARE PAID TIME WITH WORK TIME','For one week, note when required work actually starts and ends. Compare that with the hours that were paid.'],['ASK HOW PAY GROWS','Find out how raises, bonuses, higher-paid duties, or schedule changes are decided. Do not guess what the employer rewards.'],['CHECK THE NEXT PAY PERIOD','Run the same numbers again and keep the change only if pay, paid hours, or unpaid work time improved.']];
+  d.watch='Hourly rate + paid hours + tips/bonus + required unpaid work time.';
+ }
  if(path==='clients'&&(a.holes==='none'||a.holes==='rare'))d.i='You want more of the right clients, but your schedule has very few open holes. Build demand to improve your client mix and future openings—not to quietly add another workday.';
  if(path==='clients'&&(a.holes==='many'||a.holes==='some'))d.i='You have real room in the calendar. The job now is finding which client sources turn that open time into completed appointments.';
  if(path==='time'){
@@ -116,6 +122,10 @@ function deepRead(){
   addRoad('NOW','FIND THE NUMBER YOU NEED TO REPLACE','You cannot safely remove time until you know what that time produces.','Use Chair Math for the day you want back. It shows the amount to replace before you take that day off.');
   addRoad('NEXT','COMPRESS VALUE, NOT CHAOS','The goal is more value per remaining hour, not five days of exhaustion squeezed into four.','Remove dead gaps, overruns, and low-value prime-time work before reducing days.');
   addRoad('LATER','REDUCE DEPENDENCE ON YOUR BODY','A sustainable career eventually needs options beyond adding chair hours.','Test one realistic way to make money away from the chair without risking the income you already have.');
+ } else if(path==='control'&&profile.pay==='hourly'){
+  addRoad('NOW','KNOW THE PAYSLIP','Salon sales are not your paycheck when you are hourly.','Use one real pay period: hourly rate, paid hours, tips, bonuses, and any required work time that was not paid.');
+  addRoad('NEXT','FIND THE PAY LEVER','More service sales only help you if your compensation plan rewards them.','Ask exactly how raises, bonuses, premium duties, or better-paid responsibilities work in your workplace.');
+  addRoad('LATER','GIVE BETTER PAY A JOB','A stronger paycheck should improve your life, not just disappear.','Pre-assign part of future pay increases to cushion, time off, or Future You.');
  } else {
   addRoad('NOW','KNOW WHAT ACTUALLY STAYS YOURS','Sales are not useful if you cannot see what survives the cost of working.','Rebuild one normal month as money in, work costs, and money kept.');
   addRoad('NEXT','FIX THE BIGGEST CONTROLLABLE LEAK','Tiny cuts feel productive while large leaks keep draining the business.','Tell BOOKED AF your work costs. We’ll show the biggest one you can change.');
@@ -149,6 +159,11 @@ function deepRead(){
   mission(2,'FIX THE LEAK',['Review the objections from week 1.','Change the conversation or timing where the leak occurs.','Personally follow up with clients who should be due but are not booked.'],'Next appointments booked + past clients who came back');
   mission(3,'MAKE MAINTENANCE OBVIOUS',['Create simple maintenance expectations for your top services.','Use them in consultation and checkout.','Test one follow-up message for unbooked clients.'],'Clients who understand when/why to return');
   mission(4,'TURN RETURNING CLIENTS INTO GROWTH',['Measure completed second appointments.','Ask happy returning clients if they know one person who would love your work.','Keep doing the thing that got more clients to come back.'],'Appointment #2 completed + referrals');
+ } else if((path==='money'||path==='control')&&profile.pay==='hourly'){
+  mission(1,'KNOW THE PAYSLIP',['Pull one normal payslip.','Write down hourly rate, paid hours, tips, bonuses, and any work time you think may be missing.','Do not use salon service sales as your paycheck number.'],'Hourly rate • paid hours • tips/bonus • unpaid work time');
+  mission(2,'FIND WHAT CAN CHANGE',['Ask how raises, bonuses, premium duties, and schedule changes are decided.','Choose one real lever that exists in your workplace.','Write down what would have to happen for that lever to change.'],'One real pay lever identified');
+  mission(3,'TEST ONE CHANGE',['Make the agreed change.','Track paid hours and any off-the-clock work.','Do not assume a busier chair automatically improved your pay.'],'Pay or paid-time change');
+  mission(4,'CHECK THE NEXT PAY PERIOD',['Compare the next payslip with week 1.','Keep the change only if it improved pay, paid hours, or unpaid work time.','Give any improvement a job before it disappears.'],'Actual paycheck improvement');
  } else if(path==='money'||path==='control'){
   mission(1,'FIND WHERE THE MONEY LIES',['Audit one normal month or 10 recent appointments.','Separate money in, work costs, and what stayed yours.','Enter your main work costs. BOOKED AF shows the largest one you can change.'],'Money in → work cost → money kept');
   mission(2,'FIX ONE EXPENSIVE THING',['Change one weak service, cost, discount, timing, or pricing problem.','Do not change the entire menu.','Tell us what changed. BOOKED AF shows what it could mean over a month.'],'Money kept per workday');
@@ -238,6 +253,9 @@ const upgrade=[];
  } else if(path==='rebook'){
   addUpgrade('MONTH 2','MAKE RETURNING NORMAL','Once the conversation works, consistency matters more than cleverness.','Use the same next-visit process with every appropriate client and measure completed second appointments, not just reservations.');
   addUpgrade('MONTH 3','TURN LOYALTY INTO DEMAND','A returning client already trusts you. That relationship can create the next great client without turning checkout into a sales pitch.','Ask your strongest returning clients for one specific introduction and track which referrals become good-fit repeat clients.');
+ } else if((path==='money'||path==='control')&&profile.pay==='hourly'){
+  addUpgrade('MONTH 2','PROVE THE PAY CHANGE STICKS','One better paycheck is useful. A repeatable improvement is better.','Compare another pay period and make sure the gain came from a real rate, bonus, paid-hour, or responsibility change.');
+  addUpgrade('MONTH 3','TURN BETTER PAY INTO BETTER LIFE','A stronger paycheck should create more options, not just more spending.','Pre-assign part of the improvement to cushion, time off, Future You, or buying back time.');
  } else if(path==='money'||path==='control'){
   addUpgrade('MONTH 2','FIX THE SECOND-WORST PIECE OF MATH','Do not celebrate one profitable change by immediately filling the calendar with more weak work.','Keep the first improvement, then audit the next service, cost, or schedule block with the weakest return.');
   addUpgrade('MONTH 3','TURN BETTER MONEY INTO BETTER LIFE','More money left after work costs only matters if some of it makes your life better.','Pre-assign part of the improvement to cushion, time off, Future You, or buying back time before lifestyle spending absorbs all of it.');
