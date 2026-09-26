@@ -161,7 +161,7 @@
       const current = a.dataset.nav === state.view || (a.dataset.nav === 'resume' && ['result','plan'].includes(state.view));
       if (current) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
-    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Deep Dive - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Sample Plan',survey:'Client Survey'};
+    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Your Next 30 - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Sample Plan',survey:'Client Survey'};
     document.title = 'BOOKED AF | ' + (titles[state.view] || 'My next move');
   }
   render = function () {
