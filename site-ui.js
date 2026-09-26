@@ -3,7 +3,7 @@
   'use strict';
   const key = 'booked-af-free-progress-v1';
   const maxAge = 30 * 24 * 60 * 60 * 1000;
-  const publicRoutes = {intro:'home', paid:'deep-dive', about:'about', contact:'contact', privacy:'privacy', sample:'sample', survey:'survey'};
+  const publicRoutes = {intro:'home', paid:'deep-dive', about:'about', contact:'contact', privacy:'privacy', sample:'sample', next30sample:'next-30-sample', survey:'survey'};
   const freeViews = ['question','teaser','result','plan','daymath','email'];
   const preview = window.BOOKED_AF_REVIEW === true || !['bookedandfabulous.com','www.bookedandfabulous.com'].includes(location.hostname);
   let lastFreeView = 'question';
@@ -161,7 +161,7 @@
       const current = a.dataset.nav === state.view || (a.dataset.nav === 'resume' && ['result','plan'].includes(state.view));
       if (current) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
-    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Your Next 30 - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Sample Plan',survey:'Client Survey'};
+    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Your Next 30 - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Free Breakdown Sample',next30sample:'Your Next 30 Sample',survey:'Client Survey'};
     document.title = 'BOOKED AF | ' + (titles[state.view] || 'My next move');
   }
   render = function () {
