@@ -43,7 +43,7 @@ vm.runInContext(workerSource.replace('export default','globalThis.worker ='),wc)
 const env={RESEND_API_KEY:'mock',TURNSTILE_SECRET_KEY:'mock'};
 const request=data=>new Request('https://example.test',{method:'POST',headers:{Origin:'https://bookedandfabulous.com','Content-Type':'application/json'},body:JSON.stringify({name:'Bradley',email:'test@example.com',type:'breakdown',token:'mock',...data})});
 for(const goal of ['clients','money','return','keep','time','stable']){
- const a=answer(goal);const response=await wc.worker.fetch(request({schema:'short-v2',answers:a}),env);assert.equal(response.status,200);const sent=JSON.parse(calls.at(-1).opts.body);assert.equal(sent.text,c.api.shortEmailCopy(build(a),'Bradley'));assert(sent.html.includes('assets/booked-af-logo.png'));
+ const a=answer(goal);const response=await wc.worker.fetch(request({schema:'short-v2',answers:a}),env);assert.equal(response.status,200);const sent=calls.filter(call=>call.url==='https://api.resend.com/emails').map(call=>JSON.parse(call.opts.body)).find(email=>email.subject==='Your BOOKED AF Breakdown');assert(sent);assert.equal(sent.text,c.api.shortEmailCopy(build(a),'Bradley'));assert(sent.html.includes('assets/booked-af-logo.png'));
 }
 assert.equal((await wc.worker.fetch(request({schema:'bogus',answers:answer('clients')}),env)).status,400);
 assert.equal((await wc.worker.fetch(request({schema:'short-v2',answers:{goal:'time'}}),env)).status,400);
