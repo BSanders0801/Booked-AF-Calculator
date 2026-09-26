@@ -6,10 +6,10 @@ body{border-radius:0;overflow:visible;background:#0c0a0c;font-size:1rem}body mai
 @media(prefers-reduced-motion:reduce){body *{scroll-behavior:auto!important;transition:none!important}}
 @media print{body{background:#fff;color:#111}body header,body footer,body .progress,body .actions,body .storage-note,body .baf-bar{display:none!important}body .brand-print-logo{display:block;background:#100c0f;padding:8px;margin-bottom:20px}body main,body .screen{max-width:none;padding:0}body .screen .card{color:#111;background:#fff;border-color:#bbb}body .screen p,body .screen .fine,body .screen .number{color:#333}body .checkline{display:flex!important}body h2,body h3{color:#111}}
 
-/* Bradley's supplied founder portrait: natural proportions, no text overlay. */
+/* Keep the full face and shoulders visible at every viewport width. */
 body .baf-founder{align-items:start;gap:clamp(28px,5vw,64px)}
 body .baf-founder-photo{margin:0;min-width:0}
-body .baf-founder-photo img{display:block;width:100%;height:clamp(215px,27vw,300px);object-fit:cover;object-position:center top;border-radius:2px;border-bottom:3px solid var(--pink)}
+body .baf-founder-photo img{display:block;width:100%;height:auto;aspect-ratio:4 / 3;object-fit:cover;object-position:center top;border-radius:2px;border-bottom:3px solid var(--pink)}
 body .baf-founder-photo figcaption{padding:14px 0;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--ink)}
 body .baf-founder-photo figcaption span{display:block;margin-top:4px;color:var(--pink);font-size:11px}
 body .baf-founder h1{font-size:clamp(36px,5vw,62px);line-height:1.02;letter-spacing:-.045em}
