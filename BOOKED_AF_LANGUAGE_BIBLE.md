@@ -525,7 +525,7 @@ The usefulness makes them tell another stylist.
 
 ## 15. THE MIDWEST TEST
 
-BOOKED AF is **PG-13 at the front door, looser once you’re inside, and sharpest in the Your Next 30.**
+BOOKED AF is **PG-13 at the front door, looser once you’re inside, and sharpest inside Your Next 30.**
 
 We are not wholesome. We are also not trying to shock people for sport.
 
