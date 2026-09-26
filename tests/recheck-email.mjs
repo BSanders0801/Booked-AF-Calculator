@@ -30,7 +30,7 @@ test('Breakdown schedules distinct Day 7 and Day 30 emails and queues Day 60 and
     throw new Error('Unexpected fetch: '+url);
   };
   const payload = {
-    type:'breakdown', email:'alex@example.com', name:'Alex', schema:'short-v1',
+    type:'breakdown', email:'alex@example.com', name:'Alex', schema:'short-v2',
     token:'turnstile-token', honey:'',
     answers:{goal:'clients',full:'under25',days:'3',spend:'150',returning:'some',costs:'rough',visibility:'social',marketing:'social',network:'local',urgency:'month'}
   };
