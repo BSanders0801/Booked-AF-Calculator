@@ -463,12 +463,28 @@ Focus on money kept, time, body, sustainability, and freedom.
 
 ---
 
-## 12. YOUR NEXT 30 PROMISE
+## 12. THE PRODUCT EXPERIENCE
 
-Free Breakdown:
-**What is actually worth fixing first?**
+### Free Breakdown
+The Breakdown answers four things, in this order:
 
-Paid plan:
+1. **YOUR BOOK RIGHT NOW** — BUILDING, GETTING BUSY, IN DEMAND, or BOOKED AF.
+2. **FIX THIS FIRST** — the one business problem that deserves attention first.
+3. **DO THESE 3 THINGS** — three normal, specific actions for the next seven days.
+4. **WATCH THIS** — one simple result or number that tells them whether it helped.
+
+Do not make the user hunt through a report to find the point.
+
+### BOOKED AF: YOUR NEXT 30
+The paid plan starts with three decisions:
+
+1. **DO THIS** — the first move.
+2. **STOP THIS** — the habit, leak, or busywork that is not earning its place.
+3. **WATCH THIS** — the one number that tells us whether the move is working.
+
+Then give them four weeks of actions. Extra education, scripts, career planning, calendar help, and tools come after the core plan and should stay visually secondary or collapsible whenever possible.
+
+Paid promise:
 **What exactly do I do about it for the next 30 days?**
 
 Never inflate the paid product with vague promises.
