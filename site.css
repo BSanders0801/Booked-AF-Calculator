@@ -9,7 +9,7 @@ body{border-radius:0;overflow:visible;background:#0c0a0c;font-size:1rem}body mai
 /* Bradley's supplied founder portrait: natural proportions, no text overlay. */
 body .baf-founder{align-items:start;gap:clamp(28px,5vw,64px)}
 body .baf-founder-photo{margin:0;min-width:0}
-body .baf-founder-photo img{display:block;width:100%;height:clamp(230px,34vw,360px);object-fit:cover;object-position:center top;border-radius:2px;border-bottom:3px solid var(--pink)}
+body .baf-founder-photo img{display:block;width:100%;height:clamp(215px,27vw,300px);object-fit:cover;object-position:center top;border-radius:2px;border-bottom:3px solid var(--pink)}
 body .baf-founder-photo figcaption{padding:14px 0;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--ink)}
 body .baf-founder-photo figcaption span{display:block;margin-top:4px;color:var(--pink);font-size:11px}
 body .baf-founder h1{font-size:clamp(36px,5vw,62px);line-height:1.02;letter-spacing:-.045em}
