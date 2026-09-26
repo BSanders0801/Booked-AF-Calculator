@@ -3,14 +3,14 @@ import assert from 'node:assert/strict';
 import {createHmac} from 'node:crypto';
 import worker from '../email-worker.mjs';
 
-const env = {STRIPE_WEBHOOK_SECRET:'whsec_test_only', STRIPE_PAYMENT_LINK_ID:'plink_1UJbGMK8mAQwUniDbDofJPiQ', RESEND_API_KEY:'resend_test_only'};
+const env = {STRIPE_WEBHOOK_SECRET:'whsec_test_only', STRIPE_PAYMENT_LINK_ID:'plink_1UJsjEK8mAQwUniDH9v9XShT', RESEND_API_KEY:'resend_test_only'};
 function request(session, type='checkout.session.completed', signature=true) {
   const body = JSON.stringify({id:'evt_test',type,data:{object:session}});
   const t = Math.floor(Date.now()/1000);
   const digest = createHmac('sha256',env.STRIPE_WEBHOOK_SECRET).update(`${t}.${body}`).digest('hex');
   return new Request('https://example.workers.dev/stripe-webhook',{method:'POST',headers:{'Stripe-Signature':`t=${t},v1=${signature?digest:'0'.repeat(64)}`},body});
 }
-const paid = {id:'cs_test_123',status:'complete',payment_status:'paid',payment_link:'plink_1UJbGMK8mAQwUniDbDofJPiQ',currency:'usd',amount_total:4900,customer_details:{name:'Alex Stylist',email:'alex@example.com'}};
+const paid = {id:'cs_test_123',status:'complete',payment_status:'paid',payment_link:'plink_1UJsjEK8mAQwUniDH9v9XShT',currency:'usd',amount_total:4900,customer_details:{name:'Alex Stylist',email:'alex@example.com'}};
 
 test('verified Your Next 30 checkout sends welcome and schedules Day 14 survey',async()=>{
   const original=globalThis.fetch; const sent=[];
@@ -30,6 +30,17 @@ test('verified Your Next 30 checkout sends welcome and schedules Day 14 survey',
     const welcome=sent.find(x=>x.body.subject==='You’re in. Let’s make some moves.').body;
     assert.equal(welcome.to[0],'alex@example.com');
     assert.match(welcome.text,/START MY NEXT 30: https:\/\/bookedandfabulous.com\/\?deepdive=paid&session_id=cs_test_123/);
+  } finally {globalThis.fetch=original}
+});
+
+test('grandfathers the old Your Next 30 payment link during checkout migration',async()=>{
+  const original=globalThis.fetch; const sent=[];
+  globalThis.fetch=async(url,options)=>{if(String(url)==='https://api.resend.com/emails'){sent.push(JSON.parse(options.body));return new Response(JSON.stringify({id:'email_'+sent.length}),{status:200});}throw Error('unexpected fetch');};
+  try {
+    const legacy={...paid,id:'cs_test_legacy',payment_link:'plink_1UJbGMK8mAQwUniDbDofJPiQ'};
+    const response=await worker.fetch(request(legacy),env);
+    assert.equal(response.status,200);
+    assert(sent.some(x=>x.subject==='You’re in. Let’s make some moves.'));
   } finally {globalThis.fetch=original}
 });
 
