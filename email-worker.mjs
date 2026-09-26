@@ -245,7 +245,7 @@ function buildShortBreakdown(input) {
   else if(marketing.includes('paid')) step('CHECK WHAT THE PROMOTION BROUGHT IN.','Use your booking records to find any appointments from your last promotion. Before spending more, check whether people asked about booking, booked, and actually arrived.');
   else if(marketing.includes('people')) step('MAKE THE INTRODUCTION EASY.','Give the people you contact one short message and booking link they can forward. Ask for an introduction to someone who wants your particular service.');
   else if(marketing.includes('local')) step('FOLLOW UP WITH ONE LOCAL CONTACT.','Choose one business or person you’ve already approached. Suggest one small, specific referral idea and give them a link they can easily share.');
-  step('FOLLOW THE BOOKING.',(a.urgency==='now'?'Start today with people you can contact directly. ':a.urgency==='steady'?'Choose a repeatable weekly time for this. ':'Repeat your chosen action this week. ')+'For each new inquiry, note where they found you and whether they booked. Follow up once with anyone who asked and hasn’t booked.');
+  step('FOLLOW THE BOOKING.',(a.urgency==='steady'?'Choose a repeatable weekly time for this. ':'Keep the move going this week. ')+'For each new inquiry, note where they found you and whether they booked. Follow up once with anyone who asked and hasn’t booked.');
   if(marketing.includes('none')) reasons.push('You haven’t found a starting point yet, so the plan begins with one small action.');
   if(a.returning==='low'||a.returning==='some') reasons.push('You also said some clients don’t return. Give each new booking a clear next-visit recommendation before they leave.');
   summary='Give the right local people one clear reason to book and one easy way to do it.';
