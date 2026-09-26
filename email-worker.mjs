@@ -554,7 +554,7 @@ async function processLongFollowups(env) {
 
 const deepDiveUrl = 'https://bookedandfabulous.com/?deepdive=paid';
 const welcomeSubject = 'You’re in. Let’s make some moves.';
-const deepDivePaymentLinkId = 'plink_1UJbGMK8mAQwUniDbDofJPiQ';
+const deepDivePaymentLinkIds = new Set(['plink_1UJsjEK8mAQwUniDH9v9XShT','plink_1UJbGMK8mAQwUniDbDofJPiQ']);
 
 async function verifyStripeSignature(body, header, secret) {
   const values = Object.fromEntries((header || '').split(',').map(part => part.trim().split('=', 2)));
@@ -605,7 +605,7 @@ async function stripeWelcome(request, env) {
   const firstName = String(session.customer_details?.name || '').trim().split(/\s+/)[0].slice(0, 60);
 
   const surveyScheduled = await schedulePurchaseSurvey(env, session, email, firstName);
-  const isDeepDive = session.payment_link === deepDivePaymentLinkId && session.currency === 'usd' && session.amount_total === 4900;
+  const isDeepDive = deepDivePaymentLinkIds.has(session.payment_link) && session.currency === 'usd' && session.amount_total === 4900;
   if (!isDeepDive) return new Response(surveyScheduled ? 'Survey scheduled' : 'Purchase recorded');
 
   const greeting = firstName ? 'Hey ' + firstName + ',' : 'Hey,';
