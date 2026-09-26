@@ -80,7 +80,7 @@ function careerSamplePanel(key='chair',mode='full') {
 }
 const sitePages = {
   "intro": `
-<section class="baf-hero">
+<section class="baf-hero baf-hero-clean">
   <div class="baf-hero-copy">
     <p class="baf-kicker">Booked &amp; Fabulous · For hairdressers</p>
     <h1>YOUR TALENT SHOULD<br/><span>BUY YOU FREEDOM.</span></h1>
@@ -92,13 +92,16 @@ const sitePages = {
     </div>
     <p class="baf-small">About 3 minutes. 3 next moves. Email required to get your free Breakdown.</p>
   </div>
-  <aside class="baf-career-sample" aria-label="Career-specific BOOKED AF examples">
-    <p class="baf-kicker">YOUR CAREER. YOUR RULES.</p>
-    <h3>See how BOOKED AF thinks differently depending on how you actually work.</h3>
-    ${careerSampleTabs()}
-    <div data-career-sample-panel="compact">${careerSamplePanel('chair','compact')}</div>
-  </aside>
 </section>
+
+<section class="baf-section baf-career-section">
+  <p class="baf-kicker">YOUR CAREER. YOUR RULES.</p>
+  <h2>Same industry.<br/>Very different careers.</h2>
+  <p class="baf-subhead">See how BOOKED AF changes the advice depending on how you actually make your living.</p>
+  ${careerSampleTabs()}
+  <div class="baf-career-stage" data-career-sample-panel="compact">${careerSamplePanel('chair','compact')}</div>
+</section>
+
 <section class="baf-section">
   <p class="baf-kicker">Your work. Your pace.</p>
   <h2>YOUR WORK RIGHT NOW.</h2>
@@ -106,6 +109,7 @@ const sitePages = {
   <div class="baf-stages"><span>BUILDING</span><span>GETTING BUSY</span><span>IN DEMAND</span><span>BOOKED AF</span></div>
   <p class="baf-small">These stages describe your current work and demand. They have nothing to do with your age, talent, or years in the industry.</p>
 </section>
+
 <section class="baf-section">
   <p class="baf-kicker">Start here</p>
   <h2>Find your next move. Choose your plan.</h2>
@@ -138,11 +142,13 @@ const sitePages = {
     </article>
   </div>
 </section>
+
 <section class="baf-section baf-manifesto">
   <p class="baf-kicker">The point</p>
   <h2>STOP TRADING YOUR WHOLE LIFE<br/>FOR A PAYCHECK.</h2>
   <p class="baf-subhead">Make the work pay. Protect your time. Build something that leaves room for you.</p>
 </section>
+
 <section class="baf-section baf-two baf-founder">
   <figure class="baf-founder-photo">
     <img src="assets/bradley-founder.svg" alt="Bradley Sanders in a striped shirt seated on dark stairs" width="1122" height="1402" loading="lazy" decoding="async"/>
@@ -158,6 +164,7 @@ const sitePages = {
     <button class="baf-outline cursor-interaction" data-nav="about">Meet Bradley →</button>
   </div>
 </section>
+
 <section class="baf-section">
   <p class="baf-kicker">The bigger picture · Coming next</p>
   <h2>A better career should come<br/>with a better life.</h2>
