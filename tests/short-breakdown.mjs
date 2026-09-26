@@ -47,7 +47,7 @@ for(const goal of ['clients','return','money','keep','time','stable']){
  assert(element('app').innerHTML.includes('SEE MY BREAKDOWN'));
  element('back').onclick();assert(element('app').innerHTML.includes('Question '+(count-1)+' of '+count));
  element('next').onclick();element('next').onclick();element('skip').onclick();
- assert(element('app').innerHTML.includes('YOUR THREE MOVES THIS WEEK'));
+ assert(element('app').innerHTML.includes('DO THESE 3 THINGS'));
  element('edit').onclick();assert(element('app').innerHTML.includes('Question 1 of '+count));
 }
 console.log(`Passed ${cases} answer variations, all six navigation paths, short and legacy Worker requests, email parity and logo checks. No live emails sent.`);
