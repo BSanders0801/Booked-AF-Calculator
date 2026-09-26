@@ -2,7 +2,7 @@
   "private": true,
   "description": "DOM-only integration checks for the BOOKED AF redesign",
   "scripts": {
-    "test": "node redesign-dom.cjs"
+    "test": "cd .. && node tests/redesign-dom.cjs && node tests/short-breakdown.mjs && node --test tests/stripe-welcome.mjs tests/recheck-email.mjs tests/survey.mjs"
   },
   "devDependencies": {
     "jsdom": "30.1.1"
