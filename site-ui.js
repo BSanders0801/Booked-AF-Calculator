@@ -96,8 +96,19 @@
       c.setAttribute('aria-label', 'Mark “' + title + '” complete');
     });
   }
+  function renderCareerSample(key='chair') {
+    const sample=careerSampleData[key]||careerSampleData.chair;
+    document.querySelectorAll('[data-career-sample-panel]').forEach(panel=>{
+      panel.innerHTML=careerSamplePanel(key,panel.dataset.careerSamplePanel||'full');
+    });
+    document.querySelectorAll('[data-career-sample]').forEach(button=>{
+      button.setAttribute('aria-pressed',String(button.dataset.careerSample===key));
+    });
+    return sample;
+  }
   function enhance() {
     document.querySelector('.progress').hidden = state.view !== 'question';
+    if (document.querySelector('[data-career-sample-panel]')) renderCareerSample('chair');
     if (['result','plan'].includes(state.view)) {
       const note = document.createElement('p'); note.className = 'storage-note';
       note.innerHTML = 'Your free plan is saved in this browser for up to 30 days. On a shared device? <a href="#privacy" data-nav="privacy">Clear your saved plan here.</a>';
@@ -216,6 +227,8 @@
     state.view = view; render();
   }
   document.addEventListener('click', e => {
+    const sampleButton=e.target.closest('[data-career-sample]');
+    if(sampleButton){e.preventDefault();renderCareerSample(sampleButton.dataset.careerSample);return;}
     const nav = e.target.closest('[data-nav]');
     if (nav) { e.preventDefault(); go(nav.dataset.nav); return; }
     if (e.target.closest('[data-clear-progress]')) {
