@@ -667,3 +667,15 @@ Bradley shares personal and career history so we have accurate context. Do not a
 ## 22. PUBLIC BIO REFINEMENT - SEPTEMBER 25, 2026
 
 Keep the business-partner, Brooklyn/Miami salon-opening, and profitable-sale story out of the public bio. Bradley finds that paragraph uninteresting and prefers the shorter education-focused version with the dry humor: “Great hair. Questionable planning.” His ownership history remains background context, not a bio paragraph to restore without a specific request.
+
+## 23. APPROVED PUBLIC BIO - SEPTEMBER 25, 2026
+
+Lead with Bradley's behind-the-chair experience at top salons on Fifth Avenue and in SoHo, and his current color work in West Hollywood. The L’Oréal and John Paul Mitchell Systems education roles were many years ago; introduce them with “Earlier in my career.” Preserve the exact titles without implying a current affiliation. Use this approved wording:
+
+I’m Bradley. Nearly 30 years as a colorist, salon owner, and educator, with time behind the chair at top salons on New York’s Fifth Avenue and in SoHo. These days, you’ll find me coloring hair in West Hollywood.
+
+Earlier in my career, I provided in-salon education across the country as an Artistic Technical Trainer for L’Oréal Professional and a National Educator with John Paul Mitchell Systems.
+
+I’ve made good money. I’ve also worked too much and saved too little. Great hair. Questionable planning.
+
+BOOKED AF is where I share what helped, what didn’t, and what I wish someone had told me sooner. More money left for you. More life outside the salon.
