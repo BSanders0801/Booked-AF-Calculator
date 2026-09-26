@@ -3,7 +3,7 @@
   'use strict';
   const key = 'booked-af-free-progress-v1';
   const maxAge = 30 * 24 * 60 * 60 * 1000;
-  const publicRoutes = {intro:'home', paid:'deep-dive', about:'about', contact:'contact', privacy:'privacy', sample:'sample'};
+  const publicRoutes = {intro:'home', paid:'deep-dive', about:'about', contact:'contact', privacy:'privacy', sample:'sample', survey:'survey'};
   const freeViews = ['question','teaser','result','plan','daymath','email'];
   const preview = window.BOOKED_AF_REVIEW === true || !['bookedandfabulous.com','www.bookedandfabulous.com'].includes(location.hostname);
   let lastFreeView = 'question';
@@ -102,6 +102,55 @@
       const back = document.getElementById('dayback');
       if (back) { back.textContent = hasCompleteResult() ? '← Back to my Breakdown' : '← Back home'; back.onclick = () => go(hasCompleteResult() ? 'result' : 'intro'); }
     }
+    if (state.view === 'survey') {
+      const form = document.getElementById('booked-survey');
+      if (form) {
+        const status = document.getElementById('survey-status');
+        const sessionId = new URLSearchParams(location.search).get('session_id') || '';
+        if (!/^cs_(?:live|test)_[A-Za-z0-9]+$/.test(sessionId)) {
+          form.innerHTML = '<div class="baf-card"><h3>This survey link is missing its purchase information.</h3><p>Please open the survey from the email we sent after your BOOKED AF purchase.</p></div>';
+        } else {
+          form.addEventListener('submit', async event => {
+            event.preventDefault();
+            const button = form.querySelector('button[type=submit]');
+            const data = new FormData(form);
+            const more = data.getAll('more');
+            status.hidden = true;
+            if (!more.length) {
+              status.textContent = 'Pick at least one thing you want more help with.';
+              status.hidden = false;
+              return;
+            }
+            button.disabled = true;
+            button.textContent = 'SENDING…';
+            try {
+              const response = await fetch(emailServiceUrl + '/survey', {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                credentials:'omit',
+                body:JSON.stringify({
+                  session_id:sessionId,
+                  rating:Number(data.get('rating')),
+                  ease:data.get('ease'),
+                  useful:data.get('useful'),
+                  more,
+                  recommend:data.get('recommend'),
+                  comments:String(data.get('comments') || '')
+                })
+              });
+              const result = await response.json().catch(()=>({}));
+              if (!response.ok || result.success !== true) throw new Error(result.error || 'Survey could not be sent.');
+              form.innerHTML = '<div class="baf-card baf-featured"><p class="baf-kicker">Got it.</p><h2>THANK YOU.</h2><p>The nice answers are lovely. The useful answers are even better.</p><p>Bradley will actually read this.</p><div class="baf-actions"><button type="button" data-nav="intro">Back to BOOKED AF →</button></div></div>';
+            } catch (error) {
+              status.textContent = error.message || 'Survey could not be sent. Please try again.';
+              status.hidden = false;
+              button.disabled = false;
+              button.textContent = 'SEND IT TO BRADLEY →';
+            }
+          });
+        }
+      }
+    }
     if (state.view === 'email') {
       const note = app.querySelector('.capture-note');
       if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. This request does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
@@ -112,7 +161,7 @@
       const current = a.dataset.nav === state.view || (a.dataset.nav === 'resume' && ['result','plan'].includes(state.view));
       if (current) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
-    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Deep Dive - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Sample Plan'};
+    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Deep Dive - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Sample Plan',survey:'Client Survey'};
     document.title = 'BOOKED AF | ' + (titles[state.view] || 'My next move');
   }
   render = function () {
