@@ -5,8 +5,8 @@ import {webcrypto} from 'node:crypto';
 
 const core=fs.readFileSync('breakdown-core.js','utf8');
 const c=vm.createContext({});
-vm.runInContext(core+'\nglobalThis.api={shortQuestions,shortVisibleQuestions,validateShortAnswers,buildShortBreakdown,shortEmailCopy};',c);
-const {shortQuestions:qs,shortVisibleQuestions:visible,validateShortAnswers:validate,buildShortBreakdown:build}=c.api;
+vm.runInContext(core+'\nglobalThis.api={shortQuestions,shortVisibleQuestions,shortChoices,validateShortAnswers,buildShortBreakdown,shortEmailCopy};',c);
+const {shortQuestions:qs,shortVisibleQuestions:visible,shortChoices:choices,validateShortAnswers:validate,buildShortBreakdown:build}=c.api;
 
 const complete=input=>{
   const out={...input};
@@ -15,14 +15,14 @@ const complete=input=>{
     changed=false;
     for(const q of visible(out)){
       if(out[q.id]===undefined){
-        out[q.id]=q.multi?[q.choices[0][0]]:q.choices[0][0];
+        const list=choices(q,out); out[q.id]=q.multi?[list[0][0]]:list[0][0];
         changed=true;
       }
     }
   }
   return out;
 };
-const answer=goal=>complete({worktype:['fullservice'],primarywork:'chair',goal});
+const answer=goal=>complete({worktype:['color','extensions','education'],primarywork:'chair-color',goal});
 
 assert.equal(qs[0].id,'worktype');
 assert.equal(qs[0].multi,true);
@@ -36,7 +36,7 @@ for(const goal of ['clients','return','money','keep','time','stable']){
     const missing={...a};
     delete missing[q.id];
     assert.throws(()=>validate(missing));
-    for(const [value] of q.choices){
+    for(const [value] of choices(q,a)){
       if(q.id==='goal') continue;
       const b=complete({...a,[q.id]:q.multi?[value]:value});
       const r=build(b);
@@ -46,7 +46,7 @@ for(const goal of ['clients','return','money','keep','time','stable']){
       cases++;
     }
   }
-  assert.equal(build(a).schema,'short-v3');
+  assert.equal(build(a).schema,'short-v4');assert(build(a).snapshot);
 }
 
 assert(!('savings' in validate({...answer('clients'),savings:'solid'})));
@@ -102,6 +102,15 @@ const sessionClients=complete({
 });
 assert.match(build(sessionClients).top.title,/WORK COMING IN/);
 
+const primaryChoices=choices(qs.find(q=>q.id==='primarywork'),{worktype:['color','extensions','education']});
+assert.deepEqual(primaryChoices.map(x=>x[0]),['chair-color','chair-extensions','education','mix','notearning']);
+assert.match(primaryChoices[0][1],/Color clients/);
+const moveChoices=choices(qs.find(q=>q.id==='network'),{...answer('clients'),visibility:['referrals'],marketing:['social','paid'],full:'under25',returning:'notyet'});
+assert(moveChoices.some(x=>x[0]==='past'));
+assert(moveChoices.some(x=>x[0]==='local'));
+assert(moveChoices.some(x=>x[0]==='none'));
+assert.match(build(answer('clients')).snapshot,/color clients/i);
+
 const workerSource=fs.readFileSync('email-worker.mjs','utf8');
 assert(workerSource.includes(core));
 
@@ -123,7 +132,7 @@ const request=data=>new Request('https://example.test',{
 
 for(const goal of ['clients','money','return','keep','time','stable']){
   const a=answer(goal);
-  const response=await wc.worker.fetch(request({schema:'short-v3',answers:a}),env);
+  const response=await wc.worker.fetch(request({schema:'short-v4',answers:a}),env);
   assert.equal(response.status,200);
   const sent=calls.filter(call=>call.url==='https://api.resend.com/emails')
     .map(call=>JSON.parse(call.opts.body))
@@ -132,12 +141,12 @@ for(const goal of ['clients','money','return','keep','time','stable']){
   assert.equal(sent.text,c.api.shortEmailCopy(build(a),'Bradley'));
   assert(sent.html.includes('assets/booked-af-logo.png'));
 }
-const sessionResponse=await wc.worker.fetch(request({schema:'short-v3',answers:sessionMoney}),env);
+const sessionResponse=await wc.worker.fetch(request({schema:'short-v4',answers:sessionMoney}),env);
 assert.equal(sessionResponse.status,200);
 
 assert.equal((await wc.worker.fetch(request({schema:'bogus',answers:answer('clients')}),env)).status,400);
 assert.equal((await wc.worker.fetch(request({schema:'short-v2',answers:answer('clients')}),env)).status,400);
-assert.equal((await wc.worker.fetch(request({schema:'short-v3',answers:{goal:'time'}}),env)).status,400);
+assert.equal((await wc.worker.fetch(request({schema:'short-v4',answers:{goal:'time'}}),env)).status,400);
 
 const legacy=vm.runInContext('Object.fromEntries(questions.filter(q=>!q.when).map(q=>[q.id,q.choices[0][0]]))',wc);
 vm.runInContext('globalThis.legacyQuestions=questions',wc);
@@ -154,7 +163,7 @@ for(const goal of ['clients','return','money','keep','time','stable']){
   const storage={getItem(){return null},setItem(){},removeItem(){}};
   const ac=vm.createContext({
     console,URLSearchParams,AbortSignal,
-    fetch:async()=>Response.json({ready:true,schemas:['short-v3']}),
+    fetch:async()=>Response.json({ready:true,schemas:['short-v4']}),
     document:{getElementById:element},
     localStorage:storage,sessionStorage:storage,
     location:{search:'',pathname:'/',hash:''},history:{},navigator:{},setTimeout,clearTimeout
