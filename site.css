@@ -54,3 +54,8 @@ body .baf-career-stage .baf-sample-panel h3{font-size:clamp(27px,3.3vw,40px);lin
   body .baf-career-section .baf-sample-tab:last-child{grid-column:auto}
   body .baf-career-stage .baf-sample-panel{padding:24px;box-shadow:7px 7px 0 #59243e}
 }
+
+body .baf-leadership-tabs{display:inline-flex;gap:8px;margin:0 0 22px;padding:5px;background:#e3dce1;border-radius:4px}
+body .baf-leadership-tabs button{min-height:0;padding:9px 16px;background:transparent;color:#4b3542;border:1px solid transparent;font-size:11px;font-weight:900;letter-spacing:.08em}
+body .baf-leadership-tabs button[aria-pressed=true]{background:#20151d;color:#fff;border-color:#20151d}
+@media(max-width:650px){body .baf-leadership-tabs{display:grid;grid-template-columns:1fr 1fr;width:100%}body .baf-leadership-tabs button{width:100%}}
