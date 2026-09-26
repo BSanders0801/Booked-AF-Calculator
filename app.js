@@ -441,6 +441,11 @@ function answersForDelivery(){
  if(state.schema===SHORT_SCHEMA){
   const worktype=Array.isArray(answers.worktype)?answers.worktype:[];
   if(worktype.length===1&&worktype[0]==='owner'&&!answers.primarywork) answers.primarywork='management';
+  // The page can capture several needs, but the current email Worker still expects one focus goal.
+  if(Array.isArray(answers.goal)){
+   const selectedGoals=[...answers.goal];
+   answers.goal=answers.goalpriority||selectedGoals[0];
+  }
   delete answers.leadershiprole;
  }
  return answers;
