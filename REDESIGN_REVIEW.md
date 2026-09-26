@@ -1,13 +1,13 @@
 # BOOKED AF redesign — review branch
 
 ## Recovery point
-Base: `9b3329e` from `main` (Load verified Deep Dive payment flow).
+Base: `9b3329e` from `main` (Load verified Your Next 30 payment flow).
 Branch: `redesign/brand-ux-preview`. Production has not been modified.
 Other existing worktrees have uncommitted work; those files were not overwritten.
 
 ## Implemented
 - Approved brush logo in site header, footer, founder sections, email capture, and print output.
-- Responsive homepage based on the approved visual direction, direct $49 Deep Dive page, founder and contact pages, social links, sample plan, and plain-language data explanation.
+- Responsive homepage based on the approved visual direction, direct $49 Your Next 30 page, founder and contact pages, social links, sample plan, and plain-language data explanation.
 - Existing real questionnaire, branching recommendations, money calculations, email service and server-verified payment flow retained.
 - Stable hash routes with browser Back/Forward support; screen transitions return to top and focus the heading.
 - Free quiz/checklist progress saved in this browser for 30 days since last use; no email or name in the new persistent record. Corrupt/unavailable storage handled. No cross-device account claims.
