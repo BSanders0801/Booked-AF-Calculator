@@ -29,7 +29,7 @@ All 70 career-specific questions have choices, a stated purpose and an answer-li
 | Starting/returning | Current proof, feasible schedule, setup and the first suitable booking |
 | Other | Actual work format, buyer, scope, costs and suitable follow-up |
 
-This is a product/content and logic review, not specialist endorsement of bridal or production practice. Bradley's personal experience in those paths is awaiting clarification. Contracts, union rules, legal terms and standard industry rates have not been invented.
+This is a product/content and logic review, not specialist endorsement of bridal or production practice. Bradley confirmed he has never done bridal or session hair and has experts for those paths. Their review of the current draft is still pending. Contracts, union rules, legal terms and standard industry rates have not been invented.
 
 ## Validation
 
@@ -45,7 +45,7 @@ This is a product/content and logic review, not specialist endorsement of bridal
 
 1. Restore/verify runtime credentials and deploy the Worker. Verify current hosted version/settings first and retain a rollback route.
 2. Check the existing schedule and webhook destination; run an authorized delivery test and a test-mode payment flow. Configuration flags alone are insufficient.
-3. Obtain Bradley's actual story for the first personal lesson. No fabricated anecdote is being published.
-4. Confirm relevant specialist experience or obtain practitioner review for bridal/session guidance.
+3. Completed: Bradley supplied three real stories, now edited into short About-page lessons on product costs, regional blonde preferences, and the full cost of teaching.
+4. Obtain review of the bridal/session guidance from Bradley’s experts; record their actual contributions and approved attribution. Bradley has no personal bridal/session credits.
 
 Backup before this pass: BOOKED_AF_before_product_finish_20260927.zip. Earlier live/source backups remain unchanged. No merge or live publication has been performed.
