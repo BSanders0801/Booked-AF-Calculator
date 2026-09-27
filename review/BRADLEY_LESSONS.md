@@ -38,7 +38,7 @@ I could bring my experience and attention to detail with me. I also had to stay 
 
 I loved working with L’Oréal Professionnel and Paul Mitchell, teaching hairdressers color techniques, formulation, and product knowledge. But the work started long before the class.
 
-There were four to six mannequins to color and style, a curriculum to print for every student, and everything to pack. Some mornings, I was on the road at 5 a.m. for a 150-mile drive to a rural salon. And that was after the studying. Nothing says glamour like a car full of mannequin heads before sunrise.
+There were four to six mannequins to color and style, a curriculum packet to prepare, and everything to pack. Some mornings, I was on the road at 5 a.m. for a 150-mile drive to a rural salon. And that was after the studying. Nothing says glamour like a car full of mannequin heads before sunrise.
 
 Memorize the class outline. Learn the product ingredients, key features, and benefits. Keep up with new launches and spring, summer, and fall trends. Know it well enough to make it useful to another hairdresser.
 
