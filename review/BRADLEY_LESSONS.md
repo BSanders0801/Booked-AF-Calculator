@@ -22,11 +22,16 @@ I had to adjust my formulas as I moved. That was my experience in those cities, 
 
 **Try this:** Ask your next blonde client to show you what cool, warm, or sun-kissed means to them. Agree on the result before choosing the formula.
 
-## The juice wasn’t worth the squeeze.
+## The class started long before anyone walked in.
 
-I taught color techniques and product knowledge for L’Oréal Professionnel and Paul Mitchell. But teaching was only part of the work. An in-salon class could mean prepping four to six mannequins, printing every student’s curriculum, packing up everything I owned, and driving up to 150 miles.
+I loved working with L’Oréal Professionnel and Paul Mitchell. I got to teach working hairdressers color techniques, formulation, and how to get the most out of their products. I loved that work. It also taught me a lesson about counting my time.
 
-I got a class fee and mileage. But the mileage wasn’t much, and that fee didn’t account for all the prep. For me, the juice wasn’t worth the squeeze.
+Before I could teach a class, I had to know it. Memorize the outline. Learn the product ingredients, key features, and benefits. Keep up with new launches and the spring, summer, and fall trends. Then turn all that information into something another hairdresser could actually use behind the chair.
 
-**Try this:** Before accepting a class, include prep, packing, travel, and teaching time. Add the costs you won’t get reimbursed for. Check what the whole job leaves you before saying yes.
+There were four to six mannequins to color and style, a curriculum to print for every student, and what felt like everything I owned to pack. Some mornings, I was on the road at 5 a.m. for a 150-mile drive to teach in a rural salon. The class hadn’t started. I’d already done plenty of work.
 
+I received a class fee and mileage. Once I spread that fee across the preparation and teaching hours, the hourly pay was minimal, to say the least. And there was still the travel time.
+
+They say if you love what you do, you never work a day in your life. I loved what I did. But you still have to be able to pay for your life. That means counting every hour the work takes, including the hours before anyone walks into class.
+
+**Try this:** Before quoting a class, include the studying, mannequin prep, printing, packing, travel, and teaching. Count the costs you won’t get reimbursed for. Give yourself the full picture of the job.
