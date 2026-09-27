@@ -1,3 +1,4 @@
+// Auto-deployed from GitHub to Cloudflare Workers Builds.
 // BEGIN SHARED BREAKDOWN CORE
 // Shared by the website and the self-contained email Worker.
 const SHORT_SCHEMA = 'short-v5';
