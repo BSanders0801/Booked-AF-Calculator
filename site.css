@@ -178,5 +178,5 @@ body .brand-hero h1{font-size:clamp(58px,8.3vw,110px)}
 body .baf-founder-photo img{aspect-ratio:1.8/1;object-fit:cover;object-position:center top;height:auto}
 @media(max-width:700px){body .brand-hero{padding-right:24px}body .brand-hero h1{font-size:clamp(48px,13.6vw,72px)}}
 
-body .founder-crop{aspect-ratio:1;overflow:hidden;border-radius:8px;background:#171117}
-body .baf-founder-photo .founder-crop img{width:185%;max-width:none;height:auto;aspect-ratio:auto;margin-left:-42.5%;border:0;border-radius:0}
+body .founder-crop{aspect-ratio:4/3;overflow:hidden;border-radius:8px;background:#171117}
+body .baf-founder-photo .founder-crop img{width:100%;max-width:100%;height:auto;aspect-ratio:auto;margin-left:0;border:0;border-radius:0}
