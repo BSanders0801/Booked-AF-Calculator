@@ -6,48 +6,45 @@ Bradley has never done bridal or session hair. He has experts for those paths. T
 
 The three lessons below are on the About page, separate from the approved homepage bio and portrait. City preferences describe Bradley’s own experience, not universal client preferences. “Try this” actions are editorial applications of his stories, not quotations or reported results.
 
+The About page shows a short introduction for each story. “Read the story” expands the remaining text and action in place. Full edited versions follow.
+
 ## One flat fee. A whole lot of product.
 
-I used to charge one flat fee for a dimensional blonde. That sounds simple enough. What I was actually doing behind the chair was a little more involved.
+I used to charge one flat fee for a dimensional blonde. One lightener in the foils. Another to hand-paint the ends. Separate glosses for the roots, midshaft, ends, and money piece. Two lighteners. Four glosses. One price that wasn’t accounting for all of it.
 
-One type of lightener in the foils. Another to hand-paint the ends. A gloss for the roots, another for the midshaft, another for the ends, and a separate gloss for the money piece. Two lighteners. Four glosses. One price that wasn’t accounting for all of it.
+The color was customized. The price hadn’t caught up. Every extra bowl had a cost, and I was absorbing it. Beautiful blonde. Very generous of me.
 
-Each formula had a job. I wanted the dimension, the transitions, and the finish to work together. I never wanted to be a basic colorist. The details mattered to me, and I was willing to do the work to get the result I wanted.
+Each formula had a job. I never wanted to be a basic colorist, and I wasn’t looking to cut corners on the result. I needed to give the product bill the same attention I gave the hair.
 
-But every extra bowl had a cost. I was putting all that thought into what went on the hair without giving the product bill the same attention. The color was customized. The price hadn’t caught up.
+So I adjusted my pricing to reflect what I was actually using. A flat fee can work, but it has to cover the service you’re delivering.
 
-I had to adjust my pricing to reflect the product I was actually using. A flat fee can work, but it has to cover what goes into the service. Calling it “a dimensional blonde” doesn’t make the extra lightener and gloss free.
+I wanted to keep doing color my way, for clients with a taste for detail. Beautiful blonde. All the details. And enough left over for the person who did it.
 
-I wanted to keep doing color my way, for clients with a taste for detail. That meant making sure the price supported the work. Beautiful blonde. All the details. And enough left over for the person who did it.
-
-**Try this:** For your next dimensional blonde, record how much of each product you use. Put those costs and the full appointment time into your service math before deciding what to charge.
+**Try this:** Record the product used for your next dimensional blonde. Put those costs and the full appointment time into your service math before deciding what to charge.
 
 ## New city. Different blonde.
 
-Moving cities taught me that “I want to be blonde” can mean very different things depending on who’s sitting in your chair. Same word. A whole different picture in their head.
+Moving cities taught me that “I want to be blonde” can mean very different things. In New York, my clients leaned cool and dimensional. In Miami, warm and golden. In California, natural and sun-kissed.
 
-In New York, my clients leaned toward cool, dimensional blondes. In Miami, it was warmer and more golden. In California, the preference leaned natural and sun-kissed. Those were the patterns I experienced, and I had to adjust my formulas as I moved.
+Those were the patterns I experienced, and I had to adjust my formulas as I moved. Same word. A different picture in the client’s head. I had to understand that picture before mixing.
 
-That’s more than swapping one gloss for another. It means understanding what the client actually likes about a blonde before deciding how to create it. How cool? How golden? How much contrast? “Natural” sounds specific until two people show you completely different pictures.
+The city gives you context, but the person in your chair still decides what they want. A New York address doesn’t mean warmth is forbidden. Nobody checks your toner at the state line.
 
-The city gives you context. The person in the chair gives you the brief. A California address doesn’t automatically mean someone wants beachy hair, and a New York address doesn’t mean warmth is forbidden. Nobody checks your toner at the state line.
+I could bring my experience and attention to detail with me. I also had to stay curious. How cool? How golden? How much contrast? A formula that worked beautifully somewhere else wasn’t automatically the answer here.
 
-For me, the lesson was staying adaptable. I could bring my experience and attention to detail with me, but I still had to learn what people in a new market wanted. A formula that worked beautifully somewhere else wasn’t automatically the answer here.
-
-That matters whether you move across the country or welcome a new client into the same salon you’ve worked in for years. Ask what they love. Ask what they don’t. Look at the pictures together. Make sure you’re talking about the same blonde before you start mixing.
-
-**Try this:** Ask your next blonde client to show you what cool, warm, or sun-kissed means to them. Agree on the result before choosing the formula.
+**Try this:** Look at reference pictures together. Ask what the client loves and what they don’t. Agree on the blonde before choosing the formula.
 
 ## The class started long before anyone walked in.
 
-I loved working with L’Oréal Professionnel and Paul Mitchell. I got to teach working hairdressers color techniques, formulation, and how to get the most out of their products. I loved that work. It also taught me a lesson about counting my time.
+I loved working with L’Oréal Professionnel and Paul Mitchell, teaching hairdressers color techniques, formulation, and product knowledge. But the work started long before the class.
 
-Before I could teach a class, I had to know it. Memorize the outline. Learn the product ingredients, key features, and benefits. Keep up with new launches and the spring, summer, and fall trends. Then turn all that information into something another hairdresser could actually use behind the chair.
+There were four to six mannequins to color and style, a curriculum to print for every student, and everything to pack. Some mornings, I was on the road at 5 a.m. for a 150-mile drive to a rural salon. And that was after the studying. Nothing says glamour like a car full of mannequin heads before sunrise.
 
-There were four to six mannequins to color and style, a curriculum to print for every student, and what felt like everything I owned to pack. Some mornings, I was on the road at 5 a.m. for a 150-mile drive to teach in a rural salon. The class hadn’t started. I’d already done plenty of work.
+Memorize the class outline. Learn the product ingredients, key features, and benefits. Keep up with new launches and spring, summer, and fall trends. Know it well enough to make it useful to another hairdresser.
 
-I received a class fee and mileage. Once I spread that fee across the preparation and teaching hours, the hourly pay was minimal, to say the least. And there was still the travel time.
+I received a class fee and mileage. Spread that fee across the prep and teaching hours, and the hourly pay was minimal, to say the least. Then add the travel time.
 
-They say if you love what you do, you never work a day in your life. I loved what I did. But you still have to be able to pay for your life. That means counting every hour the work takes, including the hours before anyone walks into class.
+They say if you love what you do, you never work a day in your life. I loved what I did. But you still have to be able to pay for your life. The hours spent getting ready count, too.
 
-**Try this:** Before quoting a class, include the studying, mannequin prep, printing, packing, travel, and teaching. Count the costs you won’t get reimbursed for. Give yourself the full picture of the job.
+**Try this:** Before quoting a class, count the studying, prep, travel, and teaching hours, plus costs you won’t get reimbursed for.
+

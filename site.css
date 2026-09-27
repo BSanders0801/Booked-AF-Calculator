@@ -180,3 +180,13 @@ body .baf-founder-photo img{aspect-ratio:1.8/1;object-fit:cover;object-position:
 
 body .founder-crop{aspect-ratio:4/3;overflow:hidden;border-radius:8px;background:#171117}
 body .baf-founder-photo .founder-crop img{width:100%;max-width:100%;height:auto;aspect-ratio:auto;margin-left:0;border:0;border-radius:0}
+
+/* Keep personal stories skimmable, with native keyboard-accessible disclosure. */
+body .bradley-lessons .baf-grid{grid-template-columns:minmax(0,1fr);max-width:900px}
+body .bradley-lessons .story-card>p,body .bradley-lessons .story-body{max-width:72ch}
+body .bradley-lessons .story-detail{padding:0;border:0;margin:0;background:transparent}
+body .bradley-lessons .story-detail>summary{min-height:48px;padding:12px 0;cursor:pointer;color:var(--baf-ink)}
+body .bradley-lessons .story-detail>summary:focus-visible{outline:3px solid var(--baf-pink);outline-offset:4px}
+body .bradley-lessons .story-close,body .bradley-lessons details[open] .story-read{display:none}
+body .bradley-lessons details[open] .story-close{display:inline}
+body .bradley-lessons .story-body{padding-top:16px}
