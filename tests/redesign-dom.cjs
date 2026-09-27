@@ -100,6 +100,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   const blocked=start({blocked:true});blocked.click('header [data-nav="question"]');blocked.click('.choice');assert.equal(blocked.$('#storage-error').hidden,false);
   const paid=start({search:'?deepdive=paid&session_id=cs_test_123',hash:'#my-plan',saved});assert.match(paid.$('#app').textContent,/Checking your payment/);assert(!paid.$('#dnext'));
   // Student enters through the same front door, with no working-business questions.
+  const directStudent=start();directStudent.click('.student-entry');assert.match(directStudent.$('#app').textContent,/WHAT KIND OF HAIR WORK INTERESTS YOU/);
   const student=start();student.click('header [data-nav="question"]');student.click('[data-value="school"]');student.click('#next');
   let studentScreens=[];
   while(student.$('#next')){studentScreens.push(student.$('#app h2').textContent);student.click('.choice');student.click('#next');}

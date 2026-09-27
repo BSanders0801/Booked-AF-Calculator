@@ -8,6 +8,7 @@ s=re.sub(r'<meta property="og:[^>]+>','',s)
 s=re.sub(r'<link rel="canonical"[^>]+>','',s)
 s=re.sub(r'<link rel="stylesheet" href="site.css\?[^\"]+">',lambda _: '<style>'+(root/'site.css').read_text()+'</style>',s)
 setup='''window.BOOKED_AF_REVIEW=true;
+for(const name of ['localStorage','sessionStorage']){const data=new Map();Object.defineProperty(window,name,{value:{getItem:key=>data.get(key)??null,setItem:(key,value)=>data.set(key,String(value)),removeItem:key=>data.delete(key),clear:()=>data.clear()}});}
 window.turnstile={render:(el,options)=>{options.callback('offline-review');return 'review';},remove:()=>{},reset:()=>{}};
 window.fetch=async(url,options={})=>({ok:true,status:200,json:async()=>String(url).includes('verify-checkout')?{paid:false}:options.method==='POST'?{success:true}:{ready:true,schemas:['short-v5']}});
 '''

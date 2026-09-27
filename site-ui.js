@@ -261,6 +261,7 @@
   }
   document.addEventListener('click', e => {
     if(e.target.closest('.skip-link')){e.preventDefault();app.tabIndex=-1;app.focus();return;}
+    if(e.target.closest('a[href="#student-breakdown"]')){e.preventDefault();applyRoute('#student-breakdown');render();return;}
     const leadershipButton=e.target.closest('[data-career-sample-detail]');
     if(leadershipButton){e.preventDefault();renderCareerSample(leadershipButton.dataset.careerSampleDetail);return;}
     const sampleButton=e.target.closest('[data-career-sample]');
@@ -299,5 +300,4 @@
   }
   render();
 })();
-
 
