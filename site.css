@@ -59,3 +59,16 @@ body .baf-leadership-tabs{display:inline-flex;gap:8px;margin:0 0 22px;padding:5p
 body .baf-leadership-tabs button{min-height:0;padding:9px 16px;background:transparent;color:#4b3542;border:1px solid transparent;font-size:11px;font-weight:900;letter-spacing:.08em}
 body .baf-leadership-tabs button[aria-pressed=true]{background:#20151d;color:#fff;border-color:#20151d}
 @media(max-width:650px){body .baf-leadership-tabs{display:grid;grid-template-columns:1fr 1fr;width:100%}body .baf-leadership-tabs button{width:100%}}
+
+
+/* Career-specific paid plans keep the main moves visible and the depth optional. */
+.n30-field{display:grid;gap:8px;margin:18px 0;min-width:0}
+.n30-field .input{width:100%;box-sizing:border-box}
+.next30-panel details{margin:18px 0}
+.next30-panel summary{cursor:pointer;padding:14px 0;font-weight:800}
+.next30-panel .checkline{display:flex;align-items:flex-start;gap:12px;margin:18px 0;line-height:1.6}
+.next30-panel .checkline input{flex:0 0 22px;width:22px;height:22px;margin-top:3px}
+.next30-panel .actions{flex-wrap:wrap}
+.next30-panel ul{padding-left:24px;line-height:1.8}
+@media(max-width:650px){.next30-panel .grid2{grid-template-columns:1fr}.next30-panel .actions button{width:100%}.next30-panel h2{overflow-wrap:anywhere}}
+@media print{.next30-panel button,.next30-panel form,.next30-panel input[type=file]{display:none!important}.next30-panel details>*{display:block!important}.next30-panel .card{break-inside:avoid}.next30-panel details{break-inside:auto}}

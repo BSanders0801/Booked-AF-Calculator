@@ -195,16 +195,18 @@
   }
   render = function () {
     const active = document.activeElement;
-    const choice = active?.dataset?.value;
-    const screenKey = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? state.deepIndex : '');
+    const choice = active?.dataset?.value ?? active?.dataset?.next30Choice;
+    const screenKey = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? (state.careerData?.currentId ?? state.deepIndex) : '');
     const changed = lastScreen !== screenKey;
     if (['teaser','result','plan','email'].includes(state.view) && !hasCompleteResult()) { state.view = 'question'; state.index = Math.max(0,state.index); }
     if (['teaser','result','plan'].includes(state.view) && !state.emailSent) state.view = 'email';
     app.classList.remove('intro-screen');
+    app.classList.toggle('next30-panel',state.view==='deepresult');
     app.classList.toggle('marketing-screen', !!sitePages[state.view]);
     if (sitePages[state.view]) {
       disposeEmailWidget(); disposeEmailWidget = () => {};
       app.innerHTML = sitePages[state.view];
+      if(state.view==='next30sample'&&typeof renderNext30Sample==='function')renderNext30Sample();
     } else originalRender();
     enhance(); save();
     const route = routeFor();
@@ -218,9 +220,9 @@
       if (heading) { heading.tabIndex = -1; heading.focus({preventScroll:true}); }
       window.scrollTo({top:0,behavior:'instant'});
     } else if (choice !== undefined) {
-      [...app.querySelectorAll('[data-value]')].find(b => b.dataset.value === choice)?.focus({preventScroll:true});
+      [...app.querySelectorAll('[data-value], [data-next30-choice]')].find(b => (b.dataset.value ?? b.dataset.next30Choice) === choice)?.focus({preventScroll:true});
     }
-    lastScreen = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? state.deepIndex : '');
+    lastScreen = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? (state.careerData?.currentId ?? state.deepIndex) : '');
   };
   function go(view) {
     if (view === 'resume') view = Object.keys(state.answers).length ? lastFreeView : 'question';
@@ -264,4 +266,5 @@
   }
   render();
 })();
+
 
