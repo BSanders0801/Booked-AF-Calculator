@@ -424,10 +424,31 @@ function leadershipBreakdown(a,r) {
   ],'Did work take fewer hours, including the work you do at home?']
  };
  if(!cases[goal])return r;
- const [title,intro,steps,check]=cases[goal];
+ const [title,baseIntro,steps,check]=cases[goal];
+ let intro=baseIntro;
+ const labels=id=>{const q=shortQuestions.find(q=>q.id===id);const values=Array.isArray(a[id])?a[id]:[a[id]];return shortChoices(q,a).filter(([value])=>values.includes(value)).map(([,label])=>label.replace(/\.$/,''));};
+ if(goal==='clients'){
+  const sources=labels('jobsource');
+  intro+=' You said: '+sources.join('; ')+'.';
+  if((a.outreach||[]).includes('none'))steps[1]=['MAKE ONE LOCAL CONNECTION.','Choose one nearby business that serves the people you want in the salon. Introduce yourself and make it easy to send someone your way.'];
+  if((a.jobsource||[]).includes('unknown'))steps[1]=['ASK BEFORE YOU GUESS.','Ask the next 5 new clients how they found the salon. Use those answers to choose where to put your effort.'];
+ }
+ if(goal==='money'||goal==='keep'){
+  const costs=labels('workexpenses');
+  if(costs.length)intro+=' '+(manager&&goal==='keep'?'The costs you watch: ':'You flagged these work costs: ')+costs.join('; ')+'.';
+ }
+ if(goal==='return'&&['new','unknown'].includes(a.repeatwork))intro+=' Start by tracking returns. We do not need to invent a problem before we have the numbers.';
+ if(goal==='time'){
+  const time=labels('timeleak');
+  if(time.length)intro+=' Start with this: '+time[0]+'.';
+  if(a.workdays&&a.workdays!=='varies')intro+=' Work currently takes '+(a.workdays==='6'?'6-7':a.workdays)+' days a week.';
+  if(/^[1-5]$/.test(a.targetdays))intro+=' You would like '+a.targetdays+'.';
+ }
+ const load={notyet:'The salon is not taking clients yet.',light:'The salon has plenty of openings.',half:'The salon book is about half full.',busy:'The salon is busy, with some room.',full:'The salon book is packed or close to it.'};
+ const snapshot='You '+role+' the salon. '+(load[a.workload]||'');
  const plan={intro,steps:steps.map(([title,body],i)=>({id:'short-'+goal+'-'+i,day:['1','2-3','4-6'][i],title,body})),checkTitle:'WHAT CHANGED THIS WEEK?',check,rule:manager?'Your role, your pay, and the salon’s money are different things. Keep them separate.':'Check the real numbers before making a bigger change.'};
  const top={...r.top,title,short:intro,body:intro,action:plan.steps[0].body};
- return {...r,top,items:[top],intro,plan,fix:{title,body:intro,first:plan.steps[0].body,then:plan.steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:plan.rule}};
+ return {...r,snapshot,top,items:[top],intro,plan,fix:{title,body:intro,first:plan.steps[0].body,then:plan.steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:plan.rule}};
 }
 
 // END SHARED BREAKDOWN CORE
