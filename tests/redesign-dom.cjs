@@ -22,7 +22,7 @@ function boot({hash='',saved=null,delivery=null,blocked=false,search=''}={}){
  if(delivery)w.sessionStorage.setItem(deliveryKey,JSON.stringify(delivery));
  if(blocked)w.Storage.prototype.setItem=()=>{throw Error('storage unavailable')};
  const ctx=dom.getInternalVMContext();
- for(const f of ['day-math.js','breakdown-core.js','site-content.js','app.js','site-ui.js'])vm.runInContext(fs.readFileSync(f,'utf8'),ctx,{filename:f});
+ for(const f of ['day-math.js','breakdown-core.js','site-content.js','next30-core.js','next30-ui.js','app.js','site-ui.js'])vm.runInContext(fs.readFileSync(f,'utf8'),ctx,{filename:f});
  const $=s=>w.document.querySelector(s);
  const click=s=>{assert($(s),'Missing '+s);$(s).click();assert.equal(errors.length,0,errors.map(e=>e.stack).join('\n'));};
  return {dom,w,$,click,errors,network};
@@ -55,8 +55,8 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   assert.match(d.$('[data-career-sample-panel]').textContent,/KNOW WHAT YOU’RE ACTUALLY BEING PAID TO CARRY/);
   assert.match(d.$('[data-career-sample-panel]').textContent,/hours and responsibility it demands/i);
   d.click('[data-nav="intro"]');
-  d.click('header [data-nav="paid"]');assert.match(d.$('#app').textContent,/One plan. One payment/);
-  d.click('[data-nav="next30sample"]');assert.match(d.$('#app').textContent,/THIS IS WHAT/);assert.match(d.$('#app').textContent,/STOP THIS/);assert.match(d.$('#app').textContent,/WEEK 4/);
+  d.click('header [data-nav="paid"]');assert.match(d.$('#app').textContent,/Your career. One payment/);
+  d.click('[data-nav="next30sample"]');assert.match(d.$('#app').textContent,/YOUR KIND OF PLAN/);assert.match(d.$('#app').textContent,/STOP THIS/);assert.match(d.$('#app').textContent,/WEEK 1/);assert.equal(d.w.document.querySelectorAll('[data-next30-sample]').length,10);
   d.click('[data-nav="paid"]');d.click('.checkout-link');assert.match(d.$('#preview-checkout-note').textContent,/Checkout is kept off/);
   d.click('header [data-nav="question"]');assert.match(d.$('#app').textContent,/WHAT’S YOUR HAIR GAME/);
   for(let i=0;i<20&&d.$('#next');i++){d.click('.choice');d.click('#next');}
@@ -96,3 +96,4 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   console.log('PASS: homepage copy; quiz; required email; blank and failed email blocked; accepted email unlocks; resume, refresh, checklist and calculator; URL bypass blocked; privacy and clearing; corrupt/blocked storage; paid-route isolation. No real emails or payments.');
  }finally{for(const s of sessions)s.dom.window.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
+

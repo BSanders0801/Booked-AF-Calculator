@@ -69,6 +69,10 @@ body .baf-leadership-tabs button[aria-pressed=true]{background:#20151d;color:#ff
 .next30-panel .checkline{display:flex;align-items:flex-start;gap:12px;margin:18px 0;line-height:1.6}
 .next30-panel .checkline input{flex:0 0 22px;width:22px;height:22px;margin-top:3px}
 .next30-panel .actions{flex-wrap:wrap}
+body [data-next30-sample]{color:#faf7f8;border-color:#786471;background:#171117;min-height:44px}
+body [data-next30-sample][aria-pressed=true]{background:#ff338e;color:#13080e;border-color:#ff338e}
+body .next30-panel .actions>button{flex:1 1 180px;white-space:normal}
+@media(max-width:650px){body .next30-panel .actions{display:grid;grid-template-columns:1fr}body .next30-panel .actions>button{width:100%}}
 .next30-panel ul{padding-left:24px;line-height:1.8}
 @media(max-width:650px){.next30-panel .grid2{grid-template-columns:1fr}.next30-panel .actions button{width:100%}.next30-panel h2{overflow-wrap:anywhere}}
 @media print{.next30-panel button,.next30-panel form,.next30-panel input[type=file]{display:none!important}.next30-panel details>*{display:block!important}.next30-panel .card{break-inside:avoid}.next30-panel details{break-inside:auto}}
