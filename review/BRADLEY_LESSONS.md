@@ -24,7 +24,7 @@ I had to adjust my formulas as I moved. That was my experience in those cities, 
 
 ## The juice wasn’t worth the squeeze.
 
-An in-salon class could mean coloring and styling four to six mannequins beforehand. Printing a curriculum for every student. Packing up everything I owned. Then driving up to 150 miles to teach in a rural location.
+I taught color techniques and product knowledge for L’Oréal Professionnel and Paul Mitchell. But teaching was only part of the work. An in-salon class could mean prepping four to six mannequins, printing every student’s curriculum, packing up everything I owned, and driving up to 150 miles.
 
 I got a class fee and mileage. But the mileage wasn’t much, and that fee didn’t account for all the prep. For me, the juice wasn’t worth the squeeze.
 
