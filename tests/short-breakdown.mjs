@@ -143,7 +143,7 @@ const sessionResult=build(sessionMoney);
 assert.equal(sessionResult.stage,'IN DEMAND');
 assert.match(sessionResult.top.title,/PAY BETTER/);
 assert.match(sessionResult.intro,/agency takes a cut/i);
-assert.match(sessionResult.intro,/cash-flow/i);
+assert.match(sessionResult.intro,/waiting for money/i);
 assert.match(sessionResult.plan.steps[1].body,/reimbursed money|fronted/i);
 
 const sessionClients=complete({
@@ -238,3 +238,4 @@ for(const goal of ['clients','return','money','keep','time','stable']){
 }
 
 console.log(`Passed ${cases} adaptive answer variations, owner/manager, multi-goal priority, chair/session paths, Worker requests, email parity and navigation checks. No live emails sent.`);
+
