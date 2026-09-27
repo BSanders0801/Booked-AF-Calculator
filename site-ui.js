@@ -218,7 +218,7 @@
     });
     if(window.BookedLifecycle)BookedLifecycle.enhance();
     normalizeHeadings();
-    const titles = {intro:'Diagnostic Career Education for Hairstylists',paid:'Your Next 30 - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Free Breakdown Sample',next30sample:'Your Next 30 Sample',survey:'Client Survey',plans:'My Plans',first90:'FIRST 90 - Coming Soon'};
+    const titles = {intro:'For Hairdressers Who Want More',paid:'Your Next 30 - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Free Breakdown Sample',next30sample:'Your Next 30 Sample',survey:'Client Survey',plans:'My Plans',first90:'FIRST 90 - Coming Soon'};
     document.title = 'BOOKED AF | ' + (titles[state.view] || 'My next move');
   }
   render = function () {
