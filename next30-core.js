@@ -159,6 +159,7 @@ globalThis.BookedNext30 = (() => {
  }
  function choices(q){return q.choices||[]}
  function cleanAnswers(input={}){
+  if(!input||typeof input!=='object'||Array.isArray(input))input={};
   const a={};
   // Rebuild the visible path after each accepted answer. Unknown keys never survive.
   for(let pass=0;pass<6;pass++)for(const q of questions(a)){
@@ -263,7 +264,7 @@ globalThis.BookedNext30 = (() => {
   const sorted=[...signals].sort((x,y)=>Number(y.relevant)-Number(x.relevant)||x.order-y.order);
   const first=sorted[0],second=sorted[1];
   const metrics=metricsFor(role,goal,a);
-  const qty=a.available==='tiny'?1:a.available==='hour'?3:5;
+  const qty=a.available==='tiny'?1:a.available==='hour'?3:a.available==='two'?5:7;
   const count=a.available==='tiny'?'one':String(qty);
   const employee=role==='manager'||a[role+'_pay']==='hourly'||a.other_format==='employment';
   const labels={clients:a.load==='full'?'BETTER-FIT WORK. NOT A BIGGER PILE OF IT.':'MAKE THE NEXT BOOKING EASIER TO SAY YES TO.',money:employee?'MAKE THE WORK AND THE PAY MATCH.':'MAKE THE WORK PAY FOR THE TIME IT TAKES.',return:role==='bridal'?'LET A GOOD EVENT LEAD TO THE NEXT ONE.':'GIVE GOOD WORK A NEXT APPOINTMENT.',keep:'FIND WHAT THE BIG NUMBER IS HIDING.',time:'YOUR CALENDAR DOES NOT GET CUSTODY OF YOUR LIFE.',stable:'BUILD A BUSINESS THAT CAN HANDLE A WEIRD WEEK.'};
@@ -271,8 +272,11 @@ globalThis.BookedNext30 = (() => {
   if(role==='owner'&&(goal==='money'||goal==='keep'))baseline='Use one normal salon day or month. Keep collected income, payroll, rent, products, fees, and what you paid yourself separate.';
   let firstAction=first.action;
   if(goal==='stable')firstAction=a.savings==='unknown'?'Find the savings you could actually use and the bills it needs to cover. Unknown is a starting point, not a personality flaw.':a.savinghabit==='bills'?'Start with upcoming bills and one way to improve income or work costs. Do not promise a savings transfer the current money cannot support.':a.savings==='solid'?'Check what the cushion is for and keep it separate from money for planned spending.':'At the next payment, cover upcoming bills first. If money is available, choose a manageable amount to set aside.';
-  const script=goal==='clients'?book.scripts[0]:goal==='return'?book.scripts[book.scripts.length-1]:book.scripts[1];
-  const practice=employee&&goal==='money'?'Use the pay conversation to agree on responsibilities, the review process, and what a decision depends on. A raise is a conversation, not a forecast.':'Use the relevant script below in '+count+' real situation'+(qty===1?'':'s')+'. Replace the brackets with what is true for you.';
+  const scripts=book.scripts.map(x=>[...x]);
+  if(employee&&role!=='manager')scripts[2]=['PAY CONVERSATION','My work currently includes [responsibilities] and takes [required hours]. Can we review how my pay is calculated, what supports a pay review, and when we can revisit it? Here is one example of my contribution: [example].'];
+  const returnScript={color:1,cut:1,extensions:1,session:0,bridal:2,education:2,owner:2,manager:0,restart:0,other:2};
+  const script=employee&&goal==='money'?scripts[role==='manager'?1:2]:goal==='clients'?scripts[0]:goal==='return'?scripts[returnScript[role]]:scripts[1];
+  const practice='Use “'+script[0]+'” below in '+count+' real situation'+(qty===1?'':'s')+'. Replace the brackets with what is true for you.'+(employee&&goal==='money'?' Agree on the review process and the next decision. A raise is a conversation, not a forecast.':'');
   const missions=[
    {week:1,title:'GET ONE HONEST BASELINE.',tasks:[baseline,firstAction],watch:metrics[0].label},
    {week:2,title:'TRY THE FIRST CHANGE.',tasks:[firstAction,goal==='clients'&&a.budget==='0'?'Use existing contacts, relevant referrals, and the work you already have. No paid ads, new software, or rebrand required.':second.action],watch:metrics[0].label+' and '+metrics[1].label},
@@ -289,7 +293,7 @@ globalThis.BookedNext30 = (() => {
   if(goal==='clients'&&a.budget&&a.budget!=='0')constraints.push('A marketing budget is a limit, not an instruction to spend it. Start small and track completed paid work before spending more.');
   return {version:VERSION,role,roleLabel:profile.label,goal,goalLabel:goalNames[goal],headline:labels[goal],intro:'Your '+profile.label.toLowerCase()+' plan starts with '+goalNames[goal].toLowerCase()+'. One priority. Four weeks. Useful work.',
    doNow:firstAction,stop:book.stop,instead:book.instead,watch:metrics[0].label,metrics,missions,
-   evidence:sorted.slice(0,3),supporting:signals,checklist:book.checklist,scripts:book.scripts,constraints,
+   evidence:sorted.slice(0,3),supporting:signals,checklist:book.checklist,scripts,constraints,
    secondary:(a.careers||[]).filter(x=>x!==role).map(x=>({role:x,label:roles[x].label,first:playbooks[x].instead})),
    rescue:[{title:'NOBODY BOOKED.',body:'Check the offer, the person it reached, and whether booking was clear. Start with one relevant conversation before changing every price or buying more ads.'},{title:'THE MONEY DID NOT IMPROVE.',body:'Compare the same kind of work with the same costs included. Separate money earned from reimbursements and money still unpaid. Change one cost, scope, or pay conversation at a time.'},{title:'THE PLAN DID NOT FIT YOUR WEEK.',body:'Keep one task and make it smaller. One recorded appointment or one useful conversation is enough to start.'},{title:'YOU NEED SOMEONE ELSE TO SAY YES.',body:'Bring one clear example, one proposed change, and the decision you need. Agree on who owns the next step and when to revisit it.'}],
    tool:{title:profile.tool,earnedLabel:employee?'Actual pay for the period you are checking':role==='owner'?'Collected salon income for the day or period':'Earned service or job fee, excluding reimbursements',costLabel:employee?'Work costs you personally paid':role==='extensions'?'Hair, supplies, and other costs you paid':role==='bridal'?'Team pay, travel, supplies, and other costs you paid':role==='owner'?'Payroll, rent allocated to this period, supplies, fees, and other costs':'Costs you paid and will not be reimbursed for',hoursLabel:'All required work hours for that same work or period',share:!employee&&['color','cut','extensions','restart','other'].includes(role),warning:employee?'This compares your entered pay and costs with required time. It does not infer a raise or replace your pay records.':role==='owner'?'This is an operating remainder from the costs entered, not automatically the owner’s take-home pay. Unentered costs and taxes are excluded.':'This is the amount left after the pay split and costs entered, before personal taxes and any omitted business bills.'},

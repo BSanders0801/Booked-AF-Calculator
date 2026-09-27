@@ -28,6 +28,9 @@ assert.deepEqual(Array.from(api.cleanAnswers({careers:['other'],other_sources:['
 const bridal=fill({careers:['bridal'],goal:'clients',bridal_inquiry:['vendors','search']});assert(api.build(bridal).supporting.find(x=>x.id==='bridal_inquiry').action.includes('vendors'));assert(api.build(bridal).supporting.find(x=>x.id==='bridal_inquiry').action.includes('service area'));
 const manager=api.build(fill({careers:['manager'],goal:'money'}));assert(!manager.tool.share);assert.match(manager.tool.earnedLabel,/Actual pay/);assert.doesNotMatch(manager.doNow,/salon.*sales.*your.*income/i);
 const hourly=api.build(fill({careers:['color'],goal:'money',color_pay:'hourly'}));assert(!hourly.tool.share);assert.match(hourly.tool.earnedLabel,/Actual pay/);
+assert(hourly.scripts.some(x=>x[0]==='PAY CONVERSATION'));assert.match(hourly.missions[2].tasks[0],/PAY CONVERSATION/);
+assert.deepEqual(Object.keys(api.cleanAnswers(null)),[]);
+assert.equal(api.valueMath({additionalKept:-10,extraCosts:5,price:49}).afterPurchase,-64);
 const owner=api.build(fill({careers:['owner'],goal:'keep'}));assert.match(owner.tool.warning,/not automatically.*take-home/);
 assert.equal(api.seed({worktype:['owner'],leadershiprole:'manager'}).careers[0],'manager');
 assert.equal(api.seed({worktype:['session','events'],primarywork:'events'}).primary,'bridal');
