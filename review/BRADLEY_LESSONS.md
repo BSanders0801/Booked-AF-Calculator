@@ -24,9 +24,17 @@ I wanted to keep doing color my way, for clients with a taste for detail. That m
 
 ## New city. Different blonde.
 
-In my experience, New York clients leaned toward cool, dimensional blondes. Miami leaned warm and golden. In California, it was natural and sun-kissed.
+Moving cities taught me that “I want to be blonde” can mean very different things depending on who’s sitting in your chair. Same word. A whole different picture in their head.
 
-I had to adjust my formulas as I moved. That was my experience in those cities, not a rule for every client.
+In New York, my clients leaned toward cool, dimensional blondes. In Miami, it was warmer and more golden. In California, the preference leaned natural and sun-kissed. Those were the patterns I experienced, and I had to adjust my formulas as I moved.
+
+That’s more than swapping one gloss for another. It means understanding what the client actually likes about a blonde before deciding how to create it. How cool? How golden? How much contrast? “Natural” sounds specific until two people show you completely different pictures.
+
+The city gives you context. The person in the chair gives you the brief. A California address doesn’t automatically mean someone wants beachy hair, and a New York address doesn’t mean warmth is forbidden. Nobody checks your toner at the state line.
+
+For me, the lesson was staying adaptable. I could bring my experience and attention to detail with me, but I still had to learn what people in a new market wanted. A formula that worked beautifully somewhere else wasn’t automatically the answer here.
+
+That matters whether you move across the country or welcome a new client into the same salon you’ve worked in for years. Ask what they love. Ask what they don’t. Look at the pictures together. Make sure you’re talking about the same blonde before you start mixing.
 
 **Try this:** Ask your next blonde client to show you what cool, warm, or sun-kissed means to them. Agree on the result before choosing the formula.
 
