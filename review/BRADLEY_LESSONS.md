@@ -8,9 +8,17 @@ The three lessons below are on the About page, separate from the approved homepa
 
 ## One flat fee. A whole lot of product.
 
-I used to charge one flat fee for a dimensional blonde. One lightener in the foils. Another to hand-paint the ends. Separate glosses for the roots, midshaft, ends, and money piece.
+I used to charge one flat fee for a dimensional blonde. That sounds simple enough. What I was actually doing behind the chair was a little more involved.
 
-I was using all that product without charging for it. I never wanted to be a basic colorist. I had to adjust my pricing to reflect the product I was actually using.
+One type of lightener in the foils. Another to hand-paint the ends. A gloss for the roots, another for the midshaft, another for the ends, and a separate gloss for the money piece. Two lighteners. Four glosses. One price that wasn’t accounting for all of it.
+
+Each formula had a job. I wanted the dimension, the transitions, and the finish to work together. I never wanted to be a basic colorist. The details mattered to me, and I was willing to do the work to get the result I wanted.
+
+But every extra bowl had a cost. I was putting all that thought into what went on the hair without giving the product bill the same attention. The color was customized. The price hadn’t caught up.
+
+I had to adjust my pricing to reflect the product I was actually using. A flat fee can work, but it has to cover what goes into the service. Calling it “a dimensional blonde” doesn’t make the extra lightener and gloss free.
+
+I wanted to keep doing color my way. That meant making sure the price supported the work. Beautiful blonde. All the details. And enough left over for the person who did it.
 
 **Try this:** For your next dimensional blonde, record how much of each product you use. Put those costs and the full appointment time into your service math before deciding what to charge.
 
