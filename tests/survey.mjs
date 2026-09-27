@@ -21,7 +21,7 @@ test('verified purchaser can submit the six-question survey',async()=>{
     assert.deepEqual(await response.json(),{success:true});
     assert.equal(sent.to[0],'hello@bookedandfabulous.com');
     assert.equal(sent.reply_to,'alex@example.com');
-    assert.match(sent.subject,/BOOKED AF survey — 5\/5 — Alex Stylist/);
+    assert.match(sent.subject,/BOOKED AF survey - 5\/5 - Alex Stylist/);
     assert.match(sent.text,/Keep the voice. Add more money tools./);
   }finally{globalThis.fetch=original}
 });
@@ -38,3 +38,4 @@ test('survey rejects an unverified purchase',async()=>{
     assert.equal(response.status,403);
   }finally{globalThis.fetch=original}
 });
+

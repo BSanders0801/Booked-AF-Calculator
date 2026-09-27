@@ -108,6 +108,8 @@ body .baf-grid{gap:28px}
 body .baf-card,body .screen .card{padding:28px;border-radius:8px;background:#191519;border:1px solid #55424e;box-shadow:none}
 body .baf-card p:last-child{margin-bottom:0}
 body .baf-card + .baf-card{margin-top:20px}
+body .baf-grid>.baf-card + .baf-card{margin-top:0}
+body .baf-grid + p{margin-top:24px}
 body .brand-hero{position:relative;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:38px;align-items:center;padding:60px 48px 64px;background:radial-gradient(ellipse at 100% 0,#391426,transparent 65%);border-bottom:1px solid #42323c}
 body .brand-hero h1{font-size:clamp(58px,7.5vw,104px);line-height:.92;letter-spacing:-.055em;margin:22px 0 28px}
 body .brand-hero h1 span{color:#ff338e}
