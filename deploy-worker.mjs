@@ -17,8 +17,8 @@ export async function deploy(){
  const token=process.env.CLOUDFLARE_API_TOKEN;
  if(!token)throw new Error('Cloudflare build deployment token unavailable. No changes made.');
  const base=`https://api.cloudflare.com/client/v4/accounts/${account}/workers/scripts/${worker}`;
- async function api(path,options={}){
-  const r=await fetch(base+path,{...options,headers:{Authorization:`Bearer ${token}`,...options.headers}});
+ async function api(path,options={},apiBase=base){
+  const r=await fetch(apiBase+path,{...options,headers:{Authorization:`Bearer ${token}`,...options.headers}});
   const data=await r.json();
   if(!r.ok||!data.success)throw new Error(`Cloudflare request failed (${r.status}): `+(data.errors||[]).map(x=>`${x.code}: ${String(x.message).replace(/(?:Bearer\s+\S+|sk_(?:live|test)_\w+|re_\w+|whsec_\w+)/g,'[redacted]')}`).join('; '));
   return data.result;
@@ -29,11 +29,11 @@ export async function deploy(){
  const source=await api('/versions/'+active[0].version_id);
  const bindings=inheritedBindings(source);
  console.log('Preserving configured bindings from active version '+source.id+': '+bindings.map(b=>b.name).join(', '));
- const body=new FormData();
- body.set('metadata',new Blob([JSON.stringify({main_module:'email-worker.mjs',compatibility_date:'2026-09-25',bindings,annotations:{'workers/message':'Deploy current API while preserving active service connections'}})],{type:'application/json'}));
- body.set('email-worker.mjs',new Blob([await readFile(new URL('./email-worker.mjs',import.meta.url),'utf8')],{type:'application/javascript+module'}),'email-worker.mjs');
- const uploaded=await api('/versions?bindings_inherit=strict',{method:'POST',body});
- inheritedBindings(uploaded);
+ // The newer version API supports inheriting from an explicit historical version.
+ // The legacy upload API only supports the latest uploaded version, even after rollback.
+ const body={main_module:'email-worker.mjs',compatibility_date:'2026-09-25',bindings,modules:[{name:'email-worker.mjs',content_type:'application/javascript+module',content_base64:(await readFile(new URL('./email-worker.mjs',import.meta.url))).toString('base64')}],annotations:{'workers/message':'Deploy current API while preserving active service connections'}};
+ const uploaded=await api('/versions?deploy=false',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},`https://api.cloudflare.com/client/v4/accounts/${account}/workers/workers/${worker}`);
+ inheritedBindings(await api('/versions/'+uploaded.id));
  // Recheck the active deployment before moving traffic, avoiding concurrent edits.
  const fresh=await api('/deployments');
  if(JSON.stringify(fresh.deployments?.[0]?.versions)!==JSON.stringify(active))throw new Error('Active deployment changed; traffic was not moved.');
