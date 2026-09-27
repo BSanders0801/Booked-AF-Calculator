@@ -36,15 +36,18 @@ I could bring my experience and attention to detail with me. I also had to stay 
 
 ## The class started long before anyone walked in.
 
-I loved working with L’Oréal Professionnel and Paul Mitchell, teaching hairdressers color techniques, formulation, and product knowledge. But the work started long before the class.
+I loved working with L’Oréal Professionnel and Paul Mitchell. Color, formulation, products, a room full of hairdressers—yes, please.
 
-There were four to six mannequins to color and style, a curriculum packet to prepare, and everything to pack. Some mornings, I was on the road at 5 a.m. for a 150-mile drive to a rural salon. And that was after the studying. Nothing says glamour like a car full of mannequin heads before sunrise.
+But you don’t just show up with a cute outfit and a tint brush.
 
-Memorize the class outline. Learn the product ingredients, key features, and benefits. Keep up with new launches and spring, summer, and fall trends. Know it well enough to make it useful to another hairdresser.
+There were class outlines to memorize. Ingredients, features, and benefits to learn. Spring, summer, and fall trends to keep up with. I had to know the material well enough to make it useful behind somebody else’s chair.
 
-I received a class fee and mileage. Spread that fee across the prep and teaching hours, and the hourly pay was minimal, to say the least. Then add the travel time.
+Then came four to six mannequins to color and style, a curriculum packet to prepare, and what felt like everything I owned to pack. Some mornings started at 5 a.m. with a 150-mile drive to a rural salon. Nothing says glamour like a car full of mannequin heads before sunrise.
 
-They say if you love what you do, you never work a day in your life. I loved what I did. But you still have to be able to pay for your life. The hours spent getting ready count, too.
+By the time the first stylist walked in, plenty of work had already happened.
 
-**Try this:** Before quoting a class, count the studying, prep, travel, and teaching hours, plus costs you won’t get reimbursed for.
+I got a class fee and mileage. The lesson for me was learning to look at that fee alongside **all** the hours involved. Teaching was work I loved, and I needed to understand how the whole commitment fit into my income and my life. Even the studying. Even the packing. Even the drive with my very quiet passengers.
 
+They say if you love what you do, you never work a day in your life. I loved what I did. But you still have to be able to pay for your life.
+
+**Try this:** Before committing to a class, count the studying, prep, travel, and teaching hours, plus costs you won’t get reimbursed for.

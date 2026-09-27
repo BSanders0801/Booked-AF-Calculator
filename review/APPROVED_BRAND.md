@@ -14,3 +14,5 @@ Bradley confirmed he has never done bridal or session hair; those paths use his 
 Keep the About bio short. Expanded Paul Mitchell and L’Oréal information is background for use where relevant, not permission to lengthen the bio. Do not use dates in public copy.
 
 Teaching-story correction: Bradley loved working with both L’Oréal Professionnel and Paul Mitchell. Do not use “the juice wasn’t worth the squeeze” or imply regret about either company. The lesson concerns the full preparation, studying, travel and teaching time behind the class fee; no specific hourly rate is supplied.
+
+Approved voice reference: the teaching story with “cute outfit and a tint brush” and “very quiet passengers.” Bradley explicitly approved its humor, useful lesson and warmth toward both brands. Avoid framing the story as company underpayment. Use the full time commitment as the lesson.
