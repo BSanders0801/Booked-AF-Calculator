@@ -20,7 +20,7 @@ export async function deploy(){
  async function api(path,options={}){
   const r=await fetch(base+path,{...options,headers:{Authorization:`Bearer ${token}`,...options.headers}});
   const data=await r.json();
-  if(!r.ok||!data.success)throw new Error(`Cloudflare request failed (${r.status}; codes ${(data.errors||[]).map(x=>x.code).join(',')}).`);
+  if(!r.ok||!data.success)throw new Error(`Cloudflare request failed (${r.status}): `+(data.errors||[]).map(x=>`${x.code}: ${String(x.message).replace(/(?:Bearer\s+\S+|sk_(?:live|test)_\w+|re_\w+|whsec_\w+)/g,'[redacted]')}`).join('; '));
   return data.result;
  }
  const history=await api('/deployments');

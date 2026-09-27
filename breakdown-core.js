@@ -2,8 +2,8 @@
 const SHORT_SCHEMA = 'short-v5';
 const shortQuestions = [
  {id:'worktype',multi:true,note:'Pick everything that sounds like your actual career. One lane, five lanes, no judgment.',title:'WHAT’S YOUR HAIR GAME?',choices:[['color','Color is my thing.'],['cut','Cutting + styling.'],['extensions','Extensions.'],['session','Session / editorial / commercial.'],['events','Bridal + events / on-location.'],['education','Education + beauty brand work.'],['owner','I own or manage a salon.'],['inactive','I’m trained or licensed, but I’m not taking clients right now.'],['other','Something else.']]},
- {id:'leadershiprole',when:a=>Array.isArray(a.worktype)&&a.worktype.includes('owner'),title:'ARE YOU THE OWNER OR THE MANAGER?',note:'Those are two very different jobs, so BOOKED AF treats them differently.',choices:[['owner','I own the salon.'],['manager','I manage the salon, but I don’t own it.']]},
- {id:'primarywork',when:a=>{const w=Array.isArray(a.worktype)?a.worktype:[];const active=w.filter(x=>x!=='inactive');return active.length>1||(w.includes('inactive')&&active.length>0);},title:'OKAY, BUT WHAT PAYS THE BILLS?',note:'Pick the lane bringing in the most money right now.',choices:a=>{
+ {id:'leadershiprole',when:a=>Array.isArray(a.worktype)&&a.worktype.includes('owner'),title:'ARE YOU THE OWNER OR THE MANAGER?',note:'Pick one. Running the salon and owning it are different jobs.',choices:[['owner','I own the salon.'],['manager','I manage the salon, but I don’t own it.']]},
+ {id:'primarywork',when:a=>{const w=Array.isArray(a.worktype)?a.worktype:[];const active=w.filter(x=>x!=='inactive');return active.length>1||(w.includes('inactive')&&active.length>0);},title:'OKAY, BUT WHAT PAYS THE BILLS?',note:'Pick what brings in the most money. Not earning from hair yet? Say that.',choices:a=>{
    const w=new Set(Array.isArray(a.worktype)?a.worktype:[]);
    const out=[];
    if(w.has('color'))out.push(['chair-color','Color clients.']);
@@ -19,9 +19,9 @@ const shortQuestions = [
    return out;
  }},
  {id:'full',when:a=>shortLane(a)==='chair',title:'HOW FULL IS YOUR BOOK, REALLY?',choices:[['notyet','Basically empty. I’m just getting started.'],['under25','A few clients. Plenty of room.'],['half','About half full.'],['threequarters','Pretty busy, but I’ve got openings.'],['full','Packed. I’m basically booked.']]},
- {id:'days',when:a=>shortLane(a)==='chair',title:'HOW MANY DAYS A WEEK ARE YOU TAKING CLIENTS?',note:'Count the days you’re available for appointments—even if they’re not full yet.',choices:[['0','I’m not taking appointments yet'],['1','1 day'],['2','2 days'],['3','3 days'],['4','4 days'],['5','5 days'],['6','6-7 days']]},
+ {id:'days',when:a=>shortLane(a)==='chair',title:'HOW MANY DAYS A WEEK ARE YOU TAKING CLIENTS?',note:'Count the days you offer appointments, even if they are not full yet.',choices:[['0','I’m not taking appointments yet'],['1','1 day'],['2','2 days'],['3','3 days'],['4','4 days'],['5','5 days'],['6','6-7 days']]},
  {id:'workload',when:a=>shortLane(a)!=='chair',title:'HOW FULL IS YOUR WORK CALENDAR MOST MONTHS?',choices:[['notyet','I’m not booking paid work right now.'],['light','I have a lot of open time.'],['half','I’m working about half the time I want to be.'],['busy','I’m busy, with some room.'],['full','I’m as busy as I want to be or close to it.']]},
- {id:'workdays',when:a=>shortLane(a)!=='chair',title:'HOW MANY DAYS A WEEK DOES WORK REALLY TAKE?',note:'Include paid work, travel, prep, shopping, admin, and anything else the job requires.',choices:[['0','I’m not working right now'],['1','1 day'],['2','2 days'],['3','3 days'],['4','4 days'],['5','5 days'],['6','6-7 days'],['varies','It changes constantly.']]},
+ {id:'workdays',when:a=>shortLane(a)!=='chair'&&shortFocusGoal(a)==='time',title:'HOW MANY DAYS A WEEK DOES WORK REALLY TAKE?',note:'Include paid work, travel, prep, shopping, admin, and anything else the job requires.',choices:[['0','I’m not working right now'],['1','1 day'],['2','2 days'],['3','3 days'],['4','4 days'],['5','5 days'],['6','6-7 days'],['varies','It changes constantly.']]},
  {id:'goal',multi:true,title:'ALRIGHT. WHAT NEEDS FIXING?',note:'Pick everything that feels true right now.',choices:a=>{
    const lane=shortLane(a);
    if(lane==='chair')return [['clients','I need more clients in my chair.'],['money','I want to make more without working more.'],['return','I want more clients to actually come back.'],['keep','I’m making money. Where is it all going?'],['time','I love doing hair. I’d also like a life.'],['stable','I need a real safety net.']];
@@ -32,27 +32,26 @@ const shortQuestions = [
    if(lane==='manager')return [['clients','I need more business coming through the door.'],['money','I want my role to pay better for what I’m responsible for.'],['return','I want more clients to come back.'],['keep','I need a clearer grip on the numbers I’m responsible for.'],['time','I need this job to stop following me home.'],['stable','I need a real safety net.']];
    return [['clients','I need more paid work coming in.'],['money','I want to make more without working more.'],['return','I want more of the right people to hire me again.'],['keep','Money comes in. Where is it all going?'],['time','I love the work. I’d also like a life.'],['stable','I need a real safety net.']];
  }},
- {id:'goalpriority',when:a=>Array.isArray(a.goal)&&a.goal.length>1,title:'WHICH ONE DO WE FIX FIRST?',note:'You picked more than one. Pick the one you want BOOKED AF to tackle first.',choices:a=>{
+ {id:'goalpriority',when:a=>Array.isArray(a.goal)&&a.goal.length>1,title:'WHICH ONE DO WE FIX FIRST?',note:'Pick one to start with. The others still count.',choices:a=>{
    const picked=new Set(a.goal);
    const goalQuestion=shortQuestions.find(q=>q.id==='goal');
    return shortChoices(goalQuestion,a).filter(([value])=>picked.has(value));
  }},
- {id:'paystyle',when:a=>shortLane(a)!=='chair'&&(shortFocusGoal(a)==='money'||shortFocusGoal(a)==='keep'),title:'HOW DO YOU USUALLY GET PAID?',multi:true,note:'Choose everything that applies.',choices:[['day','Day rate'],['half','Half-day rate'],['project','Flat fee for a job or project'],['hourly','Hourly'],['salary','Salary'],['commission','Commission or percentage'],['other','It depends or something else']]},
- {id:'paywait',when:a=>shortLane(a)!=='chair'&&(shortFocusGoal(a)==='money'||shortFocusGoal(a)==='keep'),title:'HOW LONG DOES IT USUALLY TAKE TO ACTUALLY GET PAID?',choices:[['fast','Usually within two weeks'],['month','About a month'],['60','About 1-2 months'],['90','About 2-3 months'],['long','More than 3 months'],['varies','It varies a lot']]},
+ {id:'paywait',when:a=>!['chair','owner','manager'].includes(shortLane(a))&&(shortFocusGoal(a)==='money'||shortFocusGoal(a)==='keep'),title:'HOW LONG DOES IT USUALLY TAKE TO ACTUALLY GET PAID?',choices:[['fast','Within 2 weeks'],['month','More than 2 weeks, up to 1 month'],['60','More than 1 month, up to 2 months'],['90','More than 2 months, up to 3 months'],['long','More than 3 months'],['varies','It varies a lot']]},
  {id:'workexpenses',when:a=>shortLane(a)!=='chair'&&(shortFocusGoal(a)==='money'||shortFocusGoal(a)==='keep'),multi:true,exclusive:['none','unknown'],note:'Choose everything that can come out of your pocket.',title:'WHAT DO YOU END UP PAYING FOR?',choices:[['products','Products and supplies'],['hair','Extension hair, wigs, or hairpieces'],['tools','Tools and kit replacement'],['travel','Travel, Uber, mileage, parking, or baggage'],['team','Assistants or other people on the job'],['fees','Agency, booking, or business fees'],['none','Clients or my employer cover basically everything'],['unknown','I need to look at the real numbers']]},
  {id:'jobsource',when:a=>shortLane(a)!=='chair'&&shortFocusGoal(a)==='clients',multi:true,exclusive:['none','unknown'],note:'Choose everything that actually brings paid work.',title:'HOW DOES PAID WORK FIND YOU?',choices:[['agency','An agency or representation'],['repeat','Repeat clients or brands'],['referrals','Referrals and word of mouth'],['social','Social media or my portfolio'],['direct','Brands, producers, planners, or clients contact me directly'],['none','Paid work is not coming in consistently yet'],['unknown','I need to start tracking this']]},
  {id:'outreach',when:a=>shortLane(a)!=='chair'&&shortFocusGoal(a)==='clients',multi:true,exclusive:['none'],note:'Choose everything you actually do.',title:'WHAT HAVE YOU TRIED TO GET MORE WORK?',choices:[['agency','Staying in touch with my agency or reps'],['past','Following up with past clients or brands'],['portfolio','Updating or sharing my portfolio'],['network','Networking with people who hire hair teams'],['pitch','Reaching out directly for work'],['none','I haven’t really started yet']]},
  {id:'repeatwork',when:a=>shortLane(a)!=='chair'&&shortFocusGoal(a)==='return',title:'ARE THE PEOPLE WHO HIRE YOU COMING BACK?',choices:[['new','I’m still getting started. Too soon to tell.'],['rare','Not often enough'],['some','Some do. Some disappear.'],['most','Most of the right clients hire me again'],['unknown','I haven’t tracked it']]},
  {id:'repeatfollow',when:a=>shortLane(a)!=='chair'&&shortFocusGoal(a)==='return',multi:true,exclusive:['none'],note:'Choose everything that usually happens after a job.',title:'AFTER THE JOB, WHAT HAPPENS?',choices:[['thanks','I send a thank-you or follow-up'],['portfolio','I share or update the work when I’m allowed to'],['touch','I stay in touch with the client, producer, planner, or brand'],['agency','My agency handles most of that'],['none','Usually nothing. I wait for the next call']]},
- {id:'sessionagency',when:a=>shortLane(a)==='session'&&(shortFocusGoal(a)==='money'||shortFocusGoal(a)==='keep'),title:'DOES AN AGENCY TAKE A CUT FROM YOUR RATE?',choices:[['yes','Yes'],['sometimes','Sometimes, depending on the job'],['no','No']]},
- {id:'sessionfront',when:a=>shortLane(a)==='session'&&(shortFocusGoal(a)==='money'||shortFocusGoal(a)==='keep'),title:'HOW OFTEN ARE YOU FRONTING MONEY FOR A JOB?',note:'Flights, Uber, meals, baggage, hair, products, assistants, or anything you expect to be reimbursed for.',choices:[['often','A lot'],['sometimes','Sometimes'],['rare','Rarely'],['never','Basically never']]},
+ {id:'sessionagency',when:a=>a.primarywork==='session'&&(shortFocusGoal(a)==='money'||shortFocusGoal(a)==='keep'),title:'DOES AN AGENCY TAKE A CUT FROM YOUR RATE?',choices:[['yes','Yes'],['sometimes','Sometimes, depending on the job'],['no','No']]},
+ {id:'sessionfront',when:a=>a.primarywork==='session'&&(shortFocusGoal(a)==='money'||shortFocusGoal(a)==='keep'),title:'HOW OFTEN ARE YOU FRONTING MONEY FOR A JOB?',note:'Flights, Uber, meals, baggage, hair, products, assistants, or anything you expect to be reimbursed for.',choices:[['often','A lot'],['sometimes','Sometimes'],['rare','Rarely'],['never','Basically never']]},
  {id:'paymodel',when:a=>shortLane(a)==='chair'&&(shortFocusGoal(a)==='money'||shortFocusGoal(a)==='keep'),title:"LET’S TALK PAY. HOW DOES YOURS WORK?",choices:[["commission", "I get a percentage of what my clients pay."], ["hourly", "I get paid by the hour."], ["self", "I work for myself. The salon expenses are mine, too."], ["owner", "I own the salon."], ["mixed", "It’s a mix, or I need help sorting it out."]]},
- {id:'hourlytime',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='money'&&a.paymodel==='hourly',title:"ARE YOU DOING WORK THAT DOESN’T SHOW UP AS PAID TIME?",choices:[["no", "No. My paid hours match the time I’m working."], ["sometimes", "Sometimes. Messages, setup, cleanup, or other work happens off the clock."], ["often", "Yes. More than I’d like."], ["unknown", "I need to compare my hours with my payslip."]]},
+ {id:'hourlytime',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='money'&&a.paymodel==='hourly',title:"ARE YOU DOING WORK THAT DOESN’T SHOW UP AS PAID TIME?",choices:[["no", "No. My paid hours match the time I’m working."], ["sometimes", "Sometimes. Messages, setup, cleanup, or other work happens off the clock."], ["often", "Yes. More than I’d like."], ["unknown", "I need to check my hours against my pay."]]},
  {id:'spend',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='money'&&a.paymodel!=='hourly',title:"WHAT DOES A CLIENT USUALLY SPEND IN YOUR CHAIR?",note:"Just the hair services. Leave out tips and take-home products. Pick the closest amount.",choices:[["notyet", "I’m not taking clients yet."], ["unknown", "Honestly? I need to check."], ["75", "Under $100"], ["150", "$100-$199"], ["275", "$200-$349"], ["400", "$350 or more"]]},
  {id:'returning',when:a=>shortLane(a)==='chair'&&(shortFocusGoal(a)==='clients'||shortFocusGoal(a)==='return'),title:"THEY CAME ONCE. DID THEY COME BACK?",choices:[["notyet", "I’m still building. Too soon to know."], ["low", "Not really. We need to fix that."], ["some", "Some do. Some vanish into the witness protection program."], ["most", "Most come back."], ["almostall", "Almost everybody comes back."], ["unknown", "No clue. I haven’t tracked it."]]},
- {id:'costs',when:a=>shortLane(a)==='chair'&&(shortFocusGoal(a)==='keep'||(shortFocusGoal(a)==='money'&&a.paymodel!=='hourly')),note:'After the salon’s share and any rent or supplies you pay for. Before personal bills and taxes.',title:'YOU DID THE HAIR. HOW MUCH OF THE MONEY IS ACTUALLY YOURS?',choices:[['clear','I know what I keep, and it’s enough.'],['tight','I know what I keep. It needs to be more.'],['rough','I have a ballpark idea.'],['unknown','Honestly? I need help figuring that out.']]},
- {id:'visibility',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='clients',multi:true,exclusive:['none','unknown'],note:"Pick every source that has brought a real client into your chair. Not where you hope they’re coming from.",title:"HOW ARE THEY ACTUALLY FINDING YOU?",choices:[["social", "Instagram or TikTok."], ["salon", "The salon sends them my way."], ["referrals", "Referrals or word of mouth."], ["search", "Google or my website."], ["none", "New clients aren’t finding me yet."], ["unknown", "Good question. I need to start asking."]]},
- {id:'marketing',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='clients',multi:true,exclusive:['none'],note:"Pick everything you’ve actually tried.",title:"WHAT HAVE YOU ALREADY THROWN AT THIS?",choices:[["social", "Posting my work online."], ["people", "Asking clients, friends, or people I know for referrals."], ["local", "Getting out locally and introducing myself."], ["paid", "Paying for ads or promotions."], ["none", "Honestly? Not much yet. I need a first move."]]},
+ {id:'costs',when:a=>shortLane(a)==='chair'&&(shortFocusGoal(a)==='keep'||(shortFocusGoal(a)==='money'&&a.paymodel!=='hourly')),note:'After the salon’s share and your work bills. Before personal bills and taxes. Pick one.',title:'DO YOU KNOW WHAT YOU KEEP AFTER WORK COSTS?',choices:[['clear','I know what I keep, and it’s enough.'],['tight','I know what I keep. It needs to be more.'],['rough','I have a ballpark idea.'],['unknown','Honestly? I need help figuring that out.']]},
+ {id:'visibility',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='clients',multi:true,exclusive:['none','unknown'],note:"Pick every source that has brought you a paying client.",title:"HOW ARE THEY ACTUALLY FINDING YOU?",choices:[["social", "Instagram or TikTok."], ["salon", "The salon sends them my way."], ["referrals", "Referrals or word of mouth."], ["search", "Google or my website."], ["none", "New clients aren’t finding me yet."], ["unknown", "Good question. I need to start asking."]]},
+ {id:'marketing',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='clients',multi:true,exclusive:['none'],note:"Pick everything you’ve actually tried.",title:"WHAT HAVE YOU TRIED TO FILL YOUR BOOK?",choices:[["social", "Posting my work online."], ["people", "Asking clients, friends, or people I know for referrals."], ["local", "Getting out locally and introducing myself."], ["paid", "Paying for ads or promotions."], ["none", "Honestly? Not much yet. I need a first move."]]},
  {id:'network',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='clients',note:'Pick the one you would actually do this week.',title:'PICK YOUR MOVE.',choices:a=>{
    const visibility=new Set(Array.isArray(a.visibility)?a.visibility:[]);
    const marketing=new Set(Array.isArray(a.marketing)?a.marketing:[]);
@@ -69,14 +68,14 @@ const shortQuestions = [
  {id:'urgency',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='clients',title:"HOW FAST DO WE NEED TO MOVE?",note:"No wrong answer. We just need the truth.",choices:[["now", "Yesterday. My bills are not waiting."], ["month", "I want real movement over the next month."], ["steady", "I’ve got some breathing room. Let’s build this right."]]},
  {id:'nextvisit',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='return',title:"GREAT HAIR. NOW, DO YOU TALK ABOUT THEIR NEXT VISIT?",choices:[["prescribe", "Yes. We talk about what’s next and when to come back."], ["ask", "I ask, “Want to book your next appointment?”"], ["desk", "I leave that conversation to the front desk."], ["rare", "Usually not. We say goodbye and hope for the best."]]},
  {id:'followup',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='return',multi:true,exclusive:['none','unknown'],note:"Choose all that usually happen.",title:"THEY LEFT WITHOUT REBOOKING. WHAT HAPPENS NEXT?",choices:[["personal", "I reach out when it’s time for their next visit."], ["automatic", "My booking system sends a reminder."], ["desk", "The front desk or salon follows up."], ["none", "Nothing. I wait for them to make the next move."], ["unknown", "Honestly? I’m not sure what happens."]]},
- {id:'servicehours',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='money'&&a.paymodel!=='hourly',note:"From the client walking in to the last towel in the hamper. Pick the closest answer.",title:"HOW LONG DOES ONE APPOINTMENT REALLY TAKE?",choices:[["short", "Less than an hour"], ["medium", "About 1-2 hours"], ["long", "About 3-4 hours"], ["verylong", "5 hours or more"], ["varies", "Depends on who’s in the chair and what we’re doing."], ["unknown", "I need to watch the clock next time."]]},
+ {id:'servicehours',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='money'&&a.paymodel!=='hourly',note:"From the client walking in to the last towel in the hamper. Pick the closest answer.",title:"HOW LONG DOES ONE APPOINTMENT REALLY TAKE?",choices:[["short", "Less than an hour"], ["medium", "1 hour to under 3 hours"], ["long", "3 hours to under 5 hours"], ["verylong", "5 hours or more"], ["varies", "Depends on who’s in the chair and what we’re doing."], ["unknown", "I need to watch the clock next time."]]},
  {id:'workcosts',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='money'&&a.paymodel!=='hourly',multi:true,exclusive:['none','unknown'],note:"Choose all that come out of your pocket.",title:"WHICH WORK BILLS HAVE YOUR NAME ON THEM?",choices:[["product", "Color, extension hair, or other supplies."], ["space", "Chair or suite rent."], ["fees", "Card fees, booking apps, or work software."], ["team", "Assistant or team costs."], ["none", "The salon covers my work costs."], ["unknown", "I need to check what I’m actually paying for."]]},
- {id:'costleak',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='keep',title:"WHERE SHOULD WE START LOOKING AT WHAT YOU SPEND?",choices:[["space", "The salon’s share, rent, or salon fees."], ["product", "Color, extension hair, and supplies."], ["discount", "Discounts, free redos, and “I won’t charge you for that.”"], ["fees", "Apps, card fees, and subscriptions. They add up."], ["team", "Staff pay and the salon’s bills."], ["unknown", "Honestly? I need help knowing where to look."]]},
- {id:'weeklyhours',when:a=>shortFocusGoal(a)==='time',title:'HOW MANY HOURS A WEEK ARE YOU ACTUALLY WORKING?',note:'Count paid work, prep, cleanup, travel, ordering, admin, and messages. Answering hair questions from your couch counts. The pajamas don’t make it time off.',choices:[['under20','Under 20 hours'],['20to30','20-30 hours'],['31to40','31-40 hours'],['over40','More than 40 hours'],['unknown','Honestly? I’ve lost track.']]},
- {id:'targetdays',when:a=>shortFocusGoal(a)==='time',title:"YOUR WEEK, YOUR WAY. HOW MANY WORKDAYS?",choices:[["1", "1 day"], ["2", "2 days"], ["3", "3 days"], ["4", "4 days"], ["5", "5 days"], ["shorter", "Same number of days. I just want to get home earlier."], ["unknown", "Help me figure out what could work."]]},
+ {id:'costleak',note:'Pick one to check first. Not sure? We can start there, too.',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='keep',title:"WHERE SHOULD WE START LOOKING AT WHAT YOU SPEND?",choices:[["space", "The salon’s share, rent, or salon fees."], ["product", "Color, extension hair, and supplies."], ["discount", "Discounts, free redos, and “I won’t charge you for that.”"], ["fees", "Apps, card fees, and subscriptions. They add up."], ["team", "Staff pay and the salon’s bills."], ["unknown", "Honestly? I need help knowing where to look."]]},
+ {id:'weeklyhours',when:a=>shortFocusGoal(a)==='time',title:'HOW MANY HOURS A WEEK ARE YOU ACTUALLY WORKING?',note:'Count clients, prep, cleanup, travel, and admin. Hair messages from your couch count, too.',choices:[['under20','Under 20 hours'],['20to30','20-30 hours'],['31to40','31-40 hours'],['over40','More than 40 hours'],['unknown','Honestly? I’ve lost track.']]},
+ {id:'targetdays',when:a=>shortFocusGoal(a)==='time',title:"HOW MANY DAYS WOULD YOU LIKE TO WORK?",choices:[["1", "1 day"], ["2", "2 days"], ["3", "3 days"], ["4", "4 days"], ["5", "5 days"], ["shorter", "Same number of days. I just want to get home earlier."], ["unknown", "Help me figure out what could work."]]},
  {id:'overrun',when:a=>shortLane(a)==='chair'&&shortFocusGoal(a)==='time',note:'Choose the biggest time thief.',title:'WHICH ONE STEALS THE MOST TIME FROM YOUR WORKDAY?',choices:[['gaps','Big gaps between clients. I’m still here, but not getting paid.'],['overrun','Appointments take longer than I planned.'],['squeeze','I keep saying, “Sure, I can squeeze you in.”'],['messages','Messages and paperwork keep piling up after my last appointment.'],['none','I usually finish when I planned.'],['unknown','I’m not sure where the time goes.']]},
  {id:'timeleak',when:a=>shortLane(a)!=='chair'&&shortFocusGoal(a)==='time',note:'Choose the biggest one.',title:'WHAT EATS THE MOST TIME AROUND THE PAID WORK?',choices:[['travel','Travel and getting to the job'],['prep','Prep, shopping, kit work, or fittings'],['waiting','Waiting around before or during the job'],['longday','The paid day regularly turns into a very long day'],['admin','Invoices, email, scheduling, and follow-up'],['none','The unpaid time is pretty manageable'],['unknown','I need to track it']]},
- {id:'savings',when:a=>shortFocusGoal(a)==='stable',note:"Rent, food, utilities-the bills don’t take days off. Pick the closest answer. “I’m not sure” is okay.",title:"IF WORK STOPPED, HOW LONG COULD YOUR SAVINGS COVER THE BILLS?",choices:[["none", "I haven’t built up savings yet."], ["month", "About a month"], ["few", "A few months"], ["solid", "Six months or more"], ["unknown", "I’m not sure. I need a clearer picture."]]},
+ {id:'savings',when:a=>shortFocusGoal(a)==='stable',note:"Rent, food, and bills that keep coming. Pick the closest answer.",title:"IF WORK STOPPED, HOW LONG COULD YOUR SAVINGS COVER THE BILLS?",choices:[["none", "I haven’t built up savings yet."], ["month", "Less than 2 months"], ["few", "2 to under 6 months"], ["solid", "6 months or more"], ["unknown", "I’m not sure. I need a clearer picture."]]},
  {id:'futurehabit',when:a=>shortFocusGoal(a)==='stable',title:"IS SAVING MONEY HAPPENING, OR STILL ON THE TO-DO LIST?",choices:[["catchup", "The bills get there first."], ["spend", "I mean to save. Then I spend what’s left."], ["random", "My income changes, and my saving does too."], ["save", "I’m already putting money away regularly."]]},
  {id:'futurefear',when:a=>shortFocusGoal(a)==='stable',note:"Pick the first job you want that money to do.",title:"WHAT SHOULD THAT SAVED MONEY DO FIRST?",choices:[['emergency','Cover a slow month or an emergency'],['timeoff','Let me take real time off'],['retire','Build money for later in life'],['body','Help me move toward work that is easier on my body'],['unknown','I need help choosing where to start']]}
 ];
@@ -105,6 +104,7 @@ function shortLane(a) {
  return p;
 }
 function shortChoices(q,answers) {
+ q=shortQuestionCopy(q,answers||{});
  return typeof q.choices==='function'?q.choices(answers||{}):q.choices;
 }
 function chairPrimaryLabel(a) {
@@ -192,11 +192,10 @@ function buildOutsideChairBreakdown(a) {
   rule='A repeat client is valuable. Chasing every past contact is not the goal.';
  } else if(shortFocusGoal(a)==='money') {
   id='money'; title='MAKE THE WORK YOU ALREADY DO PAY BETTER.';
-  const styles=Array.isArray(a.paystyle)?a.paystyle:[a.paystyle];
   const expenses=Array.isArray(a.workexpenses)?a.workexpenses:[a.workexpenses];
   reasons.push('You want more money without simply adding more work. Your '+role+' can have a very different real value once time, fees, travel, assistants, products, and payment delays are included.');
-  if(shortLane(a)==='session'&&a.sessionagency==='yes') reasons.push('You said an agency takes a cut from your rate, so we need to use what actually stays yours.');
-  if(a.paywait==='90'||a.paywait==='long') reasons.push('You also wait a long time to get paid. That is a cash-flow problem even when the job itself pays well.');
+  if(a.primarywork==='session'&&a.sessionagency==='yes') reasons.push('You said an agency takes a cut from your rate, so we need to use what actually stays yours.');
+  if(a.paywait==='90'||a.paywait==='long') reasons.push('You also wait a long time to get paid. That leaves you waiting for money even when the job itself pays well.');
   step('CHECK ONE REAL JOB FROM START TO FINISH.','Use the agreed pay, every paid and unpaid hour, and every cost that truly stayed yours. Do not count reimbursed money as income.');
   step('SEPARATE THE MONEY INTO THE RIGHT BUCKETS.',expenses.includes('team')||expenses.includes('travel')||expenses.includes('hair')?'Separate what you earned, what you fronted and expect back, money that passed through you for someone else, and expenses you actually had to absorb.':'Separate what you earned from the work costs you actually paid.');
   step('COMPARE IT WITH A SECOND JOB.','Pick another recent job and do the same check. The better-paying job is not always the one with the biggest headline rate.');
@@ -207,7 +206,7 @@ function buildOutsideChairBreakdown(a) {
   id='money'; title='FIND OUT WHERE THE MONEY IS ACTUALLY GOING.';
   const expenses=Array.isArray(a.workexpenses)?a.workexpenses:[a.workexpenses];
   reasons.push('You earn through '+role+'. We need to separate real income from reimbursements, pass-through money, and costs before deciding that you are spending too much.');
-  if(shortLane(a)==='session'&&['often','sometimes'].includes(a.sessionfront)) reasons.push('You said you sometimes front money for jobs. That money is tied up until the client reimburses you, even when it is not ultimately your expense.');
+  if(a.primarywork==='session'&&['often','sometimes'].includes(a.sessionfront)) reasons.push('You said you sometimes front money for jobs. That money is tied up until the client reimburses you, even when it is not ultimately your expense.');
   step('PICK ONE NORMAL MONTH.','Gather the payments that actually reached you, plus the work bills and reimbursements from that same period. Do not use invoice totals alone.');
   step('SEPARATE EARNINGS FROM MONEY THAT WAS NEVER REALLY YOURS.',expenses.includes('team')?'If client money came through you to pay an assistant or someone else, mark it separately. Also separate reimbursements from actual earnings.':'Keep reimbursements separate from earnings, and keep business costs separate from personal spending.');
   step('CHECK ONE COST OR DELAY YOU CAN CHANGE.','Choose one recurring cost, payment delay, unnecessary purchase, or job expense you can actually verify. Make one change and check the next real statement or payment.');
@@ -245,7 +244,7 @@ function buildOutsideChairBreakdown(a) {
 }
 function buildShortBreakdown(input) {
  const a=validateShortAnswers(input);
- if(shortLane(a)!=='chair') return buildOutsideChairBreakdown(a);
+ if(shortLane(a)!=='chair'){const r=buildOutsideChairBreakdown(a);return ['owner','manager'].includes(shortLane(a))?leadershipBreakdown(a,r):r;}
  const stage=shortStage(a).label;
  const starting=a.days==='0'||a.full==='notyet'||a.spend==='notyet';
  const room=['under25','half'].includes(a.full), packed=a.full==='full';
@@ -377,3 +376,83 @@ function shortEmailCopy(r,name) {
  return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR BOOK RIGHT NOW\n'+r.stage+'\n'+(r.snapshot||'')+'\n\nFIX THIS FIRST\n'+r.top.title+'\n'+r.intro+'\n\nDO THESE 3 THINGS\n'+r.plan.steps.map((s,i)=>(i+1)+'. '+s.title+'\n'+s.body).join('\n\n')+'\n\nWATCH THIS\n'+r.plan.checkTitle+'\n'+r.plan.check+'\n'+r.plan.rule+'\n\nThis is a starting point based on your answers. Exact pay and time-off decisions need your actual numbers.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com';
 }
 
+
+
+function shortQuestionCopy(q,a) {
+ if(!['owner','manager'].includes(shortLane(a)))return q;
+ const copies={
+  workload:{title:'HOW FULL IS THE SALON’S BOOK?',note:'Think about the whole team. Pick the closest answer.',choices:[['notyet','We’re not taking clients yet.'],['light','Plenty of empty appointments.'],['half','About half full.'],['busy','Busy, with some room.'],['full','Packed, or close to it.']]},
+  jobsource:{title:'HOW DO NEW CLIENTS FIND THE SALON?',note:'Pick every source that has brought in a paying client.',choices:[['agency','Outside booking partners.'],['repeat','Past clients finding their way back.'],['referrals','Referrals and word of mouth.'],['social','Social media.'],['direct','Google, our website, or people contacting us directly.'],['none','New clients aren’t coming in consistently.'],['unknown','We need to start asking.']]},
+  outreach:{title:'WHAT HAVE YOU TRIED TO FILL THE SALON’S BOOK?',note:'Pick all that apply.',choices:[['agency','Working with outside booking partners.'],['past','Reaching out to past clients.'],['portfolio','Sharing the team’s work.'],['network','Meeting local businesses and people.'],['pitch','Promoting a specific service or opening.'],['none','We need a first move.']]},
+  repeatwork:{title:'ARE SALON CLIENTS COMING BACK?',choices:[['new','We’re just getting started. Too soon to know.'],['rare','Not often enough.'],['some','Some do. Some disappear.'],['most','Most come back.'],['unknown','We haven’t tracked it.']]},
+  repeatfollow:{title:'THEY LEFT WITHOUT REBOOKING. WHAT HAPPENS NEXT?',note:'Pick all that usually happen.',choices:[['thanks','The stylist sends a follow-up.'],['portfolio','We stay visible by sharing the team’s work.'],['touch','The salon checks in when their next visit is due.'],['agency','Our front desk or booking team handles it.'],['none','Nothing. We wait for them to book.']]},
+  timeleak:{title:'WHAT STEALS THE MOST TIME AT THE SALON?',note:'Pick one to tackle first.',choices:[['travel','Travel or running errands for the salon.'],['prep','Prep, supplies, or getting the salon ready.'],['waiting','Waiting around when the schedule falls apart.'],['longday','The workday keeps running late.'],['admin','Scheduling, messages, paperwork, and follow-up.'],['none','The extra work is manageable.'],['unknown','I need to see where the time goes.']]}
+ };
+ if(q.id==='workexpenses'&&shortLane(a)==='manager'&&shortFocusGoal(a)==='keep')return {...q,title:'WHICH SALON COSTS ARE YOU RESPONSIBLE FOR WATCHING?',note:'Pick all that are part of your job.',choices:[['products','Products and supplies.'],['hair','Extension hair, wigs, or hairpieces.'],['tools','Tools and equipment.'],['travel','Travel or work errands.'],['team','Staffing costs.'],['fees','Booking, card, or software fees.'],['none','The owner handles these costs.'],['unknown','I need to clarify what I’m responsible for.']]};
+ return {...q,...(copies[q.id]||{})};
+}
+function leadershipBreakdown(a,r) {
+ const manager=shortLane(a)==='manager',goal=shortFocusGoal(a);
+ const role=manager?'manage':'own';
+ const cases={
+  clients:['GET THE RIGHT PEOPLE THROUGH THE DOOR.','You '+role+' the salon. Let’s give new clients a clear reason to book.',[
+   ['PICK ONE SERVICE TO PUT OUT FRONT.','Choose one service the team has room for. Show a real result, who it is for, and how to book.'],
+   ['USE A SOURCE THAT HAS BROUGHT CLIENTS IN.','Look at the last 5 new clients. Ask how they found the salon. Try one small move through that source.'],
+   ['COUNT THE APPOINTMENTS, NOT THE LIKES.','For the next 5 inquiries, note where they came from and whether they became a completed visit.']
+  ],'Which source brought a client who actually showed up?'],
+  return:['MAKE APPOINTMENT #2 A TEAM HABIT.','They found the salon. Now make the next visit easy.',[
+   ['GIVE THE NEXT VISIT A REASON.','Have each stylist explain what the client needs next and when, before checkout.'],
+   ['DECIDE WHO FOLLOWS UP.',(a.repeatfollow||[]).includes('agency')?'Your front desk or booking team handles follow-up. Check what they send and when.':'Choose who follows up with clients who leave without rebooking. One clear handoff is enough.'],
+   ['FOLLOW THE NEXT 5 NEW CLIENTS.','Note who booked another appointment and who actually returned. Those are two different things.']
+  ],'Of the next 5 new clients, how many returned for appointment #2?'],
+  money:manager?['MAKE THE RESPONSIBILITY MATCH THE PAY.','You manage the salon. Its sales are not your paycheck.',[
+   ['LOOK AT ONE REAL PAY PERIOD.','Check your pay, paid hours, and any tips or bonuses. Note required work that happens outside those hours.'],
+   ['WRITE DOWN WHAT YOU ACTUALLY RUN.','List the work you handle: schedules, staffing, stock, client problems, and training. Keep it concrete.'],
+   ['HAVE A SPECIFIC PAY CONVERSATION.','Ask the owner what changes your pay: a raise, bonus, or a better-paid role. Get clear about the work and results expected.']
+  ],'Did you get a clear answer about how your pay can grow?']:['SALON SALES ARE NOT YOUR PAYCHECK.','The salon can look busy while your own pay gets lost in the bills.',[
+   ['LOOK AT ONE NORMAL MONTH.','Gather what clients paid, the salon’s bills, and what you paid yourself. Keep your own service work separate from the team’s.'],
+   ['CHECK ONE PART OF THE BUSINESS.','Choose one service or team schedule. Compare what clients paid with the time and direct costs of doing that work.'],
+   ['TRY ONE CHANGE.','Choose a price, cost, or scheduling change you can explain and measure. Check what it leaves after costs before calling it a win.']
+  ],'Did the salon keep more after costs, and did your own pay improve?'],
+  keep:manager?['GET CLEAR ON THE NUMBERS YOU OWN.','You need useful numbers and clear responsibility. You do not need the owner’s entire job.',[
+   ['AGREE ON WHAT YOU ARE RESPONSIBLE FOR.','Ask which salon numbers you are expected to watch and which decisions you can make.'],
+   ['PICK ONE NUMBER TO CHECK.','Use an actual salon report for the cost or booking issue you are responsible for. Ask for access if you do not have it.'],
+   ['BRING ONE CLEAR NEXT STEP.','Show the owner what you found and suggest one change. Agree on who makes it and when you will check again.']
+  ],'Do you have access, a clear responsibility, and one agreed next step?']:['FIND WHERE THE SALON’S MONEY GOES.','Money through the register is only the beginning of the story.',[
+   ['USE ONE NORMAL MONTH.','Put client payments and that month’s salon bills in the same place.'],
+   ['SEPARATE THE BIG BILLS.','Group payroll, rent, products, and fees. Keep what you pay yourself visible.'],
+   ['CHECK ONE COST YOU CAN CHANGE.','Pick one recurring bill or purchase. Make one change and check the next statement.']
+  ],'What changed in the money left after the salon’s bills?'],
+  time:['THE SALON DOES NOT GET YOUR WHOLE LIFE.','You '+role+' the salon. Let’s find one piece of the week you can get back.',[
+   ['TRACK ONE REAL WORKDAY.','Count salon hours plus the messages, errands, and paperwork that follow you home.'],
+   ['GIVE ONE REPEATING TASK A HOME.','Pick a task that keeps spilling over. Set a time for it or agree who can handle it.'],
+   ['PROTECT ONE FINISH TIME.',manager?'Agree with the owner who handles late problems and when you are off duty.':'Choose who handles late problems when you are off duty. Make that handoff clear to the team.']
+  ],'Did work take fewer hours, including the work you do at home?']
+ };
+ if(!cases[goal])return r;
+ const [title,baseIntro,steps,check]=cases[goal];
+ let intro=baseIntro;
+ const labels=id=>{const q=shortQuestions.find(q=>q.id===id);const values=Array.isArray(a[id])?a[id]:[a[id]];return shortChoices(q,a).filter(([value])=>values.includes(value)).map(([,label])=>label.replace(/\.$/,''));};
+ if(goal==='clients'){
+  const sources=labels('jobsource');
+  intro+=' You said: '+sources.join('; ')+'.';
+  if((a.outreach||[]).includes('none'))steps[1]=['MAKE ONE LOCAL CONNECTION.','Choose one nearby business that serves the people you want in the salon. Introduce yourself and make it easy to send someone your way.'];
+  if((a.jobsource||[]).includes('unknown'))steps[1]=['ASK BEFORE YOU GUESS.','Ask the next 5 new clients how they found the salon. Use those answers to choose where to put your effort.'];
+ }
+ if(goal==='money'||goal==='keep'){
+  const costs=labels('workexpenses');
+  if(costs.length)intro+=' '+(manager&&goal==='keep'?'The costs you watch: ':'You flagged these work costs: ')+costs.join('; ')+'.';
+ }
+ if(goal==='return'&&['new','unknown'].includes(a.repeatwork))intro+=' Start by tracking returns. We do not need to invent a problem before we have the numbers.';
+ if(goal==='time'){
+  const time=labels('timeleak');
+  if(time.length)intro+=' Start with this: '+time[0]+'.';
+  if(a.workdays&&a.workdays!=='varies')intro+=' Work currently takes '+(a.workdays==='6'?'6-7':a.workdays)+' days a week.';
+  if(/^[1-5]$/.test(a.targetdays))intro+=' You would like '+a.targetdays+'.';
+ }
+ const load={notyet:'The salon is not taking clients yet.',light:'The salon has plenty of openings.',half:'The salon book is about half full.',busy:'The salon is busy, with some room.',full:'The salon book is packed or close to it.'};
+ const snapshot='You '+role+' the salon. '+(load[a.workload]||'');
+ const plan={intro,steps:steps.map(([title,body],i)=>({id:'short-'+goal+'-'+i,day:['1','2-3','4-6'][i],title,body})),checkTitle:'WHAT CHANGED THIS WEEK?',check,rule:manager?'Your role, your pay, and the salon’s money are different things. Keep them separate.':'Check the real numbers before making a bigger change.'};
+ const top={...r.top,title,short:intro,body:intro,action:plan.steps[0].body};
+ return {...r,snapshot,top,items:[top],intro,plan,fix:{title,body:intro,first:plan.steps[0].body,then:plan.steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:plan.rule}};
+}
