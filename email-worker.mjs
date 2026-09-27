@@ -1034,7 +1034,10 @@ export default {
     const headers = {'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Vary':'Origin'};
     if (ORIGINS.has(origin)) Object.assign(headers, {'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type'});
     const reply = (data, status = 200) => new Response(JSON.stringify(data), {status, headers});
-    if (request.method === 'GET') return reply({service:'BOOKED AF email', ready:!!(env.RESEND_API_KEY && env.TURNSTILE_SECRET_KEY), schemas:['legacy',SHORT_SCHEMA]});
+    if (request.method === 'GET') {
+      const capabilities={email:!!(env.RESEND_API_KEY&&env.TURNSTILE_SECRET_KEY),checkout:!!env.STRIPE_SECRET_KEY,webhook:!!(env.STRIPE_WEBHOOK_SECRET&&env.RESEND_API_KEY),followups:!!(env.FOLLOWUPS&&env.RESEND_API_KEY)};
+      return reply({service:'BOOKED AF email',ready:capabilities.email,launchReady:Object.values(capabilities).every(Boolean),capabilities,schemas:['legacy',SHORT_SCHEMA]});
+    }
     if (!ORIGINS.has(origin)) return reply({success:false}, 403);
     if (request.method === 'OPTIONS') return new Response(null, {status:204, headers});
     if (request.method !== 'POST') return reply({success:false}, 405);

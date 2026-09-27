@@ -15,6 +15,11 @@ globalThis.BookedNext30 = (() => {
   restart:{label:'Starting or returning to hair',unit:'paid appointment',buyer:'client',proof:'recent work that shows the service you want to book',source:'people who know your work, local contacts, and recent models',tool:'FIRST APPOINTMENT MATH'},
   other:{label:'Another kind of hair career',unit:'paid assignment',buyer:'person who hires or pays you',proof:'a clear example of the work people can hire you for',source:'past buyers, referrals, and people who hire for your kind of work',tool:'YOUR WORK, YOUR MATH'}
  };
+ const examples={
+  color:{problem:'The appointment pays $300. It takes more than the time on the booking screen.',action:'Record the consultation, color used, finish, and cleanup for one appointment before changing the price.',earned:300,costs:55,hours:4,breakdown:'$40 color and supplies + $15 allocated work costs. 3.5 hours with the client + 0.5 hour setup and cleanup.',answers:{color_pay:'self',color_product:'rough',color_time:'often'}},
+  bridal:{problem:'A $1,000 wedding booking includes a trial, an assistant, and travel.',action:'Check the full booking cost and ready-by time before agreeing to another person or location.',earned:1000,costs:400,hours:12,breakdown:'$250 assistant + $100 travel + $50 supplies. 2 hours trial + 2 travel + 6 event + 2 prep and admin.',answers:{bridal_team:'team',bridal_quote:'services',bridal_trial:'bundled',bridal_changes:'absorb'}},
+  session:{problem:'An $800 job takes 14 hours once prep, travel, and wrap are counted.',action:'Confirm the full schedule, costs, and approval contact before accepting the next job.',earned:800,costs:120,hours:14,breakdown:'$80 unreimbursed travel + $40 supplies. 2 hours prep + 2 travel + 9 on set + 1 wrap and invoicing. No agency deduction in this example.',answers:{session_agency:'me',session_scope:'late',session_overrun:'absorb'}}
+ };
  const goals=[['clients','More of the right paid work.'],['money','Better pay for the work I already do.'],['return','More repeat business or referrals.'],['keep','Know where the money goes. Keep more of it.'],['time','More life outside work.'],['stable','A steadier business and some breathing room.'],['help','Help me pick the first move.']];
  const question=(id,title,choices,purpose,extra={})=>({id,title,choices,purpose,...extra});
  const unknown=['unknown','Honestly? I need to check.'];
@@ -261,7 +266,10 @@ globalThis.BookedNext30 = (() => {
    const labels=values.map(v=>q.choices.find(c=>c[0]===v)?.[1]).filter(Boolean);
    return {id:role+'_'+q.id,title:q.title,answer:labels.join(' / '),action:values.map(v=>q.actions[v]).filter(Boolean).join(' '),relevant:q.tags.includes(goal),order:i};
   });
-  const sorted=[...signals].sort((x,y)=>Number(y.relevant)-Number(x.relevant)||x.order-y.order);
+  // Put an unresolved issue ahead of a routine maintenance answer within the chosen goal.
+  const needsAttention=new Set(['unknown','no','rough','often','absorb','late','day','services','bundled','informal','nothing','unclear','slow','varies','lots','none']);
+  const urgency=s=>{const v=a[s.id];return (Array.isArray(v)?v:[v]).some(x=>needsAttention.has(x))?1:0};
+  const sorted=[...signals].sort((x,y)=>Number(y.relevant)-Number(x.relevant)||urgency(y)-urgency(x)||x.order-y.order);
   const first=sorted[0],second=sorted[1];
   const metrics=metricsFor(role,goal,a);
   const qty=a.available==='tiny'?1:a.available==='hour'?3:a.available==='two'?5:7;
@@ -276,9 +284,9 @@ globalThis.BookedNext30 = (() => {
   if(employee&&role!=='manager')scripts[2]=['PAY CONVERSATION','My work currently includes [responsibilities] and takes [required hours]. Can we review how my pay is calculated, what supports a pay review, and when we can revisit it? Here is one example of my contribution: [example].'];
   const returnScript={color:1,cut:1,extensions:1,session:0,bridal:2,education:2,owner:2,manager:0,restart:0,other:2};
   const script=employee&&goal==='money'?scripts[role==='manager'?1:2]:goal==='clients'?scripts[0]:goal==='return'?scripts[returnScript[role]]:scripts[1];
-  const practice='Use “'+script[0]+'” below in '+count+' real situation'+(qty===1?'':'s')+'. Replace the brackets with what is true for you.'+(employee&&goal==='money'?' Agree on the review process and the next decision. A raise is a conversation, not a forecast.':'');
+  const practice=goal==='stable'?'At the next payday or bill check-in, repeat the check with the money actually available. Record what you could set aside after bills, even if it was $0.':goal==='keep'?'Recheck one comparable '+profile.unit+' after your first change. Include the same costs. Record whether more money stayed with you.':'Use “'+script[0]+'” below in '+count+' real situation'+(qty===1?'':'s')+'. Replace the brackets with what is true for you.'+(employee&&goal==='money'?' Agree on the review process and the next decision. A raise is a conversation, not a forecast.':'');
   const missions=[
-   {week:1,title:'GET ONE HONEST BASELINE.',tasks:[baseline,firstAction],watch:metrics[0].label},
+   {week:1,title:'GET ONE HONEST BASELINE.',tasks:[baseline,'Write down the starting value for “'+metrics[0].label+'” in the scorecard. If you do not know it yet, leave it blank and collect it before comparing.'],watch:metrics[0].label},
    {week:2,title:'TRY THE FIRST CHANGE.',tasks:[firstAction,goal==='clients'&&a.budget==='0'?'Use existing contacts, relevant referrals, and the work you already have. No paid ads, new software, or rebrand required.':second.action],watch:metrics[0].label+' and '+metrics[1].label},
    {week:3,title:'REPEAT IT. KEEP THE RECEIPTS.',tasks:[practice,'Write down what happened. A reply, booking, completed job, payment, or hour saved counts. A vague feeling does not.'],watch:metrics[metrics.length-1].label},
    {week:4,title:'KEEP THE WINNER. FIX THE REST.',tasks:['Compare the same length of time before and after the change using the scorecard below.','If the change helped, repeat it. If it did not, change one thing and run a smaller test. Use the “If it gets stuck” section to choose the next move.'],watch:'What changed in the work, money, or time you actually recorded.'}
@@ -311,5 +319,5 @@ globalThis.BookedNext30 = (() => {
   return {benefit,afterPurchase:benefit-price,returnPercent:(benefit-price)/price*100,breakEven:benefit>=price};
  }
  function breakEven(amount,price=PRICE){return Number.isFinite(amount)&&amount>0&&Number.isFinite(price)&&price>0?Math.ceil(price/amount):null}
- return {VERSION,PRICE,roles,goals,questions,choices,primary,goalFor,cleanAnswers,complete,seed,build,workMath,valueMath,breakEven};
+ return {VERSION,PRICE,roles,examples,goals,questions,choices,primary,goalFor,cleanAnswers,complete,seed,build,workMath,valueMath,breakEven};
 })();

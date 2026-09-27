@@ -17,6 +17,10 @@ for(const role of roles)for(const goal of goals){
   for(const [v] of q.choices){const a=fill({...answers,[q.id]:q.multi?[v]:v});const p=api.build(a);assert(!JSON.stringify(p).includes('undefined'));assert(p.missions.every(w=>w.tasks.every(Boolean)));variants++}
  }
  const tiny=api.build(fill({...answers,available:'tiny'}));assert(tiny.missions.every(w=>w.tasks.length===1));
+ assert.equal(tiny.missions[1].tasks[0],tiny.doNow,'Small plans must include the actual change in week two');
+ assert.notEqual(plan.missions[0].tasks[1],plan.missions[1].tasks[0],'Baseline and action weeks must not repeat the same task');
+ if(goal==='stable')assert.match(tiny.missions[2].tasks[0],/payday or bill/);
+ if(goal==='keep')assert.match(tiny.missions[2].tasks[0],/same costs/);
  const restricted=api.build(fill({...answers,[role+'_control']:'salon'}));
  if(['color','cut'].includes(role))assert(restricted.constraints.some(x=>x.includes('agreement')));
 }
@@ -42,6 +46,13 @@ assert.equal(api.valueMath({additionalKept:100,extraCosts:20,price:49}).afterPur
 assert.equal(api.valueMath({additionalKept:0,extraCosts:0,price:49}).afterPurchase,-49);
 assert.equal(api.valueMath({additionalKept:20,extraCosts:0,price:0}),null);
 assert.equal(api.breakEven(20,49),3);assert.equal(api.breakEven(0,49),null);
+for(const [role,example] of Object.entries(api.examples)){
+ const plan=api.build(fill({careers:[role],goal:'money',load:'busy',available:'hour',...example.answers}));
+ const math=api.workMath(example);assert(math);assert.equal(math.left,example.earned-example.costs);
+ assert(!plan.evidence[0].answer.includes('Usually, yes.'));
+}
+const colorIssue=api.build(fill({careers:['color'],goal:'money',color_pay:'self',color_product:'no',color_time:'yes'}));
+assert.equal(colorIssue.evidence[0].id,'color_product','An unknown cost should outrank a routine pay-model answer');
 for(const bad of [null,[],{}, {careers:['fake'],goal:'money'},{careers:['color'],color_pay:'<script>'}]){
  const clean=api.cleanAnswers(bad||{});assert(!JSON.stringify(clean).includes('<script>'));assert(!api.complete(clean));
 }

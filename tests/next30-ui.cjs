@@ -54,6 +54,12 @@ async function boot(paid=true,saved=null){
   assert.equal(json("next30SavedPlans([{answers:{careers:['evil']}}])").length,0);
   run("state.view='next30sample';render()");assert.equal(w.document.querySelectorAll('[data-next30-sample]').length,10);
   click('[data-next30-sample="session"]');assert.match($('#app').textContent,/WHOLE-JOB MATH|whole-job math/);assert.match($('#app').textContent,/EXAMPLE ONLY/);assert(!$('#next30-import'));
+  assert.match($('.example-math').textContent,/48.57/);
+  for(const [role,rate] of [['color','61.25'],['bridal','50.00'],['session','48.57']]){
+   run("state.view='intro';render()");click(`[data-example-role="${role}"]`);
+   assert.equal(run('state.view'),'next30sample');assert.match($('.example-math').textContent,new RegExp(rate.replace('.','\\.')));
+   assert.equal($(`[data-next30-sample="${role}"]`).getAttribute('aria-pressed'),'true');
+  }
   assert.equal(b.errors.length,0);
  }finally{b.dom.window.close()}
  b=await boot(true,{version:'career-v1',answers:{careers:['color']},carried:[],checks:'bad',tools:42,metrics:[],savedPlans:[null,{},'bad']});

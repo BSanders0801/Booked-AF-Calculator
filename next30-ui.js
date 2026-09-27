@@ -1,13 +1,20 @@
 /* Paid UI. Entry remains behind app.js's verified checkout route. */
 function renderNext30Sample(role='color'){
  if(!BookedNext30.roles[role])role='color';
- let answers={careers:[role],goal:'money',load:'busy',available:'hour'};
+ const example=BookedNext30.examples[role];
+ let answers={careers:[role],goal:'money',load:'busy',available:'hour',...example?.answers};
  for(let pass=0;pass<8;pass++){
   for(const q of BookedNext30.questions(answers))if(answers[q.id]===undefined)answers[q.id]=q.multi?[q.choices[0][0]]:q.choices[0][0];
   answers=BookedNext30.cleanAnswers(answers);
  }
  const plan=BookedNext30.build(answers),escape=next30Escape;
  app.innerHTML=`<section class="baf-section"><p class="baf-kicker">EXAMPLE ONLY · MADE-UP ANSWERS</p><h1>YOUR CAREER.<br><span>YOUR KIND OF PLAN.</span></h1><p class="baf-subhead">Pick your career. This sample uses a busy workload, a better-pay goal, and an hour a week. Your answers change your plan.</p><div class="baf-sample-tabs" role="group" aria-label="Choose a paid career example">${Object.entries(BookedNext30.roles).map(([id,r])=>`<button type="button" class="baf-sample-tab" data-next30-sample="${id}" aria-pressed="${id===role}">${escape(r.label)}</button>`).join('')}</div><div class="baf-card"><p class="baf-kicker">${escape(plan.roleLabel)}</p><h2>DO THIS FIRST</h2><p>${escape(plan.doNow)}</p><h3>STOP THIS</h3><p>${escape(plan.stop)}</p><p>${escape(plan.instead)}</p><h3>WATCH THIS</h3><p>${escape(plan.watch)}</p></div><div class="baf-card"><h3>WEEK 1: ${escape(plan.missions[0].title)}</h3><ul>${plan.missions[0].tasks.map(x=>`<li>${escape(x)}</li>`).join('')}</ul></div><div class="baf-card"><h3>ONE SCRIPT TO STEAL</h3><p><strong>${escape(plan.scripts[0][0])}</strong></p><p>${escape(plan.scripts[0][1])}</p></div><details><summary>THE EXAMPLE ANSWERS BEHIND THIS</summary><ul>${plan.answers.map(x=>`<li>${escape(x.title)} ${escape(x.answer)}</li>`).join('')}</ul></details><p>Your full plan includes four weeks, three scripts, a work checklist, ${escape(plan.tool.title.toLowerCase())}, a before-and-after scorecard, and a purchase-value check. Save it and come back as the work changes.</p><div class="baf-actions"><button type="button" data-nav="paid">See Your Next 30 · $49 →</button><button type="button" class="baf-outline" data-nav="intro">Back home</button></div></section>`;
+ if(example){
+  const math=BookedNext30.workMath(example);
+  const card=document.createElement('div');card.className='baf-card example-math';
+  card.innerHTML=`<p class="baf-kicker">ILLUSTRATIVE NUMBERS · NOT CUSTOMER RESULTS</p><h2>${escape(example.problem)}</h2><p>${escape(example.breakdown)}</p><p><strong>$${example.earned} − $${example.costs} = $${math.left} left. Across ${example.hours} hours: $${math.perHour.toFixed(2)}/hour.</strong></p><p>${escape(example.action)}</p><p class="baf-small">Before personal taxes and any costs not listed. This is a starting comparison, not a recommended rate or a promise of profit.</p>`;
+  app.querySelector('.baf-sample-tabs').after(card);
+ }
  app.querySelectorAll('[data-next30-sample]').forEach(el=>el.onclick=()=>{const selected=el.dataset.next30Sample;renderNext30Sample(selected);app.querySelector(`[data-next30-sample="${selected}"]`).focus()});
 }
 function next30Ensure(){

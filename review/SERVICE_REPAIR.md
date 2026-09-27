@@ -12,6 +12,16 @@ Observed September 27, 2026 UTC. This is a release blocker for the email and pai
 
 ## Repair required before publishing the revised flows
 
+### Prepared repair, September 27 follow-up
+
+The draft now includes root `wrangler.jsonc` selecting `email-worker.mjs`, with `keep_vars: true` and the existing `booked-af-followups` namespace bound as `FOLLOWUPS`. The namespace was verified in the signed-in account dashboard. No new namespace was created. The compatibility date matches the inspected production setting. Cron configuration is deliberately omitted: Cloudflare documents that omission does not disable an existing trigger. The existing schedule still requires a post-deployment check.
+
+The Worker now reports separate configuration flags for email, checkout, webhook and follow-ups. These indicate configuration presence only, not a successful authenticated external request or delivered email. Tests cover partial configuration and invalid purchase rejection without sending anything.
+
+Live service rechecked: still returns website HTML and missing API routes. Deployment and secret restoration are NOT complete. Browser control failed twice with `encode latest capture frame failed: window crop is outside captured monitor`; the user has been asked to move Chrome onto the main monitor and maximize it. No hosted setting was modified.
+
+Steps below remain the launch checklist; step 2 and the source portion of step 5 are now prepared in the draft.
+
 1. Back up the current Cloudflare deployment/version and settings. The GitHub and local restore points preserve source; they do not back up hosted secrets or deployment versions.
 2. Configure this service to deploy `email-worker.mjs` explicitly, rather than treating the repository root as static website assets. Preserve the separate GitHub Pages website deployment.
 3. Restore runtime secrets through Cloudflare's secure controls: `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`. Do not put keys in chat, repository files or screenshots.

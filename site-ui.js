@@ -261,6 +261,8 @@
     if(leadershipButton){e.preventDefault();renderCareerSample(leadershipButton.dataset.careerSampleDetail);return;}
     const sampleButton=e.target.closest('[data-career-sample]');
     if(sampleButton){e.preventDefault();renderCareerSample(sampleButton.dataset.careerSample);return;}
+    const exampleButton=e.target.closest('[data-example-role]');
+    if(exampleButton){e.preventDefault();go('next30sample');renderNext30Sample(exampleButton.dataset.exampleRole);normalizeHeadings();return;}
     const nav = e.target.closest('[data-nav]');
     if (nav) { e.preventDefault(); go(nav.dataset.nav); return; }
     if (e.target.closest('[data-clear-progress]')) {
