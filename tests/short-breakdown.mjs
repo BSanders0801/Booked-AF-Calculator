@@ -56,6 +56,17 @@ assert.equal(byId('goalpriority').id,'goalpriority');
 const primaryChoices=Array.from(choices(byId('primarywork'),{worktype:['color','extensions','education']}),x=>x[0]);
 assert.deepEqual(primaryChoices,['chair-color','chair-extensions','education','mix','notearning']);
 
+// One selected lane should not waste a question asking the user to repeat it.
+const singleColorSeed={worktype:['color']};
+const singleColorVisible=Array.from(visible(singleColorSeed),q=>q.id);
+assert(!singleColorVisible.includes('primarywork'));
+assert.equal(singleColorVisible[1],'full');
+assert.equal(lane(singleColorSeed),'chair');
+const singleColor=complete({worktype:['color'],goal:['clients']});
+assert(!('primarywork' in validate(singleColor)));
+assert.match(build(singleColor).snapshot,/color clients/i);
+
+
 // Owner and manager are intentionally different paths.
 const owner=complete({worktype:['owner'],leadershiprole:'owner',goal:['money']});
 const manager=complete({worktype:['owner'],leadershiprole:'manager',goal:['money']});
