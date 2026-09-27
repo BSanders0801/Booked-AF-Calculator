@@ -1,6 +1,6 @@
 // Shared by the website and the self-contained email Worker.
 const SHORT_SCHEMA = 'short-v5';
-const shortQuestions = [
+const professionalQuestions = [
  {id:'worktype',multi:true,note:'Pick everything that sounds like your actual career. One lane, five lanes, no judgment.',title:'WHAT’S YOUR HAIR GAME?',choices:[['color','Color is my thing.'],['cut','Cutting + styling.'],['extensions','Extensions.'],['session','Session / editorial / commercial.'],['events','Bridal + events / on-location.'],['education','Education + beauty brand work.'],['owner','I own or manage a salon.'],['inactive','I’m trained or licensed, but I’m not taking clients right now.'],['other','Something else.']]},
  {id:'leadershiprole',when:a=>Array.isArray(a.worktype)&&a.worktype.includes('owner'),title:'ARE YOU THE OWNER OR THE MANAGER?',note:'Pick one. Running the salon and owning it are different jobs.',choices:[['owner','I own the salon.'],['manager','I manage the salon, but I don’t own it.']]},
  {id:'primarywork',when:a=>{const w=Array.isArray(a.worktype)?a.worktype:[];const active=w.filter(x=>x!=='inactive');return active.length>1||(w.includes('inactive')&&active.length>0);},title:'OKAY, BUT WHAT PAYS THE BILLS?',note:'Pick what brings in the most money. Not earning from hair yet? Say that.',choices:a=>{
@@ -79,6 +79,62 @@ const shortQuestions = [
  {id:'futurehabit',when:a=>shortFocusGoal(a)==='stable',title:"IS SAVING MONEY HAPPENING, OR STILL ON THE TO-DO LIST?",choices:[["catchup", "The bills get there first."], ["spend", "I mean to save. Then I spend what’s left."], ["random", "My income changes, and my saving does too."], ["save", "I’m already putting money away regularly."]]},
  {id:'futurefear',when:a=>shortFocusGoal(a)==='stable',note:"Pick the first job you want that money to do.",title:"WHAT SHOULD THAT SAVED MONEY DO FIRST?",choices:[['emergency','Cover a slow month or an emergency'],['timeoff','Let me take real time off'],['retire','Build money for later in life'],['body','Help me move toward work that is easier on my body'],['unknown','I need help choosing where to start']]}
 ];
+// School is a career stage, never an income lane. Old saved professional
+// answers remain readable; every new Breakdown starts with careerstage.
+const careerStageQuestion = {id:'careerstage', when:a=>a.careerstage!==undefined||!a.worktype, title:'WHERE ARE YOU IN YOUR HAIR CAREER?', choices:[
+ ['school','I’m still in school for hair.'],
+ ['building','I’m licensed and building or rebuilding.'],
+ ['working','I’m already working behind the chair.'],
+ ['broader','My career goes beyond the chair, or mixes several kinds of work.']
+]};
+function isStudent(a){return a?.careerstage==='school';}
+const studentQuestions = [
+ {id:'studentinterest',multi:true,exclusive:['exploring'],title:'WHAT KIND OF HAIR WORK INTERESTS YOU?',note:'Pick all that fit. You’re choosing what to explore, not signing a lifetime contract.',choices:[['color','Color.'],['cut','Cutting + styling.'],['extensions','Extensions.'],['session','Session / editorial.'],['events','Bridal + events.'],['education','Education + brand work.'],['exploring','I’m still figuring that out.']]},
+ {id:'graduation',title:'HOW CLOSE ARE YOU TO FINISHING SCHOOL?',choices:[['soon','About 3 months or less.'],['middle','About 4-6 months.'],['early','More than 6 months.'],['unknown','My finish date isn’t clear yet.']]},
+ {id:'practice',title:'ARE YOU WORKING ON CLINIC CLIENTS OR MODELS YET?',choices:[['regular','Yes, regularly.'],['some','A few so far.'],['notyet','Not yet.']]},
+ {id:'direction',title:'WHAT DO YOU THINK COMES AFTER GRADUATION?',choices:[['employee','A salon job or assistant role with training.'],['rental','Renting a chair or suite.'],['freelance','Session, bridal, or freelance work.'],['unsure','I haven’t figured that out yet.']]},
+ {id:'readiness',title:'WHAT FEELS LEAST PREPARED?',note:'Choose the one you want help with first.',choices:[['salon','Knowing which first job is actually right for me.'],['clients','Finding my first clients or models.'],['consultation','Agreeing on the service before I start.'],['rebooking','Talking about their next appointment.'],['money','Understanding what I’ll actually get paid.'],['boundaries','Saying no or explaining what I can offer.']]},
+ {id:'salonevidence',when:a=>a.readiness==='salon'||a.direction==='rental',title:'WHAT HAVE YOU ACTUALLY CHECKED SO FAR?',choices:[['compared','I’ve compared training, pay, costs, and how clients find me.'],['visited','I’ve visited or interviewed, but those details aren’t clear.'],['social','Mostly photos, social media, or what people have told me.'],['none','I haven’t checked yet.']]},
+ {id:'habitevidence',when:a=>!['salon'].includes(a.readiness),title:a=>'',choices:[]}
+];
+// This question follows the selected concern and asks for evidence, not confidence.
+studentQuestions[studentQuestions.length-1]={id:'habitevidence',when:a=>a.readiness!=='salon',title:'WHAT DOES THAT LOOK LIKE RIGHT NOW?',choices:a=>({
+ clients:[['planned','I have a school-approved way to invite people and book them.'],['social','I post my work, but don’t have a clear booking step.'],['none','I haven’t invited anyone yet.']],
+ consultation:[['planned','We agree on the result, time, maintenance, and price before starting.'],['some','We cover some of that, but not consistently.'],['none','I need a simple way to practice this.']],
+ rebooking:[['planned','I explain what comes next and when.'],['some','I ask if they want to book, without a specific recommendation.'],['none','I haven’t practiced that conversation.']],
+ money:[['planned','I can explain the pay, work costs, and what is still before taxes.'],['some','I know the sales number or percentage, but not what it leaves me.'],['none','I haven’t looked at an actual pay example.']],
+ boundaries:[['planned','I explain my limits and offer a clear next step.'],['some','I say yes and figure it out afterward.'],['none','I haven’t practiced the conversation.']]
+}[a.readiness]||[])};
+const shortQuestions=[careerStageQuestion,
+ ...studentQuestions.map(q=>({...q,when:a=>isStudent(a)&&(!q.when||q.when(a))})),
+ ...professionalQuestions.map(q=>({...q,when:a=>!isStudent(a)&&(!q.when||q.when(a))}))];
+const FIRST90_PRODUCT={id:'first90',title:'BOOKED AF: FIRST 90',price:29,currency:'usd',status:'coming-soon'};
+function buildStudentBreakdown(a){
+ const noPractice=a.practice==='notyet';
+ let category=a.readiness;
+ const reasons=[];
+ if(a.direction==='rental'&&a.salonevidence!=='compared'){
+  category='salon';reasons.push('You’re considering renting, but haven’t yet compared the pay, costs, training, and client-building support. That decision needs evidence first.');
+ } else reasons.push('You picked '+shortChoices(studentQuestions.find(q=>q.id==='readiness'),a).find(c=>c[0]===a.readiness)[1].replace(/\.$/,'').toLowerCase()+' as the thing you feel least prepared for.');
+ reasons.push(noPractice?'You haven’t started clinic clients or models yet. Practice this with an instructor or classmate before using it with a client.':a.practice==='some'?'You’ve worked with a few clinic clients or models. Use the next three visits to collect evidence.':'You’re seeing clinic clients or models regularly. Your next three visits can show what actually happens.');
+ if(a.habitevidence==='planned')reasons.push('You already describe a useful habit. Check whether you do it consistently before assuming it needs replacing.');
+ const recipes={
+ salon:{title:'CHECK THE FIRST JOB BEFORE YOU CHOOSE IT.',steps:[['CHOOSE TWO REAL OPTIONS.','Find two salons or roles you could realistically consider. Ask your instructor which environments offer the support you need.'],['ASK WHAT A NORMAL WEEK LOOKS LIKE.','Write down the training, who helps when a service goes wrong, how pay works, what you pay for, and how new clients reach you. Ask for concrete examples.'],['COMPARE WHAT YOU CAN VERIFY.','Put the answers side by side. Mark anything you still don’t know. Follow up on those gaps before committing to a job or rental.']],metric:'Two real options compared. How many of the five questions have clear answers for each?',rule:'A beautiful room is one detail. Training, support, pay, costs, and clients belong in the decision.'},
+ clients:{title:'GIVE ONE PERSON A CLEAR WAY TO BOOK.',steps:[['PICK ONE SERVICE TO PRACTICE.','Choose a service that interests you and that your instructor says you’re ready to offer through school.'],['MAKE ONE SPECIFIC INVITATION.','Tell one suitable person what the service is, where it happens, how long to allow, and how to book through your school. Get permission before sharing any client photos.'],['WRITE DOWN WHAT HAPPENED.','Track the invitation, the reply, and whether an appointment was booked and attended. If your school is not booking you yet, practice the invitation with your instructor.']],metric:'Invitations → replies → booked and attended visits. Count the real steps, even when the count is zero.',rule:'Follow your school’s booking rules. A follower is not a booked client.'},
+ consultation:{title:'AGREE ON THE SERVICE BEFORE YOU START.',steps:[['WRITE FOUR QUESTIONS.','What result do they want? How much time is available? What maintenance will it need? What price has the school confirmed?'],['PRACTICE SAYING THE PLAN BACK.','Use a clinic visit, or role-play with a classmate and instructor. Explain what is realistic and ask the person to confirm the plan before you begin.'],['CHECK WHAT YOU MISSED.','After three practices, ask your instructor which point was unclear. Change that part of the conversation and try again.']],metric:'Out of three practice consultations, how many covered the result, time, maintenance, and confirmed price?',rule:'Use your instructor for service suitability and technical decisions. Never promise a result you cannot safely deliver.'},
+ rebooking:{title:'MAKE THE NEXT VISIT PART OF THIS ONE.',steps:[['GET THE MAINTENANCE PLAN RIGHT.','Ask your instructor what the service needs next and when. Use that recommendation, not an arbitrary date.'],['SAY IT OUT LOUD.','Practice: “To keep this looking like this, I’d recommend [service] in [time]. Shall we check the school’s availability?”'],['TRACK THE CONVERSATION.','For three clients or role-plays, mark whether you gave a specific recommendation. For real clients, also note whether they booked.']],metric:'Three practices: specific next-visit recommendations, followed by actual bookings where applicable.',rule:'Practice comes first when you aren’t seeing clients yet. Do not count role-plays as retained clients.'},
+ money:{title:'SEPARATE THE SALES NUMBER FROM YOUR PAY.',steps:[['GET ONE REAL PAY EXAMPLE.','Ask a salon you’re considering or your instructor to walk through an actual sample compensation arrangement. No private employee details needed.'],['LABEL THE MONEY.','Write down what clients pay, what the salon pays you, any work costs you cover, and what is still before taxes or deductions. Ask about anything unclear.'],['EXPLAIN IT BACK.','Say the example back in plain language. If you only know a percentage, ask what it applies to and whether there are other deductions or costs.']],metric:'Can you explain all four parts of one pay example without guessing?',rule:'This is a money-literacy exercise. Pay, classification, and tax questions specific to your situation belong with a qualified professional.'},
+ boundaries:{title:'PRACTICE THE NO BEFORE YOU NEED IT.',steps:[['PICK ONE REALISTIC SITUATION.','Choose a request beyond your current skill, an appointment you cannot fit in, or a result your instructor says is unrealistic.'],['WRITE THE RESPONSE.','Try: “That isn’t something I can offer today. Here’s what I can do, and I’ll check the plan with my instructor.” Keep the limit clear.'],['REHEARSE IT THREE TIMES.','Ask a classmate to make the request. Practice a calm response, then ask your instructor whether the limit and next step are clear.']],metric:'Three rehearsals completed. Could the other person repeat your limit and the next step?',rule:'You don’t need to agree to an unsuitable service to sound professional.'}
+ };
+ const r=recipes[category],steps=r.steps.map(([title,body],i)=>({id:'student-'+category+'-'+i,day:['1','2-3','4-6'][i],title,body}));
+ const interests=shortChoices(studentQuestions[0],a).filter(c=>a.studentinterest.includes(c[0])).map(c=>c[1].replace(/\.$/,'')).join(', ');
+ const timing=({soon:'You expect to finish within about three months.',middle:'You expect to finish in about four to six months.',early:'You have more than six months left.',unknown:'Your finish date is not clear yet.'})[a.graduation];
+ const intro=reasons.join(' '),top={id:'student-'+category,title:r.title,short:intro,body:intro,action:steps[0].body};
+ return {schema:SHORT_SCHEMA,audience:'student',category,stage:'IN SCHOOL',snapshot:timing+' You’re exploring: '+interests+'.',top,items:[top],intro,showTime:false,opportunity:null,nextTool:'first90',
+ fix:{title:r.title,body:intro,first:steps[0].body,then:steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:r.rule},
+ plan:{intro:'One thing to practice this week, with real evidence to bring back.',steps,checkTitle:'WHAT CHANGED THIS WEEK?',check:r.metric,rule:r.rule}};
+}
+
 function shortFocusGoal(a) {
  const priority=String(a&&a.goalpriority||'');
  if(priority) return priority;
@@ -96,6 +152,7 @@ function shortInferredPrimaryWork(a) {
  return ({color:'chair-color',cut:'chair-cut',extensions:'chair-extensions',session:'session',events:'events',education:'education',owner:'management',other:'other'})[active[0]]||'';
 }
 function shortLane(a) {
+ if(isStudent(a))return 'student';
  const p=shortInferredPrimaryWork(a);
  const leadership=String(a&&a.leadershiprole||'');
  if(p==='management') return leadership==='manager'?'manager':'owner';
@@ -128,6 +185,7 @@ function validateShortAnswers(input) {
  if(!input||typeof input!=='object'||Array.isArray(input)) throw new Error('answers');
  const clean={};
  for(const q of shortQuestions) {
+  if(q.when&&!q.when({...input,...clean}))continue;
   if(input[q.id]!==undefined) {
    if(q.multi) {
     const raw=Array.isArray(input[q.id])?input[q.id]:[input[q.id]];
@@ -149,6 +207,7 @@ function validateShortAnswers(input) {
  return Object.fromEntries(shortVisibleQuestions(clean).map(q=>[q.id,clean[q.id]]));
 }
 function shortStage(a) {
+ if(isStudent(a))return {key:'school',label:'IN SCHOOL'};
  const chair=shortLane(a)==='chair';
  const stopped=chair?a.days==='0'||a.full==='notyet':a.workdays==='0'||a.workload==='notyet';
  const load=chair?a.full:a.workload;
@@ -244,6 +303,7 @@ function buildOutsideChairBreakdown(a) {
 }
 function buildShortBreakdown(input) {
  const a=validateShortAnswers(input);
+ if(isStudent(a))return buildStudentBreakdown(a);
  if(shortLane(a)!=='chair'){const r=buildOutsideChairBreakdown(a);return ['owner','manager'].includes(shortLane(a))?leadershipBreakdown(a,r):r;}
  const stage=shortStage(a).label;
  const starting=a.days==='0'||a.full==='notyet'||a.spend==='notyet';

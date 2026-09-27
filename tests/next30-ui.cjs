@@ -1,7 +1,7 @@
 // Production scripts; network mocked. No payments, emails, or survey submissions.
 const {JSDOM}=require('jsdom');
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const files=['day-math.js','breakdown-core.js','site-content.js','next30-core.js','next30-ui.js','app.js','site-ui.js'];
+const files=['day-math.js','breakdown-core.js','site-content.js','next30-core.js','next30-ui.js','app.js','lifecycle-ui.js','site-ui.js'];
 async function boot(paid=true,saved=null){
  const dom=new JSDOM(fs.readFileSync('index.html','utf8'),{url:'https://preview.example.test/?next30=paid&session_id=cs_test_Example123',runScripts:'outside-only',pretendToBeVisual:true});
  const w=dom.window,ctx=dom.getInternalVMContext(),errors=[];w.scrollTo=()=>{};w.AbortSignal=AbortSignal;

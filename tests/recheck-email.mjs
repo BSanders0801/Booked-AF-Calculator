@@ -62,7 +62,7 @@ test('Breakdown schedules distinct Day 7 and Day 30 emails and queues Day 60 and
     assert.equal(day30.scheduled_at,'in 30 days');
     assert.match(day30.html,/RECHECK MY NUMBERS →/);
 
-    const queued=[...FOLLOWUPS.map.entries()].map(([key,value])=>({key,record:JSON.parse(value)}));
+    const queued=[...FOLLOWUPS.map.entries()].filter(([key])=>key.startsWith('followup:')).map(([key,value])=>({key,record:JSON.parse(value)}));
     assert.equal(queued.length,2);
     assert.deepEqual(new Set(queued.map(x=>x.record.kind)),new Set(['60','90']));
     assert.ok(queued.every(x=>x.key.startsWith('followup:')));

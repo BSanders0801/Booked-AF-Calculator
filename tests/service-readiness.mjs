@@ -11,3 +11,11 @@ test('an invalid purchase identifier never grants access',async()=>{
  const r=await worker.fetch(new Request('https://service.test/verify-checkout?session_id=invalid',{headers:{Origin:'https://bookedandfabulous.com'}}),{});
  assert.equal(r.status,400);assert.equal((await r.json()).paid,false);
 });
+test('FIRST 90 checkout stays hidden until its product and delivery are explicitly ready',async()=>{
+ const read=async env=>(await(await worker.fetch(new Request('https://service.test/health'),env)).json()).features.first90;
+ assert.equal((await read({})).status,'coming-soon');
+ const config={FIRST90_STATUS:'live',FIRST90_PAYMENT_LINK_ID:'plink_test',FIRST90_CHECKOUT_URL:'https://buy.stripe.com/test'};
+ assert.equal((await read(config)).checkoutUrl,null);
+ assert.equal((await read({...config,FIRST90_DELIVERY_READY:'true'})).price,29);
+ assert.equal((await read({...config,FIRST90_DELIVERY_READY:'true',FIRST90_CHECKOUT_URL:'https://evil.test'})).status,'coming-soon');
+});

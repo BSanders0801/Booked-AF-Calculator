@@ -80,3 +80,9 @@ test('only unlocks the paid product after Stripe confirms the exact checkout',as
   } finally {globalThis.fetch=original}
 });
 
+test('FIRST 90 conversion hook records only the configured signed $29 purchase',async()=>{
+ const events=[];const e={...env,FIRST90_PAYMENT_LINK_ID:'plink_future_first90',FOLLOWUPS:{async put(k,v){events.push({k,v:JSON.parse(v)});}}};
+ const session={...paid,id:'cs_test_future90',payment_link:e.FIRST90_PAYMENT_LINK_ID,amount_total:2900};
+ const r=await worker.fetch(request(session),e);assert.equal(r.status,200);assert.equal(events.length,1);assert.equal(events[0].v.event,'first90_conversion');
+ assert.equal((await worker.fetch(request(session,'checkout.session.completed',false),e)).status,400);assert.equal(events.length,1);
+});

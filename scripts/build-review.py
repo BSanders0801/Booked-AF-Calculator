@@ -1,20 +1,24 @@
-"""Bundle a self-contained, no-network review copy. Production files stay separate."""
+"""Build the existing review page with the actual source, offline network stubs,
+and viewport controls for rendered mobile/desktop QA. Never grants paid access."""
 from pathlib import Path
-import base64,re
+import base64,json,re,html
 root=Path(__file__).resolve().parents[1]
 s=(root/'index.html').read_text()
-s=s.replace('</head>', '<meta name="robots" content="noindex,nofollow"></head>', 1)
-s=s.replace('<link rel="stylesheet" href="site.css?v=redesign-2">','<style>'+(root/'site.css').read_text()+'</style>')
-logo='data:image/png;base64,'+base64.b64encode((root/'assets/booked-af-logo.png').read_bytes()).decode()
-s=s.replace('src="assets/booked-af-logo.png"',f'src="{logo}"',1)
-setup='''window.BOOKED_AF_REVIEW=true;window.fetch=()=>Promise.reject(new Error('Network disabled in offline preview'));const reviewLogo=document.querySelector('.brand-logo').src;function reviewImages(){document.querySelectorAll('img[src="assets/booked-af-logo.png"]').forEach(img=>img.src=reviewLogo);}new MutationObserver(reviewImages).observe(document.body,{childList:true,subtree:true});reviewImages();'''
-s=s.replace('<script src="day-math.js?v=1" defer></script>','<script>'+setup+'</script><script>'+ (root/'day-math.js').read_text()+'</script>')
-for name in ['breakdown-core','site-content','app','site-ui']:
- s=re.sub(r'<script src="'+name+r'\.js\?[^\"]+" defer></script>',lambda m:'<script>'+ (root/(name+'.js')).read_text()+'</script>',s)
-# Embed founder portrait in static and dynamically rendered pages.
-portrait='data:image/svg+xml;base64,'+base64.b64encode((root/'assets/bradley-founder.svg').read_bytes()).decode()
-s=s.replace('assets/bradley-founder.svg',portrait)
-# Offline review cannot request CAPTCHA scripts or submit an email.
-s=s.replace("function loadEmailVerification() {", "function loadEmailVerification() { if(window.BOOKED_AF_REVIEW) return Promise.reject(new Error('Email sending is unavailable in this review copy')); ")
-(root/'review/BOOKED_AF_Redesign_Preview.html').write_text(s)
-print('Review bundle:',len(s.encode()),'bytes')
+s=re.sub(r'<meta property="og:[^>]+>','',s)
+s=re.sub(r'<link rel="canonical"[^>]+>','',s)
+s=re.sub(r'<link rel="stylesheet" href="site.css\?[^\"]+">',lambda _: '<style>'+(root/'site.css').read_text()+'</style>',s)
+setup='''window.BOOKED_AF_REVIEW=true;
+window.turnstile={render:(el,options)=>{options.callback('offline-review');return 'review';},remove:()=>{},reset:()=>{}};
+window.fetch=async(url,options={})=>({ok:true,status:200,json:async()=>String(url).includes('verify-checkout')?{paid:false}:options.method==='POST'?{success:true}:{ready:true,schemas:['short-v5']}});
+'''
+s=s.replace('<script src="day-math.js?v=1" defer></script>','<script>'+setup+'</script><script>'+(root/'day-math.js').read_text()+'</script>')
+for name in ['breakdown-core','site-content','next30-core','next30-ui','app','lifecycle-ui','site-ui']:
+ s=re.sub(r'<script src="'+name+r'\.js\?[^\"]+" defer></script>',lambda _:'<script>'+(root/(name+'.js')).read_text()+'</script>',s)
+for name in ['booked-af-logo.webp','booked-af-logo.png','bradley-founder.webp']:
+ mime='image/webp' if name.endswith('webp') else 'image/png'
+ encoded='data:'+mime+';base64,'+base64.b64encode((root/'assets'/name).read_bytes()).decode()
+ s=s.replace('assets/'+name,encoded)
+s=s.replace('REDESIGN PREVIEW · Your live site has not changed','OFFLINE REVIEW · Sample submissions only. No emails or payments.')
+outer='''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BOOKED AF responsive review</title><style>body{margin:0;background:#242124;color:white;font:16px system-ui}header{padding:16px;position:sticky;top:0;background:#242124;z-index:5;display:flex;gap:12px;flex-wrap:wrap;align-items:center}label{display:flex;align-items:center;gap:12px}select,button{font:inherit;padding:9px}iframe{display:block;height:900px;border:1px solid #555;max-width:none;margin:0 auto;background:#080609}main{overflow:auto;padding:20px}</style><header><strong>BOOKED AF · OFFLINE REVIEW</strong><label>Viewport width<select id="width"><option value="390">390px · mobile</option><option value="320">320px · small mobile</option><option value="430">430px · large mobile</option><option value="1440">1440px · desktop</option></select></label><button id="reset">Reset sample</button><span>Real site code. Mock delivery. No emails or payments.</span></header><main><iframe title="BOOKED AF preview" id="preview" width="390"></iframe></main><script>const html='''+json.dumps(s).replace('</',r'<\/')+''';const frame=document.getElementById('preview');frame.srcdoc=html;document.getElementById('width').onchange=e=>frame.width=e.target.value;document.getElementById('reset').onclick=()=>{frame.srcdoc=html;};</script></html>'''
+(root/'review/BOOKED_AF_Redesign_Preview.html').write_text(outer)
+print('Built responsive review using current site source; all network operations mocked.')

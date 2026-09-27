@@ -2,7 +2,7 @@
 // BEGIN SHARED BREAKDOWN CORE
 // Shared by the website and the self-contained email Worker.
 const SHORT_SCHEMA = 'short-v5';
-const shortQuestions = [
+const professionalQuestions = [
  {id:'worktype',multi:true,note:'Pick everything that sounds like your actual career. One lane, five lanes, no judgment.',title:'WHAT’S YOUR HAIR GAME?',choices:[['color','Color is my thing.'],['cut','Cutting + styling.'],['extensions','Extensions.'],['session','Session / editorial / commercial.'],['events','Bridal + events / on-location.'],['education','Education + beauty brand work.'],['owner','I own or manage a salon.'],['inactive','I’m trained or licensed, but I’m not taking clients right now.'],['other','Something else.']]},
  {id:'leadershiprole',when:a=>Array.isArray(a.worktype)&&a.worktype.includes('owner'),title:'ARE YOU THE OWNER OR THE MANAGER?',note:'Pick one. Running the salon and owning it are different jobs.',choices:[['owner','I own the salon.'],['manager','I manage the salon, but I don’t own it.']]},
  {id:'primarywork',when:a=>{const w=Array.isArray(a.worktype)?a.worktype:[];const active=w.filter(x=>x!=='inactive');return active.length>1||(w.includes('inactive')&&active.length>0);},title:'OKAY, BUT WHAT PAYS THE BILLS?',note:'Pick what brings in the most money. Not earning from hair yet? Say that.',choices:a=>{
@@ -81,6 +81,62 @@ const shortQuestions = [
  {id:'futurehabit',when:a=>shortFocusGoal(a)==='stable',title:"IS SAVING MONEY HAPPENING, OR STILL ON THE TO-DO LIST?",choices:[["catchup", "The bills get there first."], ["spend", "I mean to save. Then I spend what’s left."], ["random", "My income changes, and my saving does too."], ["save", "I’m already putting money away regularly."]]},
  {id:'futurefear',when:a=>shortFocusGoal(a)==='stable',note:"Pick the first job you want that money to do.",title:"WHAT SHOULD THAT SAVED MONEY DO FIRST?",choices:[['emergency','Cover a slow month or an emergency'],['timeoff','Let me take real time off'],['retire','Build money for later in life'],['body','Help me move toward work that is easier on my body'],['unknown','I need help choosing where to start']]}
 ];
+// School is a career stage, never an income lane. Old saved professional
+// answers remain readable; every new Breakdown starts with careerstage.
+const careerStageQuestion = {id:'careerstage', when:a=>a.careerstage!==undefined||!a.worktype, title:'WHERE ARE YOU IN YOUR HAIR CAREER?', choices:[
+ ['school','I’m still in school for hair.'],
+ ['building','I’m licensed and building or rebuilding.'],
+ ['working','I’m already working behind the chair.'],
+ ['broader','My career goes beyond the chair, or mixes several kinds of work.']
+]};
+function isStudent(a){return a?.careerstage==='school';}
+const studentQuestions = [
+ {id:'studentinterest',multi:true,exclusive:['exploring'],title:'WHAT KIND OF HAIR WORK INTERESTS YOU?',note:'Pick all that fit. You’re choosing what to explore, not signing a lifetime contract.',choices:[['color','Color.'],['cut','Cutting + styling.'],['extensions','Extensions.'],['session','Session / editorial.'],['events','Bridal + events.'],['education','Education + brand work.'],['exploring','I’m still figuring that out.']]},
+ {id:'graduation',title:'HOW CLOSE ARE YOU TO FINISHING SCHOOL?',choices:[['soon','About 3 months or less.'],['middle','About 4-6 months.'],['early','More than 6 months.'],['unknown','My finish date isn’t clear yet.']]},
+ {id:'practice',title:'ARE YOU WORKING ON CLINIC CLIENTS OR MODELS YET?',choices:[['regular','Yes, regularly.'],['some','A few so far.'],['notyet','Not yet.']]},
+ {id:'direction',title:'WHAT DO YOU THINK COMES AFTER GRADUATION?',choices:[['employee','A salon job or assistant role with training.'],['rental','Renting a chair or suite.'],['freelance','Session, bridal, or freelance work.'],['unsure','I haven’t figured that out yet.']]},
+ {id:'readiness',title:'WHAT FEELS LEAST PREPARED?',note:'Choose the one you want help with first.',choices:[['salon','Knowing which first job is actually right for me.'],['clients','Finding my first clients or models.'],['consultation','Agreeing on the service before I start.'],['rebooking','Talking about their next appointment.'],['money','Understanding what I’ll actually get paid.'],['boundaries','Saying no or explaining what I can offer.']]},
+ {id:'salonevidence',when:a=>a.readiness==='salon'||a.direction==='rental',title:'WHAT HAVE YOU ACTUALLY CHECKED SO FAR?',choices:[['compared','I’ve compared training, pay, costs, and how clients find me.'],['visited','I’ve visited or interviewed, but those details aren’t clear.'],['social','Mostly photos, social media, or what people have told me.'],['none','I haven’t checked yet.']]},
+ {id:'habitevidence',when:a=>!['salon'].includes(a.readiness),title:a=>'',choices:[]}
+];
+// This question follows the selected concern and asks for evidence, not confidence.
+studentQuestions[studentQuestions.length-1]={id:'habitevidence',when:a=>a.readiness!=='salon',title:'WHAT DOES THAT LOOK LIKE RIGHT NOW?',choices:a=>({
+ clients:[['planned','I have a school-approved way to invite people and book them.'],['social','I post my work, but don’t have a clear booking step.'],['none','I haven’t invited anyone yet.']],
+ consultation:[['planned','We agree on the result, time, maintenance, and price before starting.'],['some','We cover some of that, but not consistently.'],['none','I need a simple way to practice this.']],
+ rebooking:[['planned','I explain what comes next and when.'],['some','I ask if they want to book, without a specific recommendation.'],['none','I haven’t practiced that conversation.']],
+ money:[['planned','I can explain the pay, work costs, and what is still before taxes.'],['some','I know the sales number or percentage, but not what it leaves me.'],['none','I haven’t looked at an actual pay example.']],
+ boundaries:[['planned','I explain my limits and offer a clear next step.'],['some','I say yes and figure it out afterward.'],['none','I haven’t practiced the conversation.']]
+}[a.readiness]||[])};
+const shortQuestions=[careerStageQuestion,
+ ...studentQuestions.map(q=>({...q,when:a=>isStudent(a)&&(!q.when||q.when(a))})),
+ ...professionalQuestions.map(q=>({...q,when:a=>!isStudent(a)&&(!q.when||q.when(a))}))];
+const FIRST90_PRODUCT={id:'first90',title:'BOOKED AF: FIRST 90',price:29,currency:'usd',status:'coming-soon'};
+function buildStudentBreakdown(a){
+ const noPractice=a.practice==='notyet';
+ let category=a.readiness;
+ const reasons=[];
+ if(a.direction==='rental'&&a.salonevidence!=='compared'){
+  category='salon';reasons.push('You’re considering renting, but haven’t yet compared the pay, costs, training, and client-building support. That decision needs evidence first.');
+ } else reasons.push('You picked '+shortChoices(studentQuestions.find(q=>q.id==='readiness'),a).find(c=>c[0]===a.readiness)[1].replace(/\.$/,'').toLowerCase()+' as the thing you feel least prepared for.');
+ reasons.push(noPractice?'You haven’t started clinic clients or models yet. Practice this with an instructor or classmate before using it with a client.':a.practice==='some'?'You’ve worked with a few clinic clients or models. Use the next three visits to collect evidence.':'You’re seeing clinic clients or models regularly. Your next three visits can show what actually happens.');
+ if(a.habitevidence==='planned')reasons.push('You already describe a useful habit. Check whether you do it consistently before assuming it needs replacing.');
+ const recipes={
+ salon:{title:'CHECK THE FIRST JOB BEFORE YOU CHOOSE IT.',steps:[['CHOOSE TWO REAL OPTIONS.','Find two salons or roles you could realistically consider. Ask your instructor which environments offer the support you need.'],['ASK WHAT A NORMAL WEEK LOOKS LIKE.','Write down the training, who helps when a service goes wrong, how pay works, what you pay for, and how new clients reach you. Ask for concrete examples.'],['COMPARE WHAT YOU CAN VERIFY.','Put the answers side by side. Mark anything you still don’t know. Follow up on those gaps before committing to a job or rental.']],metric:'Two real options compared. How many of the five questions have clear answers for each?',rule:'A beautiful room is one detail. Training, support, pay, costs, and clients belong in the decision.'},
+ clients:{title:'GIVE ONE PERSON A CLEAR WAY TO BOOK.',steps:[['PICK ONE SERVICE TO PRACTICE.','Choose a service that interests you and that your instructor says you’re ready to offer through school.'],['MAKE ONE SPECIFIC INVITATION.','Tell one suitable person what the service is, where it happens, how long to allow, and how to book through your school. Get permission before sharing any client photos.'],['WRITE DOWN WHAT HAPPENED.','Track the invitation, the reply, and whether an appointment was booked and attended. If your school is not booking you yet, practice the invitation with your instructor.']],metric:'Invitations → replies → booked and attended visits. Count the real steps, even when the count is zero.',rule:'Follow your school’s booking rules. A follower is not a booked client.'},
+ consultation:{title:'AGREE ON THE SERVICE BEFORE YOU START.',steps:[['WRITE FOUR QUESTIONS.','What result do they want? How much time is available? What maintenance will it need? What price has the school confirmed?'],['PRACTICE SAYING THE PLAN BACK.','Use a clinic visit, or role-play with a classmate and instructor. Explain what is realistic and ask the person to confirm the plan before you begin.'],['CHECK WHAT YOU MISSED.','After three practices, ask your instructor which point was unclear. Change that part of the conversation and try again.']],metric:'Out of three practice consultations, how many covered the result, time, maintenance, and confirmed price?',rule:'Use your instructor for service suitability and technical decisions. Never promise a result you cannot safely deliver.'},
+ rebooking:{title:'MAKE THE NEXT VISIT PART OF THIS ONE.',steps:[['GET THE MAINTENANCE PLAN RIGHT.','Ask your instructor what the service needs next and when. Use that recommendation, not an arbitrary date.'],['SAY IT OUT LOUD.','Practice: “To keep this looking like this, I’d recommend [service] in [time]. Shall we check the school’s availability?”'],['TRACK THE CONVERSATION.','For three clients or role-plays, mark whether you gave a specific recommendation. For real clients, also note whether they booked.']],metric:'Three practices: specific next-visit recommendations, followed by actual bookings where applicable.',rule:'Practice comes first when you aren’t seeing clients yet. Do not count role-plays as retained clients.'},
+ money:{title:'SEPARATE THE SALES NUMBER FROM YOUR PAY.',steps:[['GET ONE REAL PAY EXAMPLE.','Ask a salon you’re considering or your instructor to walk through an actual sample compensation arrangement. No private employee details needed.'],['LABEL THE MONEY.','Write down what clients pay, what the salon pays you, any work costs you cover, and what is still before taxes or deductions. Ask about anything unclear.'],['EXPLAIN IT BACK.','Say the example back in plain language. If you only know a percentage, ask what it applies to and whether there are other deductions or costs.']],metric:'Can you explain all four parts of one pay example without guessing?',rule:'This is a money-literacy exercise. Pay, classification, and tax questions specific to your situation belong with a qualified professional.'},
+ boundaries:{title:'PRACTICE THE NO BEFORE YOU NEED IT.',steps:[['PICK ONE REALISTIC SITUATION.','Choose a request beyond your current skill, an appointment you cannot fit in, or a result your instructor says is unrealistic.'],['WRITE THE RESPONSE.','Try: “That isn’t something I can offer today. Here’s what I can do, and I’ll check the plan with my instructor.” Keep the limit clear.'],['REHEARSE IT THREE TIMES.','Ask a classmate to make the request. Practice a calm response, then ask your instructor whether the limit and next step are clear.']],metric:'Three rehearsals completed. Could the other person repeat your limit and the next step?',rule:'You don’t need to agree to an unsuitable service to sound professional.'}
+ };
+ const r=recipes[category],steps=r.steps.map(([title,body],i)=>({id:'student-'+category+'-'+i,day:['1','2-3','4-6'][i],title,body}));
+ const interests=shortChoices(studentQuestions[0],a).filter(c=>a.studentinterest.includes(c[0])).map(c=>c[1].replace(/\.$/,'')).join(', ');
+ const timing=({soon:'You expect to finish within about three months.',middle:'You expect to finish in about four to six months.',early:'You have more than six months left.',unknown:'Your finish date is not clear yet.'})[a.graduation];
+ const intro=reasons.join(' '),top={id:'student-'+category,title:r.title,short:intro,body:intro,action:steps[0].body};
+ return {schema:SHORT_SCHEMA,audience:'student',category,stage:'IN SCHOOL',snapshot:timing+' You’re exploring: '+interests+'.',top,items:[top],intro,showTime:false,opportunity:null,nextTool:'first90',
+ fix:{title:r.title,body:intro,first:steps[0].body,then:steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:r.rule},
+ plan:{intro:'One thing to practice this week, with real evidence to bring back.',steps,checkTitle:'WHAT CHANGED THIS WEEK?',check:r.metric,rule:r.rule}};
+}
+
 function shortFocusGoal(a) {
  const priority=String(a&&a.goalpriority||'');
  if(priority) return priority;
@@ -98,6 +154,7 @@ function shortInferredPrimaryWork(a) {
  return ({color:'chair-color',cut:'chair-cut',extensions:'chair-extensions',session:'session',events:'events',education:'education',owner:'management',other:'other'})[active[0]]||'';
 }
 function shortLane(a) {
+ if(isStudent(a))return 'student';
  const p=shortInferredPrimaryWork(a);
  const leadership=String(a&&a.leadershiprole||'');
  if(p==='management') return leadership==='manager'?'manager':'owner';
@@ -130,6 +187,7 @@ function validateShortAnswers(input) {
  if(!input||typeof input!=='object'||Array.isArray(input)) throw new Error('answers');
  const clean={};
  for(const q of shortQuestions) {
+  if(q.when&&!q.when({...input,...clean}))continue;
   if(input[q.id]!==undefined) {
    if(q.multi) {
     const raw=Array.isArray(input[q.id])?input[q.id]:[input[q.id]];
@@ -151,6 +209,7 @@ function validateShortAnswers(input) {
  return Object.fromEntries(shortVisibleQuestions(clean).map(q=>[q.id,clean[q.id]]));
 }
 function shortStage(a) {
+ if(isStudent(a))return {key:'school',label:'IN SCHOOL'};
  const chair=shortLane(a)==='chair';
  const stopped=chair?a.days==='0'||a.full==='notyet':a.workdays==='0'||a.workload==='notyet';
  const load=chair?a.full:a.workload;
@@ -246,6 +305,7 @@ function buildOutsideChairBreakdown(a) {
 }
 function buildShortBreakdown(input) {
  const a=validateShortAnswers(input);
+ if(isStudent(a))return buildStudentBreakdown(a);
  if(shortLane(a)!=='chair'){const r=buildOutsideChairBreakdown(a);return ['owner','manager'].includes(shortLane(a))?leadershipBreakdown(a,r):r;}
  const stage=shortStage(a).label;
  const starting=a.days==='0'||a.full==='notyet'||a.spend==='notyet';
@@ -631,12 +691,13 @@ function validateAnswers(input) {
 }
 
 function emailHTML(title, text) {
+  const lineHTML=line=>esc(line).replace(/https:\/\/bookedandfabulous\.com\/#resume-profile\/[a-f0-9]{64}/g,url=>'<a href="'+url+'" style="color:#d00069;font-weight:bold;overflow-wrap:anywhere">OPEN MY SAVED PROFILE →</a>');
   const paragraphs = text.split(/\n\n+/).map(part => {
     const lines = part.split('\n');
     const heading = lines.length > 1 && lines[0] === lines[0].toUpperCase();
     return heading
-      ? `<h2 style="margin:28px 0 10px;font-size:15px;letter-spacing:1px;color:#e90076">${esc(lines.shift())}</h2><p style="margin:0 0 18px;line-height:1.7">${lines.map(esc).join('<br>')}</p>`
-      : `<p style="margin:0 0 18px;line-height:1.7">${lines.map(esc).join('<br>')}</p>`;
+      ? `<h2 style="margin:28px 0 10px;font-size:15px;letter-spacing:1px;color:#e90076">${esc(lines.shift())}</h2><p style="margin:0 0 18px;line-height:1.7">${lines.map(lineHTML).join('<br>')}</p>`
+      : `<p style="margin:0 0 18px;line-height:1.7">${lines.map(lineHTML).join('<br>')}</p>`;
   }).join('');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(title)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF - Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:24px"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(title)}</h1>${paragraphs}<p style="margin-top:30px"><a href="https://bookedandfabulous.com" style="color:#d00069;font-weight:bold">BACK TO BOOKED AF →</a></p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br>Love your career. Keep your life.<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email after submitting a request on BOOKED AF.</td></tr></table></td></tr></table></body></html>`;
 }
@@ -910,6 +971,11 @@ async function stripeWelcome(request, env) {
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return new Response('Missing customer email', {status:422});
   const firstName = String(session.customer_details?.name || '').trim().split(/\s+/)[0].slice(0, 60);
 
+  // Reserved FIRST 90 conversion hook. It stays inactive until the approved
+  // $29 product and its delivery are explicitly configured at launch.
+  if(env.FIRST90_PAYMENT_LINK_ID&&session.payment_link===env.FIRST90_PAYMENT_LINK_ID&&session.currency==='usd'&&session.amount_total===2900){
+    try{const recorded=await recordFunnelEvent(env,{event:'first90_conversion',session:'purchase-'+(await digestHex(session.id)).slice(0,32)});return new Response(recorded?'FIRST 90 conversion recorded':'Storage unavailable',{status:recorded?200:503});}catch{return new Response('Storage unavailable',{status:503});}
+  }
   const surveyScheduled = await schedulePurchaseSurvey(env, session, email, firstName);
   const isNext30 = next30PaymentLinkIds.has(session.payment_link) && session.currency === 'usd' && session.amount_total === 4900;
   if (!isNext30) return new Response(surveyScheduled ? 'Survey scheduled' : 'Purchase recorded');
@@ -1032,8 +1098,104 @@ ${comments || 'No additional comments.'}`;
   } catch { return reply({success:false,error:'We could not save your survey. Please try again.'},502); }
 }
 
+// Career lifecycle v1. Email links verify ownership; signup responses never expose
+// a previous profile or an access token to someone who only knows an email address.
+const REBUILD_VERSION='coordinated-20260927';
+function first90Offer(env){
+ let valid=false;try{const u=new URL(env.FIRST90_CHECKOUT_URL);valid=u.protocol==='https:'&&u.hostname==='buy.stripe.com';}catch{}
+ const live=env.FIRST90_STATUS==='live'&&env.FIRST90_DELIVERY_READY==='true'&&!!env.FIRST90_PAYMENT_LINK_ID&&valid;
+ return {...FIRST90_PRODUCT,status:live?'live':'coming-soon',checkoutUrl:live?env.FIRST90_CHECKOUT_URL:null};
+}
+const PROFILE_TTL=90*24*60*60;
+const ANALYTICS_EVENTS=new Set(['student_start','student_complete','student_email_capture','first90_interest','student_plan_complete','student_share','student_referral','student_to_working']);
+async function digestHex(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
+function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
+async function kvJSON(kv,key){const raw=await kv.get(key);return raw?JSON.parse(raw):null;}
+function profilePublic(p){return {id:p.id,careerStatus:p.careerStatus,history:p.history,answers:p.answers,schema:p.schema,done:p.done||{},first90Interest:!!p.first90Interest,updatedAt:p.updatedAt};}
+function cleanDone(done,answers){const ids=new Set(buildShortBreakdown(answers).plan.steps.map(s=>s.id));return Object.fromEntries(Object.entries(done||{}).filter(([k,v])=>ids.has(k)&&typeof v==='boolean'));}
+async function prepareProfileLink(env,email,name,answers,interest){
+ if(!env.FOLLOWUPS)throw new Error('Profile storage unavailable');
+ const deliveryId=await digestHex(JSON.stringify([email,name,answers,!!interest]));
+ const existing=await env.FOLLOWUPS.get('profile-delivery:'+deliveryId);
+ if(existing)return existing;
+ const token=randomToken(),key=await digestHex(token),emailKey=await digestHex(email);
+ const grant={emailKey,pending:{schema:SHORT_SCHEMA,answers,first90Interest:!!interest,submittedAt:Date.now()},createdAt:Date.now()};
+ await env.FOLLOWUPS.put('profile-access:'+key,JSON.stringify(grant),{expirationTtl:PROFILE_TTL});
+ // Interest is an explicit opt-in, distinct from transactional Breakdown delivery.
+ if(interest)await env.FOLLOWUPS.put('first90-interest:'+emailKey,JSON.stringify({email,name,createdAt:Date.now(),source:'student-breakdown'}));
+ const link='https://bookedandfabulous.com/#resume-profile/'+token;
+ await env.FOLLOWUPS.put('profile-delivery:'+deliveryId,link,{expirationTtl:7*24*60*60});
+ return link;
+}
+async function recordFunnelEvent(env,data){
+ if(!env.FOLLOWUPS)return false;
+ const day=new Date().toISOString().slice(0,10);
+ await env.FOLLOWUPS.put('student-event:'+day+':'+data.session+':'+data.event+':'+(data.category||'none'),JSON.stringify({event:data.event,category:data.category||null,session:data.session,at:Date.now(),version:REBUILD_VERSION}),{expirationTtl:180*24*60*60});
+ return true;
+}
+function lifecycleReply(request){
+ const origin=request.headers.get('Origin')||'';
+ const headers={'Content-Type':'application/json','Cache-Control':'no-store','Vary':'Origin'};
+ if(ORIGINS.has(origin))Object.assign(headers,{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type'});
+ return {allowed:ORIGINS.has(origin),reply:(data,status=200)=>new Response(JSON.stringify(data),{status,headers})};
+}
+async function lifecycleAPI(request,env){
+ const {allowed,reply}=lifecycleReply(request);
+ if(!allowed)return reply({success:false},403);
+ if(request.method==='OPTIONS'){const r=reply({});return new Response(null,{status:204,headers:r.headers});}
+ if(request.method!=='POST')return reply({success:false},405);
+ if(!env.FOLLOWUPS)return reply({success:false,error:'Saved profiles are temporarily unavailable.'},503);
+ if(!request.headers.get('Content-Type')?.startsWith('application/json'))return reply({success:false},415);
+ let data;try{data=await limitedJSON(request);}catch{return reply({success:false},400);}
+ if(!data||typeof data!=='object'||Array.isArray(data))return reply({success:false},400);
+ const path=new URL(request.url).pathname;
+ if(path==='/events'){
+  // No email, name, answers, free text, or payment-conversion claims accepted here.
+  if(!ANALYTICS_EVENTS.has(data.event)||!/^[-a-zA-Z0-9]{16,80}$/.test(data.session||'')||!['salon','clients','consultation','rebooking','money','boundaries',undefined].includes(data.category))return reply({success:false},400);
+  if(['student_email_capture','first90_interest','student_to_working'].includes(data.event))return reply({success:false},403);
+  try{return reply({success:await recordFunnelEvent(env,data)});}catch{return reply({success:false},503);}
+ }
+ if(!/^[a-f0-9]{64}$/.test(data.token||''))return reply({success:false},401);
+ try{
+  const tokenKey='profile-access:'+await digestHex(data.token),grant=await kvJSON(env.FOLLOWUPS,tokenKey);
+  if(!grant)return reply({success:false,error:'This link has expired. Send yourself a new Breakdown to reconnect.'},401);
+  let profile=await kvJSON(env.FOLLOWUPS,'career-profile:'+grant.emailKey);
+  if(data.action==='open'){
+   if(grant.pending){
+    const pending=grant.pending;
+    if(!profile||pending.submittedAt>profile.updatedAt){
+     const previous=profile?.careerStatus,status=shortStage(pending.answers).key;
+     const history=profile?.history||[];
+     if(previous!==status)history.push({from:previous||null,to:status,at:pending.submittedAt});
+     profile={id:profile?.id||crypto.randomUUID(),schema:SHORT_SCHEMA,answers:pending.answers,done:{},careerStatus:status,history:history.slice(-30),first90Interest:!!(profile?.first90Interest||pending.first90Interest),updatedAt:pending.submittedAt};
+     await env.FOLLOWUPS.put('career-profile:'+grant.emailKey,JSON.stringify(profile));
+     if(previous==='school'&&status!=='school')await recordFunnelEvent(env,{event:'student_to_working',session:profile.id});
+    }
+    delete grant.pending;
+   }
+  }else if(data.action==='save'){
+   if(!profile||grant.pending)return reply({success:false,error:'Open your email link first.'},401);
+   let answers;try{answers=validateShortAnswers(data.answers);}catch{return reply({success:false,error:'Finish your Breakdown before saving this change.'},400);}
+   const status=shortStage(answers).key,previous=profile.careerStatus;
+   if(status!==previous)profile.history.push({from:previous,to:status,at:Date.now()});
+   profile={...profile,answers,done:cleanDone(data.done,answers),careerStatus:status,history:profile.history.slice(-30),updatedAt:Date.now()};
+   await env.FOLLOWUPS.put('career-profile:'+grant.emailKey,JSON.stringify(profile));
+   if(previous==='school'&&status!=='school')await recordFunnelEvent(env,{event:'student_to_working',session:profile.id});
+  }else if(data.action==='interest'){
+   if(!profile||grant.pending)return reply({success:false},401);
+   // New interest from the result page goes through the email form so an explicit
+   // address and opt-in reach the durable launch-interest list together.
+   return reply({success:false,error:'Use the FIRST 90 email form to join the list.'},400);
+  }else return reply({success:false},400);
+  if(!profile)return reply({success:false},404);
+  await env.FOLLOWUPS.put(tokenKey,JSON.stringify(grant),{expirationTtl:PROFILE_TTL});
+  return reply({success:true,profile:profilePublic(profile)});
+ }catch{return reply({success:false,error:'Your profile could not be saved. Your answers are still in this browser.'},503);}
+}
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
+    if(['/profile','/events'].includes(new URL(request.url).pathname))return lifecycleAPI(request,env);
     if (new URL(request.url).pathname === '/stripe-webhook') return stripeWelcome(request, env);
     if (new URL(request.url).pathname === '/verify-checkout') return verifyCheckout(request, env);
     if (new URL(request.url).pathname === '/survey') return surveyResponse(request, env);
@@ -1043,7 +1205,7 @@ export default {
     const reply = (data, status = 200) => new Response(JSON.stringify(data), {status, headers});
     if (request.method === 'GET') {
       const capabilities={email:!!(env.RESEND_API_KEY&&env.TURNSTILE_SECRET_KEY),checkout:!!env.STRIPE_SECRET_KEY,webhook:!!(env.STRIPE_WEBHOOK_SECRET&&env.RESEND_API_KEY),followups:!!(env.FOLLOWUPS&&env.RESEND_API_KEY)};
-      return reply({service:'BOOKED AF email',ready:capabilities.email,launchReady:Object.values(capabilities).every(Boolean),capabilities,schemas:['legacy',SHORT_SCHEMA]});
+      return reply({service:'BOOKED AF email',ready:capabilities.email,launchReady:Object.values(capabilities).every(Boolean),capabilities,schemas:['legacy',SHORT_SCHEMA],rebuild:REBUILD_VERSION,features:{student:true,profiles:!!env.FOLLOWUPS,analytics:!!env.FOLLOWUPS,first90:first90Offer(env)}});
     }
     if (!ORIGINS.has(origin)) return reply({success:false}, 403);
     if (request.method === 'OPTIONS') return new Response(null, {status:204, headers});
@@ -1075,8 +1237,14 @@ export default {
       const name = data.name.trim();
       const result = data.schema===SHORT_SCHEMA?buildShortBreakdown(answers):read(answers);
       const title = data.type === 'breakdown' ? 'Your BOOKED AF Breakdown' : 'You’re on the founding list';
-      const text = data.type === 'breakdown' ? emailCopy(result, name) : `${name ? name + ', you’re' : 'You’re'} on the BOOKED AF: Your Next 30 founding list.\n\nWe’ve received your request for the $49 founding offer. No payment has been taken. We’ll contact you when checkout is ready.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.`;
-      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify([email,name,data.type,data.schema||'legacy',answers])));
+      let text = data.type === 'breakdown' ? emailCopy(result, name) : `${name ? name + ', you’re' : 'You’re'} on the BOOKED AF: Your Next 30 founding list.\n\nWe’ve received your request for the $49 founding offer. No payment has been taken. We’ll contact you when checkout is ready.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.`;
+      if(data.type==='breakdown'&&data.schema===SHORT_SCHEMA&&(env.FOLLOWUPS||isStudent(answers))){
+        const resumeLink=await prepareProfileLink(env,email,name,answers,isStudent(answers)&&data.first90Interest===true);
+        text+='\n\nYOUR SAVED PROFILE\nOpen this private link to save and resume on another device: '+resumeLink+'\nKeep this link private. It opens your saved answers. Use the same email as your career changes.';
+        if(isStudent(answers))text+='\n\nBOOKED AF: FIRST 90 is coming. No payment has been taken.'+(data.first90Interest===true?' You asked us to email you when it is available.':'');
+
+      }
+      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify([email,name,data.type,data.schema||'legacy',answers,!!data.first90Interest])));
       const key = 'booked-v5-short-' + [...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
       const response = await fetch('https://api.resend.com/emails', {
         method:'POST', headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key},
@@ -1089,11 +1257,19 @@ export default {
       }
       const sent = await response.json();
       if (!sent.id) return reply({success:false}, 502);
+      try{
+        const session=/^[-a-zA-Z0-9]{16,80}$/.test(data.analyticsSession||'')?data.analyticsSession:crypto.randomUUID();
+        if(data.type==='breakdown'&&isStudent(answers)){
+          await recordFunnelEvent(env,{event:'student_email_capture',session,category:result.category});
+          if(data.first90Interest===true)await recordFunnelEvent(env,{event:'first90_interest',session,category:result.category});
+        }
+      }catch{console.error('Funnel event could not be recorded');}
       let followupScheduled7 = false;
       let followupScheduled = false;
       let followupQueued60 = false;
       let followupQueued90 = false;
-      if (data.type === 'breakdown') {
+      const scheduleFollowups=async()=>{
+      if (data.type === 'breakdown' && !isStudent(answers)) {
         try {
           const followup7Response = await fetch('https://api.resend.com/emails', {
             method:'POST',
@@ -1122,6 +1298,8 @@ export default {
         try { followupQueued60 = await queueLongFollowup(env, now + 60*24*60*60*1000, key+'-recheck-60d', '60', email, name); } catch { console.error('60-day recheck queue failed'); }
         try { followupQueued90 = await queueLongFollowup(env, now + 90*24*60*60*1000, key+'-recheck-90d', '90', email, name); } catch { console.error('90-day recheck queue failed'); }
       }
+      };
+      if(ctx?.waitUntil)ctx.waitUntil(scheduleFollowups());else await scheduleFollowups();
       return reply({success:true,followupScheduled7,followupScheduled,followupQueued60,followupQueued90});
     } catch { return reply({success:false,error:'Email could not be sent. Please try again shortly.'}, 502); }
   },

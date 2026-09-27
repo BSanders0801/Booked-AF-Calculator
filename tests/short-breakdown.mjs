@@ -45,10 +45,10 @@ const chairAnswer=goal=>complete({
 });
 
 assert.equal(SHORT_SCHEMA,'short-v5');
-assert.equal(qs[0].id,'worktype');
-assert.equal(qs[0].multi,true);
-assert.equal(qs[1].id,'leadershiprole');
-assert.equal(qs[2].id,'primarywork');
+assert.equal(qs[0].id,'careerstage');
+assert.equal(byId('worktype').multi,true);
+assert.equal(byId('leadershiprole').id,'leadershiprole');
+assert.equal(byId('primarywork').id,'primarywork');
 assert.equal(byId('goal').multi,true);
 assert.equal(byId('goalpriority').id,'goalpriority');
 
@@ -191,7 +191,7 @@ const wc=vm.createContext({
   }
 });
 vm.runInContext(workerSource.replace('export default','globalThis.worker ='),wc);
-const env={RESEND_API_KEY:'mock',TURNSTILE_SECRET_KEY:'mock',FOLLOWUPS:{async put(){},async list(){return {keys:[],list_complete:true}},async delete(){}}};
+const env={RESEND_API_KEY:'mock',TURNSTILE_SECRET_KEY:'mock',FOLLOWUPS:{async get(){return null},async put(){},async list(){return {keys:[],list_complete:true}},async delete(){}}};
 const request=data=>new Request('https://example.test',{
   method:'POST',
   headers:{Origin:'https://bookedandfabulous.com','Content-Type':'application/json'},
@@ -206,7 +206,7 @@ for(const goal of ['clients','money','return','keep','time','stable']){
     .map(call=>JSON.parse(call.opts.body))
     .filter(email=>email.subject==='Your BOOKED AF Breakdown').at(-1);
   assert(sent);
-  assert.equal(sent.text,c.api.shortEmailCopy(build(a),'Bradley'));
+  assert(sent.text.startsWith(c.api.shortEmailCopy(build(a),'Bradley')));assert.match(sent.text,/#resume-profile\/[a-f0-9]{64}/);
   assert(sent.html.includes('assets/booked-af-logo.png'));
 }
 assert.equal((await wc.worker.fetch(request({schema:'short-v5',answers:sessionMoney}),env)).status,200);

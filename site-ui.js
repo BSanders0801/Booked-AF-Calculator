@@ -3,7 +3,7 @@
   'use strict';
   const key = 'booked-af-free-progress-v1';
   const maxAge = 30 * 24 * 60 * 60 * 1000;
-  const publicRoutes = {intro:'home', paid:'deep-dive', about:'about', contact:'contact', privacy:'privacy', sample:'sample', next30sample:'next-30-sample', survey:'survey',plans:'my-plans'};
+  const publicRoutes = {intro:'home', paid:'deep-dive', about:'about', contact:'contact', privacy:'privacy', sample:'sample', next30sample:'next-30-sample', survey:'survey',plans:'my-plans',first90:'first-90'};
   const freeViews = ['question','teaser','result','plan','daymath','email'];
   const preview = window.BOOKED_AF_REVIEW === true || !['bookedandfabulous.com','www.bookedandfabulous.com'].includes(location.hostname);
   let lastFreeView = 'question';
@@ -67,6 +67,8 @@
   }
   function applyRoute(hash) {
     const value = hash.replace(/^#/, '');
+    if(value==='student-breakdown'){restoreSchema(SHORT_SCHEMA);if(!isStudent(state.answers)){state.answers={careerstage:'school'};state.done={};state.emailSent=false;}state.index=1;state.view='question';return;}
+    if(/^resume-profile\/[a-f0-9]{64}$/.test(value)){state.view='profile-loading';return;}
     const page = Object.entries(publicRoutes).find(([,path]) => path === value);
     if (page) state.view = page[0];
     else if (/^breakdown(?:\/\d+)?$/.test(value)) {
@@ -214,8 +216,9 @@
       const current = a.dataset.nav === state.view || (a.dataset.nav === 'resume' && ['result','plan','plans','deepintake','deepresult'].includes(state.view));
       if (current) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
+    if(window.BookedLifecycle)BookedLifecycle.enhance();
     normalizeHeadings();
-    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Your Next 30 - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Free Breakdown Sample',next30sample:'Your Next 30 Sample',survey:'Client Survey',plans:'My Plans'};
+    const titles = {intro:'Diagnostic Career Education for Hairstylists',paid:'Your Next 30 - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Free Breakdown Sample',next30sample:'Your Next 30 Sample',survey:'Client Survey',plans:'My Plans',first90:'FIRST 90 - Coming Soon'};
     document.title = 'BOOKED AF | ' + (titles[state.view] || 'My next move');
   }
   render = function () {
@@ -228,6 +231,7 @@
     app.classList.remove('intro-screen');
     app.classList.toggle('next30-panel',state.view==='deepresult');
     app.classList.toggle('marketing-screen', !!sitePages[state.view]);
+    if(state.view==='profile-loading'){const token=location.hash.split('/')[1];BookedLifecycle.openProfile(token);return;}
     if (sitePages[state.view]) {
       disposeEmailWidget(); disposeEmailWidget = () => {};
       app.innerHTML = sitePages[state.view];
@@ -266,7 +270,7 @@
     const nav = e.target.closest('[data-nav]');
     if (nav) { e.preventDefault(); go(nav.dataset.nav); return; }
     if (e.target.closest('[data-clear-progress]')) {
-      state.answers = {}; state.done = {}; state.name = ''; state.index = 0; state.emailSent = false;
+      BookedLifecycle.clear();state.first90Interest=false;state.answers = {}; state.done = {}; state.name = ''; state.index = 0; state.emailSent = false;
       try { localStorage.removeItem(key); sessionStorage.removeItem(deliveryKey); sessionStorage.removeItem('booked-af-email-draft'); } catch (_) {}
       go('intro');
     }
@@ -280,6 +284,7 @@
   app.addEventListener('change', e => {
     if (e.target.matches('[data-task]')) { save(); checklistStatus(); }
   });
+  window.addEventListener('hashchange',()=>{if(next30Entry!=='paid'){restoringHistory=true;applyRoute(location.hash);render();restoringHistory=false;}});
   window.addEventListener('popstate', () => {
     if (next30Entry === 'paid') return;
     restoringHistory = true; applyRoute(location.hash); render(); restoringHistory = false;

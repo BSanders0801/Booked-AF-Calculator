@@ -7,7 +7,7 @@ const dom=new JSDOM(fs.readFileSync('index.html','utf8'),{url:'https://preview.e
 const w=dom.window,ctx=dom.getInternalVMContext(),errors=[];
 w.addEventListener('error',e=>errors.push(e.error));w.scrollTo=()=>{};w.AbortSignal=AbortSignal;
 w.fetch=async()=>({ok:true,json:async()=>({ready:true,schemas:['short-v5']})});
-for(const file of ['day-math.js','breakdown-core.js','site-content.js','app.js','site-ui.js'])vm.runInContext(fs.readFileSync(file,'utf8'),ctx,{filename:file});
+for(const file of ['day-math.js','breakdown-core.js','site-content.js','app.js','lifecycle-ui.js','site-ui.js'])vm.runInContext(fs.readFileSync(file,'utf8'),ctx,{filename:file});
 const run=code=>vm.runInContext(code,ctx);
 const json=code=>JSON.parse(JSON.stringify(run(code)));
 const $=selector=>w.document.querySelector(selector);
