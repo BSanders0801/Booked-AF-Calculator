@@ -12,10 +12,6 @@ Bradley supplied these details directly on September 26, 2026. These describe hi
 - Served as a brand ambassador while maintaining Paul Mitchell’s professional standards, culture, and educational philosophy.
 - Traveled extensively to represent the brand at salons, distributor events, trade shows, and industry education programs nationwide.
 
-## About-page addition
+## Use of this background
 
-With Paul Mitchell, I taught salon teams across the country, from hands-on classes to trade shows and big education events. Color, formulation, consultations, product use, and retail recommendations. The things you need to know when there’s an actual client in the chair.
-
-I also worked with distributors, sales teams, and salon owners on new product launches, turning brand education into techniques working hairdressers could use.
-
-Placed after the existing earlier-career credentials. Homepage bio, portrait, personal lessons, and expert-role distinction are unchanged.
+Reference material for relevant lessons and education content. Bradley explicitly requested a short bio, not a full résumé. These expanded details are not in the About-page bio. Do not use dates in public copy.

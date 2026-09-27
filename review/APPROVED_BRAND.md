@@ -10,3 +10,5 @@ Keep these unless Bradley explicitly changes them:
 The differentiation audit authorizes a clearer offer and useful examples, not another unsolicited bio or identity rewrite. Personal lessons require Bradley's actual account; invented anecdotes are not acceptable. Session and bridal examples are illustrative business scenarios, not claims about Bradley's personal credits or specialist endorsement.
 
 Bradley confirmed he has never done bridal or session hair; those paths use his experts. Do not imply he has worked in those specialties. Expert review of the current draft remains pending. The three personal stories supplied on September 26 are recorded in BRADLEY_LESSONS.md.
+
+Keep the About bio short. Expanded Paul Mitchell and L’Oréal information is background for use where relevant, not permission to lengthen the bio. Do not use dates in public copy.
