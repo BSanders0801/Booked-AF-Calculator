@@ -170,3 +170,13 @@ body .brand-next{background:#141014}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 @media print{body .hero-mark,body .baf-bar,body nav,body .skip-link{display:none!important}body main{max-width:none}body .screen:not(.marketing-screen){max-width:none;padding:0}body .screen details{background:#fff;color:#111;border-color:#bbb}body .screen summary{color:#111}}
+
+/* Homepage editorial revision; crop the original photograph without altering it. */
+body .brand-hero{display:block;background:#100c10;padding-right:48px}
+body .hero-copy{max-width:1000px}
+body .brand-hero h1{font-size:clamp(58px,8.3vw,110px)}
+body .baf-founder-photo img{aspect-ratio:1.8/1;object-fit:cover;object-position:center top;height:auto}
+@media(max-width:700px){body .brand-hero{padding-right:24px}body .brand-hero h1{font-size:clamp(48px,13.6vw,72px)}}
+
+body .founder-crop{aspect-ratio:1;overflow:hidden;border-radius:8px;background:#171117}
+body .baf-founder-photo .founder-crop img{width:185%;max-width:none;height:auto;aspect-ratio:auto;margin-left:-42.5%;border:0;border-radius:0}
