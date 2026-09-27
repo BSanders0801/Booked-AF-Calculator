@@ -18,7 +18,7 @@ But every extra bowl had a cost. I was putting all that thought into what went o
 
 I had to adjust my pricing to reflect the product I was actually using. A flat fee can work, but it has to cover what goes into the service. Calling it “a dimensional blonde” doesn’t make the extra lightener and gloss free.
 
-I wanted to keep doing color my way. That meant making sure the price supported the work. Beautiful blonde. All the details. And enough left over for the person who did it.
+I wanted to keep doing color my way, for clients with a taste for detail. That meant making sure the price supported the work. Beautiful blonde. All the details. And enough left over for the person who did it.
 
 **Try this:** For your next dimensional blonde, record how much of each product you use. Put those costs and the full appointment time into your service math before deciding what to charge.
 
