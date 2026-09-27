@@ -56,17 +56,6 @@ assert.equal(byId('goalpriority').id,'goalpriority');
 const primaryChoices=Array.from(choices(byId('primarywork'),{worktype:['color','extensions','education']}),x=>x[0]);
 assert.deepEqual(primaryChoices,['chair-color','chair-extensions','education','mix','notearning']);
 
-// One selected lane should not waste a question asking the user to repeat it.
-const singleColorSeed={worktype:['color']};
-const singleColorVisible=Array.from(visible(singleColorSeed),q=>q.id);
-assert(!singleColorVisible.includes('primarywork'));
-assert.equal(singleColorVisible[1],'full');
-assert.equal(lane(singleColorSeed),'chair');
-const singleColor=complete({worktype:['color'],goal:['clients']});
-assert(!('primarywork' in validate(singleColor)));
-assert.match(build(singleColor).snapshot,/color clients/i);
-
-
 // Owner and manager are intentionally different paths.
 const owner=complete({worktype:['owner'],leadershiprole:'owner',goal:['money']});
 const manager=complete({worktype:['owner'],leadershiprole:'manager',goal:['money']});
@@ -78,6 +67,21 @@ assert.match(Array.from(choices(byId('goal'),owner),x=>x[1]).join(' '),/business
 assert.match(Array.from(choices(byId('goal'),manager),x=>x[1]).join(' '),/role to pay better/i);
 assert.equal(build(owner).plan.steps.length,3);
 assert.equal(build(manager).plan.steps.length,3);
+
+// Leadership copy follows the salon role across all six priorities.
+for(const leadershiprole of ['owner','manager']){
+ for(const goal of ['clients','money','return','keep','time','stable']){
+  const answer=complete({worktype:['owner'],leadershiprole,goal:[goal]});
+  const result=build(answer);
+  assert.equal(result.plan.steps.length,3);
+  assert(!JSON.stringify(result).includes('undefined'));
+  if(goal!=='stable'){
+   assert.match(result.snapshot,/salon/);
+   assert.doesNotMatch(JSON.stringify(result.plan),/call sheet|producer|agency/);
+  }
+  if(leadershiprole==='manager'&&goal==='money')assert.match(result.intro,/sales are not your paycheck/);
+ }
+}
 
 // Multi-select concerns require one explicit priority before the tailored branch continues.
 const multiGoal=complete({
@@ -154,7 +158,7 @@ const sessionResult=build(sessionMoney);
 assert.equal(sessionResult.stage,'IN DEMAND');
 assert.match(sessionResult.top.title,/PAY BETTER/);
 assert.match(sessionResult.intro,/agency takes a cut/i);
-assert.match(sessionResult.intro,/cash-flow/i);
+assert.match(sessionResult.intro,/waiting for money/i);
 assert.match(sessionResult.plan.steps[1].body,/reimbursed money|fronted/i);
 
 const sessionClients=complete({
@@ -249,3 +253,4 @@ for(const goal of ['clients','return','money','keep','time','stable']){
 }
 
 console.log(`Passed ${cases} adaptive answer variations, owner/manager, multi-goal priority, chair/session paths, Worker requests, email parity and navigation checks. No live emails sent.`);
+

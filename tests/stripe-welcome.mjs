@@ -79,3 +79,4 @@ test('only unlocks the paid product after Stripe confirms the exact checkout',as
     assert.equal((await visit('not-a-session')).status,400);
   } finally {globalThis.fetch=original}
 });
+

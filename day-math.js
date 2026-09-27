@@ -9,3 +9,4 @@ function dayMath(values) {
   const day = paid+tips-supplies-rentForDay;
   return {day,month:day*52/12,perHour:day/hours,rentForDay};
 }
+

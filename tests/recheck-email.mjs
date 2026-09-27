@@ -97,3 +97,4 @@ test('scheduled handler sends due 60 and 90 day queue items with different copy'
     assert.equal(FOLLOWUPS.map.size,0);
   } finally { globalThis.fetch=original; }
 });
+

@@ -59,3 +59,134 @@ body .baf-leadership-tabs{display:inline-flex;gap:8px;margin:0 0 22px;padding:5p
 body .baf-leadership-tabs button{min-height:0;padding:9px 16px;background:transparent;color:#4b3542;border:1px solid transparent;font-size:11px;font-weight:900;letter-spacing:.08em}
 body .baf-leadership-tabs button[aria-pressed=true]{background:#20151d;color:#fff;border-color:#20151d}
 @media(max-width:650px){body .baf-leadership-tabs{display:grid;grid-template-columns:1fr 1fr;width:100%}body .baf-leadership-tabs button{width:100%}}
+
+
+/* Career-specific paid plans keep the main moves visible and the depth optional. */
+.n30-field{display:grid;gap:8px;margin:18px 0;min-width:0}
+.n30-field .input{width:100%;box-sizing:border-box}
+.next30-panel details{margin:18px 0}
+.next30-panel summary{cursor:pointer;padding:14px 0;font-weight:800}
+.next30-panel .checkline{display:flex;align-items:flex-start;gap:12px;margin:18px 0;line-height:1.6}
+.next30-panel .checkline input{flex:0 0 22px;width:22px;height:22px;margin-top:3px}
+.next30-panel .actions{flex-wrap:wrap}
+body [data-next30-sample]{color:#faf7f8;border-color:#786471;background:#171117;min-height:44px}
+body [data-next30-sample][aria-pressed=true]{background:#ff338e;color:#13080e;border-color:#ff338e}
+body .next30-panel .actions>button{flex:1 1 180px;white-space:normal}
+@media(max-width:650px){body .next30-panel .actions{display:grid;grid-template-columns:1fr}body .next30-panel .actions>button{width:100%}}
+.next30-panel ul{padding-left:24px;line-height:1.8}
+@media(max-width:650px){.next30-panel .grid2{grid-template-columns:1fr}.next30-panel .actions button{width:100%}.next30-panel h2{overflow-wrap:anywhere}}
+@media print{.next30-panel button,.next30-panel form,.next30-panel input[type=file]{display:none!important}.next30-panel details>*{display:block!important}.next30-panel .card{break-inside:avoid}.next30-panel details{break-inside:auto}}
+
+/* September brand audit: one type, spacing and interaction system. */
+body{font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.6;overflow-x:clip;overflow-y:visible;border-radius:0}
+body button,body input,body select,body textarea,body a{font-family:inherit}
+body a{color:#faf7f8;text-underline-offset:.22em}
+body button,body a.primary,body a.baf-outline{border-radius:6px;min-height:48px;padding:14px 22px;font-size:16px;line-height:1.35;font-weight:750;text-decoration:none}
+body a.primary,body a.baf-outline{display:inline-flex;align-items:center;justify-content:center;color:#160510}
+body .secondary,body .baf-outline{color:#faf7f8;border-color:#8f7785;background:transparent}
+body button:focus-visible,body a:focus-visible,body summary:focus-visible,body input:focus-visible,body select:focus-visible,body textarea:focus-visible{outline:3px solid #ff78b5;outline-offset:4px}
+body button:disabled{cursor:not-allowed}
+body header{max-width:1200px;margin:auto;padding:24px 32px;gap:32px}
+body header .brand-logo{width:150px;height:auto;display:block}
+body header .brand-home{flex:0 0 auto;min-height:48px;display:flex;align-items:center}
+body header nav{gap:8px;align-items:center}
+body header nav a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 13px;font-size:15px;font-weight:700;text-decoration:none;border-radius:5px}
+body header nav a[aria-current=page]{color:#ff78b5;background:#251621}
+body header nav a[data-nav=question]{border:1px solid #9b536f}
+body main{max-width:1200px;min-height:60vh;margin:auto;padding:0}
+body .screen.marketing-screen{max-width:none;padding:0}
+body .screen:not(.marketing-screen){max-width:760px;padding:48px 32px 72px}
+body .baf-section{padding:72px 48px}
+body .baf-section p{max-width:68ch}
+body .baf-kicker,body .eyebrow{font-size:12px;line-height:1.6;letter-spacing:.13em;color:#ff78b5}
+body .baf-small,body .fine,body .hint,body .storage-note{font-size:14px;line-height:1.65;color:#c7bac3}
+body h1{font-size:clamp(42px,5.8vw,76px);line-height:1;letter-spacing:-.045em}
+body h2{font-size:clamp(30px,3.8vw,46px);line-height:1.08;letter-spacing:-.035em}
+body h3{font-size:22px;line-height:1.2}
+body .baf-two{gap:48px}
+body .baf-grid{gap:28px}
+body .baf-card,body .screen .card{padding:28px;border-radius:8px;background:#191519;border:1px solid #55424e;box-shadow:none}
+body .baf-card p:last-child{margin-bottom:0}
+body .baf-card + .baf-card{margin-top:20px}
+body .baf-grid>.baf-card + .baf-card{margin-top:0}
+body .baf-grid + p{margin-top:24px}
+body .brand-hero{position:relative;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:38px;align-items:center;padding:60px 48px 64px;background:radial-gradient(ellipse at 100% 0,#391426,transparent 65%);border-bottom:1px solid #42323c}
+body .brand-hero h1{font-size:clamp(58px,7.5vw,104px);line-height:.92;letter-spacing:-.055em;margin:22px 0 28px}
+body .brand-hero h1 span{color:#ff338e}
+body .hero-subline{max-width:36ch;font-size:20px;line-height:1.5;margin-bottom:26px;color:#eee7ec}
+body .hero-small{font-size:13px;line-height:1.5;margin:14px 0 0;color:#c7bac3}
+body .hero-mark{position:relative;min-height:350px;border:1px solid #785266;border-radius:8px;padding:38px 28px;transform:rotate(5deg);background:#eae3e8;color:#20151d;box-shadow:16px 16px 0 #8d214f;overflow:hidden}
+body .hero-mark span,body .hero-mark strong{position:relative;z-index:1;display:block;font-size:clamp(26px,3.3vw,44px);font-weight:900;line-height:1.03;letter-spacing:-.04em}
+body .hero-mark strong{margin-top:22px;color:#98134b}
+body .hero-mark i{position:absolute;bottom:-70px;right:-5px;font-size:220px;color:#806474;font-weight:900;font-style:italic;line-height:1;opacity:1}
+body .brand-how{background:#141014}
+body .brand-how article{border-top:2px solid #ff338e;padding-top:22px}
+body .baf-career-stage{max-width:none}
+body .baf-career-stage .baf-sample-panel{box-shadow:none;border:0;padding:32px;background:#eee9ed}
+body .baf-career-stage .baf-sample-panel p{color:#493742}
+body .baf-career-stage .baf-sample-panel h3{color:#20151d}
+body .baf-sample-tab,body [data-next30-sample],body .baf-leadership-tabs button{font-size:14px;line-height:1.3;letter-spacing:.01em;min-height:48px;padding:12px 16px;color:#faf7f8;background:#191519;border:1px solid #8f7785}
+body .baf-sample-tab[aria-pressed=true],body .baf-leadership-tabs button[aria-pressed=true]{background:#ff338e;color:#160510;border-color:#ff338e}
+body .baf-sample-page .baf-sheet{box-shadow:none;margin-top:24px;padding:32px}
+body .baf-sheet .baf-kicker{color:#921448}
+body .text-link{display:inline-flex;align-items:center;min-height:44px;padding:8px 0;font-size:16px;font-weight:700;line-height:1.4;text-decoration:underline}
+body .baf-founder-photo{margin:0;max-width:460px}
+body .baf-founder-photo img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:8px}
+body .baf-founder-photo figcaption{padding-top:18px;border-top:2px solid #ff338e;margin-top:16px;line-height:1.7;font-size:13px}
+body .baf-founder-photo figcaption span{display:block;color:#ff78b5;font-size:11px;letter-spacing:.06em}
+body .brand-sales{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.8fr);gap:48px;align-items:start}
+body .brand-sales .checkout-link{display:flex;width:100%}
+body .brand-reading{max-width:840px;margin:auto}
+body .brand-reading h2{margin-top:36px;font-size:28px}
+body .brand-reading .card h2,body .brand-reading .baf-card h2{margin-top:0}
+body .screen details{border:1px solid #55424e;border-radius:8px;padding:0;margin:20px 0;background:#141014}
+body .screen summary{padding:20px 24px;min-height:56px;font-size:16px;line-height:1.4;cursor:pointer}
+body .screen details>p{margin:0 24px 22px}
+body .screen details>ul,body .screen details>form,body .screen details>.grid2{margin:20px 24px}
+body .screen details>button{margin:0 24px 22px}
+body .screen details[open]>summary{border-bottom:1px solid #42323c;margin-bottom:20px}
+body label,body .screen label{font-size:16px;line-height:1.5}
+body .screen input:not([type=checkbox]):not([type=radio]):not([type=hidden]),body select,body textarea{font-size:17px;min-height:48px;max-width:100%;border-radius:6px}
+body .screen input[type=checkbox],body .screen input[type=radio]{accent-color:#ff338e;width:22px;height:22px;flex-shrink:0}
+body .screen .checkline{min-height:48px;align-items:center}
+body .screen .choice{min-height:58px;font-size:17px;line-height:1.45;border-radius:7px;padding:18px 20px}
+body .screen .choice.selected{border-width:2px;background:#351a2b}
+body .screen .actions{gap:14px;flex-wrap:wrap}
+body .screen .actions>*{flex:1 1 210px;min-width:0}
+body .capture-shell{padding:32px}
+body .survey-option{min-height:48px;padding:14px;gap:14px}
+body footer{max-width:1200px;padding:40px 48px;margin:0 auto;font-size:15px}
+body footer .brand-footer-logo{width:130px;height:auto}
+body footer a{display:inline-flex;align-items:center;min-height:44px;font-size:14px}
+body footer .baf-foot-links{gap:10px 24px}
+body .skip-link{font-size:16px;padding:14px 22px}
+body .brand-next{background:#141014}
+@media(max-width:900px){body .brand-hero{grid-template-columns:1fr .65fr;gap:24px;padding-inline:32px}body .hero-mark{min-height:300px;padding:30px 20px}body .brand-sales{grid-template-columns:1fr}body .baf-two{gap:32px}}
+@media(max-width:650px){
+ body{font-size:17px}body header{padding:16px 20px 12px;gap:12px}body header .brand-logo{width:125px}body header nav{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:4px 8px;margin:0}body header nav a{font-size:14px;padding:10px 8px;min-height:44px;justify-content:flex-start}
+ body .brand-hero{display:block;padding:30px 24px 40px}body .hero-mark{display:none}body .brand-hero h1{font-size:clamp(48px,13.6vw,72px);margin:16px 0 22px;line-height:.95}body .brand-hero .baf-kicker{font-size:11px;letter-spacing:.08em;max-width:29ch}body .hero-subline{font-size:18px;line-height:1.5;margin-bottom:22px}body .brand-hero .primary{width:100%}body .hero-small{font-size:12px}
+ body .baf-section{padding:44px 24px}body .screen:not(.marketing-screen){padding:32px 24px 48px}body .baf-two,body .baf-grid{grid-template-columns:1fr;gap:26px}body .baf-card,body .screen .card{padding:22px}body h1{font-size:42px}body h2{font-size:32px}body .baf-founder-photo{max-width:360px}body .baf-sample-tabs,body .baf-career-section .baf-sample-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}body .baf-sample-tab:last-child{grid-column:auto}body .baf-sample-tab{font-size:13px;padding:12px 10px;min-height:48px}body .baf-career-stage .baf-sample-panel,body .baf-sample-page .baf-sheet{padding:24px;box-shadow:none}
+ body .screen .actions{display:grid;grid-template-columns:1fr}body .screen .actions>*{width:100%}body .screen summary{padding:18px;font-size:15px}body .screen details>p,body .screen details>form,body .screen details>ul{margin-left:18px;margin-right:18px}body .capture-shell{padding:24px 18px}body footer{padding:36px 24px}body .baf-section{overflow-wrap:break-word}body .brand-sales{gap:28px}body .brand-reading h2{font-size:27px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media print{body .hero-mark,body .baf-bar,body nav,body .skip-link{display:none!important}body main{max-width:none}body .screen:not(.marketing-screen){max-width:none;padding:0}body .screen details{background:#fff;color:#111;border-color:#bbb}body .screen summary{color:#111}}
+
+/* Homepage editorial revision; crop the original photograph without altering it. */
+body .brand-hero{display:block;background:#100c10;padding-right:48px}
+body .hero-copy{max-width:1000px}
+body .brand-hero h1{font-size:clamp(58px,8.3vw,110px)}
+body .baf-founder-photo img{aspect-ratio:1.8/1;object-fit:cover;object-position:center top;height:auto}
+@media(max-width:700px){body .brand-hero{padding-right:24px}body .brand-hero h1{font-size:clamp(48px,13.6vw,72px)}}
+
+body .founder-crop{aspect-ratio:4/3;overflow:hidden;border-radius:8px;background:#171117}
+body .baf-founder-photo .founder-crop img{width:100%;max-width:100%;height:auto;aspect-ratio:auto;margin-left:0;border:0;border-radius:0}
+
+/* Keep personal stories skimmable, with native keyboard-accessible disclosure. */
+body .bradley-lessons .baf-grid{grid-template-columns:minmax(0,1fr);max-width:900px}
+body .bradley-lessons .story-card>p,body .bradley-lessons .story-body{max-width:72ch}
+body .bradley-lessons .story-detail{padding:0;border:0;margin:0;background:transparent}
+body .bradley-lessons .story-detail>summary{min-height:48px;padding:12px 0;cursor:pointer;color:var(--baf-ink)}
+body .bradley-lessons .story-detail>summary:focus-visible{outline:3px solid var(--baf-pink);outline-offset:4px}
+body .bradley-lessons .story-close,body .bradley-lessons details[open] .story-read{display:none}
+body .bradley-lessons details[open] .story-close{display:inline}
+body .bradley-lessons .story-body{padding-top:16px}

@@ -3,7 +3,7 @@
   'use strict';
   const key = 'booked-af-free-progress-v1';
   const maxAge = 30 * 24 * 60 * 60 * 1000;
-  const publicRoutes = {intro:'home', paid:'deep-dive', about:'about', contact:'contact', privacy:'privacy', sample:'sample', next30sample:'next-30-sample', survey:'survey'};
+  const publicRoutes = {intro:'home', paid:'deep-dive', about:'about', contact:'contact', privacy:'privacy', sample:'sample', next30sample:'next-30-sample', survey:'survey',plans:'my-plans'};
   const freeViews = ['question','teaser','result','plan','daymath','email'];
   const preview = window.BOOKED_AF_REVIEW === true || !['bookedandfabulous.com','www.bookedandfabulous.com'].includes(location.hostname);
   let lastFreeView = 'question';
@@ -106,7 +106,18 @@
     document.querySelectorAll('[data-career-sample]').forEach(button=>{
       button.setAttribute('aria-pressed',String(button.dataset.careerSample===topKey));
     });
+    normalizeHeadings();
     return sample;
+  }
+  function normalizeHeadings(){
+    // Keep the original visual hierarchy while giving each screen a complete heading outline.
+    let previousLevel = 0;
+    app.querySelectorAll('h1,h2,h3,h4').forEach((heading,index) => {
+      const nativeLevel = Number(heading.tagName.slice(1));
+      const level = index === 0 ? 1 : Math.min(nativeLevel,previousLevel + 1);
+      if(level !== nativeLevel){heading.setAttribute('role','heading');heading.setAttribute('aria-level',String(level));}
+      previousLevel = level;
+    });
   }
   function enhance() {
     document.querySelector('.progress').hidden = state.view !== 'question';
@@ -180,31 +191,47 @@
         }
       }
     }
+    if (state.view === 'plans') {
+      const free = document.getElementById('resume-free');
+      const hasFree = Object.keys(state.answers).length > 0;
+      free.textContent = hasFree ? 'Open my free plan →' : 'Start my free Breakdown →';
+      document.getElementById('free-resume-note').textContent = hasFree ? 'Your free answers are saved in this browser. Let’s pick up there.' : 'No free plan saved in this browser yet. Start here, or use the link in your Breakdown email.';
+      free.onclick = () => go(hasFree ? lastFreeView : 'question');
+      const paid = document.getElementById('resume-paid');
+      if (state.next30Verified === true) {
+        paid.hidden = false;
+        document.getElementById('paid-resume-note').textContent = 'Your purchase is verified for this visit. Open your plan or continue your answers.';
+        paid.onclick = () => {state.view = BookedNext30.complete(next30Ensure().answers) ? 'deepresult' : 'deepintake'; render();};
+      }
+    }
     if (state.view === 'email') {
       const note = app.querySelector('.capture-note');
       if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. We’ll also send a few check-ins over the next 90 days so you can recheck your plan and numbers. This does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
       const heading = app.querySelector('.capture-wordmark');
-      if (heading) heading.innerHTML = '<img src="assets/booked-af-logo.png" alt="BOOKED AF - Booked & Fabulous" width="230" height="109" style="max-width:100%;height:auto">';
+      if (heading) heading.innerHTML = '<img src="assets/booked-af-logo.webp" alt="BOOKED AF - Booked & Fabulous" width="230" height="109" style="max-width:100%;height:auto">';
     }
     document.querySelectorAll('header [data-nav]').forEach(a => {
-      const current = a.dataset.nav === state.view || (a.dataset.nav === 'resume' && ['result','plan'].includes(state.view));
+      const current = a.dataset.nav === state.view || (a.dataset.nav === 'resume' && ['result','plan','plans','deepintake','deepresult'].includes(state.view));
       if (current) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
-    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Your Next 30 - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Free Breakdown Sample',next30sample:'Your Next 30 Sample',survey:'Client Survey'};
+    normalizeHeadings();
+    const titles = {intro:'Education & Business Tools for Hairdressers',paid:'Your Next 30 - $49',about:'Meet Bradley Sanders',contact:'Contact',plan:'My 7-Day Plan',question:'Free Breakdown',result:'My Breakdown',daymath:'Chair Math',privacy:'Privacy Policy',sample:'Free Breakdown Sample',next30sample:'Your Next 30 Sample',survey:'Client Survey',plans:'My Plans'};
     document.title = 'BOOKED AF | ' + (titles[state.view] || 'My next move');
   }
   render = function () {
     const active = document.activeElement;
-    const choice = active?.dataset?.value;
-    const screenKey = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? state.deepIndex : '');
+    const choice = active?.dataset?.value ?? active?.dataset?.next30Choice;
+    const screenKey = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? (state.careerData?.currentId ?? state.deepIndex) : '');
     const changed = lastScreen !== screenKey;
     if (['teaser','result','plan','email'].includes(state.view) && !hasCompleteResult()) { state.view = 'question'; state.index = Math.max(0,state.index); }
     if (['teaser','result','plan'].includes(state.view) && !state.emailSent) state.view = 'email';
     app.classList.remove('intro-screen');
+    app.classList.toggle('next30-panel',state.view==='deepresult');
     app.classList.toggle('marketing-screen', !!sitePages[state.view]);
     if (sitePages[state.view]) {
       disposeEmailWidget(); disposeEmailWidget = () => {};
       app.innerHTML = sitePages[state.view];
+      if(state.view==='next30sample'&&typeof renderNext30Sample==='function')renderNext30Sample();
     } else originalRender();
     enhance(); save();
     const route = routeFor();
@@ -218,21 +245,24 @@
       if (heading) { heading.tabIndex = -1; heading.focus({preventScroll:true}); }
       window.scrollTo({top:0,behavior:'instant'});
     } else if (choice !== undefined) {
-      [...app.querySelectorAll('[data-value]')].find(b => b.dataset.value === choice)?.focus({preventScroll:true});
+      [...app.querySelectorAll('[data-value], [data-next30-choice]')].find(b => (b.dataset.value ?? b.dataset.next30Choice) === choice)?.focus({preventScroll:true});
     }
-    lastScreen = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? state.deepIndex : '');
+    lastScreen = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? (state.careerData?.currentId ?? state.deepIndex) : '');
   };
   function go(view) {
-    if (view === 'resume') view = Object.keys(state.answers).length ? lastFreeView : 'question';
+    if (view === 'resume') view = 'plans';
     if (view === 'question' && !Object.keys(state.answers).length) { restoreSchema(SHORT_SCHEMA); state.index = 0; }
     if (view === 'question') state.index = Math.max(0,state.index);
     state.view = view; render();
   }
   document.addEventListener('click', e => {
+    if(e.target.closest('.skip-link')){e.preventDefault();app.tabIndex=-1;app.focus();return;}
     const leadershipButton=e.target.closest('[data-career-sample-detail]');
     if(leadershipButton){e.preventDefault();renderCareerSample(leadershipButton.dataset.careerSampleDetail);return;}
     const sampleButton=e.target.closest('[data-career-sample]');
     if(sampleButton){e.preventDefault();renderCareerSample(sampleButton.dataset.careerSample);return;}
+    const exampleButton=e.target.closest('[data-example-role]');
+    if(exampleButton){e.preventDefault();go('next30sample');renderNext30Sample(exampleButton.dataset.exampleRole);normalizeHeadings();return;}
     const nav = e.target.closest('[data-nav]');
     if (nav) { e.preventDefault(); go(nav.dataset.nav); return; }
     if (e.target.closest('[data-clear-progress]')) {
@@ -260,8 +290,9 @@
     else if (state.view === 'intro') state.view = 'intro';
   }
   if (preview) {
-    const badge = document.createElement('div'); badge.className = 'baf-bar'; badge.textContent = 'REDESIGN PREVIEW · Your live site has not changed'; document.body.prepend(badge);
+    const badge = document.createElement('div'); badge.className = 'baf-bar'; badge.setAttribute('role','region'); badge.setAttribute('aria-label','Preview status'); badge.textContent = 'REDESIGN PREVIEW · Your live site has not changed'; document.body.prepend(badge);
   }
   render();
 })();
+
 
