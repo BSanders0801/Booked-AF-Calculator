@@ -71,7 +71,7 @@
   }
   if(['result','plan'].includes(state.view)){
    if(access)saveProfile();
-   else {const note=document.createElement('p');note.className='profile-status';note.textContent='To save this career profile across devices, open the private link in your Breakdown email. Use the same email after graduation.';app.append(note);}
+   else {const note=document.createElement('p');note.className='profile-status';note.textContent='To save this career profile across devices, open the private link in your Breakdown email.'+(student?' Use the same email after graduation.':'');app.append(note);}
   }
   if(state.view==='plans'){
    const wrap=document.createElement('div');wrap.className='card';
