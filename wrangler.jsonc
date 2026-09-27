@@ -1,0 +1,17 @@
+{
+  // This repository contains a separate static website. Deploy the API worker only.
+  "name": "booked-af-email",
+  "main": "email-worker.mjs",
+  "compatibility_date": "2026-09-25",
+  "workers_dev": true,
+  "keep_vars": true,
+  "kv_namespaces": [
+    {
+      "binding": "FOLLOWUPS",
+      // Existing booked-af-followups namespace, verified in the account dashboard.
+      "id": "c1030f222e4047ba8fc03636900a14fc"
+    }
+  ]
+  // Intentionally omit triggers: preserve the existing dashboard-managed schedule.
+  // Restore runtime secrets securely before launch. No secrets belong in this file.
+}

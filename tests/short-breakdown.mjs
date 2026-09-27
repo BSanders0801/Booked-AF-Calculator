@@ -68,6 +68,21 @@ assert.match(Array.from(choices(byId('goal'),manager),x=>x[1]).join(' '),/role t
 assert.equal(build(owner).plan.steps.length,3);
 assert.equal(build(manager).plan.steps.length,3);
 
+// Leadership copy follows the salon role across all six priorities.
+for(const leadershiprole of ['owner','manager']){
+ for(const goal of ['clients','money','return','keep','time','stable']){
+  const answer=complete({worktype:['owner'],leadershiprole,goal:[goal]});
+  const result=build(answer);
+  assert.equal(result.plan.steps.length,3);
+  assert(!JSON.stringify(result).includes('undefined'));
+  if(goal!=='stable'){
+   assert.match(result.snapshot,/salon/);
+   assert.doesNotMatch(JSON.stringify(result.plan),/call sheet|producer|agency/);
+  }
+  if(leadershiprole==='manager'&&goal==='money')assert.match(result.intro,/sales are not your paycheck/);
+ }
+}
+
 // Multi-select concerns require one explicit priority before the tailored branch continues.
 const multiGoal=complete({
   worktype:['color','extensions'],
@@ -143,7 +158,7 @@ const sessionResult=build(sessionMoney);
 assert.equal(sessionResult.stage,'IN DEMAND');
 assert.match(sessionResult.top.title,/PAY BETTER/);
 assert.match(sessionResult.intro,/agency takes a cut/i);
-assert.match(sessionResult.intro,/cash-flow/i);
+assert.match(sessionResult.intro,/waiting for money/i);
 assert.match(sessionResult.plan.steps[1].body,/reimbursed money|fronted/i);
 
 const sessionClients=complete({
@@ -238,3 +253,4 @@ for(const goal of ['clients','return','money','keep','time','stable']){
 }
 
 console.log(`Passed ${cases} adaptive answer variations, owner/manager, multi-goal priority, chair/session paths, Worker requests, email parity and navigation checks. No live emails sent.`);
+
