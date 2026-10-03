@@ -17,6 +17,7 @@
       day0Complete:!!input.day0Complete,
       numberPlanner:input.numberPlanner&&typeof input.numberPlanner==='object'?input.numberPlanner:{},
       dayValue:input.dayValue&&typeof input.dayValue==='object'?input.dayValue:{},
+      demandSprint:input.demandSprint&&typeof input.demandSprint==='object'?input.demandSprint:{},
       nextPath:typeof input.nextPath==='string'?input.nextPath:'',
       moneyMap:{
         payType:['employee','self','mixed'].indexOf(m.payType)>=0?m.payType:'',
@@ -303,6 +304,33 @@
     return '<div class="card"><div class="number">YOUR DAY</div><h3>NOW WE KNOW WHAT THE DAY IS DOING.</h3><p>Normal day value: <strong>'+cash(r.dayRevenue)+'</strong>'+(r.usedActual?' using the actual day revenue you entered.':' using average client spend × clients per day.')+'</p><p>Booked-hour value: <strong>'+(r.revenuePerBookedHour===null?'Not available yet':cash(r.revenuePerBookedHour)+'/hour')+'</strong>.</p><p>Utilization: <strong>'+Math.round(r.utilization*100)+'%</strong> of the hours you make available.</p><p>Average client spend: <strong>'+cash(r.ticket)+'</strong>.</p><p class="fine">We do not judge price from revenue/hour alone, and we do not treat intentional breaks as wasted capacity.</p><div id="dv-route-slot"></div></div>';
   }
 
+
+  function chooseDemandLanes(data){
+    var a=data.answers||{},role=BookedNext30.primary(a),load=a.load;
+    var existing=(role==='restart'||load==='starting')?'small':'some';
+    var primary=[],maintenance='targeted local content';
+    if(existing==='some'){
+      primary=['lapsed-client reactivation','referrals / rebooking'];
+      maintenance='targeted local visibility';
+    }else{
+      primary=['local partnership / outreach','targeted local social / Google'];
+      maintenance='portfolio proof that matches the work you want';
+    }
+    if(role==='session'||role==='education'||role==='bridal'||role==='other'){
+      primary=['targeted professional outreach','portfolio / case-study proof'];
+      maintenance='industry relationships / inbound buyer content';
+    }
+    return {primary:primary,maintenance:maintenance};
+  }
+  function demandSprintHTML(data){
+    if(data.shell.nextPath!=='p01')return '';
+    var d=data.shell.demandSprint||{},lanes=d.lanes||chooseDemandLanes(data);
+    return '<section class="card" id="demand-sprint"><div class="number">NEXT PATH · FILL THE EMPTY TUESDAY</div><h2>DEFINE THE HOLE BEFORE YOU MARKET TO EVERYONE.</h2><p>Pick the specific weak block or service first. Then work two acquisition lanes for 30 days and keep one maintenance lane running quietly in the background.</p><div class="grid2">'
+      +f('ds-block','Consistently weak day / time block',d.block||'','Example: Tuesday afternoon, Thursday morning, or one recurring weekly gap.')
+      +f('ds-capacity','New-client capacity per week',d.capacity||'','How many new paid appointments could you realistically absorb without wrecking the schedule?')
+      +'</div><div class="card"><div class="number">PRIMARY LANE 1</div><h3>'+e(lanes.primary[0])+'</h3><p>Do 5 real actions this week. Track replies, bookings, service, and source.</p></div><div class="card"><div class="number">PRIMARY LANE 2</div><h3>'+e(lanes.primary[1])+'</h3><p>Do 5 real actions this week. Same rule: track business outcomes, not attention.</p></div><div class="card"><div class="number">MAINTENANCE LANE</div><h3>'+e(lanes.maintenance)+'</h3><p>Keep this visible without turning it into a second full-time job.</p></div><div class="actions"><button type="button" class="primary" id="ds-save">START MY 30-DAY SPRINT →</button></div><div id="ds-result">'+(d.started?'<div class="card"><h3>THE SPRINT IS SET.</h3><p>Week 1: define the hole and complete the first five actions in each primary lane. Week 2: repeat and track every inquiry source. Week 3: follow through and rebook the good new guests. Week 4: KEEP one winner, ADJUST one, STOP one weak tactic.</p></div>':'')+'</div></section>';
+  }
+
   function renderMoney(data,plan){
     data.shell=shell(data.shell);if(!data.shell.startedAt)data.shell.startedAt=new Date().toISOString();
     if(!data.shell.moneyMap.payType)data.shell.moneyMap.payType=infer(data,plan);
@@ -317,6 +345,7 @@
       +mapHTML(data.shell)
       +numberPlannerHTML(data.shell)
       +dayValueHTML(data.shell)
+      +demandSprintHTML(data)
       +'<section class="card" id="next30-whats-next"><div class="number">WHAT\'S NEXT</div>'+(done?'<h3>YOUR NUMBER OPENS NEXT.</h3><p>Once you build it, we compare your current workday value with the workday value your desired income and schedule actually require.</p>':'<p>Once the baseline is set, we open YOUR NUMBER. We do not dump the whole month on you at once.</p>')+'</section>'
       +'<section class="card"><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button><p class="fine">Your progress is saved on this device. Returning to this browser brings you back to your current plan.</p></section>';
     bind(data,plan);
@@ -360,6 +389,19 @@
             go.textContent=(d.route.id==='p01'?'FILL THE EMPTY TUESDAY':d.route.id==='p02'?'REBOOKING WITHOUT BEGGING':d.route.id==='p04'?'MONEY MAP':d.route.id==='p05'?'SERVICE ECONOMICS':d.route.id==='p07'?'BUY BACK A DAY':'DETAILED AUDIT')+' SAVED';
           };
         }
+      };
+    }
+    if(data.shell.nextPath==='p01'){
+      var ds=data.shell.demandSprint||{};
+      if(!ds.lanes)ds.lanes=chooseDemandLanes(data);
+      var block=document.getElementById('ds-block'),capacity=document.getElementById('ds-capacity');
+      function saveDemand(){if(block)ds.block=block.value.trim();if(capacity)ds.capacity=capacity.value.trim();data.shell.demandSprint=ds;next30Save()}
+      if(block)block.oninput=saveDemand;if(capacity)capacity.oninput=saveDemand;
+      var save=document.getElementById('ds-save');if(save)save.onclick=function(){
+        saveDemand();
+        if(!ds.block){var out=document.getElementById('ds-result');if(out)out.innerHTML='<div class="card"><h3>NAME THE HOLE FIRST.</h3><p>Pick the day, time block, or recurring service gap you are actually trying to fill.</p></div>';return}
+        ds.started=true;data.shell.demandSprint=ds;next30Save();
+        var out=document.getElementById('ds-result');if(out)out.innerHTML='<div class="card"><h3>THE SPRINT IS SET.</h3><p>Week 1: define the hole and complete the first five actions in each primary lane. Week 2: repeat and track every inquiry source. Week 3: follow through and rebook the good new guests. Week 4: KEEP one winner, ADJUST one, STOP one weak tactic.</p></div>';
       };
     }
     next30Save();
