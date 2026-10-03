@@ -16,6 +16,8 @@
       phase:typeof input.phase==='string'?input.phase:'day0',
       day0Complete:!!input.day0Complete,
       numberPlanner:input.numberPlanner&&typeof input.numberPlanner==='object'?input.numberPlanner:{},
+      dayValue:input.dayValue&&typeof input.dayValue==='object'?input.dayValue:{},
+      nextPath:typeof input.nextPath==='string'?input.nextPath:'',
       moneyMap:{
         payType:['employee','self','mixed'].indexOf(m.payType)>=0?m.payType:'',
         employee:clean(m.employee),
@@ -244,6 +246,33 @@
     return {complete:true,currentMonthly:currentMonthly,currentAnnual:currentAnnual,currentDays:currentDays,currentWeeks:currentWeeks,currentPerDay:currentPerDay,desiredAnnual:desiredAnnual,desiredDays:desiredDays,desiredWeeks:desiredWeeks,desiredWorkdays:desiredWorkdays,targetPerDay:targetPerDay,annualGap:desiredAnnual-currentAnnual,workdayGap:targetPerDay-currentPerDay,preservePerDay:currentAnnual/desiredWorkdays};
   }
 
+
+  function dayValueHTML(s){
+    if(s.nextPath!=='p03')return '';
+    var d=s.dayValue||{};
+    return '<section class="card" id="day-value-audit"><div class="number">NEXT PATH · WHAT YOUR DAY IS ACTUALLY WORTH</div><h2>START WITH A NORMAL DAY. NOT YOUR BEST SATURDAY.</h2><p>Ticket matters. Time matters. Empty space matters. We are putting them in the same room before deciding what to change.</p><div class="grid2">'
+      +f('dv-ticket','Average client spend',d.ticket||'')
+      +f('dv-clients','Average clients per workday',d.clients||'')
+      +f('dv-available','Average hours available to clients each workday',d.available||'','Include the hours you actually make bookable. Intentional breaks are not automatically waste.')
+      +f('dv-booked','Average booked / revenue-producing hours per workday',d.booked||'')
+      +f('dv-days','Days worked per week',d.days||'')
+      +f('dv-revenue','Average service sales / client revenue per day, if known',d.revenue||'','Optional. If entered, this replaces the ticket × clients estimate for day revenue.')
+      +'</div><div class="actions"><button type="button" class="primary" id="dv-calc">AUDIT MY DAY →</button></div><div id="dv-result">'+(d.result?dayValueResultCard(d.result):'')+'</div></section>';
+  }
+  function dayValueCalc(d){
+    var ticket=num(d,'ticket'),clients=num(d,'clients'),available=num(d,'available'),booked=num(d,'booked'),days=num(d,'days'),actualRevenue=num(d,'revenue');
+    if([ticket,clients,available,booked,days].some(function(v){return v===null}))return {complete:false,message:'Complete average client spend, clients per day, available hours, booked hours, and days worked.'};
+    if(ticket<0||clients<0||available<=0||booked<0||days<=0||days>7)return {complete:false,message:'Check the numbers entered. Hours and days must be usable positive values, and booked hours cannot be negative.'};
+    if(booked>available)return {complete:false,message:'Booked revenue-producing hours cannot be higher than the hours you make available. Check those two numbers.'};
+    var estimate=ticket*clients,day=actualRevenue!==null?actualRevenue:estimate,util=booked/available;
+    var perBooked=booked>0?day/booked:null;
+    return {complete:true,ticket:ticket,clients:clients,available:available,booked:booked,days:days,estimatedDay:estimate,dayRevenue:day,usedActual:actualRevenue!==null,utilization:util,revenuePerBookedHour:perBooked};
+  }
+  function dayValueResultCard(r){
+    if(!r||!r.complete)return '<div class="card"><h3>WE NEED A CLEAN DAY FIRST.</h3><p>'+e((r&&r.message)||'Finish the required fields above.')+'</p></div>';
+    return '<div class="card"><div class="number">YOUR DAY</div><h3>NOW WE KNOW WHAT THE DAY IS DOING.</h3><p>Normal day value: <strong>'+cash(r.dayRevenue)+'</strong>'+(r.usedActual?' using the actual day revenue you entered.':' using average client spend × clients per day.')+'</p><p>Booked-hour value: <strong>'+(r.revenuePerBookedHour===null?'Not available yet':cash(r.revenuePerBookedHour)+'/hour')+'</strong>.</p><p>Utilization: <strong>'+Math.round(r.utilization*100)+'%</strong> of the hours you make available.</p><p>Average client spend: <strong>'+cash(r.ticket)+'</strong>.</p><p class="fine">We do not judge price from revenue/hour alone, and we do not treat intentional breaks as wasted capacity.</p></div>';
+  }
+
   function renderMoney(data,plan){
     data.shell=shell(data.shell);if(!data.shell.startedAt)data.shell.startedAt=new Date().toISOString();
     if(!data.shell.moneyMap.payType)data.shell.moneyMap.payType=infer(data,plan);
@@ -257,6 +286,7 @@
       +'<section class="card"><div class="number">QUICK LESSON</div><h2>SIX FIGURES OF WHAT?</h2><p>Revenue, production, gross pay, take-home, and profit are not the same number. Your job here is not to become an accountant. It is to separate what came in from what the work actually left you.</p><p>If you do not know a number, leave it unknown. One honest blank is more useful than a beautiful total we made up.</p></section>'
       +mapHTML(data.shell)
       +numberPlannerHTML(data.shell)
+      +dayValueHTML(data.shell)
       +'<section class="card" id="next30-whats-next"><div class="number">WHAT\'S NEXT</div>'+(done?'<h3>YOUR NUMBER OPENS NEXT.</h3><p>Once you build it, we compare your current workday value with the workday value your desired income and schedule actually require.</p>':'<p>Once the baseline is set, we open YOUR NUMBER. We do not dump the whole month on you at once.</p>')+'</section>'
       +'<section class="card"><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button><p class="fine">Your progress is saved on this device. Returning to this browser brings you back to your current plan.</p></section>';
     bind(data,plan);
@@ -276,9 +306,20 @@
           var go=document.getElementById('yn-route-go');if(go)go.onclick=function(){
             data.shell.nextPath=n.route.id;next30Save();
             var messages={p01:'FILL THE EMPTY TUESDAY is next.',p02:'REBOOKING WITHOUT BEGGING is next.',p03:'WHAT YOUR DAY IS ACTUALLY WORTH is next.',p07:'BUY BACK A DAY is next.',p14:'ONE CAREER, MORE THAN ONE LANE is next.'};
+            if(n.route.id==='p03'){render();return}
             go.disabled=true;go.textContent=messages[n.route.id]||'NEXT PATH SAVED.';
           };
         }
+      };
+    }
+    if(data.shell.nextPath==='p03'){
+      var d=data.shell.dayValue||{},dFields=['ticket','clients','available','booked','days','revenue'];
+      var dIds={ticket:'dv-ticket',clients:'dv-clients',available:'dv-available',booked:'dv-booked',days:'dv-days',revenue:'dv-revenue'};
+      dFields.forEach(function(k){var x=document.getElementById(dIds[k]);if(x)x.oninput=function(){d[k]=x.value.trim();data.shell.dayValue=d;next30Save()}});
+      var dCalc=document.getElementById('dv-calc');if(dCalc)dCalc.onclick=function(){
+        dFields.forEach(function(k){var x=document.getElementById(dIds[k]);if(x)d[k]=x.value.trim()});
+        d.result=dayValueCalc(d);data.shell.dayValue=d;next30Save();
+        var out=document.getElementById('dv-result');if(out)out.innerHTML=dayValueResultCard(d.result);
       };
     }
     next30Save();
