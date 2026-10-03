@@ -196,14 +196,42 @@
       +f('yn-desired-days','Desired days worked per week',n.desiredDays||'','1–7 days.')
       +f('yn-desired-weeks','Desired weeks worked per year',n.desiredWeeks||'','1–52 weeks. Time off belongs in the math.')
       +f('yn-max-clients','Optional maximum clients per day',n.maxClients||'','Optional. Useful later when we test whether the target fits your capacity.')
-      +'</div><div class="actions"><button type="button" class="primary" id="yn-calc">BUILD MY NUMBER →</button></div><div id="yn-result">'+(n.result?numberPlannerResultCard(n.result):'')+'</div></section>';
+      +'</div><div class="actions"><button type="button" class="primary" id="yn-calc">BUILD MY NUMBER →</button></div><div id="yn-result">'+(n.result?numberPlannerResultCard(n.result):'')+'</div>'+(n.result&&n.result.complete&&n.route?routeCard(n.route):'')+'</section>';
   }
+
+  function retentionLeak(a,role){
+    var v=a&&a[role+'_return'];
+    if(role==='extensions')v=a&&a[role+'_maintenance'];
+    var weak=['ask','desk','nothing','wait','plan','chase','new','stylist','unknown'];
+    return weak.indexOf(v)>=0;
+  }
+  function routeAfterNumber(data,plan,r){
+    var a=data.answers||{},load=a.load,payType=data.shell&&data.shell.moneyMap&&data.shell.moneyMap.payType;
+    var multiple=(Array.isArray(a.careers)&&a.careers.length>1)||payType==='mixed';
+    if(r.annualGap<=0&&r.desiredDays<r.currentDays){
+      return {id:'p07',title:'THE MONEY WORKS. NOW LET\'S SEE IF THE SCHEDULE CAN.',body:'You are at or above the income target on the numbers entered, and you want fewer workdays. Next we test whether one workday still deserves permanent custody of your week.',cta:'BUY BACK A DAY →'};
+    }
+    if(multiple&&r.annualGap>0){
+      return {id:'p14',title:'YOUR CHAIR DOES NOT HAVE TO DO EVERYTHING.',body:'You have more than one income lane. Before forcing the entire target onto one part of the career, we should decide what each lane can responsibly carry.',cta:'MAP MY INCOME LANES →'};
+    }
+    if(load==='starting'||load==='open'){
+      return {id:'p01',title:'THE MATH DOESN\'T NEED MORE PRICE YET. IT NEEDS MORE FILLED TIME.',body:'There is still meaningful room in the book. Before changing pricing or squeezing the schedule, we need to fill the right empty space and see what the existing economics do with more paid work.',cta:'FILL THE EMPTY TUESDAY →'};
+    }
+    if(load==='busy'&&retentionLeak(a,plan.role)){
+      return {id:'p02',title:'YOU ARE GETTING CLIENTS. YOU ARE NOT KEEPING ENOUGH FUTURE BUSINESS.',body:'The book has real activity, but the next-visit system is weak enough that future weeks can keep opening back up. Fix that leak before buying more attention.',cta:'FIX MY REBOOKING →'};
+    }
+    return {id:'p03',title:'THE GAP IS INSIDE THE WORKDAY.',body:'Your schedule has enough paid work that the next useful question is what the day itself is producing — ticket, service mix, time and utilization. We audit that before deciding whether pricing deserves attention.',cta:'AUDIT MY DAY →'};
+  }
+  function routeCard(route){
+    return '<div class="card" id="yn-route"><div class="number">FIX THIS NEXT</div><h3>'+e(route.title)+'</h3><p>'+e(route.body)+'</p><button type="button" class="primary" id="yn-route-go">'+e(route.cta)+'</button></div>';
+  }
+
   function numberPlannerResultCard(r){
     if(!r||!r.complete)return '<div class="card"><h3>WE NEED THE REAL INPUTS FIRST.</h3><p>'+e((r&&r.message)||'Finish the required fields above.')+'</p></div>';
     var gapText=r.annualGap<=0
       ?'You are already at or above the annual income target on the current numbers. The next question is whether you can protect it while buying back time, reducing physical load, or building security.'
       :'Your current annual baseline is about <strong>'+cash(r.currentAnnual)+'</strong>. The gap to your desired annual income is about <strong>'+cash(r.annualGap)+'</strong>.';
-    return '<div class="card"><div class="number">MY NUMBER</div><h3>'+cash(r.desiredAnnual)+' A YEAR. ON PURPOSE.</h3><p>You want this career to provide <strong>'+cash(r.desiredAnnual)+'</strong> per year after work costs, before personal income taxes.</p><p>You want to work <strong>'+r.desiredDays+' days/week for '+r.desiredWeeks+' weeks/year</strong> — about <strong>'+r.desiredWorkdays+' workdays/year</strong>.</p><p>That means the career needs to provide about <strong>'+cash(r.targetPerDay)+'</strong> per workday.</p><p>Current workday value: <strong>'+cash(r.currentPerDay)+'</strong>. Workday gap: <strong>'+cash(r.workdayGap)+'</strong>.</p><p>'+gapText+'</p><div class="grid2"><div class="card"><div class="number">CURRENT REALITY</div><p>'+cash(r.currentAnnual)+' / year</p><p>'+r.currentDays+' days/week · '+r.currentWeeks+' weeks/year</p><p><strong>'+cash(r.currentPerDay)+'/workday</strong></p></div><div class="card"><div class="number">THE SCHEDULE I WANT</div><p>Same current annual income on the desired schedule would require about <strong>'+cash(r.preservePerDay)+'/workday</strong>.</p></div></div><div class="card"><div class="number">MY NUMBER</div><p>'+cash(r.desiredAnnual)+' / year</p><p>'+r.desiredDays+' days/week · '+r.desiredWeeks+' weeks/year</p><p><strong>'+cash(r.targetPerDay)+'/workday</strong></p></div></div>';
+    return '<div class="card"><div class="number">MY NUMBER</div><h3>'+cash(r.desiredAnnual)+' A YEAR. ON PURPOSE.</h3><p>You want this career to provide <strong>'+cash(r.desiredAnnual)+'</strong> per year after work costs, before personal income taxes.</p><p>You want to work <strong>'+r.desiredDays+' days/week for '+r.desiredWeeks+' weeks/year</strong> — about <strong>'+r.desiredWorkdays+' workdays/year</strong>.</p><p>That means the career needs to provide about <strong>'+cash(r.targetPerDay)+'</strong> per workday.</p><p>Current workday value: <strong>'+cash(r.currentPerDay)+'</strong>. Workday gap: <strong>'+cash(r.workdayGap)+'</strong>.</p><p>'+gapText+'</p><div class="grid2"><div class="card"><div class="number">CURRENT REALITY</div><p>'+cash(r.currentAnnual)+' / year</p><p>'+r.currentDays+' days/week · '+r.currentWeeks+' weeks/year</p><p><strong>'+cash(r.currentPerDay)+'/workday</strong></p></div><div class="card"><div class="number">THE SCHEDULE I WANT</div><p>Same current annual income on the desired schedule would require about <strong>'+cash(r.preservePerDay)+'/workday</strong>.</p></div></div><div class="card"><div class="number">MY NUMBER</div><p>'+cash(r.desiredAnnual)+' / year</p><p>'+r.desiredDays+' days/week · '+r.desiredWeeks+' weeks/year</p><p><strong>'+cash(r.targetPerDay)+'/workday</strong></p></div></div><div id="yn-route-slot"></div>';
   }
   function calculateNumberPlanner(n){
     function need(k){var v=num(n,k);return v}
@@ -238,9 +266,19 @@
       fields.forEach(function(k){var x=document.getElementById(ids[k]);if(x)x.oninput=function(){n[k]=x.value.trim();data.shell.numberPlanner=n;next30Save()}});
       var calc=document.getElementById('yn-calc');if(calc)calc.onclick=function(){
         fields.forEach(function(k){var x=document.getElementById(ids[k]);if(x)n[k]=x.value.trim()});
-        n.result=calculateNumberPlanner(n);data.shell.numberPlanner=n;next30Save();
+        n.result=calculateNumberPlanner(n);
+        if(n.result.complete)n.route=routeAfterNumber(data,plan,n.result);
+        data.shell.numberPlanner=n;next30Save();
         var out=document.getElementById('yn-result');if(out)out.innerHTML=numberPlannerResultCard(n.result);
-        if(n.result.complete){var nxt=document.getElementById('next30-whats-next');if(nxt)nxt.innerHTML='<div class="number">WHAT\'S NEXT</div><h3>NOW WE FIND THE BOTTLENECK.</h3><p>Your current workday value and target workday value are set. Next we test whether the gap is mainly empty capacity, weak day value, schedule pressure, or the wrong mix of income lanes.</p>'}
+        if(n.result.complete){
+          var slot=document.getElementById('yn-route-slot');if(slot)slot.innerHTML=routeCard(n.route);
+          var nxt=document.getElementById('next30-whats-next');if(nxt)nxt.innerHTML='<div class="number">WHAT\'S NEXT</div><h3>ONE NEXT MOVE.</h3><p>BOOKED AF uses the gap plus the signals you already gave us to choose the next thing to test. We do not send everyone to pricing.</p>';
+          var go=document.getElementById('yn-route-go');if(go)go.onclick=function(){
+            data.shell.nextPath=n.route.id;next30Save();
+            var messages={p01:'FILL THE EMPTY TUESDAY is next.',p02:'REBOOKING WITHOUT BEGGING is next.',p03:'WHAT YOUR DAY IS ACTUALLY WORTH is next.',p07:'BUY BACK A DAY is next.',p14:'ONE CAREER, MORE THAN ONE LANE is next.'};
+            go.disabled=true;go.textContent=messages[n.route.id]||'NEXT PATH SAVED.';
+          };
+        }
       };
     }
     next30Save();
