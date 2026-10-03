@@ -268,9 +268,39 @@
     var perBooked=booked>0?day/booked:null;
     return {complete:true,ticket:ticket,clients:clients,available:available,booked:booked,days:days,estimatedDay:estimate,dayRevenue:day,usedActual:actualRevenue!==null,utilization:util,revenuePerBookedHour:perBooked};
   }
+
+  function interpretDayValue(data,plan,r){
+    var a=data.answers||{},n=data.shell&&data.shell.numberPlanner&&data.shell.numberPlanner.result;
+    var targetPerDay=n&&n.complete?n.targetPerDay:null,currentTargetMet=targetPerDay!==null?r.dayRevenue>=targetPerDay:false;
+    var lowUtil=r.utilization<0.75,highUtil=r.utilization>=0.85;
+    var wantsFewer=n&&n.complete&&n.desiredDays<n.currentDays;
+    var payType=data.shell&&data.shell.moneyMap&&data.shell.moneyMap.payType;
+    var moneyBaseline=data.shell&&data.shell.moneyMap&&data.shell.moneyMap.result&&data.shell.moneyMap.result.baseline;
+    var strongDayWeakIncome=moneyBaseline!==undefined&&moneyBaseline!==null&&r.dayRevenue>0&&n&&n.complete&&n.currentAnnual>0&&(r.dayRevenue*r.days*48)>n.currentAnnual*1.35;
+    if(lowUtil){
+      if(retentionLeak(a,plan.role)&&a.load==='busy'){
+        return {id:'p02',title:'YOUR DAY IS NOT UNDERPRICED. FUTURE WEEKS KEEP OPENING BACK UP.',body:'When you are booked, the day can work. The bigger leak is keeping enough future business on the calendar. Fix the return/rebooking system before chasing more attention.',cta:'FIX MY REBOOKING →'};
+      }
+      return {id:'p01',title:'YOUR DAY ISN\'T UNDERPRICED. IT\'S UNDERFILLED.',body:'Your current utilization is about '+Math.round(r.utilization*100)+'%. Before changing price, we need to fill the right empty space and see what the day does with more paid time.',cta:'FIX MY EMPTY TIME →'};
+    }
+    if(currentTargetMet&&highUtil&&wantsFewer){
+      return {id:'p07',title:'THIS DAY MAY BE STRONG ENOUGH TO BUY BACK ANOTHER ONE.',body:'The day is producing at or above the target workday value, utilization is strong, and you want fewer days. Next we test whether the income can survive a shorter week.',cta:'BUY BACK A DAY →'};
+    }
+    if(strongDayWeakIncome){
+      return {id:'p04',title:'THE CHAIR IS PRODUCING. THE MONEY IS LEAKING SOMEWHERE ELSE.',body:'The day looks stronger than the personal-income baseline. That points back to costs, compensation, or the money structure rather than the client schedule itself.',cta:'REOPEN MY MONEY MAP →'};
+    }
+    if(highUtil&&targetPerDay!==null&&r.dayRevenue<targetPerDay){
+      return {id:'p05',title:'YOU ARE BUSY ENOUGH TO LOOK AT THE DAY ITSELF.',body:'Utilization is strong, but the day is still below the target. Now pricing, service mix, appointment structure, or time design deserves a closer look. We do not pick price alone from this one number.',cta:'CHECK MY SERVICE ECONOMICS →'};
+    }
+    return {id:'p03-detail',title:'WE NEED A LITTLE MORE RECEIPT.',body:'The fast audit does not point cleanly to one bottleneck yet. Next we compare 10–20 representative appointments so time, ticket, overruns, and direct costs can tell the story.',cta:'RUN THE DETAILED AUDIT →'};
+  }
+  function dayRouteCard(route){
+    return '<div class="card"><div class="number">FIX THIS NEXT</div><h3>'+e(route.title)+'</h3><p>'+e(route.body)+'</p><button type="button" class="primary" id="dv-route-go">'+e(route.cta)+'</button></div>';
+  }
+
   function dayValueResultCard(r){
     if(!r||!r.complete)return '<div class="card"><h3>WE NEED A CLEAN DAY FIRST.</h3><p>'+e((r&&r.message)||'Finish the required fields above.')+'</p></div>';
-    return '<div class="card"><div class="number">YOUR DAY</div><h3>NOW WE KNOW WHAT THE DAY IS DOING.</h3><p>Normal day value: <strong>'+cash(r.dayRevenue)+'</strong>'+(r.usedActual?' using the actual day revenue you entered.':' using average client spend × clients per day.')+'</p><p>Booked-hour value: <strong>'+(r.revenuePerBookedHour===null?'Not available yet':cash(r.revenuePerBookedHour)+'/hour')+'</strong>.</p><p>Utilization: <strong>'+Math.round(r.utilization*100)+'%</strong> of the hours you make available.</p><p>Average client spend: <strong>'+cash(r.ticket)+'</strong>.</p><p class="fine">We do not judge price from revenue/hour alone, and we do not treat intentional breaks as wasted capacity.</p></div>';
+    return '<div class="card"><div class="number">YOUR DAY</div><h3>NOW WE KNOW WHAT THE DAY IS DOING.</h3><p>Normal day value: <strong>'+cash(r.dayRevenue)+'</strong>'+(r.usedActual?' using the actual day revenue you entered.':' using average client spend × clients per day.')+'</p><p>Booked-hour value: <strong>'+(r.revenuePerBookedHour===null?'Not available yet':cash(r.revenuePerBookedHour)+'/hour')+'</strong>.</p><p>Utilization: <strong>'+Math.round(r.utilization*100)+'%</strong> of the hours you make available.</p><p>Average client spend: <strong>'+cash(r.ticket)+'</strong>.</p><p class="fine">We do not judge price from revenue/hour alone, and we do not treat intentional breaks as wasted capacity.</p><div id="dv-route-slot"></div></div>';
   }
 
   function renderMoney(data,plan){
@@ -318,8 +348,18 @@
       dFields.forEach(function(k){var x=document.getElementById(dIds[k]);if(x)x.oninput=function(){d[k]=x.value.trim();data.shell.dayValue=d;next30Save()}});
       var dCalc=document.getElementById('dv-calc');if(dCalc)dCalc.onclick=function(){
         dFields.forEach(function(k){var x=document.getElementById(dIds[k]);if(x)d[k]=x.value.trim()});
-        d.result=dayValueCalc(d);data.shell.dayValue=d;next30Save();
+        d.result=dayValueCalc(d);
+        if(d.result.complete)d.route=interpretDayValue(data,plan,d.result);
+        data.shell.dayValue=d;next30Save();
         var out=document.getElementById('dv-result');if(out)out.innerHTML=dayValueResultCard(d.result);
+        if(d.result.complete){
+          var slot=document.getElementById('dv-route-slot');if(slot)slot.innerHTML=dayRouteCard(d.route);
+          var go=document.getElementById('dv-route-go');if(go)go.onclick=function(){
+            data.shell.nextPath=d.route.id;next30Save();
+            go.disabled=true;
+            go.textContent=(d.route.id==='p01'?'FILL THE EMPTY TUESDAY':d.route.id==='p02'?'REBOOKING WITHOUT BEGGING':d.route.id==='p04'?'MONEY MAP':d.route.id==='p05'?'SERVICE ECONOMICS':d.route.id==='p07'?'BUY BACK A DAY':'DETAILED AUDIT')+' SAVED';
+          };
+        }
       };
     }
     next30Save();
