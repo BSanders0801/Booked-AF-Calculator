@@ -15,6 +15,7 @@
       startedAt:typeof input.startedAt==='string'?input.startedAt:null,
       phase:typeof input.phase==='string'?input.phase:'day0',
       day0Complete:!!input.day0Complete,
+      numberPlanner:input.numberPlanner&&typeof input.numberPlanner==='object'?input.numberPlanner:{},
       moneyMap:{
         payType:['employee','self','mixed'].indexOf(m.payType)>=0?m.payType:'',
         employee:clean(m.employee),
@@ -182,6 +183,39 @@
     };
     var edit=document.getElementById('next30-edit-answers');if(edit)edit.onclick=function(){data.editAll=true;data.currentId='careers';next30Save();state.view='deepintake';render()};
   }
+
+  function numberPlannerHTML(s){
+    if(!s.day0Complete)return '';
+    var n=s.numberPlanner||{},base=s.moneyMap.result&&s.moneyMap.result.complete?s.moneyMap.result.baseline:null;
+    if((n.currentMonthly===undefined||n.currentMonthly==='')&&base!==null)n.currentMonthly=String(base);
+    return '<section class="card" id="your-number"><div class="number">NEXT · YOUR NUMBER</div><h2>WHAT DO YOU ACTUALLY WANT THIS CAREER TO PROVIDE?</h2><p>A real number. A real schedule. Time off included.</p><div class="grid2">'
+      +f('yn-current-month','Current monthly planning income',n.currentMonthly||'','Income from the career after work/business costs, before personal income taxes. Preloaded from your Money Map when available.')
+      +f('yn-current-days','Current days worked per week',n.currentDays||'')
+      +f('yn-current-weeks','Current weeks worked per year',n.currentWeeks||'','Do not guess 50. Use the number that is actually true or your best honest estimate.')
+      +f('yn-desired-annual','Desired annual planning income',n.desiredAnnual||'','There is no default $100K benchmark. Pick the number your life actually needs.')
+      +f('yn-desired-days','Desired days worked per week',n.desiredDays||'','1–7 days.')
+      +f('yn-desired-weeks','Desired weeks worked per year',n.desiredWeeks||'','1–52 weeks. Time off belongs in the math.')
+      +f('yn-max-clients','Optional maximum clients per day',n.maxClients||'','Optional. Useful later when we test whether the target fits your capacity.')
+      +'</div><div class="actions"><button type="button" class="primary" id="yn-calc">BUILD MY NUMBER →</button></div><div id="yn-result">'+(n.result?numberPlannerResultCard(n.result):'')+'</div></section>';
+  }
+  function numberPlannerResultCard(r){
+    if(!r||!r.complete)return '<div class="card"><h3>WE NEED THE REAL INPUTS FIRST.</h3><p>'+e((r&&r.message)||'Finish the required fields above.')+'</p></div>';
+    var gapText=r.annualGap<=0
+      ?'You are already at or above the annual income target on the current numbers. The next question is whether you can protect it while buying back time, reducing physical load, or building security.'
+      :'Your current annual baseline is about <strong>'+cash(r.currentAnnual)+'</strong>. The gap to your desired annual income is about <strong>'+cash(r.annualGap)+'</strong>.';
+    return '<div class="card"><div class="number">MY NUMBER</div><h3>'+cash(r.desiredAnnual)+' A YEAR. ON PURPOSE.</h3><p>You want this career to provide <strong>'+cash(r.desiredAnnual)+'</strong> per year after work costs, before personal income taxes.</p><p>You want to work <strong>'+r.desiredDays+' days/week for '+r.desiredWeeks+' weeks/year</strong> — about <strong>'+r.desiredWorkdays+' workdays/year</strong>.</p><p>That means the career needs to provide about <strong>'+cash(r.targetPerDay)+'</strong> per workday.</p><p>Current workday value: <strong>'+cash(r.currentPerDay)+'</strong>. Workday gap: <strong>'+cash(r.workdayGap)+'</strong>.</p><p>'+gapText+'</p><div class="grid2"><div class="card"><div class="number">CURRENT REALITY</div><p>'+cash(r.currentAnnual)+' / year</p><p>'+r.currentDays+' days/week · '+r.currentWeeks+' weeks/year</p><p><strong>'+cash(r.currentPerDay)+'/workday</strong></p></div><div class="card"><div class="number">THE SCHEDULE I WANT</div><p>Same current annual income on the desired schedule would require about <strong>'+cash(r.preservePerDay)+'/workday</strong>.</p></div></div><div class="card"><div class="number">MY NUMBER</div><p>'+cash(r.desiredAnnual)+' / year</p><p>'+r.desiredDays+' days/week · '+r.desiredWeeks+' weeks/year</p><p><strong>'+cash(r.targetPerDay)+'/workday</strong></p></div></div>';
+  }
+  function calculateNumberPlanner(n){
+    function need(k){var v=num(n,k);return v}
+    var currentMonthly=need('currentMonthly'),currentDays=need('currentDays'),currentWeeks=need('currentWeeks'),desiredAnnual=need('desiredAnnual'),desiredDays=need('desiredDays'),desiredWeeks=need('desiredWeeks');
+    if([currentMonthly,currentDays,currentWeeks,desiredAnnual,desiredDays,desiredWeeks].some(function(v){return v===null}))return {complete:false,message:'Complete current income, current schedule, desired annual income, and desired schedule.'};
+    if(currentDays<=0||currentDays>7||desiredDays<=0||desiredDays>7)return {complete:false,message:'Days worked per week must be between 1 and 7.'};
+    if(currentWeeks<=0||currentWeeks>52||desiredWeeks<=0||desiredWeeks>52)return {complete:false,message:'Weeks worked per year must be between 1 and 52.'};
+    var currentAnnual=currentMonthly*12,currentWorkdays=currentDays*currentWeeks,desiredWorkdays=desiredDays*desiredWeeks;
+    var currentPerDay=currentAnnual/currentWorkdays,targetPerDay=desiredAnnual/desiredWorkdays;
+    return {complete:true,currentMonthly:currentMonthly,currentAnnual:currentAnnual,currentDays:currentDays,currentWeeks:currentWeeks,currentPerDay:currentPerDay,desiredAnnual:desiredAnnual,desiredDays:desiredDays,desiredWeeks:desiredWeeks,desiredWorkdays:desiredWorkdays,targetPerDay:targetPerDay,annualGap:desiredAnnual-currentAnnual,workdayGap:targetPerDay-currentPerDay,preservePerDay:currentAnnual/desiredWorkdays};
+  }
+
   function renderMoney(data,plan){
     data.shell=shell(data.shell);if(!data.shell.startedAt)data.shell.startedAt=new Date().toISOString();
     if(!data.shell.moneyMap.payType)data.shell.moneyMap.payType=infer(data,plan);
@@ -194,9 +228,22 @@
       +'<section class="card"><div class="number">WHY THIS MATTERS</div><p>A big service-sales number can look great and still tell you almost nothing about what the career paid you. Before BOOKED AF tells you to work more, charge more, or change your schedule, we need the number that is actually yours to plan from.</p></section>'
       +'<section class="card"><div class="number">QUICK LESSON</div><h2>SIX FIGURES OF WHAT?</h2><p>Revenue, production, gross pay, take-home, and profit are not the same number. Your job here is not to become an accountant. It is to separate what came in from what the work actually left you.</p><p>If you do not know a number, leave it unknown. One honest blank is more useful than a beautiful total we made up.</p></section>'
       +mapHTML(data.shell)
-      +'<section class="card" id="next30-whats-next"><div class="number">WHAT\'S NEXT</div>'+(done?'<h3>YOUR BASELINE IS SET.</h3><p>Next: YOUR NUMBER. We take the number you just found and put a real income goal, schedule, and life underneath it.</p>':'<p>Once the baseline is set, we open YOUR NUMBER. We do not dump the whole month on you at once.</p>')+'</section>'
+      +numberPlannerHTML(data.shell)
+      +'<section class="card" id="next30-whats-next"><div class="number">WHAT\'S NEXT</div>'+(done?'<h3>YOUR NUMBER OPENS NEXT.</h3><p>Once you build it, we compare your current workday value with the workday value your desired income and schedule actually require.</p>':'<p>Once the baseline is set, we open YOUR NUMBER. We do not dump the whole month on you at once.</p>')+'</section>'
       +'<section class="card"><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button><p class="fine">Your progress is saved on this device. Returning to this browser brings you back to your current plan.</p></section>';
-    bind(data,plan);next30Save();
+    bind(data,plan);
+    if(done){
+      var n=data.shell.numberPlanner||{},fields=['currentMonthly','currentDays','currentWeeks','desiredAnnual','desiredDays','desiredWeeks','maxClients'];
+      var ids={currentMonthly:'yn-current-month',currentDays:'yn-current-days',currentWeeks:'yn-current-weeks',desiredAnnual:'yn-desired-annual',desiredDays:'yn-desired-days',desiredWeeks:'yn-desired-weeks',maxClients:'yn-max-clients'};
+      fields.forEach(function(k){var x=document.getElementById(ids[k]);if(x)x.oninput=function(){n[k]=x.value.trim();data.shell.numberPlanner=n;next30Save()}});
+      var calc=document.getElementById('yn-calc');if(calc)calc.onclick=function(){
+        fields.forEach(function(k){var x=document.getElementById(ids[k]);if(x)n[k]=x.value.trim()});
+        n.result=calculateNumberPlanner(n);data.shell.numberPlanner=n;next30Save();
+        var out=document.getElementById('yn-result');if(out)out.innerHTML=numberPlannerResultCard(n.result);
+        if(n.result.complete){var nxt=document.getElementById('next30-whats-next');if(nxt)nxt.innerHTML='<div class="number">WHAT\'S NEXT</div><h3>NOW WE FIND THE BOTTLENECK.</h3><p>Your current workday value and target workday value are set. Next we test whether the gap is mainly empty capacity, weak day value, schedule pressure, or the wrong mix of income lanes.</p>'}
+      };
+    }
+    next30Save();
   }
 
   window.renderCareerPlan=function(){
