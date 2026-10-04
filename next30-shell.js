@@ -19,6 +19,7 @@
       dayValue:input.dayValue&&typeof input.dayValue==='object'?input.dayValue:{},
       demandSprint:input.demandSprint&&typeof input.demandSprint==='object'?input.demandSprint:{},
       nextPath:typeof input.nextPath==='string'?input.nextPath:'',
+      review:input.review&&typeof input.review==='object'?input.review:{},
       moneyMap:{
         payType:['employee','self','mixed'].indexOf(m.payType)>=0?m.payType:'',
         employee:clean(m.employee),
@@ -181,6 +182,7 @@
         r=bad>=0?{complete:false,missing:['Finish '+m.lanes[bad].label+' before combining the lanes.']}:{complete:true,type:'mixed',generated:rs.reduce(function(a,x){return a+(x.generated||0)},0),baseline:rs.reduce(function(a,x){return a+x.baseline},0),warnings:rs.reduce(function(a,x){return a.concat(x.warnings||[])},[])};
       }
       m.result=r;s.day0Complete=!!(r&&r.complete);if(s.day0Complete)s.phase='week1';next30Save();
+      if(s.day0Complete){render();return}
       var out=document.getElementById('mmm-result');if(out)out.innerHTML=resultCard(r);
       var nxt=document.getElementById('next30-whats-next');if(nxt&&s.day0Complete)nxt.innerHTML='<h3>YOUR BASELINE IS SET.</h3><p>Next: YOUR NUMBER. We take the number you just found and put a real income goal, schedule, and life underneath it.</p>';
     };
@@ -331,6 +333,39 @@
       +'</div><div class="card"><div class="number">FIRST WAY TO FIND CLIENTS</div><h3>'+e(lanes.primary[0])+'</h3><p>Do 5 real actions this week. Track replies, bookings, service, and source.</p></div><div class="card"><div class="number">SECOND WAY TO FIND CLIENTS</div><h3>'+e(lanes.primary[1])+'</h3><p>Do 5 real actions this week. Write down who replies and who books. Likes don’t pay the rent.</p></div><div class="card"><div class="number">KEEP THIS TICKING ALONG</div><h3>'+e(lanes.maintenance)+'</h3><p>Keep this visible without turning it into a second full-time job.</p></div><div class="actions"><button type="button" class="primary" id="ds-save">START MY 30-DAY SPRINT →</button></div><div id="ds-result">'+(d.started?'<div class="card"><h3>THE SPRINT IS SET.</h3><p>Week 1: pick the appointments you want to fill. Take five actions for each of your two ways to find clients. Week 2: keep going and ask each new inquiry how they found you. Week 3: answer interested clients and help good new clients book their next visit. Week 4: keep what brought bookings, adjust what showed promise, and drop what went nowhere.</p></div>':'')+'</div></section>';
   }
 
+
+  function monthHTML(data,plan){
+    if(!data.shell.numberPlanner.result||!data.shell.numberPlanner.result.complete)return '';
+    var key=plan.role+'-money',review=data.shell.review||{};
+    var titles=['KNOW WHAT YOU MAKE.','TRY ONE CHANGE.','KEEP GOING. WRITE IT DOWN.','KEEP WHAT WORKED.'];
+    return '<section id="next30-month"><div class="eyebrow">FOUR WEEKS. ONE THING TO WORK ON.</div><p>Start with the numbers you just found. Use the steps below for your kind of work. You can open each week when you’re ready.</p><p id="month-progress" role="status"></p>'
+      +plan.missions.map(function(week,i){return '<details class="card"'+(i===0?' open':'')+'><summary>WEEK '+week.week+' · '+e(titles[i])+'</summary>'+week.tasks.map(function(task,j){var id=next30TaskKey(key,week.week,j,task);return '<label class="checkline"><input type="checkbox" data-month-task="'+e(id)+'" '+(data.checks[id]?'checked':'')+'><span>'+e(task)+'</span></label>'}).join('')+'<p class="fine">Keep an eye on: '+e(week.watch)+'</p></details>'}).join('')
+      +'<details class="card"><summary>WORDS YOU CAN USE</summary>'+plan.scripts.map(function(script){return '<h3>'+e(script[0])+'</h3><p>'+e(script[1])+'</p>'}).join('')+'</details>'
+      +'<section class="card" id="month-review"><div class="number">DAY 30</div><h2>DID ANYTHING ACTUALLY CHANGE?</h2><p>Compare the same length of time before and after. Leave a number blank if you don’t know it. Checking every box doesn’t automatically mean you made more money.</p>'
+      +plan.metrics.map(function(m){return '<div class="card"><h3>'+e(m.label)+'</h3><div class="grid2">'+f('month-base-'+m.id,'Before ('+m.unit+')',data.metrics[key+'-base-'+m.id])+f('month-now-'+m.id,'After ('+m.unit+')',data.metrics[key+'-now-'+m.id])+'</div><p id="month-delta-'+m.id+'" role="status"></p></div>'}).join('')
+      +'<button type="button" class="primary" id="month-compare">SHOW ME WHAT CHANGED →</button><p id="month-status" role="status"></p>'
+      +['keep','adjust','stop'].map(function(k){return '<div class="n30-field"><label for="month-'+k+'">'+({keep:'What’s worth keeping?',adjust:'What needs a change?',stop:'What are you done wasting time on?'})[k]+'</label><textarea class="input" id="month-'+k+'" maxlength="2000">'+e(review[k]||'')+'</textarea></div>'}).join('')
+      +'<button type="button" class="secondary" id="month-save-review">SAVE MY CHECK-IN</button><p id="month-review-status" role="status">'+(review.saved?'Your check-in is saved on this device.':'')+'</p></section></section>';
+  }
+  function bindMonth(data,plan){
+    var key=plan.role+'-money',all=document.querySelectorAll('[data-month-task]');
+    function progress(){var out=document.getElementById('month-progress');if(out)out.textContent=Array.from(all).filter(function(x){return x.checked}).length+' of '+all.length+' steps checked off.'}
+    all.forEach(function(x){x.onchange=function(){data.checks[x.dataset.monthTask]=x.checked;next30Save();progress()}});progress();
+    plan.metrics.forEach(function(m){['base','now'].forEach(function(phase){var x=document.getElementById('month-'+phase+'-'+m.id);if(x)x.oninput=function(){data.metrics[key+'-'+phase+'-'+m.id]=x.value;next30Save()}})});
+    var compare=document.getElementById('month-compare');if(compare)compare.onclick=function(){
+      var count=0;
+      plan.metrics.forEach(function(m){var before=document.getElementById('month-base-'+m.id).value,after=document.getElementById('month-now-'+m.id).value,out=document.getElementById('month-delta-'+m.id);
+        if(before.trim()===''||after.trim()===''){out.textContent='Add both numbers when you have them. A blank isn’t zero.';return}
+        var b=Number(before),a=Number(after);if(!Number.isFinite(b)||!Number.isFinite(a)||a<0||b<0){out.textContent='Use zero or a positive number.';return}
+        var delta=a-b,value=m.unit==='money'?cash(Math.abs(delta)):String(Number(Math.abs(delta).toFixed(2)));
+        out.textContent=delta===0?'No change in the numbers entered.':value+' '+(delta>0?'more':'less')+' '+(m.unit==='money'?'':m.unit)+' than before.';
+        if(m.unit==='hours')out.textContent+=' Check what you earned alongside the hours.';count++;
+      });document.getElementById('month-status').textContent=count?'These numbers show what changed. They don’t prove what caused it. Use them to decide what to keep doing.':'Add a before and after number when you have them.';
+    };
+    ['keep','adjust','stop'].forEach(function(k){var x=document.getElementById('month-'+k);if(x)x.oninput=function(){data.shell.review[k]=x.value;data.shell.review.saved=false;next30Save()}});
+    var save=document.getElementById('month-save-review');if(save)save.onclick=function(){data.shell.review.saved=true;data.shell.phase='day30';var ok=next30Save();document.getElementById('month-review-status').textContent=ok?'Your check-in is saved on this device.':'This browser couldn’t save your check-in. Copy your notes before closing it.'};
+  }
+
   function renderMoney(data,plan){
     data.shell=shell(data.shell);if(!data.shell.startedAt)data.shell.startedAt=new Date().toISOString();
     if(!data.shell.moneyMap.payType)data.shell.moneyMap.payType=infer(data,plan);
@@ -346,9 +381,13 @@
       +numberPlannerHTML(data.shell)
       +dayValueHTML(data.shell)
       +demandSprintHTML(data)
+      +monthHTML(data,plan)
       +'<section class="card" id="next30-whats-next"><div class="number">WHAT\'S NEXT</div>'+(done?'<h3>YOUR NUMBER OPENS NEXT.</h3><p>Next, choose what you want to earn and how much you want to work. We’ll compare that with what you make now.</p>':'<p>Save your monthly number first. Then we’ll work out what you want this career to pay you—and how much of your week you want it to take.</p>')+'</section>'
       +'<section class="card"><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button><p class="fine">Your progress is saved on this device. Returning to this browser brings you back to your current plan.</p></section>';
     bind(data,plan);
+    bindMonth(data,plan);
+    var savedRoute=document.getElementById('yn-route-go');
+    if(savedRoute)savedRoute.onclick=function(){var route=data.shell.numberPlanner.route;if(route){data.shell.nextPath=route.id;next30Save();render()}};
     if(done){
       var n=data.shell.numberPlanner||{},fields=['currentMonthly','currentDays','currentWeeks','desiredAnnual','desiredDays','desiredWeeks','maxClients'];
       var ids={currentMonthly:'yn-current-month',currentDays:'yn-current-days',currentWeeks:'yn-current-weeks',desiredAnnual:'yn-desired-annual',desiredDays:'yn-desired-days',desiredWeeks:'yn-desired-weeks',maxClients:'yn-max-clients'};
@@ -358,6 +397,7 @@
         n.result=calculateNumberPlanner(n);
         if(n.result.complete)n.route=routeAfterNumber(data,plan,n.result);
         data.shell.numberPlanner=n;next30Save();
+        if(n.result.complete){render();return}
         var out=document.getElementById('yn-result');if(out)out.innerHTML=numberPlannerResultCard(n.result);
         if(n.result.complete){
           var slot=document.getElementById('yn-route-slot');if(slot)slot.innerHTML=routeCard(n.route);
