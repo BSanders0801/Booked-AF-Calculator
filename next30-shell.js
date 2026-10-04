@@ -137,7 +137,7 @@
   }
   function mapHTML(s){
     var m=s.moneyMap;if(m.payType==='mixed'&&!m.lanes.length)m.lanes=[{label:'Income lane 1',type:'employee',fields:{}},{label:'Income lane 2',type:'self',fields:{}}];
-    return '<section class="card" id="money-map"><div class="number">YOUR TOOL</div><h2>MONTHLY MONEY MAP</h2><p>Use one recent, completed, reasonably normal month. Actual records beat memory. A blank means unknown. Zero means zero.</p><div class="n30-field"><label for="mmm-pay-type">How do you get paid?</label><select class="input" id="mmm-pay-type"><option value="">Choose one</option><option value="employee" '+(m.payType==='employee'?'selected':'')+'>I work for a salon / employer</option><option value="self" '+(m.payType==='self'?'selected':'')+'>I rent, have a suite, or work for myself</option><option value="mixed" '+(m.payType==='mixed'?'selected':'')+'>I have more than one income lane</option></select></div>'
+    return '<section class="card" id="money-map"><div class="number">YOUR TOOL</div><h2>MONTHLY MONEY MAP</h2><p>Pick one recent month that’s finished and fairly normal. Pull your pay stubs, deposits, and business expenses. Leave anything you don’t know blank. Only enter zero if it really is zero.</p><div class="n30-field"><label for="mmm-pay-type">How do you get paid?</label><select class="input" id="mmm-pay-type"><option value="">Choose one</option><option value="employee" '+(m.payType==='employee'?'selected':'')+'>I work for a salon / employer</option><option value="self" '+(m.payType==='self'?'selected':'')+'>I rent, have a suite, or work for myself</option><option value="mixed" '+(m.payType==='mixed'?'selected':'')+'>I have more than one income lane</option></select></div>'
       +(m.payType==='employee'?'<div class="grid2">'+employeeFields(m.employee)+'</div>':'')
       +(m.payType==='self'?'<div class="grid2">'+selfFields(m.self)+'</div>':'')
       +(m.payType==='mixed'?'<div id="mmm-lanes">'+m.lanes.map(laneCard).join('')+'</div><button type="button" class="secondary" id="mmm-add-lane">ADD AN INCOME LANE</button>':'')
@@ -192,13 +192,13 @@
     var n=s.numberPlanner||{},base=s.moneyMap.result&&s.moneyMap.result.complete?s.moneyMap.result.baseline:null;
     if((n.currentMonthly===undefined||n.currentMonthly==='')&&base!==null)n.currentMonthly=String(base);
     return '<section class="card" id="your-number"><div class="number">NEXT · YOUR NUMBER</div><h2>WHAT DO YOU ACTUALLY WANT THIS CAREER TO PROVIDE?</h2><p>A real number. A real schedule. Time off included.</p><div class="grid2">'
-      +f('yn-current-month','Current monthly planning income',n.currentMonthly||'','Income from the career after work/business costs, before personal income taxes. Preloaded from your Money Map when available.')
+      +f('yn-current-month','What you make in a month, before personal income taxes',n.currentMonthly||'','After work expenses, before personal income taxes. We’ve filled this in from your Money Map when available.')
       +f('yn-current-days','Current days worked per week',n.currentDays||'')
       +f('yn-current-weeks','Current weeks worked per year',n.currentWeeks||'','Do not guess 50. Use the number that is actually true or your best honest estimate.')
-      +f('yn-desired-annual','Desired annual planning income',n.desiredAnnual||'','There is no default $100K benchmark. Pick the number your life actually needs.')
+      +f('yn-desired-annual','What you want to make in a year, before personal income taxes',n.desiredAnnual||'','There is no default $100K benchmark. Pick the number your life actually needs.')
       +f('yn-desired-days','Desired days worked per week',n.desiredDays||'','1–7 days.')
       +f('yn-desired-weeks','Desired weeks worked per year',n.desiredWeeks||'','1–52 weeks. Time off belongs in the math.')
-      +f('yn-max-clients','Optional maximum clients per day',n.maxClients||'','Optional. Useful later when we test whether the target fits your capacity.')
+      +f('yn-max-clients','Optional maximum clients per day',n.maxClients||'','How many clients can you handle in a day without running yourself into the ground?')
       +'</div><div class="actions"><button type="button" class="primary" id="yn-calc">BUILD MY NUMBER →</button></div><div id="yn-result">'+(n.result?numberPlannerResultCard(n.result):'')+'</div>'+(n.result&&n.result.complete&&n.route?routeCard(n.route):'')+'</section>';
   }
 
@@ -218,12 +218,12 @@
       return {id:'p14',title:'YOUR CHAIR DOES NOT HAVE TO DO EVERYTHING.',body:'You have more than one income lane. Before forcing the entire target onto one part of the career, we should decide what each lane can responsibly carry.',cta:'MAP MY INCOME LANES →'};
     }
     if(load==='starting'||load==='open'){
-      return {id:'p01',title:'THE MATH DOESN\'T NEED MORE PRICE YET. IT NEEDS MORE FILLED TIME.',body:'There is still meaningful room in the book. Before changing pricing or squeezing the schedule, we need to fill the right empty space and see what the existing economics do with more paid work.',cta:'FILL THE EMPTY TUESDAY →'};
+      return {id:'p01',title:'LET’S START WITH THE EMPTY APPOINTMENTS.',body:'You’ve still got room for clients. Let’s work on filling those appointments, then check what that does for your income.',cta:'FILL THE EMPTY TUESDAY →'};
     }
     if(load==='busy'&&retentionLeak(a,plan.role)){
-      return {id:'p02',title:'YOU ARE GETTING CLIENTS. YOU ARE NOT KEEPING ENOUGH FUTURE BUSINESS.',body:'The book has real activity, but the next-visit system is weak enough that future weeks can keep opening back up. Fix that leak before buying more attention.',cta:'FIX MY REBOOKING →'};
+      return {id:'p02',title:'CLIENTS ARE COMING IN. ARE THEY COMING BACK?',body:'You’re getting clients, but too many leave without their next visit sorted. Let’s make coming back easier before you spend more time finding someone new.',cta:'FIX MY REBOOKING →'};
     }
-    return {id:'p03',title:'THE GAP IS INSIDE THE WORKDAY.',body:'Your schedule has enough paid work that the next useful question is what the day itself is producing — ticket, service mix, time and utilization. We audit that before deciding whether pricing deserves attention.',cta:'AUDIT MY DAY →'};
+    return {id:'p03',title:'THE GAP IS INSIDE THE WORKDAY.',body:'You’re working. Now let’s look at what clients spend, how long their appointments take, and what the day brings in. That will help us decide what needs to change.',cta:'CHECK MY DAY →'};
   }
   function routeCard(route){
     return '<div class="card" id="yn-route"><div class="number">FIX THIS NEXT</div><h3>'+e(route.title)+'</h3><p>'+e(route.body)+'</p><button type="button" class="primary" id="yn-route-go">'+e(route.cta)+'</button></div>';
@@ -251,14 +251,14 @@
   function dayValueHTML(s){
     if(s.nextPath!=='p03')return '';
     var d=s.dayValue||{};
-    return '<section class="card" id="day-value-audit"><div class="number">NEXT PATH · WHAT YOUR DAY IS ACTUALLY WORTH</div><h2>START WITH A NORMAL DAY. NOT YOUR BEST SATURDAY.</h2><p>Ticket matters. Time matters. Empty space matters. We are putting them in the same room before deciding what to change.</p><div class="grid2">'
+    return '<section class="card" id="day-value-audit"><div class="number">NEXT PATH · WHAT YOUR DAY IS ACTUALLY WORTH</div><h2>START WITH A NORMAL DAY. NOT YOUR BEST SATURDAY.</h2><p>What clients spend matters. So does how long you spend with them. Let’s look at both, along with the gaps in your day.</p><div class="grid2">'
       +f('dv-ticket','Average client spend',d.ticket||'')
       +f('dv-clients','Average clients per workday',d.clients||'')
       +f('dv-available','Average hours available to clients each workday',d.available||'','Include the hours you actually make bookable. Intentional breaks are not automatically waste.')
-      +f('dv-booked','Average booked / revenue-producing hours per workday',d.booked||'')
+      +f('dv-booked','Hours spent with paying clients on an average day',d.booked||'')
       +f('dv-days','Days worked per week',d.days||'')
       +f('dv-revenue','Average service sales / client revenue per day, if known',d.revenue||'','Optional. If entered, this replaces the ticket × clients estimate for day revenue.')
-      +'</div><div class="actions"><button type="button" class="primary" id="dv-calc">AUDIT MY DAY →</button></div><div id="dv-result">'+(d.result?dayValueResultCard(d.result):'')+'</div></section>';
+      +'</div><div class="actions"><button type="button" class="primary" id="dv-calc">CHECK MY DAY →</button></div><div id="dv-result">'+(d.result?dayValueResultCard(d.result):'')+'</div></section>';
   }
   function dayValueCalc(d){
     var ticket=num(d,'ticket'),clients=num(d,'clients'),available=num(d,'available'),booked=num(d,'booked'),days=num(d,'days'),actualRevenue=num(d,'revenue');
@@ -301,7 +301,7 @@
 
   function dayValueResultCard(r){
     if(!r||!r.complete)return '<div class="card"><h3>WE NEED A CLEAN DAY FIRST.</h3><p>'+e((r&&r.message)||'Finish the required fields above.')+'</p></div>';
-    return '<div class="card"><div class="number">YOUR DAY</div><h3>NOW WE KNOW WHAT THE DAY IS DOING.</h3><p>Normal day value: <strong>'+cash(r.dayRevenue)+'</strong>'+(r.usedActual?' using the actual day revenue you entered.':' using average client spend × clients per day.')+'</p><p>Booked-hour value: <strong>'+(r.revenuePerBookedHour===null?'Not available yet':cash(r.revenuePerBookedHour)+'/hour')+'</strong>.</p><p>Utilization: <strong>'+Math.round(r.utilization*100)+'%</strong> of the hours you make available.</p><p>Average client spend: <strong>'+cash(r.ticket)+'</strong>.</p><p class="fine">We do not judge price from revenue/hour alone, and we do not treat intentional breaks as wasted capacity.</p><div id="dv-route-slot"></div></div>';
+    return '<div class="card"><div class="number">YOUR DAY</div><h3>NOW WE KNOW WHAT THE DAY IS DOING.</h3><p>Normal day value: <strong>'+cash(r.dayRevenue)+'</strong>'+(r.usedActual?' using the actual day revenue you entered.':' using average client spend × clients per day.')+'</p><p>Booked-hour value: <strong>'+(r.revenuePerBookedHour===null?'Not available yet':cash(r.revenuePerBookedHour)+'/hour')+'</strong>.</p><p>Booked time: <strong>'+Math.round(r.utilization*100)+'%</strong> of the hours you make available.</p><p>Average client spend: <strong>'+cash(r.ticket)+'</strong>.</p><p class="fine">We do not judge price from revenue/hour alone, and we do not treat intentional breaks as wasted capacity.</p><div id="dv-route-slot"></div></div>';
   }
 
 
@@ -325,10 +325,10 @@
   function demandSprintHTML(data){
     if(data.shell.nextPath!=='p01')return '';
     var d=data.shell.demandSprint||{},lanes=d.lanes||chooseDemandLanes(data);
-    return '<section class="card" id="demand-sprint"><div class="number">NEXT PATH · FILL THE EMPTY TUESDAY</div><h2>DEFINE THE HOLE BEFORE YOU MARKET TO EVERYONE.</h2><p>Pick the specific weak block or service first. Then work two acquisition lanes for 30 days and keep one maintenance lane running quietly in the background.</p><div class="grid2">'
+    return '<section class="card" id="demand-sprint"><div class="number">NEXT PATH · FILL THE EMPTY TUESDAY</div><h2>WHICH APPOINTMENTS DO YOU NEED TO FILL?</h2><p>Pick the day, time, or service you need more bookings for. For the next 30 days, focus on two ways to bring clients in. Keep one other way ticking along.</p><div class="grid2">'
       +f('ds-block','Consistently weak day / time block',d.block||'','Example: Tuesday afternoon, Thursday morning, or one recurring weekly gap.')
       +f('ds-capacity','New-client capacity per week',d.capacity||'','How many new paid appointments could you realistically absorb without wrecking the schedule?')
-      +'</div><div class="card"><div class="number">PRIMARY LANE 1</div><h3>'+e(lanes.primary[0])+'</h3><p>Do 5 real actions this week. Track replies, bookings, service, and source.</p></div><div class="card"><div class="number">PRIMARY LANE 2</div><h3>'+e(lanes.primary[1])+'</h3><p>Do 5 real actions this week. Same rule: track business outcomes, not attention.</p></div><div class="card"><div class="number">MAINTENANCE LANE</div><h3>'+e(lanes.maintenance)+'</h3><p>Keep this visible without turning it into a second full-time job.</p></div><div class="actions"><button type="button" class="primary" id="ds-save">START MY 30-DAY SPRINT →</button></div><div id="ds-result">'+(d.started?'<div class="card"><h3>THE SPRINT IS SET.</h3><p>Week 1: define the hole and complete the first five actions in each primary lane. Week 2: repeat and track every inquiry source. Week 3: follow through and rebook the good new guests. Week 4: KEEP one winner, ADJUST one, STOP one weak tactic.</p></div>':'')+'</div></section>';
+      +'</div><div class="card"><div class="number">FIRST WAY TO FIND CLIENTS</div><h3>'+e(lanes.primary[0])+'</h3><p>Do 5 real actions this week. Track replies, bookings, service, and source.</p></div><div class="card"><div class="number">SECOND WAY TO FIND CLIENTS</div><h3>'+e(lanes.primary[1])+'</h3><p>Do 5 real actions this week. Write down who replies and who books. Likes don’t pay the rent.</p></div><div class="card"><div class="number">KEEP THIS TICKING ALONG</div><h3>'+e(lanes.maintenance)+'</h3><p>Keep this visible without turning it into a second full-time job.</p></div><div class="actions"><button type="button" class="primary" id="ds-save">START MY 30-DAY SPRINT →</button></div><div id="ds-result">'+(d.started?'<div class="card"><h3>THE SPRINT IS SET.</h3><p>Week 1: pick the appointments you want to fill. Take five actions for each of your two ways to find clients. Week 2: keep going and ask each new inquiry how they found you. Week 3: answer interested clients and help good new clients book their next visit. Week 4: keep what brought bookings, adjust what showed promise, and drop what went nowhere.</p></div>':'')+'</div></section>';
   }
 
   function renderMoney(data,plan){
@@ -338,15 +338,15 @@
     state.currentCareerPlan=plan;
     app.classList.add('next30-panel');
     app.innerHTML='<div class="eyebrow">YOUR NEXT 30'+(stage?' · '+e(stage):'')+'</div>'
-      +'<section class="card"><div class="number">'+(done?'WEEK 1 — KNOW IT':'DAY 0 — SET THE BASELINE')+'</div><h2>FIX THIS FIRST</h2><p class="lead">KNOW WHAT THE WORK ACTUALLY PAYS YOU.</p><p>'+(done?'Your baseline is saved. Now we use it instead of guessing.':'Day 0 has one job: get the real monthly number before we try to fix pricing, schedule, or client volume.')+'</p></section>'
-      +'<section class="card"><div class="number">TODAY</div><h2>'+(done?'KEEP THE BASELINE.':'COMPLETE ONE REAL MONTHLY MONEY MAP.')+'</h2><p>'+(done?'You can update the map if you find a missing number.':'Pick one recent, completed month. Get the actual pay stubs, deposits, and business costs. No guessing.')+'</p><a class="primary button" href="#money-map">'+(done?'REVIEW MY MONEY MAP':'DO THIS NOW')+' →</a></section>'
-      +'<section class="card"><div class="number">WHY THIS MATTERS</div><p>A big service-sales number can look great and still tell you almost nothing about what the career paid you. Before BOOKED AF tells you to work more, charge more, or change your schedule, we need the number that is actually yours to plan from.</p></section>'
-      +'<section class="card"><div class="number">QUICK LESSON</div><h2>SIX FIGURES OF WHAT?</h2><p>Revenue, production, gross pay, take-home, and profit are not the same number. Your job here is not to become an accountant. It is to separate what came in from what the work actually left you.</p><p>If you do not know a number, leave it unknown. One honest blank is more useful than a beautiful total we made up.</p></section>'
+      +'<section class="card"><div class="number">'+(done?'WEEK 1 — KNOW IT':'DAY 0 — WHAT DID YOU ACTUALLY MAKE?')+'</div><h2>FIX THIS FIRST</h2><p class="lead">KNOW WHAT THE WORK ACTUALLY PAYS YOU.</p><p>'+(done?'Your monthly number is saved. Now we have something to work with.':'First, let’s find out what you actually made. Then we can look at your prices, your schedule, and how many clients you need.')+'</p></section>'
+      +'<section class="card"><div class="number">TODAY</div><h2>'+(done?'YOUR MONTHLY NUMBER IS SAVED.':'FIND OUT WHAT YOU ACTUALLY MADE.')+'</h2><p>'+(done?'You can update the map if you find a missing number.':'Pick one recent, completed month. Get the actual pay stubs, deposits, and business costs. No guessing.')+'</p><a class="primary button" href="#money-map">'+(done?'REVIEW MY MONEY MAP':'DO THIS NOW')+' →</a></section>'
+      +'<section class="card"><div class="number">WHY THIS MATTERS</div><p>A full book looks good. So does a big sales number. Neither tells us what you got to keep. Before you add more clients or another workday, let’s see what the work actually paid you.</p></section>'
+      +'<section class="card"><div class="number">QUICK LESSON</div><h2>SIX FIGURES OF WHAT?</h2><p>What clients paid, what the salon paid you, and what landed in your bank account can be three very different numbers. You don’t need to become an accountant. You do need to know which number you’re looking at.</p><p>Don’t know a number? Leave it blank. We’re checking your money, not your ability to guess.</p></section>'
       +mapHTML(data.shell)
       +numberPlannerHTML(data.shell)
       +dayValueHTML(data.shell)
       +demandSprintHTML(data)
-      +'<section class="card" id="next30-whats-next"><div class="number">WHAT\'S NEXT</div>'+(done?'<h3>YOUR NUMBER OPENS NEXT.</h3><p>Once you build it, we compare your current workday value with the workday value your desired income and schedule actually require.</p>':'<p>Once the baseline is set, we open YOUR NUMBER. We do not dump the whole month on you at once.</p>')+'</section>'
+      +'<section class="card" id="next30-whats-next"><div class="number">WHAT\'S NEXT</div>'+(done?'<h3>YOUR NUMBER OPENS NEXT.</h3><p>Next, choose what you want to earn and how much you want to work. We’ll compare that with what you make now.</p>':'<p>Save your monthly number first. Then we’ll work out what you want this career to pay you—and how much of your week you want it to take.</p>')+'</section>'
       +'<section class="card"><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button><p class="fine">Your progress is saved on this device. Returning to this browser brings you back to your current plan.</p></section>';
     bind(data,plan);
     if(done){
@@ -361,7 +361,7 @@
         var out=document.getElementById('yn-result');if(out)out.innerHTML=numberPlannerResultCard(n.result);
         if(n.result.complete){
           var slot=document.getElementById('yn-route-slot');if(slot)slot.innerHTML=routeCard(n.route);
-          var nxt=document.getElementById('next30-whats-next');if(nxt)nxt.innerHTML='<div class="number">WHAT\'S NEXT</div><h3>ONE NEXT MOVE.</h3><p>BOOKED AF uses the gap plus the signals you already gave us to choose the next thing to test. We do not send everyone to pricing.</p>';
+          var nxt=document.getElementById('next30-whats-next');if(nxt)nxt.innerHTML='<div class="number">WHAT\'S NEXT</div><h3>ONE NEXT MOVE.</h3><p>We’ll use your numbers and answers to pick the next thing to work on. Raising prices isn’t automatically the answer.</p>';
           var go=document.getElementById('yn-route-go');if(go)go.onclick=function(){
             data.shell.nextPath=n.route.id;next30Save();
             var messages={p01:'FILL THE EMPTY TUESDAY is next.',p02:'REBOOKING WITHOUT BEGGING is next.',p03:'WHAT YOUR DAY IS ACTUALLY WORTH is next.',p07:'BUY BACK A DAY is next.',p14:'ONE CAREER, MORE THAN ONE LANE is next.'};
@@ -401,7 +401,7 @@
         saveDemand();
         if(!ds.block){var out=document.getElementById('ds-result');if(out)out.innerHTML='<div class="card"><h3>NAME THE HOLE FIRST.</h3><p>Pick the day, time block, or recurring service gap you are actually trying to fill.</p></div>';return}
         ds.started=true;data.shell.demandSprint=ds;next30Save();
-        var out=document.getElementById('ds-result');if(out)out.innerHTML='<div class="card"><h3>THE SPRINT IS SET.</h3><p>Week 1: define the hole and complete the first five actions in each primary lane. Week 2: repeat and track every inquiry source. Week 3: follow through and rebook the good new guests. Week 4: KEEP one winner, ADJUST one, STOP one weak tactic.</p></div>';
+        var out=document.getElementById('ds-result');if(out)out.innerHTML='<div class="card"><h3>THE SPRINT IS SET.</h3><p>Week 1: pick the appointments you want to fill. Take five actions for each of your two ways to find clients. Week 2: keep going and ask each new inquiry how they found you. Week 3: answer interested clients and help good new clients book their next visit. Week 4: keep what brought bookings, adjust what showed promise, and drop what went nowhere.</p></div>';
       };
     }
     next30Save();
