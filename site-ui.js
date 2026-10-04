@@ -200,10 +200,22 @@
       document.getElementById('free-resume-note').textContent = hasFree ? 'Your free answers are saved in this browser. Let’s pick up there.' : 'No free plan saved in this browser yet. Start here, or use the link in your Breakdown email.';
       free.onclick = () => go(hasFree ? lastFreeView : 'question');
       const paid = document.getElementById('resume-paid');
+      const previewHost = /(?:^|\\.)workers\\.dev$/i.test(location.hostname);
       if (state.next30Verified === true) {
         paid.hidden = false;
-        document.getElementById('paid-resume-note').textContent = 'Your purchase is verified for this visit. Open your plan or continue your answers.';
+        document.getElementById('paid-resume-note').textContent = state.deepPreview ? 'Preview access is on. Open the test plan and walk through it like a customer.' : 'Your purchase is verified for this visit. Open your plan or continue your answers.';
+        paid.textContent = state.deepPreview ? 'Open preview plan →' : 'Open my Next 30 →';
         paid.onclick = () => {state.view = BookedNext30.complete(next30Ensure().answers) ? 'deepresult' : 'deepintake'; render();};
+      } else if (previewHost) {
+        paid.hidden = false;
+        paid.textContent = 'Start preview plan →';
+        document.getElementById('paid-resume-note').textContent = 'Preview only. Start a test plan without checkout so we can QA the full experience.';
+        paid.onclick = () => {
+          state.next30Verified = true;
+          state.deepPreview = true;
+          state.view = 'deepintake';
+          render();
+        };
       }
     }
     if (state.view === 'email') {
