@@ -934,12 +934,17 @@ async function verifyStripeSignature(body, header, secret) {
   return candidates.some(value => /^[a-f0-9]{64}$/i.test(value) && value.toLowerCase() === expected);
 }
 
-async function schedulePurchaseSurvey(env, session, email, firstName) {
+async function schedulePurchaseSurvey(env, session, email, firstName, paidAt) {
   try {
+    const recordKey = 'purchase-survey-14d:' + session.id;
+    // Stripe can retry for longer than Resend's 24-hour idempotency window.
+    if (env.FOLLOWUPS && await env.FOLLOWUPS.get(recordKey)) return true;
+    const dueAt = (Number.isSafeInteger(paidAt) && paidAt > 0 ? paidAt * 1000 : Date.now()) + 14 * 24 * 60 * 60 * 1000;
+    const scheduledAt = new Date(dueAt).toISOString();
     const response = await fetch('https://api.resend.com/emails', {
       method:'POST',
       headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':'booked-survey-14d-'+session.id},
-      body:JSON.stringify({from:FROM,to:[email],reply_to:'hello@bookedandfabulous.com',subject:SURVEY_SUBJECT,text:surveyEmailCopy(firstName,session.id),html:surveyEmailHTML(firstName,session.id),scheduled_at:'in 14 days'}),
+      body:JSON.stringify({from:FROM,to:[email],reply_to:'hello@bookedandfabulous.com',subject:SURVEY_SUBJECT,text:surveyEmailCopy(firstName,session.id),html:surveyEmailHTML(firstName,session.id),...(dueAt > Date.now() ? {scheduled_at:scheduledAt} : {})}),
       signal:AbortSignal.timeout(12000)
     });
     if (!response.ok) {
@@ -947,7 +952,9 @@ async function schedulePurchaseSurvey(env, session, email, firstName) {
       return false;
     }
     const result = await response.json();
-    return !!result.id;
+    if (!result.id) return false;
+    if (env.FOLLOWUPS) await env.FOLLOWUPS.put(recordKey, JSON.stringify({emailId:result.id,scheduledAt}), {expirationTtl:90 * 24 * 60 * 60});
+    return true;
   } catch {
     console.error('14-day survey scheduling failed');
     return false;
@@ -976,9 +983,9 @@ async function stripeWelcome(request, env) {
   if(env.FIRST90_PAYMENT_LINK_ID&&session.payment_link===env.FIRST90_PAYMENT_LINK_ID&&session.currency==='usd'&&session.amount_total===2900){
     try{const recorded=await recordFunnelEvent(env,{event:'first90_conversion',session:'purchase-'+(await digestHex(session.id)).slice(0,32)});return new Response(recorded?'FIRST 90 conversion recorded':'Storage unavailable',{status:recorded?200:503});}catch{return new Response('Storage unavailable',{status:503});}
   }
-  const surveyScheduled = await schedulePurchaseSurvey(env, session, email, firstName);
+  const surveyScheduled = await schedulePurchaseSurvey(env, session, email, firstName, event.created);
   const isNext30 = next30PaymentLinkIds.has(session.payment_link) && session.currency === 'usd' && session.amount_total === 4900;
-  if (!isNext30) return new Response(surveyScheduled ? 'Survey scheduled' : 'Purchase recorded');
+  if (!isNext30) return new Response(surveyScheduled ? 'Survey scheduled' : 'Survey scheduling failed', {status:surveyScheduled ? 200 : 502});
 
   const greeting = firstName ? 'Hey ' + firstName + ',' : 'Hey,';
   const customerNext30Url = next30Url + '&session_id=' + encodeURIComponent(session.id);
@@ -1005,7 +1012,9 @@ BOOKED AF`;
     });
     if (!response.ok) return new Response('Email delivery failed', {status:502});
     const result = await response.json();
-    return result.id ? new Response('Sent') : new Response('Email delivery failed', {status:502});
+    if (!result.id) return new Response('Email delivery failed', {status:502});
+    // Do not acknowledge a paid event until its survey is scheduled.
+    return new Response(surveyScheduled ? 'Sent' : 'Survey scheduling failed', {status:surveyScheduled ? 200 : 502});
   } catch { return new Response('Email delivery failed', {status:502}); }
 }
 
