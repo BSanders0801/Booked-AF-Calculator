@@ -159,7 +159,7 @@
             const more = data.getAll('more');
             status.hidden = true;
             if (!more.length) {
-              status.textContent = 'Pick at least one thing you want more help with.';
+              status.textContent = 'Pick at least one thing you want me to go deeper on.';
               status.hidden = false;
               return;
             }
@@ -172,9 +172,10 @@
                 credentials:'omit',
                 body:JSON.stringify({
                   session_id:sessionId,
-                  rating:Number(data.get('rating')),
-                  ease:data.get('ease'),
-                  useful:data.get('useful'),
+                  useful_rating:Number(data.get('useful_rating')),
+                  ease_rating:Number(data.get('ease_rating')),
+                  most_useful:String(data.get('most_useful') || ''),
+                  unclear:String(data.get('unclear') || ''),
                   more,
                   recommend:data.get('recommend'),
                   comments:String(data.get('comments') || '')
@@ -182,12 +183,12 @@
               });
               const result = await response.json().catch(()=>({}));
               if (!response.ok || result.success !== true) throw new Error(result.error || 'Survey could not be sent.');
-              form.innerHTML = '<div class="baf-card baf-featured"><p class="baf-kicker">Got it.</p><h2>THANK YOU.</h2><p>The nice answers are lovely. The useful answers are even better.</p><p>Bradley will actually read this.</p><div class="baf-actions"><button type="button" data-nav="intro">Back to BOOKED AF →</button></div></div>';
+              form.innerHTML = '<div class="baf-card baf-featured"><p class="baf-kicker">THANK YOU. SERIOUSLY.</p><h2>THIS HELPS.</h2><p>I’m building BOOKED AF around what actually helps people behind the chair — not what sounds good on a sales page.</p><p>Your feedback helps me make it better.</p><p><strong>YOUR CAREER OWES YOU A LIFE.</strong></p><div class="baf-actions"><button type="button" data-nav="intro">Back to BOOKED AF →</button></div></div>';
             } catch (error) {
               status.textContent = error.message || 'Survey could not be sent. Please try again.';
               status.hidden = false;
               button.disabled = false;
-              button.textContent = 'SEND IT TO BRADLEY →';
+              button.textContent = 'TELL BRADLEY →';
             }
           });
         }
