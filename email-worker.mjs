@@ -1045,17 +1045,23 @@ async function surveyResponse(request, env) {
   let data;
   try { data = await limitedJSON(request); } catch { return reply({success:false,error:'Please check your answers.'},400); }
   const sessionId = String(data?.session_id || '');
-  const rating = Number(data?.rating);
-  const ease = String(data?.ease || '');
-  const useful = String(data?.useful || '');
+  const usefulRating = Number(data?.useful_rating);
+  const easeRating = Number(data?.ease_rating);
+  const mostUseful = String(data?.most_useful || '').trim();
+  const unclear = String(data?.unclear || '').trim();
   const recommend = String(data?.recommend || '');
   const more = Array.isArray(data?.more) ? [...new Set(data.more.map(String))] : [];
   const comments = String(data?.comments || '').trim();
-  const allowedEase = new Set(['ridiculously easy','pretty easy','questions','throw my phone']);
-  const allowedUseful = new Set(['using it','not yet','a little','not really']);
-  const allowedRecommend = new Set(['absolutely','probably','maybe','not yet','no']);
-  const allowedMore = new Set(['getting more clients','keeping clients','charging and pricing','making more money','where my money goes','working fewer days','marketing without living on Instagram','scripts and templates','classes and education','something else']);
-  if (!/^cs_(?:live|test)_[A-Za-z0-9]+$/.test(sessionId) || !Number.isInteger(rating) || rating < 1 || rating > 5 || !allowedEase.has(ease) || !allowedUseful.has(useful) || !allowedRecommend.has(recommend) || !more.length || more.length > 10 || more.some(v=>!allowedMore.has(v)) || comments.length > 2000) return reply({success:false,error:'Please check your answers.'},400);
+  const allowedRecommend = new Set(['definitely','probably','not sure yet','probably not','definitely not']);
+  const allowedMore = new Set(['getting more clients','rebooking and retention','pricing and money','schedule and boundaries','social media and marketing','consultations','retail','assistants','burnout and career longevity','something else']);
+  if (!/^cs_(?:live|test)_[A-Za-z0-9]+$/.test(sessionId) ||
+      !Number.isInteger(usefulRating) || usefulRating < 1 || usefulRating > 5 ||
+      !Number.isInteger(easeRating) || easeRating < 1 || easeRating > 5 ||
+      !mostUseful || mostUseful.length > 2000 ||
+      !unclear || unclear.length > 2000 ||
+      !allowedRecommend.has(recommend) ||
+      !more.length || more.length > 10 || more.some(v=>!allowedMore.has(v)) ||
+      comments.length > 2000) return reply({success:false,error:'Please check your answers.'},400);
   try {
     const stripe = await fetch('https://api.stripe.com/v1/checkout/sessions/'+encodeURIComponent(sessionId), {headers:{Authorization:'Bearer '+env.STRIPE_SECRET_KEY},signal:AbortSignal.timeout(8000)});
     if (!stripe.ok) return reply({success:false,error:'We could not verify this purchase.'},403);
@@ -1069,27 +1075,30 @@ Customer: ${customerName || 'Not provided'}
 Email: ${customerEmail || 'Not provided'}
 Purchase session: ${sessionId}
 
-1. HOW DID WE DO?
-${rating}/5
+1. OVERALL, HOW USEFUL HAS BOOKED AF BEEN SO FAR?
+${usefulRating}/5
 
-2. WAS BOOKED AF EASY TO USE?
-${ease}
+2. HOW EASY WAS IT TO UNDERSTAND AND ACTUALLY USE?
+${easeRating}/5
 
-3. DID YOU ACTUALLY GET SOMETHING USEFUL?
-${useful}
+3. WHAT HAS BEEN THE MOST USEFUL PART SO FAR?
+${mostUseful}
 
-4. WHAT DO YOU WANT MORE HELP WITH?
+4. WHAT FELT UNCLEAR, UNNECESSARY, OR LIKE IT NEEDED MORE?
+${unclear}
+
+5. WHAT DO YOU WANT ME TO GO DEEPER ON NEXT?
 ${more.join(', ')}
 
-5. WOULD YOU TELL ANOTHER HAIRDRESSER ABOUT BOOKED AF?
+6. WOULD YOU RECOMMEND BOOKED AF TO ANOTHER STYLIST?
 ${recommend}
 
-6. YOUR TURN.
+ANYTHING ELSE YOU WANT TO TELL ME?
 ${comments || 'No additional comments.'}`;
     const send = await fetch('https://api.resend.com/emails', {
       method:'POST',
       headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':'booked-survey-response-'+sessionId},
-      body:JSON.stringify({from:FROM,to:['hello@bookedandfabulous.com'],reply_to:customerEmail || 'hello@bookedandfabulous.com',subject:`BOOKED AF survey - ${rating}/5 - ${customerName || customerEmail || 'customer'}`,text}),
+      body:JSON.stringify({from:FROM,to:['hello@bookedandfabulous.com'],reply_to:customerEmail || 'hello@bookedandfabulous.com',subject:`BOOKED AF survey - ${usefulRating}/5 useful - ${customerName || customerEmail || 'customer'}`,text}),
       signal:AbortSignal.timeout(12000)
     });
     if (!send.ok) return reply({success:false,error:'We could not save your survey. Please try again.'},502);
