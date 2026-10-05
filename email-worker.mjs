@@ -922,6 +922,16 @@ async function processLongFollowups(env) {
 const next30Url = 'https://bookedandfabulous.com/?next30=paid';
 const welcomeSubject = 'You’re in. Let’s make some moves.';
 const next30PaymentLinkIds = new Set(['plink_1UJsjEK8mAQwUniDH9v9XShT','plink_1UJbGMK8mAQwUniDbDofJPiQ']);
+// Stripe's completed Checkout record is the authority, including discounts.
+// Identify the approved $49 one-time offer before discount, not the final charge.
+function isNext30Checkout(session) {
+  if (!session || session.status !== 'complete' || session.mode !== 'payment' ||
+      !next30PaymentLinkIds.has(session.payment_link) || session.currency !== 'usd' ||
+      session.amount_subtotal !== 4900 || !Number.isInteger(session.amount_total) || session.amount_total < 0) return false;
+  return session.payment_status === 'paid' ||
+      (session.payment_status === 'no_payment_required' && session.amount_total === 0);
+}
+
 
 async function verifyStripeSignature(body, header, secret) {
   const values = Object.fromEntries((header || '').split(',').map(part => part.trim().split('=', 2)));
@@ -966,7 +976,7 @@ async function stripeWelcome(request, env) {
   try { event = JSON.parse(body); } catch { return new Response('Invalid JSON', {status:400}); }
   if (!['checkout.session.completed','checkout.session.async_payment_succeeded'].includes(event.type)) return new Response('Ignored');
   const session = event.data?.object;
-  if (session?.payment_status !== 'paid') return new Response('Ignored');
+  if (session?.payment_status !== 'paid' && !(session?.payment_status === 'no_payment_required' && isNext30Checkout(session))) return new Response('Ignored');
   const email = session.customer_details?.email || session.customer_email;
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return new Response('Missing customer email', {status:422});
   const firstName = String(session.customer_details?.name || '').trim().split(/\s+/)[0].slice(0, 60);
@@ -977,7 +987,7 @@ async function stripeWelcome(request, env) {
     try{const recorded=await recordFunnelEvent(env,{event:'first90_conversion',session:'purchase-'+(await digestHex(session.id)).slice(0,32)});return new Response(recorded?'FIRST 90 conversion recorded':'Storage unavailable',{status:recorded?200:503});}catch{return new Response('Storage unavailable',{status:503});}
   }
   const surveyScheduled = await schedulePurchaseSurvey(env, session, email, firstName);
-  const isNext30 = next30PaymentLinkIds.has(session.payment_link) && session.currency === 'usd' && session.amount_total === 4900;
+  const isNext30 = isNext30Checkout(session);
   if (!isNext30) return new Response(surveyScheduled ? 'Survey scheduled' : 'Purchase recorded');
 
   const greeting = firstName ? 'Hey ' + firstName + ',' : 'Hey,';
@@ -1027,7 +1037,7 @@ async function verifyCheckout(request, env) {
     });
     if (!response.ok) return reply({paid:false},response.status===404?404:502);
     const session = await response.json();
-    return reply({paid:session.status==='complete' && session.payment_status==='paid' && next30PaymentLinkIds.has(session.payment_link) && session.currency==='usd' && session.amount_total===4900});
+    return reply({paid:isNext30Checkout(session)});
   } catch { return reply({paid:false,error:'Payment check is unavailable.'},503); }
 }
 
@@ -1060,7 +1070,7 @@ async function surveyResponse(request, env) {
     const stripe = await fetch('https://api.stripe.com/v1/checkout/sessions/'+encodeURIComponent(sessionId), {headers:{Authorization:'Bearer '+env.STRIPE_SECRET_KEY},signal:AbortSignal.timeout(8000)});
     if (!stripe.ok) return reply({success:false,error:'We could not verify this purchase.'},403);
     const session = await stripe.json();
-    if (session.status !== 'complete' || session.payment_status !== 'paid' || session.currency !== 'usd') return reply({success:false,error:'We could not verify this purchase.'},403);
+    if (session.status !== 'complete' || (session.payment_status !== 'paid' && !isNext30Checkout(session)) || session.currency !== 'usd') return reply({success:false,error:'We could not verify this purchase.'},403);
     const customerEmail = session.customer_details?.email || session.customer_email || '';
     const customerName = String(session.customer_details?.name || '').trim();
     const text = `BOOKED AF CLIENT SURVEY

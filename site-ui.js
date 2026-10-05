@@ -200,10 +200,22 @@
       document.getElementById('free-resume-note').textContent = hasFree ? 'Your free answers are saved in this browser. Let’s pick up there.' : 'No free plan saved in this browser yet. Start here, or use the link in your Breakdown email.';
       free.onclick = () => go(hasFree ? lastFreeView : 'question');
       const paid = document.getElementById('resume-paid');
+      const previewHost = /(?:^|\.)workers\.dev$/i.test(location.hostname);
       if (state.next30Verified === true) {
         paid.hidden = false;
-        document.getElementById('paid-resume-note').textContent = 'Your purchase is verified for this visit. Open your plan or continue your answers.';
+        document.getElementById('paid-resume-note').textContent = state.deepPreview ? 'Preview access is on. Open the test plan and walk through it like a customer.' : 'Your purchase is verified for this visit. Open your plan or continue your answers.';
+        paid.textContent = state.deepPreview ? 'Open preview plan →' : 'Open my Next 30 →';
         paid.onclick = () => {state.view = BookedNext30.complete(next30Ensure().answers) ? 'deepresult' : 'deepintake'; render();};
+      } else if (previewHost) {
+        paid.hidden = false;
+        paid.textContent = 'Start preview plan →';
+        document.getElementById('paid-resume-note').textContent = 'Preview only. Start a test plan without checkout so we can QA the full experience.';
+        paid.onclick = () => {
+          state.next30Verified = true;
+          state.deepPreview = true;
+          state.view = 'deepintake';
+          render();
+        };
       }
     }
     if (state.view === 'email') {
@@ -271,8 +283,8 @@
     const nav = e.target.closest('[data-nav]');
     if (nav) { e.preventDefault(); go(nav.dataset.nav); return; }
     if (e.target.closest('[data-clear-progress]')) {
-      BookedLifecycle.clear();state.first90Interest=false;state.answers = {}; state.done = {}; state.name = ''; state.index = 0; state.emailSent = false;
-      try { localStorage.removeItem(key); sessionStorage.removeItem(deliveryKey); sessionStorage.removeItem('booked-af-email-draft'); } catch (_) {}
+      BookedLifecycle.clear();state.careerData=null;state.first90Interest=false;state.answers = {}; state.done = {}; state.name = ''; state.index = 0; state.emailSent = false;
+      try { localStorage.removeItem(key); localStorage.removeItem('booked-af-career-next30-v2'); sessionStorage.removeItem('booked-af-career-next30-v1'); sessionStorage.removeItem(deliveryKey); sessionStorage.removeItem('booked-af-email-draft'); } catch (_) {}
       go('intro');
     }
     if (preview && e.target.closest('.checkout-link')) {

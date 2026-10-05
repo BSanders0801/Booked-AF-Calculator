@@ -14,7 +14,7 @@ window.turnstile={render:(el,options)=>{options.callback('offline-review');retur
 window.fetch=async(url,options={})=>({ok:true,status:200,json:async()=>String(url).includes('verify-checkout')?{paid:false}:options.method==='POST'?{success:true}:{ready:true,schemas:['short-v5']}});
 '''
 s=s.replace('<script src="day-math.js?v=1" defer></script>','<script>'+setup+'</script><script>'+(root/'day-math.js').read_text()+'</script>')
-for name in ['breakdown-core','site-content','next30-core','next30-ui','app','lifecycle-ui','site-ui']:
+for name in ['breakdown-core','site-content','next30-core','next30-ui','next30-rebooking','next30-buyback','next30-services','next30-lanes','next30-shell','app','lifecycle-ui','site-ui']:
  s=re.sub(r'<script src="'+name+r'\.js\?[^\"]+" defer></script>',lambda _:'<script>'+(root/(name+'.js')).read_text()+'</script>',s)
 for name in ['booked-af-logo.webp','booked-af-logo.png','bradley-founder.webp']:
  mime='image/webp' if name.endswith('webp') else 'image/png'
