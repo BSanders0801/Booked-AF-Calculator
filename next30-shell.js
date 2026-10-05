@@ -68,8 +68,9 @@
     }catch(_){return false}
   };
 
-  function f(id,label,val,help){
-    return '<div class="n30-field"><label for="'+id+'">'+e(label)+'</label><input class="input" type="number" inputmode="decimal" step="any" id="'+id+'" value="'+e(val||'')+'"><p class="fine">'+e(help||'Leave blank if you do not know it yet. Enter 0 only when it is truly zero.')+'</p></div>';
+  function f(id,label,val,help,type){
+    var attrs=type==='text'?'type="text" maxlength="200"':'type="number" inputmode="decimal" step="any"';
+    return '<div class="n30-field"><label for="'+id+'">'+e(label)+'</label><input class="input" '+attrs+' id="'+id+'" value="'+e(val==null?'':val)+'"><p class="fine">'+e(help||'Leave blank if you do not know it yet. Enter 0 only when it is truly zero.')+'</p></div>';
   }
   var EMP=['service','gross','tips','bonus','benefits','taxes','other','net','days'];
   var SELF=['payments','refunds','direct','rent','processing','software','insurance','payroll','marketing','other','reserve','days'];
@@ -78,7 +79,7 @@
     p=p||'mmm-emp-';
     return f(p+'service','Service sales you produced this month',v.service,'Optional context. This is not automatically your pay.')
       +f(p+'gross','Gross wages / commission before taxes',v.gross,'Use the amount you were paid before personal taxes and deductions.')
-      +f(p+'tips','Tips',v.tips)+f(p+'bonus','Bonuses / incentives',v.bonus)
+      +f(p+'tips','Additional tips',v.tips,'Only include tips not already included in gross pay. Enter 0 if none.')+f(p+'bonus','Additional bonuses / incentives',v.bonus,'Only include bonuses not already included in gross pay. Enter 0 if none.')
       +f(p+'benefits','Payroll deductions / benefits',v.benefits)+f(p+'taxes','Taxes withheld',v.taxes)
       +f(p+'other','Other payroll deductions',v.other)+f(p+'net','Net paycheck / take-home deposited',v.net,'Recommended if available.')
       +f(p+'days','Days worked this month',v.days,'Optional. Used only for a per-workday view.');
@@ -97,8 +98,10 @@
     var o={};keys.forEach(function(k){var x=document.getElementById(prefix+k);if(x)o[k]=x.value.trim()});return o;
   }
   function empResult(v){
-    var gross=num(v,'gross');if(gross===null)return {complete:false,missing:['Gross wages / commission before taxes']};
-    var tips=num(v,'tips')||0,bonus=num(v,'bonus')||0,base=gross+tips+bonus;
+    var required={gross:'Gross wages / commission before taxes',tips:'Additional tips',bonus:'Additional bonuses / incentives'};
+    var missing=Object.keys(required).filter(function(k){return num(v,k)===null}).map(function(k){return required[k]});
+    if(missing.length)return {complete:false,missing:missing};
+    var gross=num(v,'gross'),tips=num(v,'tips'),bonus=num(v,'bonus'),base=gross+tips+bonus;
     var net=num(v,'net'),benefits=num(v,'benefits'),taxes=num(v,'taxes'),other=num(v,'other'),estimate=false;
     var take=net;
     if(take===null&&benefits!==null&&taxes!==null&&other!==null){take=base-benefits-taxes-other;estimate=true}
@@ -127,7 +130,7 @@
       return '<div class="card"><div class="number">YOUR MONEY MAP</div><h3>SIX FIGURES OF WHAT? NOW WE KNOW.</h3><p>'+generated+'</p><p>You were paid about <strong>'+cash(r.baseline)+'</strong> before personal taxes/deductions, including the tips and bonuses you entered. '+take+'</p>'+(r.perDay!==null?'<p>About <strong>'+cash(r.perDay)+'</strong> in pre-personal-tax career income per workday entered.</p>':'')+'<p><strong>'+cash(r.baseline)+'</strong> is the current planning baseline we will carry into YOUR NUMBER.</p>'+r.warnings.map(function(w){return '<p class="baf-note">'+e(w)+'</p>'}).join('')+'</div>';
     }
     if(r.type==='mixed'){
-      return '<div class="card"><div class="number">YOUR MONEY MAP</div><h3>YOUR CAREER HAS MORE THAN ONE LANE.</h3><p>Across the completed lanes, the work generated about <strong>'+cash(r.generated)+'</strong>. Your combined pre-personal-tax career-income baseline is about <strong>'+cash(r.baseline)+'</strong>.</p><p>Each lane stays separate underneath the combined number so revenue is not confused with what the career actually paid you.</p><p><strong>'+cash(r.baseline)+'</strong> is the planning baseline we will carry into YOUR NUMBER.</p>'+r.warnings.map(function(w){return '<p class="baf-note">'+e(w)+'</p>'}).join('')+'</div>';
+      return '<div class="card"><div class="number">YOUR MONEY MAP</div><h3>YOUR CAREER HAS MORE THAN ONE LANE.</h3><p>'+(r.generated===null?'Total sales are not available because a lane’s service sales were left blank.':'Across the completed lanes, the work generated about <strong>'+cash(r.generated)+'</strong>.')+' Your combined pre-personal-tax career-income baseline is about <strong>'+cash(r.baseline)+'</strong>.</p><p>Each lane stays separate underneath the combined number so revenue is not confused with what the career actually paid you.</p><p><strong>'+cash(r.baseline)+'</strong> is the planning baseline we will carry into YOUR NUMBER.</p>'+r.warnings.map(function(w){return '<p class="baf-note">'+e(w)+'</p>'}).join('')+'</div>';
     }
     return '<div class="card"><div class="number">YOUR MONEY MAP</div><h3>'+(r.baseline<0?'THIS NUMBER NEEDS ATTENTION. NOT PANIC.':'SIX FIGURES OF WHAT? NOW WE KNOW.')+'</h3><p>Clients paid your business about <strong>'+cash(r.generated)+'</strong>. The business costs you entered totaled about <strong>'+cash(r.expenses)+'</strong>.</p><p>That leaves approximately <strong>'+cash(r.baseline)+'</strong> before personal income taxes.</p>'+(r.reserve!==null?'<p>You chose to reserve <strong>'+cash(r.reserve)+'</strong> for taxes, leaving about <strong>'+cash(r.available)+'</strong> after that reserve.</p>':'')+(r.perDay!==null?'<p>About <strong>'+cash(r.perDay)+'</strong> before personal income taxes per workday entered.</p>':'')+'<p><strong>'+cash(r.baseline)+'</strong> is the business-planning baseline we will carry into YOUR NUMBER.</p></div>';
   }
@@ -179,7 +182,7 @@
         });
         var rs=m.lanes.map(function(l){return l.type==='employee'?empResult(l.fields):selfResult(l.fields)});
         var bad=rs.findIndex(function(x){return !x.complete});
-        r=bad>=0?{complete:false,missing:['Finish '+m.lanes[bad].label+' before combining the lanes.']}:{complete:true,type:'mixed',generated:rs.reduce(function(a,x){return a+(x.generated||0)},0),baseline:rs.reduce(function(a,x){return a+x.baseline},0),warnings:rs.reduce(function(a,x){return a.concat(x.warnings||[])},[])};
+        r=bad>=0?{complete:false,missing:['Finish '+m.lanes[bad].label+' before combining the lanes.']}:{complete:true,type:'mixed',generated:rs.some(function(x){return x.generated===null})?null:rs.reduce(function(a,x){return a+x.generated},0),baseline:rs.reduce(function(a,x){return a+x.baseline},0),warnings:rs.reduce(function(a,x){return a.concat(x.warnings||[])},[])};
       }
       m.result=r;s.day0Complete=!!(r&&r.complete);if(s.day0Complete)s.phase='week1';next30Save();
       if(s.day0Complete){render();return}
@@ -328,7 +331,7 @@
     if(data.shell.nextPath!=='p01')return '';
     var d=data.shell.demandSprint||{},lanes=d.lanes||chooseDemandLanes(data);
     return '<section class="card" id="demand-sprint"><div class="number">NEXT PATH · FILL THE EMPTY TUESDAY</div><h2>WHICH APPOINTMENTS DO YOU NEED TO FILL?</h2><p>Pick the day, time, or service you need more bookings for. For the next 30 days, focus on two ways to bring clients in. Keep one other way ticking along.</p><div class="grid2">'
-      +f('ds-block','Consistently weak day / time block',d.block||'','Example: Tuesday afternoon, Thursday morning, or one recurring weekly gap.')
+      +f('ds-block','Consistently weak day / time block',d.block||'','Example: Tuesday afternoon, Thursday morning, or one recurring weekly gap.','text')
       +f('ds-capacity','New-client capacity per week',d.capacity||'','How many new paid appointments could you realistically absorb without wrecking the schedule?')
       +'</div><div class="card"><div class="number">FIRST WAY TO FIND CLIENTS</div><h3>'+e(lanes.primary[0])+'</h3><p>Do 5 real actions this week. Track replies, bookings, service, and source.</p></div><div class="card"><div class="number">SECOND WAY TO FIND CLIENTS</div><h3>'+e(lanes.primary[1])+'</h3><p>Do 5 real actions this week. Write down who replies and who books. Likes don’t pay the rent.</p></div><div class="card"><div class="number">KEEP THIS TICKING ALONG</div><h3>'+e(lanes.maintenance)+'</h3><p>Keep this visible without turning it into a second full-time job.</p></div><div class="actions"><button type="button" class="primary" id="ds-save">START MY 30-DAY SPRINT →</button></div><div id="ds-result">'+(d.started?'<div class="card"><h3>THE SPRINT IS SET.</h3><p>Week 1: pick the appointments you want to fill. Take five actions for each of your two ways to find clients. Week 2: keep going and ask each new inquiry how they found you. Week 3: answer interested clients and help good new clients book their next visit. Week 4: keep what brought bookings, adjust what showed promise, and drop what went nowhere.</p></div>':'')+'</div></section>';
   }
@@ -425,6 +428,7 @@
           var slot=document.getElementById('dv-route-slot');if(slot)slot.innerHTML=dayRouteCard(d.route);
           var go=document.getElementById('dv-route-go');if(go)go.onclick=function(){
             data.shell.nextPath=d.route.id;next30Save();
+            if(d.route.id==='p01'||d.route.id==='p04'){render();return}
             go.disabled=true;
             go.textContent=(d.route.id==='p01'?'FILL THE EMPTY TUESDAY':d.route.id==='p02'?'REBOOKING WITHOUT BEGGING':d.route.id==='p04'?'MONEY MAP':d.route.id==='p05'?'SERVICE ECONOMICS':d.route.id==='p07'?'BUY BACK A DAY':'DETAILED AUDIT')+' SAVED';
           };
