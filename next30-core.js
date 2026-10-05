@@ -314,10 +314,10 @@ globalThis.BookedNext30 = (() => {
   return {left,perHour:left/hours,earned,costs,hours,share};
  }
  function valueMath({additionalKept,extraCosts=0,price=PRICE}){
-  if(![additionalKept,extraCosts,price].every(Number.isFinite)||extraCosts<0||price<=0)return null;
+  if(![additionalKept,extraCosts,price].every(Number.isFinite)||extraCosts<0||price<0)return null;
   const benefit=additionalKept-extraCosts;
-  return {benefit,afterPurchase:benefit-price,returnPercent:(benefit-price)/price*100,breakEven:benefit>=price};
+  return {benefit,afterPurchase:benefit-price,returnPercent:price===0?null:(benefit-price)/price*100,breakEven:benefit>=price};
  }
- function breakEven(amount,price=PRICE){return Number.isFinite(amount)&&amount>0&&Number.isFinite(price)&&price>0?Math.ceil(price/amount):null}
+ function breakEven(amount,price=PRICE){return Number.isFinite(amount)&&amount>0&&Number.isFinite(price)&&price>=0?Math.ceil(price/amount):null}
  return {VERSION,PRICE,roles,examples,goals,questions,choices,primary,goalFor,cleanAnswers,complete,seed,build,workMath,valueMath,breakEven};
 })();

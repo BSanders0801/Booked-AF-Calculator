@@ -44,7 +44,9 @@ assert.equal(api.workMath({earned:100,costs:0,hours:0}),null);
 assert.equal(api.workMath({earned:100,costs:0,hours:2,share:101}),null);
 assert.equal(api.valueMath({additionalKept:100,extraCosts:20,price:49}).afterPurchase,31);
 assert.equal(api.valueMath({additionalKept:0,extraCosts:0,price:49}).afterPurchase,-49);
-assert.equal(api.valueMath({additionalKept:20,extraCosts:0,price:0}),null);
+assert.deepEqual(JSON.parse(JSON.stringify(api.valueMath({additionalKept:20,extraCosts:0,price:0}))),{benefit:20,afterPurchase:20,returnPercent:null,breakEven:true});
+assert.equal(api.valueMath({additionalKept:20,extraCosts:0,price:-1}),null);
+assert.equal(api.breakEven(10,0),0);
 assert.equal(api.breakEven(20,49),3);assert.equal(api.breakEven(0,49),null);
 for(const [role,example] of Object.entries(api.examples)){
  const plan=api.build(fill({careers:[role],goal:'money',load:'busy',available:'hour',...example.answers}));

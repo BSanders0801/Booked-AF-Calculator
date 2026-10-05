@@ -34,5 +34,17 @@ async function boot(paid=true,saved=null,url=null){
  const backup=JSON.parse(exported.text);backup.shell.services={rows:[],draft:{service:'Saved appointment draft'},review:'Audit note'};run('state.careerData.shell={};render()');
  const restore=$('#next30-import');Object.defineProperty(restore,'files',{value:[{size:exported.text.length,text:async()=>JSON.stringify(backup)}],configurable:true});await restore.onchange();assert.equal(run('state.careerData.shell.incomeLanes.rows.length'),1);assert.equal(run('state.careerData.shell.incomeLanes.review'),'Confirm teaching dates <exact>');assert.equal(run('state.careerData.shell.services.review'),'Audit note');assert($('#next30-save-file'));
  const before=run('JSON.stringify(state.careerData)');const bad=$('#next30-import');Object.defineProperty(bad,'files',{value:[{size:12,text:async()=>'{bad json'}],configurable:true});await bad.onchange();assert.equal(run('JSON.stringify(state.careerData)'),before);assert.match($('#next30-import-status').textContent,/does not look/);assert.equal(b.errors.length,0);b.dom.window.close();
+ b=await boot(true,saved);({w,run,$,input}=b);
+ for(const path of ['', 'p14','p02','p07','p05','p03-detail']){
+  run(`state.careerData.shell.nextPath=${JSON.stringify(path)};state.view='deepresult';render()`);
+  assert($('#next30-full-plan'),'full plan entry for '+path);
+  const shellBefore=run('JSON.stringify(state.careerData.shell)');$('#next30-full-plan').click();
+  assert.equal(w.document.querySelectorAll('[data-next30-copy]').length,3);assert($('#next30-workmath'));assert($('#next30-score'));assert($('#next30-value'));assert($('#next30-save-file'));
+  input('n30-extra','20');input('n30-implementation','5');input('n30-price','0');
+  $('#next30-value').dispatchEvent(new w.Event('submit',{cancelable:true}));assert.match($('#next30-value-result').textContent,/You paid \$0/);assert.match($('#next30-value-result').textContent,/\$15/);
+  input('n30-perwin','10');$('#next30-break-even').dispatchEvent(new w.Event('submit',{cancelable:true}));assert.match($('#next30-break-result').textContent,/no additional booking/);
+  $('#next30-tool-back').click();assert($('#next30-full-plan'));assert.equal(run('JSON.stringify(state.careerData.shell)'),shellBefore);assert.equal(run("state.careerData.tools['color-money-price']"),'0');
+ }
+ assert.equal(b.errors.length,0);b.dom.window.close();
  console.log('PASS: separate pay/revenue lanes, shared costs once, known/unknown/zero amounts, negative net income, duplicate protection, time capacity, CSV safety, paid gate, edit/delete and saved reload.');
 })().catch(e=>{console.error(e);process.exitCode=1});

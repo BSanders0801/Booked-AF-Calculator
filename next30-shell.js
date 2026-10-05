@@ -129,65 +129,7 @@
     if(!r||!r.complete){
       return '<div class="card"><div class="number">NOT DONE YET</div><h3>WE FOUND THE MISSING NUMBER.</h3><p>Check: '+e((r&&r.missing||[]).join(', '))+'.</p><p>Leave an unknown blank. Enter 0 only when it is truly zero.</p></div>';
     }
-    if(r.type==='employee'){
-      var generated=r.generated===null?'Service sales were not entered.':'Your chair produced about <strong>'+cash(r.generated)+'</strong> in service sales.';
-      var take=r.takeHome===null?'Take-home was not entered or fully calculable.':(r.estimated?'Estimated take-home':'Take-home entered')+': <strong>'+cash(r.takeHome)+'</strong>.';
-      return '<div class="card"><div class="number">YOUR MONEY MAP</div><h3>SIX FIGURES OF WHAT? NOW WE KNOW.</h3><p>'+generated+'</p><p>You were paid about <strong>'+cash(r.baseline)+'</strong> before personal taxes/deductions, including the tips and bonuses you entered. '+take+'</p>'+(r.perDay!==null?'<p>About <strong>'+cash(r.perDay)+'</strong> in pre-personal-tax career income per workday entered.</p>':'')+'<p><strong>'+cash(r.baseline)+'</strong> is the current planning baseline we will carry into YOUR NUMBER.</p>'+r.warnings.map(function(w){return '<p class="baf-note">'+e(w)+'</p>'}).join('')+'</div>';
-    }
-    if(r.type==='mixed'){
-      return '<div class="card"><div class="number">YOUR MONEY MAP</div><h3>YOUR CAREER HAS MORE THAN ONE LANE.</h3><p>'+(r.generated===null?'Total sales are not available because a lane’s service sales were left blank.':'Across the completed lanes, the work generated about <strong>'+cash(r.generated)+'</strong>.')+' Your combined pre-personal-tax career-income baseline is about <strong>'+cash(r.baseline)+'</strong>.</p><p>Each lane stays separate underneath the combined number so revenue is not confused with what the career actually paid you.</p><p><strong>'+cash(r.baseline)+'</strong> is the planning baseline we will carry into YOUR NUMBER.</p>'+r.warnings.map(function(w){return '<p class="baf-note">'+e(w)+'</p>'}).join('')+'</div>';
-    }
-    return '<div class="card"><div class="number">YOUR MONEY MAP</div><h3>'+(r.baseline<0?'THIS NUMBER NEEDS ATTENTION. NOT PANIC.':'SIX FIGURES OF WHAT? NOW WE KNOW.')+'</h3><p>Clients paid your business about <strong>'+cash(r.generated)+'</strong>. The business costs you entered totaled about <strong>'+cash(r.expenses)+'</strong>.</p><p>That leaves approximately <strong>'+cash(r.baseline)+'</strong> before personal income taxes.</p>'+(r.reserve!==null?'<p>You chose to reserve <strong>'+cash(r.reserve)+'</strong> for taxes, leaving about <strong>'+cash(r.available)+'</strong> after that reserve.</p>':'')+(r.perDay!==null?'<p>About <strong>'+cash(r.perDay)+'</strong> before personal income taxes per workday entered.</p>':'')+'<p><strong>'+cash(r.baseline)+'</strong> is the business-planning baseline we will carry into YOUR NUMBER.</p></div>';
-  }
-  function laneCard(lane,i){
-    lane=lane||{label:'Income lane '+(i+1),type:'self',fields:{}};
-    var fields=lane.fields||{};
-    return '<section class="card" data-lane="'+i+'"><div class="grid2"><div class="n30-field"><label>Lane name</label><input class="input" id="lane-label-'+i+'" value="'+e(lane.label||'Income lane '+(i+1))+'"></div><div class="n30-field"><label>How this lane pays you</label><select class="input" id="lane-type-'+i+'"><option value="employee" '+(lane.type==='employee'?'selected':'')+'>Salon / employer</option><option value="self" '+(lane.type==='self'?'selected':'')+'>Independent / self-employed</option></select></div></div><div class="grid2">'+(lane.type==='employee'?employeeFields(fields,'lane-'+i+'-emp-'):selfFields(fields,'lane-'+i+'-self-'))+'</div><button type="button" class="secondary" data-remove-lane="'+i+'">REMOVE THIS LANE</button></section>';
-  }
-  function mapHTML(s){
-    var m=s.moneyMap;if(m.payType==='mixed'&&!m.lanes.length)m.lanes=[{label:'Income lane 1',type:'employee',fields:{}},{label:'Income lane 2',type:'self',fields:{}}];
-    return '<section class="card" id="money-map"><div class="number">YOUR TOOL</div><h2>MONTHLY MONEY MAP</h2><p>Pick one recent month that’s finished and fairly normal. Pull your pay stubs, deposits, and business expenses. Leave anything you don’t know blank. Only enter zero if it really is zero.</p><div class="n30-field"><label for="mmm-pay-type">How do you get paid?</label><select class="input" id="mmm-pay-type"><option value="">Choose one</option><option value="employee" '+(m.payType==='employee'?'selected':'')+'>I work for a salon / employer</option><option value="self" '+(m.payType==='self'?'selected':'')+'>I rent, have a suite, or work for myself</option><option value="mixed" '+(m.payType==='mixed'?'selected':'')+'>I have more than one income lane</option></select></div>'
-      +(m.payType==='employee'?'<div class="grid2">'+employeeFields(m.employee)+'</div>':'')
-      +(m.payType==='self'?'<div class="grid2">'+selfFields(m.self)+'</div>':'')
-      +(m.payType==='mixed'?'<div id="mmm-lanes">'+m.lanes.map(laneCard).join('')+'</div><button type="button" class="secondary" id="mmm-add-lane">ADD AN INCOME LANE</button>':'')
-      +'<div class="actions"><button type="button" class="primary" id="mmm-calc" '+(m.payType?'':'disabled')+'>SHOW ME THE REAL NUMBER →</button></div><p class="fine">Your entries save on this device as you go.</p><div id="mmm-result">'+(m.result?resultCard(m.result):'')+'</div></section>';
-  }
-  function bind(data,plan){
-    var s=data.shell,m=s.moneyMap,p=document.getElementById('mmm-pay-type');
-    if(p)p.onchange=function(){m.payType=p.value;m.result=null;next30Save();render()};
-    function saveBasic(){
-      if(m.payType==='employee')m.employee=capture('mmm-emp-',EMP);
-      if(m.payType==='self')m.self=capture('mmm-self-',SELF);
-      next30Save();
-    }
-    if(m.payType==='employee')EMP.forEach(function(k){var x=document.getElementById('mmm-emp-'+k);if(x)x.oninput=saveBasic});
-    if(m.payType==='self')SELF.forEach(function(k){var x=document.getElementById('mmm-self-'+k);if(x)x.oninput=saveBasic});
-    if(m.payType==='mixed'){
-      m.lanes.forEach(function(lane,i){
-        var lab=document.getElementById('lane-label-'+i),typ=document.getElementById('lane-type-'+i);
-        var keys=lane.type==='employee'?EMP:SELF,prefix=lane.type==='employee'?'lane-'+i+'-emp-':'lane-'+i+'-self-';
-        function saveLane(){lane.label=lab.value.trim()||'Income lane '+(i+1);lane.fields=capture(prefix,keys);next30Save()}
-        if(lab)lab.oninput=saveLane;
-        keys.forEach(function(k){var x=document.getElementById(prefix+k);if(x)x.oninput=saveLane});
-        if(typ)typ.onchange=function(){saveLane();lane.type=typ.value;lane.fields={};m.result=null;next30Save();render()};
-      });
-      document.querySelectorAll('[data-remove-lane]').forEach(function(b){b.onclick=function(){m.lanes.splice(Number(b.dataset.removeLane),1);m.result=null;next30Save();render()}});
-      var add=document.getElementById('mmm-add-lane');if(add)add.onclick=function(){if(m.lanes.length<6)m.lanes.push({label:'Income lane '+(m.lanes.length+1),type:'self',fields:{}});m.result=null;next30Save();render()};
-    }
-    var calc=document.getElementById('mmm-calc');
-    if(calc)calc.onclick=function(){
-      var r=null;
-      if(m.payType==='employee'){saveBasic();r=empResult(m.employee)}
-      if(m.payType==='self'){saveBasic();r=selfResult(m.self)}
-      if(m.payType==='mixed'){
-        m.lanes.forEach(function(lane,i){
-          var keys=lane.type==='employee'?EMP:SELF,prefix=lane.type==='employee'?'lane-'+i+'-emp-':'lane-'+i+'-self-';
-          lane.fields=capture(prefix,keys);
-          var lab=document.getElementById('lane-label-'+i);if(lab)lane.label=lab.value.trim()||'Income lane '+(i+1);
-        });
-        var rs=m.lanes.map(function(l){return l.type==='employee'?empResult(l.fields):selfResult(l.fields)});
-        var bad=rs.findIndex(function(x){return !x.complete});
-        r=bad>=0?{complete:false,missing:['Finish '+m.lanes[bad].label+' before combining the lanes.']}:{complete:true,type:'mixed',generated:rs.some(function(x){return x.generated===null})?null:rs.reduce(function(a,x){return a+x.generated},0),baseline:rs.reduce(function(a,x){return a+x.baseline},0),warnings:rs.reduce(function(a,x){return a.concat(x.warnings||[])},[])};
+    if(r.type=…1955 tokens truncated…>=0?{complete:false,missing:['Finish '+m.lanes[bad].label+' before combining the lanes.']}:{complete:true,type:'mixed',generated:rs.some(function(x){return x.generated===null})?null:rs.reduce(function(a,x){return a+x.generated},0),baseline:rs.reduce(function(a,x){return a+x.baseline},0),warnings:rs.reduce(function(a,x){return a.concat(x.warnings||[])},[])};
       }
       m.result=r;s.day0Complete=!!(r&&r.complete);if(s.day0Complete)s.phase='week1';next30Save();
       if(s.day0Complete){render();return}
@@ -499,8 +441,13 @@
     renderTools();
     if(state.view!=='deepresult'||!app.classList.contains('next30-panel')||document.getElementById('next30-save-file'))return;
     var keep=document.createElement('section');keep.className='card';keep.id='next30-backup';
-    keep.innerHTML='<h2>KEEP YOUR WORK.</h2><p>Your answers, tool entries and notes stay on this device. Download a private plan file before clearing browser storage or switching devices. Open your purchase link first, then import the file to restore your work. This file does not grant purchase access.</p><button type="button" class="primary" id="next30-save-file">SAVE MY PLAN FILE →</button><p id="next30-storage-status" role="status"></p>'+next30ImportControl();
+    keep.innerHTML='<h2>YOUR FULL PLAN.</h2><p>Open your four-week plan, three scripts, work checklist, scorecard and purchase-value check. Your current tool entries stay saved.</p><button type="button" class="secondary" id="next30-full-plan">OPEN MY FULL PLAN →</button><h2>KEEP YOUR WORK.</h2><p>Your answers, tool entries and notes stay on this device. Download a private plan file before clearing browser storage or switching devices. Open your purchase link first, then import the file to restore your work. This file does not grant purchase access.</p><button type="button" class="primary" id="next30-save-file">SAVE MY PLAN FILE →</button><p id="next30-storage-status" role="status"></p>'+next30ImportControl();
     app.appendChild(keep);
+    document.getElementById('next30-full-plan').onclick=function(){
+      next30Save();oldPlan();
+      var back=document.createElement('button');back.type='button';back.className='secondary';back.id='next30-tool-back';back.textContent='BACK TO MY CURRENT TOOL →';
+      back.onclick=function(){next30Save();render()};app.insertBefore(back,app.firstChild);
+    };
     document.getElementById('next30-save-file').onclick=function(){var data=next30Ensure();next30Save();next30Download('BOOKED-AF-next30-plan.json',JSON.stringify(data,null,2),'application/json')};
     next30BindImport();
   };
