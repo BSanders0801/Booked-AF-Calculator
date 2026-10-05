@@ -4,7 +4,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const dom=new JSDOM(fs.readFileSync('index.html','utf8'),{url:'https://preview.example.test/?next30=paid&session_id=cs_test_Example123',runScripts:'outside-only',pretendToBeVisual:true});
 const w=dom.window,ctx=dom.getInternalVMContext();w.scrollTo=()=>{};w.AbortSignal=AbortSignal;
 w.fetch=async url=>({ok:true,json:async()=>String(url).includes('verify-checkout')?{paid:true}:{ready:true,schemas:['short-v5']}});
-for(const f of ['day-math.js','breakdown-core.js','site-content.js','next30-core.js','next30-ui.js','next30-rebooking.js','next30-buyback.js','next30-shell.js','app.js','lifecycle-ui.js','site-ui.js'])vm.runInContext(fs.readFileSync(f,'utf8'),ctx,{filename:f});
+for(const f of ['day-math.js','breakdown-core.js','site-content.js','next30-core.js','next30-ui.js','next30-rebooking.js','next30-buyback.js','next30-services.js','next30-shell.js','app.js','lifecycle-ui.js','site-ui.js'])vm.runInContext(fs.readFileSync(f,'utf8'),ctx,{filename:f});
 await new Promise(r=>setTimeout(r,25));
 const run=c=>vm.runInContext(c,ctx),$=s=>w.document.querySelector(s),input=(id,v)=>{const x=$('#'+id);assert(x,id);x.value=String(v);x.dispatchEvent(new w.Event('input',{bubbles:true}))};
 run(`let a={careers:['color'],goal:'money',color_pay:'commission'};for(let pass=0;pass<8;pass++){for(const q of BookedNext30.questions(a))if(a[q.id]===undefined)a[q.id]=q.multi?[q.choices[0][0]]:q.choices[0][0];a=BookedNext30.cleanAnswers(a)}state.careerData={version:BookedNext30.VERSION,answers:a,carried:{},checks:{},metrics:{},tools:{},savedPlans:[],shell:{}};state.view='deepresult';render()`);

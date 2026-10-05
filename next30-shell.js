@@ -20,6 +20,7 @@
       demandSprint:input.demandSprint&&typeof input.demandSprint==='object'?input.demandSprint:{},
       nextPath:typeof input.nextPath==='string'?input.nextPath:'',
       review:input.review&&typeof input.review==='object'?input.review:{},
+      services:window.BookedServices?BookedServices.clean(input.services):{},
       buyback:window.BookedBuyback?BookedBuyback.clean(input.buyback):{},
       rebooking:window.BookedRebooking?BookedRebooking.clean(input.rebooking):{},
       moneyMap:{
@@ -282,9 +283,6 @@
     var targetPerDay=n&&n.complete?n.targetPerDay:null,currentTargetMet=!!(n&&n.complete&&n.currentAnnual>=n.desiredAnnual);
     var lowUtil=r.utilization<0.75,highUtil=r.utilization>=0.85;
     var wantsFewer=n&&n.complete&&n.desiredDays<n.currentDays;
-    var payType=data.shell&&data.shell.moneyMap&&data.shell.moneyMap.payType;
-    var moneyBaseline=data.shell&&data.shell.moneyMap&&data.shell.moneyMap.result&&data.shell.moneyMap.result.baseline;
-    var strongDayWeakIncome=moneyBaseline!==undefined&&moneyBaseline!==null&&r.dayRevenue>0&&n&&n.complete&&n.currentAnnual>0&&(r.dayRevenue*r.days*48)>n.currentAnnual*1.35;
     if(lowUtil){
       if(retentionLeak(a,plan.role)&&a.load==='busy'){
         return {id:'p02',title:'YOUR DAY IS NOT UNDERPRICED. FUTURE WEEKS KEEP OPENING BACK UP.',body:'When you are booked, the day can work. The bigger leak is keeping enough future business on the calendar. Fix the return/rebooking system before chasing more attention.',cta:'FIX MY REBOOKING →'};
@@ -294,11 +292,8 @@
     if(currentTargetMet&&highUtil&&wantsFewer){
       return {id:'p07',title:'THIS DAY MAY BE STRONG ENOUGH TO BUY BACK ANOTHER ONE.',body:'Your current personal-income baseline meets the annual target, utilization is strong, and you want fewer days. Next we test whether the income can survive a shorter week.',cta:'BUY BACK A DAY →'};
     }
-    if(strongDayWeakIncome){
-      return {id:'p04',title:'THE CHAIR IS PRODUCING. THE MONEY IS LEAKING SOMEWHERE ELSE.',body:'The day looks stronger than the personal-income baseline. That points back to costs, compensation, or the money structure rather than the client schedule itself.',cta:'REOPEN MY MONEY MAP →'};
-    }
-    if(highUtil&&targetPerDay!==null&&r.dayRevenue<targetPerDay){
-      return {id:'p05',title:'YOU ARE BUSY ENOUGH TO LOOK AT THE DAY ITSELF.',body:'Utilization is strong, but the day is still below the target. Now pricing, service mix, appointment structure, or time design deserves a closer look. We do not pick price alone from this one number.',cta:'CHECK MY SERVICE ECONOMICS →'};
+    if(highUtil&&n&&n.complete&&n.currentAnnual<n.desiredAnnual){
+      return {id:'p05',title:'YOU ARE BUSY ENOUGH TO LOOK AT THE DAY ITSELF.',body:'Your bookable time is mostly filled, but your personal-income baseline is below your personal-income target. Audit service time and costs before deciding whether price, service mix, expenses or your pay structure needs to change.',cta:'CHECK MY SERVICE ECONOMICS →'};
     }
     return {id:'p03-detail',title:'WE NEED A LITTLE MORE RECEIPT.',body:'The fast audit does not point cleanly to one bottleneck yet. Next we compare 10–20 representative appointments so time, ticket, overruns, and direct costs can tell the story.',cta:'RUN THE DETAILED AUDIT →'};
   }
@@ -385,12 +380,14 @@
       +mapHTML(data.shell)
       +numberPlannerHTML(data.shell)
       +dayValueHTML(data.shell)
+      +(['color','cut','extensions','owner','manager','restart'].indexOf(plan.role)>=0?'<section class="card"><h2>AUDIT THE REAL APPOINTMENTS</h2><p>Keep 10–20 service totals, actual time and material costs together before choosing a price change.</p><button type="button" class="secondary" id="open-service-audit">OPEN SERVICE ECONOMICS →</button></section>':'')
       +demandSprintHTML(data)
       +monthHTML(data,plan)
       +'<section class="card" id="next30-whats-next"><div class="number">WHAT\'S NEXT</div>'+(done?'<h3>YOUR NUMBER OPENS NEXT.</h3><p>Next, choose what you want to earn and how much you want to work. We’ll compare that with what you make now.</p>':'<p>Save your monthly number first. Then we’ll work out what you want this career to pay you—and how much of your week you want it to take.</p>')+'</section>'
       +'<section class="card"><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button><p class="fine">Your progress is saved on this device. Returning to this browser brings you back to your current plan.</p></section>';
     bind(data,plan);
     bindMonth(data,plan);
+    var auditButton=document.getElementById('open-service-audit');if(auditButton)auditButton.onclick=function(){data.shell.nextPath='p03-detail';next30Save();render()};
     var savedRoute=document.getElementById('yn-route-go');
     if(savedRoute)savedRoute.onclick=function(){var route=data.shell.numberPlanner.route;if(route){data.shell.nextPath=route.id;next30Save();render()}};
     if(done){
@@ -410,7 +407,7 @@
           var go=document.getElementById('yn-route-go');if(go)go.onclick=function(){
             data.shell.nextPath=n.route.id;next30Save();
             var messages={p01:'FILL THE EMPTY TUESDAY is next.',p02:'REBOOKING WITHOUT BEGGING is next.',p03:'WHAT YOUR DAY IS ACTUALLY WORTH is next.',p07:'BUY BACK A DAY is next.',p14:'ONE CAREER, MORE THAN ONE LANE is next.'};
-            if(n.route.id==='p03'){render();return}
+            if(['p01','p02','p03','p07'].indexOf(n.route.id)>=0){render();return}
             go.disabled=true;go.textContent=messages[n.route.id]||'NEXT PATH SAVED.';
           };
         }
@@ -430,7 +427,7 @@
           var slot=document.getElementById('dv-route-slot');if(slot)slot.innerHTML=dayRouteCard(d.route);
           var go=document.getElementById('dv-route-go');if(go)go.onclick=function(){
             data.shell.nextPath=d.route.id;next30Save();
-            if(d.route.id==='p01'||d.route.id==='p02'||d.route.id==='p04'||d.route.id==='p07'){render();return}
+            if(['p01','p02','p04','p07','p05','p03-detail'].indexOf(d.route.id)>=0){render();return}
             go.disabled=true;
             go.textContent=(d.route.id==='p01'?'FILL THE EMPTY TUESDAY':d.route.id==='p02'?'REBOOKING WITHOUT BEGGING':d.route.id==='p04'?'MONEY MAP':d.route.id==='p05'?'SERVICE ECONOMICS':d.route.id==='p07'?'BUY BACK A DAY':'DETAILED AUDIT')+' SAVED';
           };
@@ -459,6 +456,14 @@
     var plan=BookedNext30.build(data.answers);
     data.shell=shell(data.shell);
     var goal=BookedNext30.goalFor(data.answers);
+    if(window.BookedServices&&goal==='money'&&['p05','p03-detail'].indexOf(data.shell.nextPath)>=0){
+      state.currentCareerPlan=plan;app.classList.add('next30-panel');
+      app.innerHTML='<div class="eyebrow">YOUR NEXT 30 · SERVICE ECONOMICS</div>'+BookedServices.html(data)+'<div class="actions"><button type="button" class="secondary" id="svc-back">REVIEW MY MONEY MAP & NUMBER</button><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button></div>';
+      BookedServices.bind(data,render);
+      document.getElementById('svc-back').onclick=function(){data.shell.nextPath='';next30Save();render()};
+      document.getElementById('next30-edit-answers').onclick=function(){data.editAll=true;data.currentId='careers';next30Save();state.view='deepintake';render()};
+      next30Save();return;
+    }
     if(window.BookedBuyback&&((goal==='time'&&['color','cut','extensions','owner','restart'].indexOf(plan.role)>=0)||(goal==='money'&&data.shell.nextPath==='p07'))){
       state.currentCareerPlan=plan;app.classList.add('next30-panel');
       app.innerHTML='<div class="eyebrow">YOUR NEXT 30 · MORE TIME BACK</div>'+BookedBuyback.html(data)+(goal==='money'?'<button type="button" class="secondary" id="p07-back">REVIEW MY MONEY MAP & NUMBER</button>':'')+'<button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button>';
