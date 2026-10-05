@@ -2,7 +2,7 @@
   "private": true,
   "description": "DOM-only integration checks for the BOOKED AF redesign",
   "scripts": {
-    "test": "cd .. && node tests/next30-careers.cjs && node tests/next30-ui.cjs && node tests/next30-shell.cjs && node tests/rebooking.cjs && node tests/buyback.cjs && node tests/services.cjs && node tests/redesign-dom.cjs && node tests/question-simplicity.cjs && node tests/short-breakdown.mjs && node tests/student-lifecycle.mjs && node --test tests/stripe-welcome.mjs tests/recheck-email.mjs tests/survey.mjs tests/service-readiness.mjs"
+    "test": "cd .. && node tests/next30-careers.cjs && node tests/next30-ui.cjs && node tests/next30-shell.cjs && node tests/rebooking.cjs && node tests/buyback.cjs && node tests/services.cjs && node tests/lanes.cjs && node tests/redesign-dom.cjs && node tests/question-simplicity.cjs && node tests/short-breakdown.mjs && node tests/student-lifecycle.mjs && node --test tests/stripe-welcome.mjs tests/recheck-email.mjs tests/survey.mjs tests/service-readiness.mjs"
   },
   "devDependencies": {
     "jsdom": "30.1.1"

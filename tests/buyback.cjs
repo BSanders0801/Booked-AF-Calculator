@@ -14,7 +14,7 @@ async function boot(paid=true,saved=null,url=null){
  const w=dom.window,ctx=dom.getInternalVMContext(),errors=[];w.scrollTo=()=>{};w.AbortSignal=AbortSignal;w.addEventListener('error',e=>errors.push(e.error));
  w.fetch=async url=>({ok:true,json:async()=>String(url).includes('verify-checkout')?{paid}:{ready:true,schemas:['short-v5']}});
  if(saved)w.localStorage.setItem('booked-af-career-next30-v2',saved);
- for(const f of ['day-math.js','breakdown-core.js','site-content.js','next30-core.js','next30-ui.js','next30-rebooking.js','next30-buyback.js','next30-services.js','next30-shell.js','app.js','lifecycle-ui.js','site-ui.js'])vm.runInContext(fs.readFileSync(f,'utf8'),ctx,{filename:f});
+ for(const f of ['day-math.js','breakdown-core.js','site-content.js','next30-core.js','next30-ui.js','next30-rebooking.js','next30-buyback.js','next30-services.js','next30-lanes.js','next30-shell.js','app.js','lifecycle-ui.js','site-ui.js'])vm.runInContext(fs.readFileSync(f,'utf8'),ctx,{filename:f});
  await new Promise(r=>setTimeout(r,25));
  const run=c=>vm.runInContext(c,ctx),$=s=>w.document.querySelector(s),input=(id,v)=>{const x=$('#'+id);assert(x,id);x.value=String(v);x.dispatchEvent(new w.Event('input',{bubbles:true}))};
  return {dom,w,run,$,input,errors};

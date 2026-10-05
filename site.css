@@ -210,3 +210,8 @@ body .bradley-lessons .story-body{padding-top:16px}
 .next30-panel #service-audit .grid2,.next30-panel #price-planner .grid2{gap:20px}
 .next30-panel #svc-review,.next30-panel #price-evidence{box-sizing:border-box;width:100%;min-height:110px;background:#110d10;color:#faf7f8;border:1px solid #786471;padding:12px;font:inherit}
 .next30-panel .service-scroll button{min-height:44px;margin:3px}
+
+.next30-panel #income-lanes input,.next30-panel #income-lanes select{box-sizing:border-box;width:100%;min-height:44px;background:#110d10;color:#faf7f8;border:1px solid #786471;border-radius:5px;padding:12px;font:inherit}
+.next30-panel #income-lanes label{display:block;min-width:0}
+.next30-panel #income-lanes .grid2{gap:20px}
+.next30-panel #lane-evidence,.next30-panel #lane-review{box-sizing:border-box;width:100%;min-height:110px;background:#110d10;color:#faf7f8;border:1px solid #786471;padding:12px;font:inherit}

@@ -20,6 +20,7 @@
       demandSprint:input.demandSprint&&typeof input.demandSprint==='object'?input.demandSprint:{},
       nextPath:typeof input.nextPath==='string'?input.nextPath:'',
       review:input.review&&typeof input.review==='object'?input.review:{},
+      incomeLanes:window.BookedIncomeLanes?BookedIncomeLanes.clean(input.incomeLanes):{},
       services:window.BookedServices?BookedServices.clean(input.services):{},
       buyback:window.BookedBuyback?BookedBuyback.clean(input.buyback):{},
       rebooking:window.BookedRebooking?BookedRebooking.clean(input.rebooking):{},
@@ -379,6 +380,7 @@
       +'<section class="card"><div class="number">QUICK LESSON</div><h2>SIX FIGURES OF WHAT?</h2><p>What clients paid, what the salon paid you, and what landed in your bank account can be three very different numbers. You don’t need to become an accountant. You do need to know which number you’re looking at.</p><p>Don’t know a number? Leave it blank. We’re checking your money, not your ability to guess.</p></section>'
       +mapHTML(data.shell)
       +numberPlannerHTML(data.shell)
+      +'<section class="card"><h2>GIVE EACH PART OF THE CAREER A JOB</h2><p>Separate chair work, teaching, events and brand work before combining the income and hours.</p><button type="button" class="secondary" id="open-income-lanes">OPEN INCOME-LANE PLANNER →</button></section>'
       +dayValueHTML(data.shell)
       +(['color','cut','extensions','owner','manager','restart'].indexOf(plan.role)>=0?'<section class="card"><h2>AUDIT THE REAL APPOINTMENTS</h2><p>Keep 10–20 service totals, actual time and material costs together before choosing a price change.</p><button type="button" class="secondary" id="open-service-audit">OPEN SERVICE ECONOMICS →</button></section>':'')
       +demandSprintHTML(data)
@@ -387,6 +389,7 @@
       +'<section class="card"><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button><p class="fine">Your progress is saved on this device. Returning to this browser brings you back to your current plan.</p></section>';
     bind(data,plan);
     bindMonth(data,plan);
+    var lanesButton=document.getElementById('open-income-lanes');if(lanesButton)lanesButton.onclick=function(){data.shell.nextPath='p14';next30Save();render()};
     var auditButton=document.getElementById('open-service-audit');if(auditButton)auditButton.onclick=function(){data.shell.nextPath='p03-detail';next30Save();render()};
     var savedRoute=document.getElementById('yn-route-go');
     if(savedRoute)savedRoute.onclick=function(){var route=data.shell.numberPlanner.route;if(route){data.shell.nextPath=route.id;next30Save();render()}};
@@ -407,7 +410,7 @@
           var go=document.getElementById('yn-route-go');if(go)go.onclick=function(){
             data.shell.nextPath=n.route.id;next30Save();
             var messages={p01:'FILL THE EMPTY TUESDAY is next.',p02:'REBOOKING WITHOUT BEGGING is next.',p03:'WHAT YOUR DAY IS ACTUALLY WORTH is next.',p07:'BUY BACK A DAY is next.',p14:'ONE CAREER, MORE THAN ONE LANE is next.'};
-            if(['p01','p02','p03','p07'].indexOf(n.route.id)>=0){render();return}
+            if(['p01','p02','p03','p07','p14'].indexOf(n.route.id)>=0){render();return}
             go.disabled=true;go.textContent=messages[n.route.id]||'NEXT PATH SAVED.';
           };
         }
@@ -456,6 +459,13 @@
     var plan=BookedNext30.build(data.answers);
     data.shell=shell(data.shell);
     var goal=BookedNext30.goalFor(data.answers);
+    if(window.BookedIncomeLanes&&goal==='money'&&data.shell.nextPath==='p14'){
+      state.currentCareerPlan=plan;app.classList.add('next30-panel');
+      app.innerHTML='<div class="eyebrow">YOUR NEXT 30 · INCOME LANES</div>'+BookedIncomeLanes.html(data)+'<div class="actions"><button type="button" class="secondary" id="lane-back">REVIEW MY MONEY MAP & NUMBER</button><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button></div>';
+      BookedIncomeLanes.bind(data,render);
+      document.getElementById('lane-back').onclick=function(){data.shell.nextPath='';next30Save();render()};
+      document.getElementById('next30-edit-answers').onclick=function(){data.editAll=true;data.currentId='careers';next30Save();state.view='deepintake';render()};next30Save();return;
+    }
     if(window.BookedServices&&goal==='money'&&['p05','p03-detail'].indexOf(data.shell.nextPath)>=0){
       state.currentCareerPlan=plan;app.classList.add('next30-panel');
       app.innerHTML='<div class="eyebrow">YOUR NEXT 30 · SERVICE ECONOMICS</div>'+BookedServices.html(data)+'<div class="actions"><button type="button" class="secondary" id="svc-back">REVIEW MY MONEY MAP & NUMBER</button><button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button></div>';
