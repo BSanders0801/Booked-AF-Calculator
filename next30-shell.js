@@ -20,6 +20,7 @@
       demandSprint:input.demandSprint&&typeof input.demandSprint==='object'?input.demandSprint:{},
       nextPath:typeof input.nextPath==='string'?input.nextPath:'',
       review:input.review&&typeof input.review==='object'?input.review:{},
+      rebooking:window.BookedRebooking?BookedRebooking.clean(input.rebooking):{},
       moneyMap:{
         payType:['employee','self','mixed'].indexOf(m.payType)>=0?m.payType:'',
         employee:clean(m.employee),
@@ -428,7 +429,7 @@
           var slot=document.getElementById('dv-route-slot');if(slot)slot.innerHTML=dayRouteCard(d.route);
           var go=document.getElementById('dv-route-go');if(go)go.onclick=function(){
             data.shell.nextPath=d.route.id;next30Save();
-            if(d.route.id==='p01'||d.route.id==='p04'){render();return}
+            if(d.route.id==='p01'||d.route.id==='p02'||d.route.id==='p04'){render();return}
             go.disabled=true;
             go.textContent=(d.route.id==='p01'?'FILL THE EMPTY TUESDAY':d.route.id==='p02'?'REBOOKING WITHOUT BEGGING':d.route.id==='p04'?'MONEY MAP':d.route.id==='p05'?'SERVICE ECONOMICS':d.route.id==='p07'?'BUY BACK A DAY':'DETAILED AUDIT')+' SAVED';
           };
@@ -456,6 +457,15 @@
     if(!BookedNext30.complete(data.answers)){state.view='deepintake';render();return}
     var plan=BookedNext30.build(data.answers);
     data.shell=shell(data.shell);
+    var goal=BookedNext30.goalFor(data.answers);
+    if(window.BookedRebooking&&((goal==='return'&&['color','cut','extensions','owner','manager','restart'].indexOf(plan.role)>=0)||(goal==='money'&&data.shell.nextPath==='p02'))){
+      state.currentCareerPlan=plan;app.classList.add('next30-panel');
+      app.innerHTML='<div class="eyebrow">YOUR NEXT 30 · REBOOKING</div>'+BookedRebooking.html(data)+(goal==='money'?'<button type="button" class="secondary" id="p02-back">REVIEW MY MONEY MAP & NUMBER</button>':'')+'<button type="button" class="secondary" id="next30-edit-answers">EDIT MY BREAKDOWN ANSWERS</button>';
+      BookedRebooking.bind(data,render);
+      var back=document.getElementById('p02-back');if(back)back.onclick=function(){data.shell.nextPath='';next30Save();render()};
+      document.getElementById('next30-edit-answers').onclick=function(){data.editAll=true;data.currentId='careers';next30Save();state.view='deepintake';render()};
+      next30Save();return;
+    }
     if(BookedNext30.goalFor(data.answers)==='money'){renderMoney(data,plan);return}
     if(typeof oldPlan==='function')oldPlan();
   };

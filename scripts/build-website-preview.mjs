@@ -3,7 +3,7 @@ import { mkdir, copyFile, readdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const out = resolve(root, '.website-preview');
-const files = ["index.html","site.css","day-math.js","breakdown-core.js","site-content.js","next30-core.js","next30-ui.js","next30-shell.js","app.js","lifecycle-ui.js","site-ui.js"];
+const files = ["index.html","site.css","day-math.js","breakdown-core.js","site-content.js","next30-core.js","next30-ui.js","next30-rebooking.js","next30-shell.js","app.js","lifecycle-ui.js","site-ui.js"];
 await mkdir(out, {recursive:true});
 for (const file of files) await copyFile(resolve(root,file), resolve(out,file));
 await mkdir(resolve(out,'assets'), {recursive:true});
