@@ -4,7 +4,7 @@ import worker from '../email-worker.mjs';
 
 const env={STRIPE_SECRET_KEY:'sk_test_only',RESEND_API_KEY:'resend_test_only'};
 
-test('verified purchaser can submit the six-question survey',async()=>{
+test('verified purchaser can submit the finalized six-question survey',async()=>{
   const original=globalThis.fetch; let sent;
   globalThis.fetch=async(url,options={})=>{
     if(String(url).startsWith('https://api.stripe.com/v1/checkout/sessions/')) return new Response(JSON.stringify({id:'cs_test_123',status:'complete',payment_status:'paid',currency:'usd',customer_details:{name:'Alex Stylist',email:'alex@example.com'}}),{status:200});
@@ -15,14 +15,24 @@ test('verified purchaser can submit the six-question survey',async()=>{
     const response=await worker.fetch(new Request('https://example.workers.dev/survey',{
       method:'POST',
       headers:{Origin:'https://bookedandfabulous.com','Content-Type':'application/json'},
-      body:JSON.stringify({session_id:'cs_test_123',rating:5,ease:'ridiculously easy',useful:'using it',more:['making more money','working fewer days'],recommend:'absolutely',comments:'Keep the voice. Add more money tools.'})
+      body:JSON.stringify({
+        session_id:'cs_test_123',
+        useful_rating:5,
+        ease_rating:4,
+        most_useful:'The money section gave me an actual next move.',
+        unclear:'I wanted one more example in the schedule section.',
+        more:['pricing and money','schedule and boundaries'],
+        recommend:'definitely',
+        comments:'Keep the voice. Add more money tools.'
+      })
     }),env);
     assert.equal(response.status,200);
     assert.deepEqual(await response.json(),{success:true});
     assert.equal(sent.to[0],'hello@bookedandfabulous.com');
     assert.equal(sent.reply_to,'alex@example.com');
-    assert.match(sent.subject,/BOOKED AF survey - 5\/5 - Alex Stylist/);
-    assert.match(sent.text,/Keep the voice. Add more money tools./);
+    assert.match(sent.subject,/BOOKED AF survey - 5\/5 useful - Alex Stylist/);
+    assert.match(sent.text,/The money section gave me an actual next move\./);
+    assert.match(sent.text,/Keep the voice\. Add more money tools\./);
   }finally{globalThis.fetch=original}
 });
 
@@ -33,9 +43,17 @@ test('survey rejects an unverified purchase',async()=>{
     const response=await worker.fetch(new Request('https://example.workers.dev/survey',{
       method:'POST',
       headers:{Origin:'https://bookedandfabulous.com','Content-Type':'application/json'},
-      body:JSON.stringify({session_id:'cs_test_bad',rating:5,ease:'pretty easy',useful:'a little',more:['getting more clients'],recommend:'maybe',comments:''})
+      body:JSON.stringify({
+        session_id:'cs_test_bad',
+        useful_rating:5,
+        ease_rating:4,
+        most_useful:'Useful.',
+        unclear:'Nothing major.',
+        more:['getting more clients'],
+        recommend:'probably',
+        comments:''
+      })
     }),env);
     assert.equal(response.status,403);
   }finally{globalThis.fetch=original}
 });
-
