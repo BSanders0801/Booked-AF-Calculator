@@ -47,7 +47,7 @@ function next30BindImport(){
    if(parsed.version!==BookedNext30.VERSION||!parsed.answers||typeof parsed.answers!=='object')throw Error('format');
    const answers=BookedNext30.cleanAnswers(parsed.answers);
    if(!Object.keys(answers).length)throw Error('answers');
-   state.careerData={version:BookedNext30.VERSION,answers,carried:{},currentId:null,checks:next30NumericMap(parsed.checks,true),metrics:next30NumericMap(parsed.metrics),tools:next30NumericMap(parsed.tools),savedPlans:next30SavedPlans(parsed.savedPlans)};
+   state.careerData={version:BookedNext30.VERSION,answers,carried:{},currentId:null,checks:next30NumericMap(parsed.checks,true),metrics:next30NumericMap(parsed.metrics),tools:next30NumericMap(parsed.tools),savedPlans:next30SavedPlans(parsed.savedPlans),shell:typeof window.next30CleanShell==='function'?window.next30CleanShell(parsed.shell):{}};
    next30Save();state.view=BookedNext30.complete(answers)?'deepresult':'deepintake';render();
   }catch(e){status.textContent='That does not look like a BOOKED AF plan file. Your current answers are still here.'}
  };

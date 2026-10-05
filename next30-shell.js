@@ -33,6 +33,7 @@
       }
     };
   }
+  window.next30CleanShell=shell;
   function infer(data,plan){
     var a=data.answers&&data.answers[plan.role+'_pay'];
     if(a==='self')return 'self';
@@ -492,5 +493,15 @@
     }
     if(BookedNext30.goalFor(data.answers)==='money'){renderMoney(data,plan);return}
     if(typeof oldPlan==='function')oldPlan();
+  };
+  var renderTools=window.renderCareerPlan;
+  window.renderCareerPlan=function(){
+    renderTools();
+    if(state.view!=='deepresult'||!app.classList.contains('next30-panel')||document.getElementById('next30-save-file'))return;
+    var keep=document.createElement('section');keep.className='card';keep.id='next30-backup';
+    keep.innerHTML='<h2>KEEP YOUR WORK.</h2><p>Your answers, tool entries and notes stay on this device. Download a private plan file before clearing browser storage or switching devices. Open your purchase link first, then import the file to restore your work. This file does not grant purchase access.</p><button type="button" class="primary" id="next30-save-file">SAVE MY PLAN FILE →</button><p id="next30-storage-status" role="status"></p>'+next30ImportControl();
+    app.appendChild(keep);
+    document.getElementById('next30-save-file').onclick=function(){var data=next30Ensure();next30Save();next30Download('BOOKED-AF-next30-plan.json',JSON.stringify(data,null,2),'application/json')};
+    next30BindImport();
   };
 })();
