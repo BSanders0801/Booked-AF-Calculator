@@ -33,15 +33,16 @@ On a tool screen, choose OPEN MY FULL PLAN. Use BACK TO MY CURRENT TOOL to retur
 **What if the email is missing or access fails?**
 Check spam and the email address used at checkout. Email hello@bookedandfabulous.com with your Stripe receipt or purchase reference and a description of what happened. Do not send card numbers, passwords, private client notes or your whole plan file.
 
-## Business policies still requiring a decision
+## Approved business policies — October 4, 2026 (LA)
 
-| Decision | What is known | Draft operational proposal, not approved terms |
-| --- | --- | --- |
-| Refund handling | No YOUR NEXT 30 policy is approved. Earlier general preference was that refunds should not happen. | Resolve access/delivery problems first; review duplicate charges and unresolved delivery failures individually. Do not advertise a satisfaction or income guarantee. Decide treatment of change-of-mind requests before release. |
-| Access duration | Current code has no timed purchase expiry. A 30-day plan describes the work period, not an approved access limit. | Do not promise lifetime access. Choose an explicit supported period before publishing purchase terms; saved readable copies remain the buyer's own files. |
-| Support | A business contact address exists. No response-time commitment is approved. | Support covers payment, opening access and restoring plan files. Coaching and reviews of private finances are outside the purchased offer. Set a reply target that Bradley can maintain before promising a timeframe. |
+Bradley approved the following after reviewing the recommendation in this conversation:
 
-Publish the chosen rules beside checkout and make the support route reachable from payment-error screens. Review the resulting purchase/privacy terms before public release. No policy in the proposal column should be represented as already approved.
+- Change-of-mind purchases are final once access is delivered.
+- Correct duplicate charges; refund the affected purchase when a delivery/access failure cannot be resolved. Preserve applicable legal rights.
+- Include 12 months of online access from purchase. Buyers can keep downloaded readable copies. JSON backups require active verified access to restore inside the product.
+- Reply to purchase and technical-support requests within two business days. The draft defines business days as Monday–Friday, excluding U.S. federal holidays. This is a reply standard, not a guaranteed resolution deadline. No coaching or personal financial review is included.
+
+The draft sales page displays the rules. They have not been released to production or applied retroactively to existing buyers. The current Worker has no timed expiry; before release, reconcile the approved duration with purchase-date tracking and buyer-facing expiry handling. Do not silently revoke access for buyers whose original purchase terms did not state this limit. Verify the support inbox and reply process before making the service promise live.
 
 ## Real delivery test — still open
 
