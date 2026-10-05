@@ -215,3 +215,19 @@ body .bradley-lessons .story-body{padding-top:16px}
 .next30-panel #income-lanes label{display:block;min-width:0}
 .next30-panel #income-lanes .grid2{gap:20px}
 .next30-panel #lane-evidence,.next30-panel #lane-review{box-sizing:border-box;width:100%;min-height:110px;background:#110d10;color:#faf7f8;border:1px solid #786471;padding:12px;font:inherit}
+
+/* Keep one complete income lane readable on a phone. */
+@media(max-width:650px){
+ .next30-panel #income-lanes .service-scroll{overflow:visible}
+ .next30-panel #income-lanes table{display:block;min-width:0;position:relative}
+ .next30-panel #income-lanes caption{display:block}
+ .next30-panel #income-lanes thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ .next30-panel #income-lanes tbody,.next30-panel #income-lanes tr{display:block;width:100%}
+ .next30-panel #income-lanes tbody tr{padding:14px 0;border-bottom:2px solid #55434d}
+ .next30-panel #income-lanes th[scope=row]{display:block;padding:10px 0;border:0;font-size:18px;overflow-wrap:anywhere}
+ .next30-panel #income-lanes td{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:10px;padding:10px 0;overflow-wrap:anywhere}
+ .next30-panel #income-lanes td::before{content:attr(data-label);font-weight:700;color:#c7bac3}
+ .next30-panel #income-lanes td[data-label="Job / evidence"],.next30-panel #income-lanes td[data-label="Actions"]{display:block}
+ .next30-panel #income-lanes td[data-label="Job / evidence"]::before,.next30-panel #income-lanes td[data-label="Actions"]::before{display:block;margin-bottom:8px}
+ .next30-panel #income-lanes td[data-label="Actions"] button{width:100%;margin:4px 0}
+}
