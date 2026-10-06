@@ -1042,7 +1042,8 @@ async function verifyCheckout(request, env) {
   if (!ORIGINS.has(origin)) return reply({paid:false},403);
   if (request.method === 'OPTIONS') return new Response(null,{status:204,headers});
   if (request.method !== 'GET') return reply({paid:false},405);
-  const sessionId = new URL(request.url).searchParams.get('session_id');
+  const params = new URL(request.url).searchParams;
+  const sessionId = params.get('session_id');
   if (!/^cs_(?:live|test)_[A-Za-z0-9]+$/.test(sessionId||'')) return reply({paid:false},400);
   if (!env.STRIPE_SECRET_KEY) return reply({paid:false,error:'Payment check is unavailable.'},503);
   try {
@@ -1053,6 +1054,13 @@ async function verifyCheckout(request, env) {
     if (!response.ok) return reply({paid:false},response.status===404?404:502);
     const session = await response.json();
     const access = next30AccessState(session);
+    if(access.active && env.FOLLOWUPS){
+      const funnelSession=String(params.get('funnel_session')||'');
+      const source=String(params.get('source')||'direct').toLowerCase();
+      if(/^[-a-zA-Z0-9]{16,80}$/.test(funnelSession)&&/^[-a-z0-9_]{1,40}$/.test(source)){
+        try{await recordFunnelEvent(env,{event:'next30_access_verified',session:funnelSession,source});}catch{console.error('Paid conversion event could not be recorded');}
+      }
+    }
     return reply({
       paid:access.active,
       expired:access.expired || undefined,
@@ -1138,7 +1146,7 @@ function first90Offer(env){
  return {...FIRST90_PRODUCT,status:live?'live':'coming-soon',checkoutUrl:live?env.FIRST90_CHECKOUT_URL:null};
 }
 const PROFILE_TTL=90*24*60*60;
-const ANALYTICS_EVENTS=new Set(['student_start','student_complete','student_email_capture','breakdown_email_capture','next30_access_verified','first90_interest','student_plan_complete','student_share','student_referral','student_to_working']);
+const ANALYTICS_EVENTS=new Set(['site_visit','student_start','student_complete','student_email_capture','breakdown_email_capture','next30_access_verified','first90_interest','student_plan_complete','student_share','student_referral','student_to_working']);
 async function digestHex(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function kvJSON(kv,key){const raw=await kv.get(key);return raw?JSON.parse(raw):null;}
@@ -1183,7 +1191,7 @@ async function lifecycleAPI(request,env){
  if(path==='/events'){
   // No email, name, answers, free text, or payment-conversion claims accepted here.
   if(!ANALYTICS_EVENTS.has(data.event)||!/^[-a-zA-Z0-9]{16,80}$/.test(data.session||'')||!['salon','clients','consultation','rebooking','money','boundaries',undefined].includes(data.category)||!/^[-a-z0-9_]{1,40}$/.test(String(data.source||'direct')))return reply({success:false},400);
-  if(['student_email_capture','first90_interest','student_to_working'].includes(data.event))return reply({success:false},403);
+  if(['student_email_capture','breakdown_email_capture','next30_access_verified','first90_interest','student_to_working'].includes(data.event))return reply({success:false},403);
   try{return reply({success:await recordFunnelEvent(env,data)});}catch{return reply({success:false},503);}
  }
  if(!/^[a-f0-9]{64}$/.test(data.token||''))return reply({success:false},401);
@@ -1224,8 +1232,43 @@ async function lifecycleAPI(request,env){
  }catch{return reply({success:false,error:'Your profile could not be saved. Your answers are still in this browser.'},503);}
 }
 
+async function conversionSummary(request, env) {
+  const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'};
+  const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers});
+  if(request.method!=='GET')return reply({success:false},405);
+  if(!env.REPORT_SECRET||!env.FOLLOWUPS)return reply({success:false,error:'Report unavailable.'},503);
+  if((request.headers.get('Authorization')||'')!==('Bearer '+env.REPORT_SECRET))return reply({success:false},401);
+  const requested=Number(new URL(request.url).searchParams.get('days')||30);
+  const days=Number.isFinite(requested)?Math.min(90,Math.max(1,Math.floor(requested))):30;
+  const cutoff=Date.now()-days*24*60*60*1000;
+  const buckets=new Map();
+  let cursor,seen=0;
+  do{
+    const page=await env.FOLLOWUPS.list({prefix:'student-event:',cursor,limit:1000});
+    for(const key of page.keys){
+      const row=await kvJSON(env.FOLLOWUPS,key.name); seen++;
+      if(!row||Number(row.at)<cutoff||!['site_visit','breakdown_email_capture','next30_access_verified'].includes(row.event))continue;
+      const source=/^[-a-z0-9_]{1,40}$/.test(String(row.source||''))?String(row.source):'direct';
+      if(!buckets.has(source))buckets.set(source,{source,visits:new Set(),breakdowns:new Set(),paid:new Set()});
+      const item=buckets.get(source);
+      if(row.event==='site_visit')item.visits.add(row.session);
+      if(row.event==='breakdown_email_capture')item.breakdowns.add(row.session);
+      if(row.event==='next30_access_verified')item.paid.add(row.session);
+    }
+    cursor=page.list_complete?undefined:page.cursor;
+  }while(cursor&&seen<10000);
+  const sources=[...buckets.values()].map(item=>{
+    const visits=item.visits.size,breakdowns=item.breakdowns.size,paid=item.paid.size;
+    return {source:item.source,visits,breakdowns,paid,
+      visit_to_breakdown:visits?Number((breakdowns/visits).toFixed(3)):null,
+      breakdown_to_paid:breakdowns?Number((paid/breakdowns).toFixed(3)):null};
+  }).sort((a,b)=>b.paid-a.paid||b.breakdowns-a.breakdowns||b.visits-a.visits||a.source.localeCompare(b.source));
+  return reply({success:true,days,sources,generated_at:new Date().toISOString()});
+}
+
 export default {
   async fetch(request, env, ctx) {
+    if(new URL(request.url).pathname==='/conversion-summary')return conversionSummary(request,env);
     if(['/profile','/events'].includes(new URL(request.url).pathname))return lifecycleAPI(request,env);
     if (new URL(request.url).pathname === '/stripe-webhook') return stripeWelcome(request, env);
     if (new URL(request.url).pathname === '/verify-checkout') return verifyCheckout(request, env);
