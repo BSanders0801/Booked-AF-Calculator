@@ -1,0 +1,12 @@
+{
+  // Isolated non-production Worker for BOOKED AF checkout/access testing.
+  // Do not add production secrets or production KV bindings here.
+  "name": "booked-af-email-test",
+  "main": "email-worker.mjs",
+  "compatibility_date": "2026-09-25",
+  "workers_dev": true,
+  "keep_vars": true,
+  "build": {"command": "node scripts/build-website-preview.mjs"},
+  "assets": {"directory": "./.website-preview"},
+  "previews": {}
+}
