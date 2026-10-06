@@ -116,5 +116,6 @@
  });
  app.addEventListener('change',event=>{if(event.target.matches('[data-task]')){saveProfile();if(isStudent(state.answers)){const r=buildShortBreakdown(state.answers);if(r.plan.steps.every(s=>state.done[s.id]))track('student_plan_complete',r.category);}}});
  window.BookedLifecycle={session,source,track,enhance,clear,openProfile,saveProfile,studentResultHTML,hasAccess:()=>!!access};
+ track('site_visit');
  if(new URLSearchParams(location.search).get('source')==='student-share')track('student_referral');
 })();
