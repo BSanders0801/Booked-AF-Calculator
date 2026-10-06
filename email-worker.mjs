@@ -924,12 +924,27 @@ const welcomeSubject = 'You’re in. Let’s make some moves.';
 const next30PaymentLinkIds = new Set(['plink_1UJsjEK8mAQwUniDH9v9XShT','plink_1UJbGMK8mAQwUniDbDofJPiQ']);
 // Stripe's completed Checkout record is the authority, including discounts.
 // Identify the approved $49 one-time offer before discount, not the final charge.
+const NEXT30_ACCESS_DAYS = 365;
+// Purchases completed before the approved access-duration policy are grandfathered.
+// October 4, 2026 at midnight in LA = 07:00 UTC while PDT is in effect.
+const NEXT30_ACCESS_POLICY_UNIX = 1791097200;
+
 function isNext30Checkout(session) {
   if (!session || session.status !== 'complete' || session.mode !== 'payment' ||
       !next30PaymentLinkIds.has(session.payment_link) || session.currency !== 'usd' ||
       session.amount_subtotal !== 4900 || !Number.isInteger(session.amount_total) || session.amount_total < 0) return false;
   return session.payment_status === 'paid' ||
       (session.payment_status === 'no_payment_required' && session.amount_total === 0);
+}
+
+function next30AccessState(session, nowMs = Date.now()) {
+  if (!isNext30Checkout(session)) return {active:false, expired:false, grandfathered:false};
+  const created = Number(session.created);
+  if (!Number.isSafeInteger(created) || created <= 0) return {active:false, expired:false, grandfathered:false};
+  if (created < NEXT30_ACCESS_POLICY_UNIX) return {active:true, expired:false, grandfathered:true};
+  const expiresAt = created + NEXT30_ACCESS_DAYS * 24 * 60 * 60;
+  const active = Math.floor(nowMs / 1000) < expiresAt;
+  return {active, expired:!active, grandfathered:false, expiresAt};
 }
 
 
@@ -1037,7 +1052,13 @@ async function verifyCheckout(request, env) {
     });
     if (!response.ok) return reply({paid:false},response.status===404?404:502);
     const session = await response.json();
-    return reply({paid:isNext30Checkout(session)});
+    const access = next30AccessState(session);
+    return reply({
+      paid:access.active,
+      expired:access.expired || undefined,
+      grandfathered:access.grandfathered || undefined,
+      expires_at:access.expiresAt || undefined
+    });
   } catch { return reply({paid:false,error:'Payment check is unavailable.'},503); }
 }
 
