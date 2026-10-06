@@ -44,6 +44,16 @@ Bradley approved the following after reviewing the recommendation in this conver
 
 The draft sales page displays the rules. They have not been released to production or applied retroactively to existing buyers. The draft Worker now enforces 365 days of online access for policy-era purchases and grandfathers purchases completed before the approved October 4, 2026 policy cutoff. The website now distinguishes expired access from an unverified payment and tells buyers that downloaded readable copies remain theirs. Verify the support inbox and reply process before making the service promise live.
 
+## Test-mode Stripe mirror created — October 6, 2026
+
+A clean test-mode mirror now exists in the BOOKED AF Stripe account:
+- one-time YOUR NEXT 30 test product at $49 USD
+- test Payment Link with the production-style return URL
+- test promotion code `BETA100` for 100% off
+- no live product, payment link, coupon, or customer charge was changed
+
+The remaining infrastructure blocker is outside Stripe: a non-production Cloudflare Worker/environment must be configured with a Stripe test secret and the signing secret for a test webhook endpoint. The production Worker must not be repointed to test secrets. Until that isolated environment exists, a real `cs_test_` checkout cannot prove welcome-email delivery or paid-plan verification end to end.
+
 ## Real delivery test — still open
 
 Use a Stripe sandbox/test environment and an expressly approved test recipient. Only the live Stripe account is currently exposed through the connector. Automated tests do not prove inbox receipt. No live checkout, charge or email is authorized by this checklist.
