@@ -3,6 +3,7 @@
 import {readFile} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
 import {resolve} from 'node:path';
+import {resolveTestAccount} from './test-cloudflare-account.mjs';
 const root = resolve(import.meta.dirname, '..');
 const target = 'booked-af-email-test';
 const marker = 'booked-af-isolated-test';
@@ -11,7 +12,6 @@ const missing = names.filter(name => !process.env[name]);
 for (const name of names) console.log(`${name}: ${process.env[name] ? 'present' : 'missing'}`);
 if (missing.length) { console.error('Add the missing encrypted GitHub Actions secrets. No provider changes made.'); process.exit(1); }
 if (!/^(?:sk|rk)_test_/.test(process.env.STRIPE_TEST_SECRET_KEY)) throw Error('Refusing a non-test Stripe key.');
-if (!/^[a-f0-9]{32}$/.test(process.env.CLOUDFLARE_ACCOUNT_ID)) throw Error('Invalid Cloudflare account ID.');
 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(process.env.TEST_RECIPIENT_EMAIL)) throw Error('An expressly approved test recipient is required.');
 const config = JSON.parse((await readFile(resolve(root,'wrangler.test.jsonc'),'utf8')).replace(/^\s*\/\/.*$/gm,''));
 if (config.name !== target || config.main !== 'test-worker.mjs' || config.routes?.length || config.kv_namespaces || config.env ||
@@ -20,8 +20,6 @@ if (config.name !== target || config.main !== 'test-worker.mjs' || config.routes
     Object.keys(config).some(k=>!['name','main','compatibility_date','workers_dev','keep_vars','build','assets','routes','vars','previews'].includes(k)) ||
     Object.keys(config.vars).length !== 1) throw Error('Unsafe test configuration.');
 if (process.env.GITHUB_ACTIONS === 'true' && process.env.GITHUB_REF !== 'refs/heads/build/next30-shell-p04') throw Error('Wrong deployment branch.');
-if (process.argv.includes('--check')) { console.log('Credential names and isolated configuration validated; no provider changes made.'); process.exit(0); }
-if (process.env.BOOKED_AF_TEST_DEPLOY_ENABLED !== 'true') throw Error('Test deployment is not enabled. No provider changes made.');
 
 async function api(base, path, token, params, allowMissing=false) {
   const options = {headers:{Authorization:`Bearer ${token}`}, signal:AbortSignal.timeout(20000)};
@@ -34,11 +32,16 @@ async function api(base, path, token, params, allowMissing=false) {
   return data;
 }
 const cfToken=process.env.CLOUDFLARE_API_TOKEN, stripeToken=process.env.STRIPE_TEST_SECRET_KEY;
-const account='/accounts/'+process.env.CLOUDFLARE_ACCOUNT_ID;
+const resolvedAccount=await resolveTestAccount(process.env.CLOUDFLARE_ACCOUNT_ID,
+  path=>api('https://api.cloudflare.com/client/v4',path,cfToken));
+process.env.CLOUDFLARE_ACCOUNT_ID=resolvedAccount.id;
+console.log(resolvedAccount.recovered ? 'Cloudflare account metadata recovered and verified privately.' : 'Cloudflare account and token verified.');
+if (process.argv.includes('--check')) { console.log('Credentials and isolated configuration checked using read-only Cloudflare requests; no provider changes made.'); process.exit(0); }
+if (process.env.BOOKED_AF_TEST_DEPLOY_ENABLED !== 'true') throw Error('Test deployment is not enabled. No provider changes made.');
+const account='/accounts/'+resolvedAccount.id;
 const cf=(path,allowMissing=false)=>api('https://api.cloudflare.com/client/v4',account+path,cfToken,undefined,allowMissing);
 const stripe=(path,params)=>api('https://api.stripe.com',path,stripeToken,params);
-const subdomain=(await cf('/workers/subdomain')).result?.subdomain;
-if (!/^[a-z0-9-]+$/.test(subdomain || '')) throw Error('Cloudflare workers.dev subdomain could not be verified.');
+const subdomain=resolvedAccount.subdomain;
 const origin=`https://${target}.${subdomain}.workers.dev`;
 const settings=(await cf(`/workers/scripts/${target}/settings`,true))?.result;
 if (settings && (!settings.bindings?.some(b=>b.name==='BOOKED_AF_TEST_MARKER' && b.type==='plain_text' && b.text===marker) ||

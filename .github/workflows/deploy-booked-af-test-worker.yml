@@ -9,6 +9,8 @@ on:
       - 'test-worker.mjs'
       - 'scripts/build-test-worker.mjs'
       - 'scripts/deploy-test-worker.mjs'
+      - 'scripts/test-cloudflare-account.mjs'
+      - 'tests/test-cloudflare-account.mjs'
       - 'tests/test-isolation.mjs'
       - 'review/TEST_DEPLOY_TRIGGER.txt'
   workflow_dispatch:
@@ -39,7 +41,7 @@ jobs:
         with:
           node-version: 24
       - name: Verify isolated payment behavior
-        run: node --test tests/test-isolation.mjs tests/stripe-welcome.mjs tests/survey.mjs tests/service-readiness.mjs
+        run: node --test tests/test-cloudflare-account.mjs tests/test-isolation.mjs tests/stripe-welcome.mjs tests/survey.mjs tests/service-readiness.mjs
       - name: Check credential presence without exposing values
         run: node scripts/deploy-test-worker.mjs --check
       - name: Deploy only the isolated test environment

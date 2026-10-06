@@ -49,6 +49,13 @@ next test-branch workflow run to deploy. It is an operational gate, not a claim
 that Cloudflare's token is technically restricted to a single Worker.
 
 The script discovers the account's workers.dev subdomain and verifies the unique
+account against the owner's supplied BOOKED AF workers.dev host. Account IDs
+copied with surrounding whitespace or as a Cloudflare dashboard URL are normalized
+in memory. A malformed ID can be recovered only when the token can list exactly
+one account and its workers.dev host matches. The check step uses only read-only
+Cloudflare API calls and never prints or rewrites encrypted secrets.
+
+The deployment then verifies the unique
 active $49 Your Next 30 TEST offer using only the supplied Stripe test key. It
 creates/connects only the test webhook, passes a newly created signing secret
 directly into the test Worker, and changes only that test Payment Link's return
