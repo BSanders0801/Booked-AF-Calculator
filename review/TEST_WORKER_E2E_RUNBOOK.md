@@ -25,13 +25,62 @@ The test config intentionally has no production KV binding.
 
 ## Required test secrets
 
+### GitHub deployment path (no Cloudflare browser login during runs)
+
+The test workflow runs on changes to its listed files on `build/next30-shell-p04`.
+It never runs deployment on `main`. Change `review/TEST_DEPLOY_TRIGGER.txt` on the
+test branch to rerun after setting credentials. A manual dispatch also requires
+the workflow to exist on GitHub's default branch; do not merge this work just to
+make that button appear.
+
+Add these encrypted **repository Actions secrets** (not committed files):
+
+| Name | Value |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Dedicated token with Workers Scripts Edit for the account containing the intended test Worker. No DNS, billing or production-key changes are required. |
+| `CLOUDFLARE_ACCOUNT_ID` | That Cloudflare account's ID. |
+| `STRIPE_TEST_SECRET_KEY` | Existing BOOKED AF account's test-mode key; `sk_test_` or appropriately scoped `rk_test_`. Never a live key. |
+| `RESEND_TEST_API_KEY` | Approved sending key for the verified BOOKED AF sender domain. This workflow does not consume the production `RESEND_API_KEY` repository secret. |
+| `TEST_RECIPIENT_EMAIL` | Inbox expressly approved by Bradley for these test welcome and survey emails. |
+
+Keep `BOOKED_AF_TEST_DEPLOY_ENABLED` unset until credentials and recipient are
+approved. Setting that repository Actions **variable** to `true` permits the
+next test-branch workflow run to deploy. It is an operational gate, not a claim
+that Cloudflare's token is technically restricted to a single Worker.
+
+The script discovers the account's workers.dev subdomain and verifies the unique
+active $49 Your Next 30 TEST offer using only the supplied Stripe test key. It
+creates/connects only the test webhook, passes a newly created signing secret
+directly into the test Worker, and changes only that test Payment Link's return
+URL. Existing unmarked Workers, custom domains, unsafe bindings, ambiguous test
+offers, or incomplete existing webhook configurations stop the run. It never
+prints provider identifiers, email addresses, raw API responses, or secrets.
+
+The generated `.test-worker/` and `.test-website/` directories are ignored by Git.
+Production `email-worker.mjs`, `wrangler.jsonc`, `app.js`, and `site-ui.js` are not
+modified. The test artifact replaces production links, allows only its own
+origin, removes review bypasses, rejects live sessions/events/keys, and limits
+email delivery to the approved test inbox. Lead signup, saved-profile, survey
+submission and report APIs are outside this isolated checkout test scope.
+
+If webhook creation succeeds but secret upload fails, stop and securely recover
+the existing test webhook secret. Do not create duplicate endpoints or rotate a
+production secret. A successful health check proves configuration only; actual
+checkout, email receipt and paid access remain the beta gate below.
+
+### Worker runtime bindings
+
 Set these only on the test Worker:
 
 - `STRIPE_SECRET_KEY` — Stripe test-mode secret key
 - `STRIPE_WEBHOOK_SECRET` — signing secret from the test webhook endpoint
 - `RESEND_API_KEY` — approved sending key for the test delivery
+- `TEST_RECIPIENT_EMAIL` — the sole approved test inbox (required by the isolated wrapper)
 - `TURNSTILE_SECRET_KEY` only if testing Breakdown signup through the same environment
 - `REPORT_SECRET` only if testing the private conversion summary
+
+The isolated wrapper currently disables signup, survey submissions and reports.
+Do not add those optional secrets or a production KV binding to this deployment.
 
 Do not commit any secret.
 

@@ -121,6 +121,9 @@ test('welcome delivery failure stays retryable instead of acknowledging fulfillm
 
 test('12-month access expires for policy-era purchases and preserves earlier buyer terms',async()=>{
   const original=globalThis.fetch;
+  const originalNow=Date.now;
+  // Fixed clock: both fresh and expired examples are after the policy cutoff.
+  Date.now=()=> (1791097200 + 400*24*60*60)*1000;
   const visit=()=>worker.fetch(new Request('https://example.workers.dev/verify-checkout?session_id=cs_test_access',{headers:{Origin:'https://bookedandfabulous.com'}}),{...env,STRIPE_SECRET_KEY:'sk_test_only'});
   try {
     const fresh={...paid,id:'cs_test_access',created:Math.floor(Date.now()/1000)-30*24*60*60};
@@ -142,5 +145,5 @@ test('12-month access expires for policy-era purchases and preserves earlier buy
     assert.equal(result.paid,true);
     assert.equal(result.grandfathered,true);
     assert.equal(result.expires_at,undefined);
-  } finally {globalThis.fetch=original}
+  } finally {globalThis.fetch=original;Date.now=originalNow}
 });
