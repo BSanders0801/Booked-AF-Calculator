@@ -1138,7 +1138,7 @@ function first90Offer(env){
  return {...FIRST90_PRODUCT,status:live?'live':'coming-soon',checkoutUrl:live?env.FIRST90_CHECKOUT_URL:null};
 }
 const PROFILE_TTL=90*24*60*60;
-const ANALYTICS_EVENTS=new Set(['student_start','student_complete','student_email_capture','first90_interest','student_plan_complete','student_share','student_referral','student_to_working']);
+const ANALYTICS_EVENTS=new Set(['student_start','student_complete','student_email_capture','breakdown_email_capture','next30_access_verified','first90_interest','student_plan_complete','student_share','student_referral','student_to_working']);
 async function digestHex(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function kvJSON(kv,key){const raw=await kv.get(key);return raw?JSON.parse(raw):null;}
@@ -1161,7 +1161,7 @@ async function prepareProfileLink(env,email,name,answers,interest){
 async function recordFunnelEvent(env,data){
  if(!env.FOLLOWUPS)return false;
  const day=new Date().toISOString().slice(0,10);
- await env.FOLLOWUPS.put('student-event:'+day+':'+data.session+':'+data.event+':'+(data.category||'none'),JSON.stringify({event:data.event,category:data.category||null,session:data.session,at:Date.now(),version:REBUILD_VERSION}),{expirationTtl:180*24*60*60});
+ await env.FOLLOWUPS.put('student-event:'+day+':'+data.session+':'+data.event+':'+(data.category||'none'),JSON.stringify({event:data.event,category:data.category||null,source:data.source||'direct',session:data.session,at:Date.now(),version:REBUILD_VERSION}),{expirationTtl:180*24*60*60});
  return true;
 }
 function lifecycleReply(request){
@@ -1182,7 +1182,7 @@ async function lifecycleAPI(request,env){
  const path=new URL(request.url).pathname;
  if(path==='/events'){
   // No email, name, answers, free text, or payment-conversion claims accepted here.
-  if(!ANALYTICS_EVENTS.has(data.event)||!/^[-a-zA-Z0-9]{16,80}$/.test(data.session||'')||!['salon','clients','consultation','rebooking','money','boundaries',undefined].includes(data.category))return reply({success:false},400);
+  if(!ANALYTICS_EVENTS.has(data.event)||!/^[-a-zA-Z0-9]{16,80}$/.test(data.session||'')||!['salon','clients','consultation','rebooking','money','boundaries',undefined].includes(data.category)||!/^[-a-z0-9_]{1,40}$/.test(String(data.source||'direct')))return reply({success:false},400);
   if(['student_email_capture','first90_interest','student_to_working'].includes(data.event))return reply({success:false},403);
   try{return reply({success:await recordFunnelEvent(env,data)});}catch{return reply({success:false},503);}
  }
