@@ -1,3 +1,3 @@
-Isolated deployment checkpoint 1.
-Changing this file on build/next30-shell-p04 runs only the test workflow.
-Deployment also requires BOOKED_AF_TEST_DEPLOY_ENABLED=true and all test secrets.
+Isolated test deployment checkpoint 2.
+Refresh credential checks after Cloudflare Actions secrets were saved.
+Production deployment remains prohibited.
