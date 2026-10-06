@@ -10,7 +10,7 @@ function request(session, type='checkout.session.completed', signature=true) {
   const digest = createHmac('sha256',env.STRIPE_WEBHOOK_SECRET).update(`${t}.${body}`).digest('hex');
   return new Request('https://example.workers.dev/stripe-webhook',{method:'POST',headers:{'Stripe-Signature':`t=${t},v1=${signature?digest:'0'.repeat(64)}`},body});
 }
-const paid = {id:'cs_test_123',status:'complete',mode:'payment',amount_subtotal:4900,payment_status:'paid',payment_link:'plink_1UJsjEK8mAQwUniDH9v9XShT',currency:'usd',amount_total:4900,customer_details:{name:'Alex Stylist',email:'alex@example.com'}};
+const paid = {id:'cs_test_123',status:'complete',mode:'payment',amount_subtotal:4900,payment_status:'paid',payment_link:'plink_1UJsjEK8mAQwUniDH9v9XShT',currency:'usd',amount_total:4900,created:1791183600,customer_details:{name:'Alex Stylist',email:'alex@example.com'}};
 
 test('verified Your Next 30 checkout sends welcome and schedules Day 14 survey',async()=>{
   const original=globalThis.fetch; const sent=[];
@@ -72,7 +72,10 @@ test('only unlocks the paid product after Stripe confirms the exact checkout',as
   globalThis.fetch=async()=>new Response(JSON.stringify(authorized),{status:200});
   const visit=(id,origin='https://bookedandfabulous.com')=>worker.fetch(new Request('https://example.workers.dev/verify-checkout?session_id='+id,{headers:{Origin:origin}}),{...env,STRIPE_SECRET_KEY:'sk_test_only'});
   try {
-    assert.deepEqual(await (await visit('cs_test_123')).json(),{paid:true});
+    const active=await (await visit('cs_test_123')).json();
+    assert.equal(active.paid,true);
+    assert.equal(active.expired,undefined);
+    assert(Number.isInteger(active.expires_at));
     authorized.payment_link='plink_other';
     assert.deepEqual(await (await visit('cs_test_123')).json(),{paid:false});
     assert.equal((await visit('cs_test_123','https://other.example')).status,403);
@@ -113,4 +116,31 @@ test('welcome delivery failure stays retryable instead of acknowledging fulfillm
  const original=globalThis.fetch;
  globalThis.fetch=async(url,options)=>JSON.parse(options.body).subject==='You’re in. Let’s make some moves.'?new Response('delivery failed',{status:503}):new Response(JSON.stringify({id:'survey_scheduled'}));
  try{assert.equal((await worker.fetch(request(paid),env)).status,502)}finally{globalThis.fetch=original}
+});
+
+
+test('12-month access expires for policy-era purchases and preserves earlier buyer terms',async()=>{
+  const original=globalThis.fetch;
+  const visit=()=>worker.fetch(new Request('https://example.workers.dev/verify-checkout?session_id=cs_test_access',{headers:{Origin:'https://bookedandfabulous.com'}}),{...env,STRIPE_SECRET_KEY:'sk_test_only'});
+  try {
+    const fresh={...paid,id:'cs_test_access',created:Math.floor(Date.now()/1000)-30*24*60*60};
+    globalThis.fetch=async()=>new Response(JSON.stringify(fresh),{status:200});
+    let result=await (await visit()).json();
+    assert.equal(result.paid,true);
+    assert.equal(result.expired,undefined);
+    assert(Number.isInteger(result.expires_at));
+
+    const expired={...paid,id:'cs_test_access',created:Math.floor(Date.now()/1000)-366*24*60*60};
+    globalThis.fetch=async()=>new Response(JSON.stringify(expired),{status:200});
+    result=await (await visit()).json();
+    assert.equal(result.paid,false);
+    assert.equal(result.expired,true);
+
+    const grandfathered={...paid,id:'cs_test_access',created:1791097199};
+    globalThis.fetch=async()=>new Response(JSON.stringify(grandfathered),{status:200});
+    result=await (await visit()).json();
+    assert.equal(result.paid,true);
+    assert.equal(result.grandfathered,true);
+    assert.equal(result.expires_at,undefined);
+  } finally {globalThis.fetch=original}
 });
