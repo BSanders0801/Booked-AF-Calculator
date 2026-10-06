@@ -921,7 +921,7 @@ async function processLongFollowups(env) {
 
 const next30Url = 'https://bookedandfabulous.com/?next30=paid';
 const welcomeSubject = 'You’re in. Let’s make some moves.';
-const next30PaymentLinkIds = new Set(['plink_1UJsjEK8mAQwUniDH9v9XShT','plink_1UJbGMK8mAQwUniDbDofJPiQ']);
+const next30PaymentLinkIds = new Set(['plink_1UJsjEK8mAQwUniDH9v9XShT','plink_1UJbGMK8mAQwUniDbDofJPiQ','plink_1UNdzjK8mAQwUniDtNq8rOut']);
 // Stripe's completed Checkout record is the authority, including discounts.
 // Identify the approved $49 one-time offer before discount, not the final charge.
 const NEXT30_ACCESS_DAYS = 365;
