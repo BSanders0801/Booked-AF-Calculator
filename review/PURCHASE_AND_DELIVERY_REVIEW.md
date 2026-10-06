@@ -1,6 +1,6 @@
 # YOUR NEXT 30 — purchase and delivery review
 
-Reviewed October 4, 2026 (LA). Draft review only; this document does not establish customer terms or authorize production release.
+Reviewed October 6, 2026 (LA). Draft review only; this document does not authorize production release.
 
 ## Confirmed offer and delivery
 
@@ -42,7 +42,7 @@ Bradley approved the following after reviewing the recommendation in this conver
 - Include 12 months of online access from purchase. Buyers can keep downloaded readable copies. JSON backups require active verified access to restore inside the product.
 - Reply to purchase and technical-support requests within two business days. The draft defines business days as Monday–Friday, excluding U.S. federal holidays. This is a reply standard, not a guaranteed resolution deadline. No coaching or personal financial review is included.
 
-The draft sales page displays the rules. They have not been released to production or applied retroactively to existing buyers. The current Worker has no timed expiry; before release, reconcile the approved duration with purchase-date tracking and buyer-facing expiry handling. Do not silently revoke access for buyers whose original purchase terms did not state this limit. Verify the support inbox and reply process before making the service promise live.
+The draft sales page displays the rules. They have not been released to production or applied retroactively to existing buyers. The draft Worker now enforces 365 days of online access for policy-era purchases and grandfathers purchases completed before the approved October 4, 2026 policy cutoff. The website now distinguishes expired access from an unverified payment and tells buyers that downloaded readable copies remain theirs. Verify the support inbox and reply process before making the service promise live.
 
 ## Real delivery test — still open
 
@@ -64,7 +64,7 @@ Record session identifiers privately, event status, email provider delivery evid
 
 ## Automated evidence already completed
 
-- Full test suite passes, including discounted/no-cost access, signed/forged webhooks, unrelated/unpaid sessions, asynchronous success and retryable welcome failures.
+- Full test suite previously passed, including discounted/no-cost access, signed/forged webhooks, unrelated/unpaid sessions, asynchronous success and retryable welcome failures. A new access-expiry/grandfathering test was added October 6 and must be green before release.
 - Full-plan round trips preserve entries across the money map, income lanes, rebooking, buyback and service tools.
 - Zero purchase cost is accepted in value calculations without dividing by zero or claiming a percentage return.
 - Draft asset packaging passes. Deployed draft was inspected at a 390px browser frame, including full-plan entry, $0 value check and return to income lanes.
