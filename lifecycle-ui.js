@@ -7,11 +7,19 @@
  const offerReady=fetch(emailServiceUrl,{credentials:'omit',signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(data=>{first90Offer=data.features?.first90||null;}).catch(()=>{});
  let session='';
  try{session=sessionStorage.getItem('booked-af-funnel-session')||'';if(!/^[-a-zA-Z0-9]{16,80}$/.test(session)){session=crypto.randomUUID();sessionStorage.setItem('booked-af-funnel-session',session);}}catch{session=crypto.randomUUID();}
+ let source='direct';
+ try{
+  const params=new URLSearchParams(location.search);
+  const incoming=String(params.get('src')||params.get('utm_source')||params.get('source')||'').trim().toLowerCase();
+  if(/^[a-z0-9_-]{1,40}$/.test(incoming)&&incoming!=='student-share')sessionStorage.setItem('booked-af-acquisition-source',incoming);
+  const saved=String(sessionStorage.getItem('booked-af-acquisition-source')||'').trim().toLowerCase();
+  if(/^[a-z0-9_-]{1,40}$/.test(saved))source=saved;
+ }catch{}
  try{const saved=JSON.parse(localStorage.getItem(profileKey)||'null');if(/^[a-f0-9]{64}$/.test(saved?.token||'')){access=saved.token;profile=saved.profile;}}catch{}
  const emitted=new Set();
  function track(event,category){
-  const id=event+':'+(category||'');if(emitted.has(id))return;emitted.add(id);
-  fetch(emailServiceUrl+'/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event,session,...(category?{category}:{})}),credentials:'omit',keepalive:true}).then(r=>{if(!r.ok)emitted.delete(id);}).catch(()=>emitted.delete(id));
+  const id=event+':'+(category||'')+':'+source;if(emitted.has(id))return;emitted.add(id);
+  fetch(emailServiceUrl+'/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event,session,source,...(category?{category}:{})}),credentials:'omit',keepalive:true}).then(r=>{if(!r.ok)emitted.delete(id);}).catch(()=>emitted.delete(id));
  }
  function persist(){try{localStorage.setItem(profileKey,JSON.stringify({token:access,profile}));}catch{}}
  async function profileRequest(action,extra={}){
@@ -107,6 +115,6 @@
   }
  });
  app.addEventListener('change',event=>{if(event.target.matches('[data-task]')){saveProfile();if(isStudent(state.answers)){const r=buildShortBreakdown(state.answers);if(r.plan.steps.every(s=>state.done[s.id]))track('student_plan_complete',r.category);}}});
- window.BookedLifecycle={session,track,enhance,clear,openProfile,saveProfile,studentResultHTML,hasAccess:()=>!!access};
+ window.BookedLifecycle={session,source,track,enhance,clear,openProfile,saveProfile,studentResultHTML,hasAccess:()=>!!access};
  if(new URLSearchParams(location.search).get('source')==='student-share')track('student_referral');
 })();
