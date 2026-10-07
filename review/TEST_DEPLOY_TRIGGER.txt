@@ -1,3 +1,3 @@
-Isolated test deployment checkpoint 2.
-Refresh credential checks after Cloudflare Actions secrets were saved.
-Production deployment remains prohibited.
+Isolated test deployment checkpoint 3 — October 6, 2026.
+Deploy the tested free/paid content boundary revision after PR #4.
+Only the existing isolated test Worker is authorized; production deployment remains prohibited.
