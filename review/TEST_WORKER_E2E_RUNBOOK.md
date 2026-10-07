@@ -1,6 +1,6 @@
 # BOOKED AF — TEST WORKER / END-TO-END PURCHASE RUNBOOK
 
-**Status:** Required before beta.
+**Status:** Baseline full-price and BETA100 end-to-end checks passed October 6; repeat against the final deployed release candidate before beta.
 **Updated:** October 6, 2026.
 
 ## Purpose

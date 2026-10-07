@@ -53,14 +53,14 @@ test('Breakdown schedules distinct Day 7 and Day 30 emails and queues Day 60 and
     const immediate = emails.find(x=>x.body.subject==='Your BOOKED AF Breakdown').body;
     assert.match(immediate.text,/\nBradley\nBOOKED AF\n/);
 
-    const day7 = emails.find(x=>x.body.subject==='It’s been a week. Did we actually do the things?').body;
+    const day7 = emails.find(x=>x.body.subject==='A week later. Still on your mind?').body;
     assert.equal(day7.scheduled_at,'in 7 days');
-    assert.match(day7.text,/This is a business plan, not a guilt trip/);
-    assert.match(day7.html,/OPEN MY 7-DAY PLAN →/);
+    assert.match(day7.text,/practical tools and four-week plan are inside YOUR NEXT 30/);
+    assert.match(day7.html,/OPEN MY BREAKDOWN/);
 
     const day30 = emails.find(x=>x.body.subject==='30 days later. Are we rich yet?').body;
     assert.equal(day30.scheduled_at,'in 30 days');
-    assert.match(day30.html,/RECHECK MY NUMBERS →/);
+    assert.match(day30.html,/REVISIT MY BREAKDOWN →/);
 
     const queued=[...FOLLOWUPS.map.entries()].filter(([key])=>key.startsWith('followup:')).map(([key,value])=>({key,record:JSON.parse(value)}));
     assert.equal(queued.length,2);

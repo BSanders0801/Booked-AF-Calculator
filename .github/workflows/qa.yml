@@ -14,7 +14,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js 20
+      - name: Use Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -24,3 +24,19 @@ jobs:
 
       - name: Run BOOKED AF test suite
         run: npm --prefix tests test
+
+      - name: Install browser for responsive review
+        run: cd tests && npx playwright install --with-deps chromium
+
+      - name: Check phone and desktop layouts
+        run: node tests/browser-layout.cjs
+
+      - name: Save responsive review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: booked-af-responsive-review
+          path: .browser-review/
+          retention-days: 7
+          include-hidden-files: true
+          if-no-files-found: error

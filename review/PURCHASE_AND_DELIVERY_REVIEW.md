@@ -52,11 +52,11 @@ A clean test-mode mirror now exists in the BOOKED AF Stripe account:
 - test promotion code `BETA100` for 100% off
 - no live product, payment link, coupon, or customer charge was changed
 
-The remaining infrastructure blocker is outside Stripe: a non-production Cloudflare Worker/environment must be configured with a Stripe test secret and the signing secret for a test webhook endpoint. The production Worker must not be repointed to test secrets. Until that isolated environment exists, a real `cs_test_` checkout cannot prove welcome-email delivery or paid-plan verification end to end.
+The isolated test Worker was subsequently deployed on October 6. Both the full-price $49 and BETA100 test purchases completed, provider delivery succeeded, Bradley confirmed both welcome emails in his inbox, and their private links opened paid access. Evidence is retained in the private October 6 test-flow checkpoint; no purchase identifiers or recipient records belong in this repository. Production remained unchanged.
 
-## Real delivery test — still open
+## Real delivery test — baseline complete; final revision recheck required
 
-Use a Stripe sandbox/test environment and an expressly approved test recipient. Only the live Stripe account is currently exposed through the connector. Automated tests do not prove inbox receipt. No live checkout, charge or email is authorized by this checklist.
+The baseline at commit b022889ecc4832cd60b4a4d595a4bb4602a2a38a passed full-price and BETA100 end-to-end delivery on October 6. The $0 checkout returned paid; no_payment_required is covered separately by automated fixtures. Recheck purchase/delivery after the final candidate is deployed to the isolated test environment. Automated tests do not substitute for inbox receipt. Remaining negative/failure cases below were tested with mocks, not live failure injection.
 
 | Test | Required evidence |
 | --- | --- |

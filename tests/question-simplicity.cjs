@@ -26,7 +26,7 @@ try {
  assert(!json("shortVisibleQuestions(completeShort({worktype:['session'],primarywork:'session',goal:['money']})).map(q=>q.id)").includes('workdays'));
  assert(json("shortVisibleQuestions(completeShort({worktype:['session'],primarywork:'session',goal:['time']})).map(q=>q.id)").includes('workdays'));
  // Reuse only matching answers; don't ask a new customer to repeat pay, days, or specialty.
- run(`state.answers=completeShort({worktype:['color'],primarywork:'chair-color',goal:['money'],paymodel:'commission',days:'4'});state.deepAnswers={};state.deepIndex=0;state.view='deepintake';render()`);
+ run(`state.answers=completeShort({worktype:['color'],primarywork:'chair-color',goal:['money'],paymodel:'commission',days:'4'});state.next30Verified=true;state.deepAnswers={};state.deepIndex=0;state.view='deepintake';render()`);
  assert.match($('#app').textContent,/kept 3 answers/);
  assert.deepEqual(json('carriedDeepAnswers()'),{model:'commission',weekly:'four',service:'color'});
  assert(!json('deepQuestions.filter(q=>deepQuestionVisible(q,carriedDeepAnswers())).map(q=>q.id)').includes('model'));

@@ -6,3 +6,4 @@ review.html
 .wrangler/
 .dev.vars*
 .env*
+.browser-review/
