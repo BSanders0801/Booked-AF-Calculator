@@ -16,6 +16,7 @@ async function boot(paid=true,saved=null){
  return {dom,w,run,$,json,click,errors};
 }
 (async()=>{
+ let portable;
  let b=await boot(false);assert.equal(b.run('state.view'),'deepverify');assert(!b.$('#next30-import'));b.dom.window.close();
  b=await boot();const {run,$,click,json,w}=b;
  try{
@@ -47,22 +48,33 @@ async function boot(paid=true,saved=null){
   assert.equal($('#n30-extra').value,'-10');
   run("globalThis.downloads=[];next30Download=(name,content,type)=>downloads.push({name,content,type})");click('#next30-save-file');click('#next30-save-text');
   const downloads=json('downloads');assert.equal(downloads.length,2);assert(downloads[1].content.includes('STEAL THESE WORDS'));
-  const exported=JSON.parse(downloads[0].content);assert(exported.savedPlans.length>=2);
+  const exported=JSON.parse(downloads[0].content);portable=downloads[0].content;assert(exported.savedPlans.length>=2);
   async function importFile(content){Object.defineProperty($('#next30-import'),'files',{configurable:true,value:[{size:content.length,text:async()=>content}]});await $('#next30-import').onchange()}
   await importFile('{broken');assert.match($('#next30-import-status').textContent,/current answers are still here/);
   await importFile(JSON.stringify(exported));assert($('[data-next30-restore="bridal-money"]'));assert.equal($('#n30-extra').value,'-10');
   assert.equal(json("next30SavedPlans([{answers:{careers:['evil']}}])").length,0);
-  run("state.view='next30sample';render()");assert.equal(w.document.querySelectorAll('[data-next30-sample]').length,10);
-  click('[data-next30-sample="session"]');assert.match($('#app').textContent,/WHOLE-JOB MATH|whole-job math/);assert.match($('#app').textContent,/EXAMPLE ONLY/);assert(!$('#next30-import'));
-  assert.match($('.example-math').textContent,/48.57/);
-  for(const [role,rate] of [['color','61.25'],['bridal','50.00'],['session','48.57']]){
+  run("state.view='next30sample';render()");
+  assert.match($('#app').textContent,/A PLAN YOU CAN ACTUALLY USE/);
+  assert(!$('#next30-import'));assert(!$('.example-math'));
+  for(const role of ['color','bridal','session']){
    run("state.view='intro';render()");click(`[data-example-role="${role}"]`);
-   assert.equal(run('state.view'),'next30sample');assert.match($('.example-math').textContent,new RegExp(rate.replace('.','\\.')));
-   assert.equal($(`[data-next30-sample="${role}"]`).getAttribute('aria-pressed'),'true');
+   assert.equal(run('state.view'),'next30sample');
+   assert.doesNotMatch($('#app').textContent,/ONE SCRIPT TO STEAL|DO THIS FIRST|WEEK 1/);
+   assert(!$('.example-math'));
   }
   assert.equal(b.errors.length,0);
  }finally{b.dom.window.close()}
+ // Restore the exported work in a fresh browser after a new server verification.
+ b=await boot(true);
+ Object.defineProperty(b.$('#next30-import'),'files',{configurable:true,value:[{size:portable.length,text:async()=>portable}]});
+ await b.$('#next30-import').onchange();
+ assert.equal(b.$('#n30-extra').value,'-10');
+ assert(b.$('[data-next30-restore="bridal-money"]'));
+ b.dom.window.close();
+ b=await boot(false);
+ b.run("state.view='deepresult';render()");assert(!b.$('#next30-import'));assert(!b.$('#next30-workmath'));
+ b.dom.window.close();
  b=await boot(true,{version:'career-v1',answers:{careers:['color']},carried:[],checks:'bad',tools:42,metrics:[],savedPlans:[null,{},'bad']});
  assert.equal(b.run('state.view'),'deepintake');assert.equal(b.errors.length,0);b.dom.window.close();
- console.log('PASS: verified payment entry, 10 complete career flows, mixed careers, calculators, changed tasks, save/import, malformed files and 10 public examples.');
+ console.log('PASS: verified payment entry, 10 complete career flows, mixed careers, calculators, changed tasks, save/import, malformed files fresh-browser restore and safe public previews.');
 })().catch(e=>{console.error(e);process.exitCode=1});

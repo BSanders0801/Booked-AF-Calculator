@@ -434,9 +434,34 @@ function buildShortBreakdown(input) {
   day:'Want to check what one appointment or workday pays? Enter the real pay, time, and costs. BOOKED AF does the math.',
   fix:{title,body:intro,first:steps[0].body,then:steps.slice(1).map(s=>s.body).join(' '),dontTitle:'KEEP THIS IN MIND.',dont:rule},plan,nextTool};
 }
-function shortEmailCopy(r,name) {
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR BOOK RIGHT NOW\n'+r.stage+'\n'+(r.snapshot||'')+'\n\nFIX THIS FIRST\n'+r.top.title+'\n'+r.intro+'\n\nDO THESE 3 THINGS\n'+r.plan.steps.map((s,i)=>(i+1)+'. '+s.title+'\n'+s.body).join('\n\n')+'\n\nWATCH THIS\n'+r.plan.checkTitle+'\n'+r.plan.check+'\n'+r.plan.rule+'\n\nThis is a starting point based on your answers. Exact pay and time-off decisions need your actual numbers.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com';
+// Public output is an explicit allowlist: never serialize internal plans or calculations.
+function publicBreakdown(r) {
+ const student=r.audience==='student';
+ const id=student?r.category:String(r.top?.id||'').replace(/^short-/, '');
+ const topics={
+  fill:['ROOM IN THE BOOK.','An open calendar can make every quiet week feel personal. Visibility and reliable demand are different things.'],
+  clients:['ROOM TO BUILD.','Being good at the work and having people ready to book are different challenges.'],
+  cheap:['A BIG TICKET ISN’T THE WHOLE STORY.','Busy appointments can still leave disappointing income. The price on the menu never tells the whole story.'],
+  money:['BUSY AND WELL PAID ARE DIFFERENT THINGS.','Sales, pay and money left over can tell very different stories about the same career.'],
+  keep:['MONEY IN. MONEY LEFT.','A stronger sales month does not always feel like a stronger paycheck. Work costs can explain part of that gap.'],
+  return:['THE SECOND VISIT MATTERS.','New clients bring opportunity. Repeat visits bring consistency. A busy first appointment is only part of the picture.'],
+  rebooking:['THE SECOND VISIT MATTERS.','A great first visit and a dependable return are different parts of a lasting client relationship.'],
+  time:['A FULL CALENDAR CAN COST TOO MUCH.','A career can look successful while taking more time and energy than you want to give it.'],
+  life:['SUCCESS SHOULD LEAVE ROOM FOR YOU.','A full book does not automatically mean the career fits the life you want.'],
+  salon:['THE FIRST SALON SHAPES THE START.','A beautiful room and a supportive place to learn are not always the same thing.'],
+  consultation:['GOOD WORK STARTS WITH CLEAR EXPECTATIONS.','Unclear expectations can turn a technically good service into a disappointing experience.'],
+  boundaries:['A GOOD CAREER NEEDS LIMITS.','Saying yes to everything can cost confidence, time and the quality of the work.']
+ };
+ const topic=topics[id]||['YOUR CAREER DESERVES A CLOSER LOOK.','Clients, money, time and the life around the work do not always improve together.'];
+ return {student,stage:r.stage,title:topic[0],body:topic[1],
+  offer:student?'FIRST 90 is in development. Join the optional updates list to hear when it is ready. There is nothing to buy yet.':'YOUR NEXT 30 turns your answers into a four-week plan, with scripts, practical tools and a way to check what changed. $49 once.',
+  url:student?'https://bookedandfabulous.com/#first-90':'https://bookedandfabulous.com/#deep-dive'};
 }
+function publicBreakdownEmail(r,name) {
+ const p=publicBreakdown(r);
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nThis is a starting point for understanding the problem, not a personalized action plan or an income forecast.\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF\nLove your career. Keep your life.';
+}
+function shortEmailCopy(r,name) { return publicBreakdownEmail(r,name); }
 
 
 
@@ -662,14 +687,7 @@ function read(answers){
  const plan=planMap[top.id]||planMap.fill;
  return{stage,top,items:chosen,intro,day,showTime,opportunity,fix,plan};
 }
-function emailCopy(r,name){
-if(r.schema===SHORT_SCHEMA)return shortEmailCopy(r,name);
- const money=r.opportunity?("\n\nTHE MONEY OPPORTUNITY\n"+r.opportunity.title+"\n"+r.opportunity.body+(r.opportunity.gain?"\n"+r.opportunity.monthly+" more per month • "+r.opportunity.annual+" more per year":"")+"\n"+r.opportunity.math):"";
- return "THE BOOKED AF BREAKDOWN\n\n"+(name?name+", here’s":"Here’s")+" your Breakdown.\n\nYOUR BOOK RIGHT NOW\n"+r.stage+"\n\nFIX THIS FIRST\n"+r.fix.title+"\n"+r.fix.body+
- "\n\nDO THESE 3 THINGS\n"+r.plan.steps.map((step,i)=>(i+1)+". "+step.title+"\n"+step.body).join("\n\n")+
- "\n\nWATCH THIS\n"+r.plan.checkTitle+"\n"+r.plan.check+"\n"+r.plan.rule+money+
- "\n\nThis is a starting point based on your answers, not a promise of income.\n\nBradley\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com";
-}
+function emailCopy(r,name) { return publicBreakdownEmail(r,name); }
 
 const ORIGINS = new Set(['https://bookedandfabulous.com', 'https://www.bookedandfabulous.com']);
 const FROM = 'BOOKED AF <hello@bookedandfabulous.com>';
@@ -714,9 +732,9 @@ It’s been 30 days since you did your BOOKED AF Breakdown, so it’s time to se
 
 Maybe you got busier. Maybe you raised a price. Maybe your rebooking got better. Maybe absolutely nothing changed. That’s okay too. We just need to know what’s actually happening.
 
-Come back, plug in your new numbers, and let’s see where you are now compared to 30 days ago.
+Come back for a fresh look at your career. Your answers may have changed since your first Breakdown.
 
-RECHECK MY NUMBERS: ${RECHECK_URL}
+REVISIT MY BREAKDOWN: ${RECHECK_URL}
 
 This isn’t a report card. Nobody’s getting graded. We’re just figuring out what’s working, what isn’t, and what you should focus on next.
 
@@ -727,7 +745,7 @@ Love your career. Keep your life.`;
 
 function recheckEmailHTML(name) {
   const greeting = name ? 'Hey ' + esc(name) + ',' : 'Hey,';
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(RECHECK_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF - Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(RECHECK_SUBJECT)}</h1><p>${greeting}</p><p>It’s been 30 days since you did your BOOKED AF Breakdown, so it’s time to see what changed.</p><p>Maybe you got busier. Maybe you raised a price. Maybe your rebooking got better. Maybe absolutely nothing changed. That’s okay too. We just need to know what’s actually happening.</p><p>Come back, plug in your new numbers, and let’s see where you are now compared to 30 days ago.</p><p style="margin:30px 0"><a href="${RECHECK_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">RECHECK MY NUMBERS →</a></p><p>This isn’t a report card. Nobody’s getting graded. We’re just figuring out what’s working, what isn’t, and what you should focus on next.</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(RECHECK_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF - Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(RECHECK_SUBJECT)}</h1><p>${greeting}</p><p>It’s been 30 days since you did your BOOKED AF Breakdown, so it’s time to see what changed.</p><p>Maybe you got busier. Maybe you raised a price. Maybe your rebooking got better. Maybe absolutely nothing changed. That’s okay too. We just need to know what’s actually happening.</p><p>Come back for a fresh look at your career. Your answers may have changed since your first Breakdown.</p><p style="margin:30px 0"><a href="${RECHECK_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">REVISIT MY BREAKDOWN →</a></p><p>This isn’t a report card. Nobody’s getting graded. We’re just figuring out what’s working, what isn’t, and what you should focus on next.</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
 }
 
 
@@ -746,11 +764,11 @@ Maybe your book is filling up. Maybe your clients are coming back more often. Ma
 
 Or maybe you tried a few things and discovered exactly what does not work for you. Also useful.
 
-Come back and run your numbers again.
+Come back and revisit your Breakdown.
 
 This time, don’t just look at whether they went up or down. Look at what actually changed because of something you did.
 
-CHECK MY 60-DAY NUMBERS: ${RECHECK_URL}
+REVISIT MY BREAKDOWN: ${RECHECK_URL}
 
 We’re looking for patterns now.
 
@@ -763,7 +781,7 @@ Love your career. Keep your life.`;
 
 function recheck60EmailHTML(name) {
   const greeting = name ? 'Hey ' + esc(name) + ',' : 'Hey,';
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(RECHECK_60_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF - Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(RECHECK_60_SUBJECT)}</h1><p>${greeting}</p><p>It’s been 60 days since your first BOOKED AF Breakdown.</p><p>By now, something should be getting clearer.</p><p>Maybe your book is filling up. Maybe your clients are coming back more often. Maybe you finally raised that price you’ve been thinking about for six months.</p><p>Or maybe you tried a few things and discovered exactly what does not work for you. Also useful.</p><p>Come back and run your numbers again.</p><p>This time, don’t just look at whether they went up or down. Look at what actually changed because of something you did.</p><p style="margin:30px 0"><a href="${RECHECK_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">CHECK MY 60-DAY NUMBERS →</a></p><p>We’re looking for patterns now.</p><p>What’s working? What keeps happening? What needs another month? And what can we officially stop wasting our time on?</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(RECHECK_60_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF - Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(RECHECK_60_SUBJECT)}</h1><p>${greeting}</p><p>It’s been 60 days since your first BOOKED AF Breakdown.</p><p>By now, something should be getting clearer.</p><p>Maybe your book is filling up. Maybe your clients are coming back more often. Maybe you finally raised that price you’ve been thinking about for six months.</p><p>Or maybe you tried a few things and discovered exactly what does not work for you. Also useful.</p><p>Come back and revisit your Breakdown.</p><p>This time, don’t just look at whether they went up or down. Look at what actually changed because of something you did.</p><p style="margin:30px 0"><a href="${RECHECK_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">REVISIT MY BREAKDOWN →</a></p><p>We’re looking for patterns now.</p><p>What’s working? What keeps happening? What needs another month? And what can we officially stop wasting our time on?</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this email because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
 }
 
 function recheck90EmailCopy(name) {
@@ -799,38 +817,12 @@ function recheck90EmailHTML(name) {
 }
 
 
-const DAY7_SUBJECT = 'It’s been a week. Did we actually do the things?';
-const DAY7_URL = 'https://bookedandfabulous.com/#my-plan';
-
+const DAY7_SUBJECT = 'A week later. Still on your mind?';
+const DAY7_URL = 'https://bookedandfabulous.com/#my-breakdown';
 function day7EmailCopy(name) {
-  const greeting = name ? 'Hey ' + name + ',' : 'Hey,';
-  return `${greeting}
-
-It’s been a week since your BOOKED AF Breakdown.
-
-So… did we actually do the things?
-
-You had three moves. You do not need a perfect week. I just want you to look at what happened.
-
-Did one thing work? Great. Keep it.
-Did one thing go nowhere? Also useful.
-Did you do none of it because life happened? Welcome to being human.
-
-Come back, open your plan, and finish what still matters.
-
-OPEN MY 7-DAY PLAN: ${DAY7_URL}
-
-This is a business plan, not a guilt trip.
-
-Bradley
-BOOKED AF
-Love your career. Keep your life.`;
+ return (name?'Hey '+name+',':'Hey,')+'\n\nIt’s been a week since your BOOKED AF Breakdown.\n\nA full book, better money and a life outside work do not always arrive together. Knowing what feels off is a useful start.\n\nYour free Breakdown is there when you want another look. The practical tools and four-week plan are inside YOUR NEXT 30.\n\nOPEN MY BREAKDOWN: '+DAY7_URL+'\n\nBradley\nBOOKED AF\nLove your career. Keep your life.';
 }
-
-function day7EmailHTML(name) {
-  const greeting = name ? 'Hey ' + esc(name) + ',' : 'Hey,';
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#eeeeef;font-family:Arial,Helvetica,sans-serif;color:#171719"><div style="display:none;max-height:0;overflow:hidden">${esc(DAY7_SUBJECT)}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:24px 12px"><table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:white"><tr><td align="center" bgcolor="#000000" style="padding:8px 26px;background-color:#000000;background-image:linear-gradient(#000000,#000000);border-bottom:4px solid #ff1686"><a href="https://bookedandfabulous.com" style="display:block;text-decoration:none"><img src="https://bookedandfabulous.com/assets/booked-af-logo.png" width="400" height="200" alt="BOOKED AF - Booked &amp; Fabulous" style="display:block;width:100%;max-width:400px;height:auto;margin:0 auto;border:0"></a></td></tr><tr><td style="padding:32px 26px;font-size:16px;line-height:1.7"><h1 style="margin:0 0 24px;font-size:28px;line-height:1.2">${esc(DAY7_SUBJECT)}</h1><p>${greeting}</p><p>It’s been a week since your BOOKED AF Breakdown.</p><p>So… did we actually do the things?</p><p>You had three moves. You do not need a perfect week. I just want you to look at what happened.</p><p>Did one thing work? Great. Keep it.<br>Did one thing go nowhere? Also useful.<br>Did you do none of it because life happened? Welcome to being human.</p><p>Come back, open your plan, and finish what still matters.</p><p style="margin:30px 0"><a href="${DAY7_URL}" style="display:inline-block;background:#ff338e;color:#160510;text-decoration:none;font-weight:bold;padding:16px 24px">OPEN MY 7-DAY PLAN →</a></p><p>This is a business plan, not a guilt trip.</p><p>Bradley<br>BOOKED AF<br>Love your career. Keep your life.</p></td></tr><tr><td style="padding:24px 26px;background:#111114;color:#dddddf;font-size:12px;line-height:1.7">BOOKED AF · Booked &amp; Fabulous<br><a href="mailto:hello@bookedandfabulous.com" style="color:#ff79b8">hello@bookedandfabulous.com</a><br>You received this because you asked BOOKED AF to send your Breakdown.</td></tr></table></td></tr></table></body></html>`;
-}
+function day7EmailHTML(name) { return emailHTML(DAY7_SUBJECT,day7EmailCopy(name)); }
 
 const SURVEY_SUBJECT = 'You paid us. Did we earn it?';
 const SURVEY_URL_BASE = 'https://bookedandfabulous.com/?survey=paid&session_id=';

@@ -114,6 +114,9 @@ for(const goal of ['clients','return','money','keep','time','stable']){
       assert.equal(result.plan.steps.length,3);
       assert(!JSON.stringify(result).includes('undefined'));
       assert.equal(result.opportunity,null);
+      const publicText=c.api.shortEmailCopy(result,'Bradley');
+      assert.doesNotMatch(publicText,/DO THESE 3 THINGS|WATCH THIS|OPEN CHAIR MATH/);
+      for(const step of result.plan.steps)assert(!publicText.includes(step.body));
       cases++;
     }
   }
@@ -247,7 +250,8 @@ for(const goal of ['clients','return','money','keep','time','stable']){
   assert(element('app').innerHTML.includes('Question '+(count-1)+' of '+count));
   element('next').onclick();
   vm.runInContext('state.emailSent=true;state.view="result";render()',ac);
-  assert(element('app').innerHTML.includes('DO THESE 3 THINGS'));
+  assert(element('app').innerHTML.includes('WHAT MAY BE GETTING IN THE WAY'));
+  assert(!element('app').innerHTML.includes('DO THESE 3 THINGS'));
   element('edit').onclick();
   assert(element('app').innerHTML.includes('Question 1 of '+count));
 }

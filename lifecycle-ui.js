@@ -59,9 +59,7 @@
   notice.textContent=message;
   if(error){const retry=document.createElement('button');retry.className='secondary';retry.textContent='Retry saving';retry.onclick=saveProfile;notice.append(document.createElement('br'),retry);}
  }
- function studentResultHTML(r){
-  return `<div class="eyebrow">Your BOOKED AF Breakdown</div><div class="card"><div class="number">YOUR CAREER RIGHT NOW</div><h3>${r.stage}</h3><p>${r.snapshot}</p></div><div class="card"><div class="number">FIX THIS FIRST</div><h2>${r.top.title}</h2><p>${r.intro}</p></div><div class="eyebrow">DO THESE 3 THINGS</div>${r.plan.steps.map((s,i)=>`<div class="card"><div class="number">0${i+1} / DAY ${s.day}</div><h3>${s.title}</h3><p>${s.body}</p></div>`).join('')}<div class="card"><div class="number">WATCH THIS</div><h3>${r.plan.checkTitle}</h3><p>${r.plan.check}</p><p>${r.plan.rule}</p></div><div class="actions"><button class="primary" id="plan">OPEN MY 7-DAY CHECKLIST →</button><button class="secondary" id="share">SAVE / SHARE MY BREAKDOWN</button></div><div class="card"><div class="number">COMING NEXT</div><h3>BOOKED AF: FIRST 90</h3><p>A first-90-days plan built around what you need to get right first. It isn’t available to buy yet. Your free plan is ready now.</p><button class="secondary" id="paid">FIRST 90 UPDATES →</button></div><div class="actions"><button class="secondary" id="edit">EDIT ANSWERS</button><button class="secondary" id="restart">START OVER</button><button class="secondary" data-career-update>I’VE FINISHED SCHOOL →</button><button class="subtle" data-student-share>Share the free student Breakdown</button></div>`;
- }
+ function studentResultHTML(r){return shortResultHTML(r);}
  sitePages.first90=`<section class="first90-panel"><p class="eyebrow">BOOKED AF: FIRST 90</p><h1>THE FIRST 90.<br><span class="pink">COMING NEXT.</span></h1><p class="lead">The first salon. The first clients. The first paycheck. A plan for the part that gets real fast.</p><p>We’re testing what students actually need before building the full product. There’s nothing to buy yet.</p><div class="card" id="first90-interest-panel"></div><div class="actions"><button class="secondary" id="first90-back">Back to my free Breakdown →</button></div></section>`;
  function enhance(){
   const student=isStudent(state.answers);
@@ -91,7 +89,7 @@
   if(state.view==='first90'){
    const panel=document.getElementById('first90-interest-panel');
    if(!student){panel.innerHTML='<h2>Start with your free Breakdown.</h2><p>We’ll use your school and clinic experience to find what to fix first.</p><a class="primary" href="#student-breakdown">START MY STUDENT BREAKDOWN →</a>';}
-   else if(profile?.first90Interest||state.first90Interest){panel.innerHTML='<h2>YOU’RE ON THE LIST.</h2><p>We’ve saved your FIRST 90 interest. No payment has been taken. Keep working on your free seven-day plan.</p>';}
+   else if(profile?.first90Interest||state.first90Interest){panel.innerHTML='<h2>YOU’RE ON THE LIST.</h2><p>We’ve saved your FIRST 90 interest. No payment has been taken. Your free Breakdown is saved in your career profile.</p>';}
    else{panel.innerHTML='<h2>Want to hear when it’s ready?</h2><p>Send yourself your free Breakdown and tick the optional FIRST 90 box.</p><button class="primary" id="first90-email">GET FIRST 90 UPDATES →</button>';document.getElementById('first90-email').onclick=()=>{state.view='email';render();document.getElementById('first90-optin').checked=true;};}
    offerReady.then(()=>{
     if(state.view!=='first90'||!first90Offer||first90Offer.status!=='live'||first90Offer.price!==29)return;

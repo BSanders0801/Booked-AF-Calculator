@@ -126,7 +126,7 @@
     if (document.querySelector('[data-career-sample-panel]')) renderCareerSample('chair');
     if (['result','plan'].includes(state.view)) {
       const note = document.createElement('p'); note.className = 'storage-note';
-      note.innerHTML = 'Your free plan is saved in this browser for up to 30 days. On a shared device? <a href="#privacy" data-nav="privacy">Clear your saved plan here.</a>';
+      note.innerHTML = 'Your free Breakdown is saved in this browser for up to 30 days. On a shared device? <a href="#privacy" data-nav="privacy">Clear your saved Breakdown here.</a>';
       app.append(note);
     }
     if (state.view === 'result') {
@@ -196,8 +196,8 @@
     if (state.view === 'plans') {
       const free = document.getElementById('resume-free');
       const hasFree = Object.keys(state.answers).length > 0;
-      free.textContent = hasFree ? 'Open my free plan →' : 'Start my free Breakdown →';
-      document.getElementById('free-resume-note').textContent = hasFree ? 'Your free answers are saved in this browser. Let’s pick up there.' : 'No free plan saved in this browser yet. Start here, or use the link in your Breakdown email.';
+      free.textContent = hasFree ? 'Open my free Breakdown →' : 'Start my free Breakdown →';
+      document.getElementById('free-resume-note').textContent = hasFree ? 'Your free answers are saved in this browser. Let’s pick up there.' : 'No free Breakdown saved in this browser yet. Start here, or use the link in your Breakdown email.';
       free.onclick = () => go(hasFree ? lastFreeView : 'question');
       const paid = document.getElementById('resume-paid');
       const previewHost = /(?:^|\.)workers\.dev$/i.test(location.hostname);
@@ -220,7 +220,7 @@
     }
     if (state.view === 'email') {
       const note = app.querySelector('.capture-note');
-      if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. We’ll also send a few check-ins over the next 90 days so you can recheck your plan and numbers. This does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
+      if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. We’ll also send a few check-ins over the next 90 days so you can revisit your career and priorities. This does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
       const heading = app.querySelector('.capture-wordmark');
       if (heading) heading.innerHTML = '<img src="assets/booked-af-logo.webp" alt="BOOKED AF - Booked & Fabulous" width="230" height="109" style="max-width:100%;height:auto">';
     }
@@ -234,6 +234,8 @@
     document.title = 'BOOKED AF | ' + (titles[state.view] || 'My next move');
   }
   render = function () {
+    if(state.view==='plan')state.view='result';
+    if(['daymath','membertool','membership'].includes(state.view))state.view=isStudent(state.answers)?'first90':'paid';
     const active = document.activeElement;
     const choice = active?.dataset?.value ?? active?.dataset?.next30Choice;
     const screenKey = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? (state.careerData?.currentId ?? state.deepIndex) : '');
@@ -247,7 +249,7 @@
     if (sitePages[state.view]) {
       disposeEmailWidget(); disposeEmailWidget = () => {};
       app.innerHTML = sitePages[state.view];
-      if(state.view==='next30sample'&&typeof renderNext30Sample==='function')renderNext30Sample();
+
     } else originalRender();
     enhance(); save();
     const route = routeFor();
