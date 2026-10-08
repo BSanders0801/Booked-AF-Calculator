@@ -9,3 +9,5 @@ review.html
 .browser-review/
 .private-assets/
 tests/node_modules
+
+.release-review/
