@@ -1,6 +1,6 @@
 # BOOKED AF launch verification — October 8, 2026 UTC
 
-**Decision: HOLD production release.** The development fixes and isolated application checks are complete. Fresh inbox receipt, a physical iPhone check, and the approved production cutover/source-privacy execution remain open. Production has not received the secure candidate.
+**Decision: HOLD production website release.** The development fixes, isolated application checks, fresh inbox receipt and separately authorized Gmail migration are complete. A physical iPhone check and the approved production website cutover/source-privacy execution remain open. Production has not received the secure application candidate.
 
 ## Candidate and evidence
 
@@ -40,7 +40,8 @@ The existing secure public allowlist, server-authorized paid-module delivery, pr
 | Full-price hosted checkout | PASS — fresh $49 Stripe TEST checkout at 19:46 UTC; signed event completed with zero pending webhooks; actual welcome link opened protected intake and plan. No real charge. |
 | BETA100 hosted checkout | PASS — fresh 100% discount, $0 Stripe TEST checkout at 19:50 UTC; signed event completed with zero pending webhooks; paid access restored. The actual session reported paid; no_payment_required is separately tested by fixtures. |
 | Welcome and survey scheduling | PASS at provider — exactly one welcome and one scheduled Day 14 survey observed for each new purchase. Both welcomes report delivered. Surveys are scheduled for October 22. Actual future receipt is not yet testable. |
-| Fresh inbox receipt | UNCONFIRMED — exact Message-ID searches across the connected Workspace mailbox found neither new welcome. This is not proof of failure in the actual recipient mailbox. Resend delivered status does not prove inbox placement. |
+| Fresh inbox receipt | PASS — both October 8 welcome messages were opened in the original Spacemail inbox; their links match the verified full-price and BETA100 purchases. Both messages, the free Breakdown and survey response are now present as ordinary Gmail messages after the delta import. |
+| Gmail migration | PASS for preservation and routing — previous mail preserved, Google MX/SPF/DKIM configured, direct incoming delivery and outgoing BOOKED AF identity verified, and reply round trip passed. The initial direct test landed in Spam and was moved to Inbox; a subsequent new conversation and reply arrived in Inbox without manual relabeling. The lingering import job was manually stopped after all 51 discovered messages were accounted for (9 copied, 42 already present, zero failures); this is not an automatic import-completion claim. See [migration record](EMAIL_MIGRATION_2026-10-08.md). |
 | Final-deployment paid restore | PASS — reopened both actual welcome links after the final application deployment; protected Money Map loaded and retained test input 5000; private purchase credentials removed from the address bar. Earlier reload without the link correctly required re-verification. |
 | Real free Breakdown | PASS — student form completed at 19:50 UTC using the isolated dummy challenge; on-screen diagnosis and delivered email matched; no paid worksheets, scripts, calculations or detailed plan exposed. FIRST 90 stays coming-soon with optional updates. |
 | Real saved profile | PASS — opened actual email link in a new tab, restored server diagnosis, changed student to working stage and reopened the updated profile. Retested a different stage change after the final fix: diagnosis refreshed immediately, save confirmation appeared, and only one storage notice remained. Real independent-device testing remains below. |
@@ -54,9 +55,8 @@ Full-price/BETA100 checkouts were completed on revision `8617effbfc97664b43acb84
 
 ## Remaining launch gates requiring the owner
 
-1. **Confirm actual receipt of the two new welcome emails** in the approved test inbox, including spam and the actual mailbox/forwarding destination. They were sent October 8 at approximately 12:47 PM and 12:50 PM Los Angeles time. Open their access links. A connected Workspace search is not access to every mailbox in that delivery path. No DNS, historical Spacemail or production email setting was changed.
-2. **Complete one physical iPhone/Safari pass** on the final isolated application: free form and keyboard, actual email-link opening, saved profile, test checkout return, paid plan/tool entry, and plan-file save/import. Use only the approved recipient and test checkout; never enter a real card in testing.
-3. **Authorize the production release/cutover only after the first two gates pass.** Hosting/source-privacy direction was approved October 7, 10:53 PM Los Angeles time. That did not authorize deployment, DNS changes or making the repository private now. Execute [HOSTING_CUTOVER_PLAN.md](HOSTING_CUTOVER_PLAN.md), preserve existing purchase links/profile data/schedules, and use a public-only rollback.
+1. **Complete one physical iPhone/Safari pass** on the final isolated application: free form and keyboard, actual email-link opening, saved profile, test checkout return, paid plan/tool entry, and plan-file save/import. Use only the approved recipient and test checkout; never enter a real card in testing. The welcome-inbox gate is already closed.
+2. **Authorize the production website release/cutover after the physical-device check passes.** Hosting/source-privacy direction was approved October 7, 10:53 PM Los Angeles time. The separately authorized email migration does not authorize website deployment or making the repository private. Execute [HOSTING_CUTOVER_PLAN.md](HOSTING_CUTOVER_PLAN.md), preserve existing purchase links/profile data/schedules, and use a public-only rollback.
 
 ## Security limitation that remains until cutover
 
@@ -66,4 +66,4 @@ Full-price/BETA100 checkouts were completed on revision `8617effbfc97664b43acb84
 
 Read-only verification identified the current production CTA as the $49 **BOOKED AF: Your Next 30** Payment Link ending `6oU9AU5F72l05pA4RTaAw01`. The other active $49 **BOOKED AF Deep Dive** link is legacy and is not the current CTA. Both remain active; existing return URLs and historical buyer compatibility are preserved.
 
-No production website/Worker deployment, live Stripe mutation, DNS change, production email-setting change, repository-visibility change, release merge or real customer charge was performed. Only the development branch and isolated test environment were updated. Issue #6 remains open for the concrete gates above.
+No production website/Worker deployment, live Stripe mutation, Resend configuration change, repository-visibility change, release merge or real customer charge was performed. The later, separately authorized email migration changed email-only DNS and Gmail/Spacemail settings; unrelated website and Resend DNS records were preserved. Issue #6 remains open for the concrete website-release gates above.

@@ -1,6 +1,6 @@
 # Hosting and source privacy — approved direction, release execution gated
 
-Prepared October 7, 2026; updated October 8. The hosting/private-source direction was approved October 7 at 10:53 PM LA time. Production execution is still gated on inbox/device verification and explicit release approval. No production changes performed.
+Prepared October 7, 2026; updated October 8. The hosting/private-source direction was approved October 7 at 10:53 PM LA time. Welcome-inbox verification is complete. Production website execution is still gated on physical-device verification and explicit release approval. The separately authorized email migration is complete; no production application deployment was performed.
 
 ## Findings
 
@@ -31,7 +31,7 @@ Preparation passed: 13 public assets; no paid filenames, symlinks or unexpected 
 
 ## Ordered execution, only after explicit release approval
 
-1. Confirm new welcome messages in the recipient mailbox and finish the real iPhone check. Recheck the exact release code's automated gates.
+1. Finish the real iPhone check. New welcome messages are confirmed in the recipient mailbox and preserved in Gmail. Recheck the exact release code's automated gates.
 2. Privately record current production Worker versions, all bindings, schedules, domain routing, DNS and GitHub Pages settings. Verify that the generated API configuration preserves every required existing binding and schedule. Confirm durable migration tag is unused and old objects need no migration. Stop on differences; the local config is a review draft, not proof of live configuration parity.
 3. Prepare the new static host at its provider URL; initially keep paid entry disabled until the guarded API is ready. Do not expose paid source. Preserve the current live hostname and customer paths until the approved cutover.
 4. Deploy the guarded API at its existing address, keeping its secrets and profile data, Stripe webhook endpoint and email settings unchanged. Verify current-purchase authorization and no-store responses without creating a real charge. Check scheduled work and historical purchase compatibility.
@@ -45,4 +45,4 @@ Before cutover, retain a public-only maintenance package and known-good secured 
 
 ## Current unresolved checks
 
-Fresh October 8 full-price and BETA100 test welcomes report delivered at the provider, but exact Message-ID searches did not find them in the connected Workspace mailbox. Physical iPhone testing still requires the owner's device. See [current verification](LAUNCH_VERIFICATION_2026-10-08.md) for evidence and exact gates. Direction approval is recorded; production deployment, DNS cutover and repository visibility changes still require explicit release authorization. No production mail configuration changed.
+Fresh October 8 full-price and BETA100 test welcomes were opened in Spacemail and subsequently copied into Gmail. The separately approved email-only Google MX/SPF/DKIM cutover and send/receive/reply checks are complete; preserve those new records during any website cutover. Physical iPhone testing still requires the owner's device. See [current verification](LAUNCH_VERIFICATION_2026-10-08.md) and [email migration record](EMAIL_MIGRATION_2026-10-08.md). Direction approval is recorded; production website deployment, website DNS cutover and repository visibility changes still require explicit release authorization.
