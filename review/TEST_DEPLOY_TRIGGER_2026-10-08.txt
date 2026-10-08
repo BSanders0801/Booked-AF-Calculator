@@ -1,0 +1,1 @@
+Re-run candidate checkout QA on isolated test worker only. No production deployment.
