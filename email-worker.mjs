@@ -1091,7 +1091,7 @@ async function surveyResponse(request, env) {
   const allowedUseful = new Set(['using it','not yet','a little','not really']);
   const allowedRecommend = new Set(['absolutely','probably','maybe','not yet','no']);
   const allowedMore = new Set(['getting more clients','keeping clients','charging and pricing','making more money','where my money goes','working fewer days','marketing without living on Instagram','scripts and templates','classes and education','something else']);
-  if (!/^cs_(?:live|test)_[A-Za-z0-9]+$/.test(sessionId) || !Number.isInteger(rating) || rating < 1 || rating > 5 || !allowedEase.has(ease) || !allowedUseful.has(useful) || !allowedRecommend.has(recommend) || !more.length || more.length > 10 || more.some(v=>!allowedMore.has(v)) || comments.length > 2000) return reply({success:false,error:'Please check your answers.'},400);
+  if (!/^cs_(?:live|test)_[A-Za-z0-9]+$/.test(sessionId) || !Number.isInteger(rating) || rating < 1 || rating > 5 || !allowedEase.has(ease) || !allowedUseful.has(useful) || !allowedRecommend.has(recommend) || more.length > 10 || more.some(v=>!allowedMore.has(v)) || comments.length > 2000) return reply({success:false,error:'Please check your answers.'},400);
   try {
     const stripe = await fetch('https://api.stripe.com/v1/checkout/sessions/'+encodeURIComponent(sessionId), {headers:{Authorization:'Bearer '+env.STRIPE_SECRET_KEY},signal:AbortSignal.timeout(8000)});
     if (!stripe.ok) return reply({success:false,error:'We could not verify this purchase.'},403);
@@ -1115,7 +1115,7 @@ ${ease}
 ${useful}
 
 4. WHAT DO YOU WANT MORE HELP WITH?
-${more.join(', ')}
+${more.join(', ') || 'No optional topics selected.'}
 
 5. WOULD YOU TELL ANOTHER HAIRDRESSER ABOUT BOOKED AF?
 ${recommend}

@@ -47,7 +47,9 @@ test('isolated survey accepts approved test purchase only and keeps all mail ins
  const data={session_id:'cs_test_fixture',rating:5,ease:'pretty easy',useful:'using it',more:['making more money'],recommend:'probably',comments:'Isolated QA'};
  try{
   assert.equal((await worker.fetch(req('/survey',data),env)).status,200);
+  assert.equal((await worker.fetch(req('/survey',{...data,more:[]}),env)).status,200,'topics are optional');
+  assert.equal((await worker.fetch(req('/survey',{...data,more:['unknown']}),env)).status,400,'supplied topics must remain valid');
   for(const variant of [{livemode:true},{payment_link:'plink_other'},{payment_status:'unpaid'},{customer_details:{email:'other@example.invalid'}}]){const prior=session;session={...session,...variant};assert.equal((await worker.fetch(req('/survey',data),env)).status,403);session=prior;}
-  assert.equal(count,1);
+  assert.equal(count,2);
  }finally{globalThis.fetch=old;}
 });

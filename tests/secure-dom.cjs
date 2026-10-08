@@ -26,8 +26,25 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
   run("state.next30Verified=true;state.view='deepresult';render()");assert(!w.document.querySelector('#money-map'));
   run("restoreSchema(SHORT_SCHEMA);state.answers={};for(const q of questions){if(!q.when||q.when(state.answers)){const c=shortChoices(q,state.answers);state.answers[q.id]=q.multi?[c[0][0]]:c[0][0]}}state.emailSent=true;state.view='result';render()");
   assert(w.document.querySelector('#share'));
+  const copy={student:true,stage:'IN SCHOOL',title:'SERVER DIAGNOSIS ON RESTORE',body:'Sanitized diagnosis only.',offer:'No purchase required.',url:'https://booked-af-email-test.fixture.workers.dev/#first-90'};
+  const school=JSON.parse(run('JSON.stringify(state.answers)'));let saves=0;
+  w.fetch=async(url,options)=>{
+   if(!String(url).endsWith('/profile'))return Response.json({ready:true,schemas:['short-v5']});
+   const data=JSON.parse(options.body);if(data.action==='save')saves++;
+   return Response.json({success:true,profile:{id:'fixture_profile',schema:'short-v5',answers:data.answers||school,done:{},breakdown:data.action==='save'?{...copy,student:false,stage:'BUILDING',title:'SERVER DIAGNOSIS AFTER UPDATE'}:copy}});
+  };
+  await run("BookedLifecycle.openProfile('a'.repeat(64))");
+  assert.match(w.document.querySelector('#app').textContent,/SERVER DIAGNOSIS ON RESTORE/);
+  w.document.querySelector('[data-career-update]').click();
+  run("state.answers={careerstage:'building'};for(const q of questions){if(state.answers[q.id]===undefined&&(!q.when||q.when(state.answers))){const c=shortChoices(q,state.answers);state.answers[q.id]=q.multi?[c[0][0]]:c[0][0]}}state.view='result';render()");
+  for(let n=0;n<100&&!w.document.querySelector('#profile-save-status');n++)await new Promise(r=>setTimeout(r,5));
+  assert.equal(saves,1,'diagnosis refresh does not cause a save loop');
+  assert.match(w.document.querySelector('#app').textContent,/SERVER DIAGNOSIS AFTER UPDATE/);
+  assert.equal(w.document.querySelectorAll('.storage-note').length,1);
+  assert.match(JSON.parse(w.sessionStorage.getItem('booked-free-copy')).copy.title,/AFTER UPDATE/);
+
  }
  assert.deepEqual(errors,[]);dom.window.close();
  }
- console.log('PASS: generated public bundle, public navigation and results, tampering denied, server-delivered paid bundle and complete intake.');
+ console.log('PASS: generated public bundle, public navigation, profile restore and career-stage diagnosis, tampering denied, server-delivered paid bundle and complete intake.');
 })().catch(e=>{console.error(e);process.exitCode=1});

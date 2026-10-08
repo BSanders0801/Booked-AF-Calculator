@@ -125,6 +125,7 @@
     document.querySelector('.progress').hidden = state.view !== 'question';
     if (document.querySelector('[data-career-sample-panel]')) renderCareerSample('chair');
     if (['result','plan'].includes(state.view)) {
+      app.querySelector('.storage-note')?.remove();
       const note = document.createElement('p'); note.className = 'storage-note';
       note.innerHTML = 'Your free Breakdown is saved in this browser for up to 30 days. On a shared device? <a href="#privacy" data-nav="privacy">Clear your saved Breakdown here.</a>';
       app.append(note);
@@ -158,11 +159,6 @@
             const data = new FormData(form);
             const more = data.getAll('more');
             status.hidden = true;
-            if (!more.length) {
-              status.textContent = 'Pick at least one thing you want more help with.';
-              status.hidden = false;
-              return;
-            }
             button.disabled = true;
             button.textContent = 'SENDING…';
             try {

@@ -27,6 +27,11 @@
   const data=await r.json();if(!r.ok||data.success!==true)throw new Error(data.error||'We couldn’t connect to your saved profile. Try again.');
   profile=data.profile;persist();return profile;
  }
+ function setPublicCopy(p){
+  if(!p.breakdown)return;
+  state.freePublicCopy={schema:state.schema,answers:JSON.stringify(state.answers),copy:p.breakdown};
+  try{sessionStorage.setItem('booked-free-copy',JSON.stringify(state.freePublicCopy));}catch{}
+ }
  async function openProfile(token){
   access=token;
   app.classList.remove('marketing-screen');
@@ -34,7 +39,7 @@
   try{
    const p=await profileRequest('open');
    restoreSchema(p.schema);state.answers=validateShortAnswers(p.answers);state.done=p.done||{};state.emailSent=true;state.index=0;
-   if(p.breakdown){state.freePublicCopy={schema:state.schema,answers:JSON.stringify(state.answers),copy:p.breakdown};try{sessionStorage.setItem('booked-free-copy',JSON.stringify(state.freePublicCopy))}catch{}}
+   setPublicCopy(p);
    lastSaved=JSON.stringify({answers:state.answers,done:state.done});
    try{sessionStorage.setItem(deliveryKey,JSON.stringify({schema:state.schema,answers:state.answers,emailSent:true,name:state.name||''}));}catch{}
    history.replaceState(null,'',location.pathname+location.search+'#my-breakdown');state.view='result';render();
@@ -49,7 +54,14 @@
   const value=JSON.stringify({answers,done:state.done});if(value===lastSaved)return;
   saving=true;
   let saved=false;
-  try{await profileRequest('save',{answers,done:state.done});lastSaved=value;saved=true;showSaveStatus('Saved to your career profile.');}
+  try{
+   const p=await profileRequest('save',{answers,done:state.done});lastSaved=value;saved=true;
+   // A pending save must not apply diagnosis text to answers edited while it was in flight.
+   if(value===JSON.stringify({answers:state.answers,done:state.done})){
+    setPublicCopy(p);if(state.view==='result')render();
+   }
+   showSaveStatus('Saved to your career profile.');
+  }
   catch(error){showSaveStatus(error.message+' Your browser copy is still available.',true);}
   finally{saving=false;if(saved)saveProfile();}
  }
