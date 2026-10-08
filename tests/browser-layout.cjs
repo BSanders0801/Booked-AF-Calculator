@@ -7,7 +7,7 @@ const output=path.join(root,'.browser-review');
  const server=http.createServer((req,res)=>{const p=path.join(root,new URL(req.url,'http://localhost').pathname==='/'?'index.html':new URL(req.url,'http://localhost').pathname);try{res.setHeader('Content-Type',p.endsWith('.js')?'text/javascript':p.endsWith('.css')?'text/css':p.endsWith('.html')?'text/html':'application/octet-stream');res.end(fs.readFileSync(p))}catch{res.statusCode=404;res.end()}}).listen(8765,'127.0.0.1');
  const browser=await chromium.launch({headless:true});const results=[];fs.mkdirSync(output,{recursive:true});
  try{for(const width of [320,390,1280]){
- const page=await browser.newPage({viewport:{width,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const page=await browser.newPage({viewport:{width,height:900}});await page.addInitScript(() => { window.turnstile={render:()=>1,remove:()=>{},reset:()=>{}}; });const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/*',route=>{const u=route.request().url();return u.startsWith('http://127.0.0.1:8765')?route.continue():route.request().resourceType()==='script'?route.fulfill({status:200,contentType:'text/javascript',body:''}):route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ready:true,schemas:['short-v5'],paid:false})})});
  await page.goto('http://127.0.0.1:8765');await page.waitForFunction(()=>typeof state!=='undefined');
  for(const view of ['intro','sample','next30sample','paid','email','result','first90','deepintake','deepresult']){
