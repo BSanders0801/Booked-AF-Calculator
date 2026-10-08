@@ -47,6 +47,21 @@ jobs:
       - name: Deploy only the isolated test environment
         if: env.BOOKED_AF_TEST_DEPLOY_ENABLED == 'true'
         run: node scripts/deploy-test-worker.mjs
+      - name: Smoke-test isolated Worker and reject invalid payment access
+        if: env.BOOKED_AF_TEST_DEPLOY_ENABLED == 'true'
+        run: |
+          node --input-type=module <<'JS'
+          const base='https://booked-af-email-test.wild-recipe-42df.workers.dev';
+          const health=await fetch(base+'/health',{signal:AbortSignal.timeout(15000)});
+          const data=await health.json();
+          if(!health.ok||data.isolated!==true||data.ready!==true||data.checkout!==true||data.webhook!==true)
+            throw Error('Isolated checkout Worker readiness failed');
+          const invalid=await fetch(base+'/verify-checkout?session_id=cs_live_fake',{signal:AbortSignal.timeout(15000)});
+          const denied=await invalid.json();
+          if(invalid.status!==400||denied.paid!==false)
+            throw Error('Invalid checkout session was not denied');
+          console.log('Isolated Worker healthy; invalid checkout access denied.');
+          JS
       - name: Report deployment gate
         if: env.BOOKED_AF_TEST_DEPLOY_ENABLED != 'true'
         run: echo 'Checks completed. No deployment requested. Enable BOOKED_AF_TEST_DEPLOY_ENABLED only after the test credentials and recipient are approved.'
