@@ -6,8 +6,9 @@
 
 - Repository: `BSanders0801/Booked-AF-Calculator`; branch: `build/next30-shell-p04`; tracking: [issue #6](https://github.com/BSanders0801/Booked-AF-Calculator/issues/6).
 - Final application revision deployed to test: `1d59e173016c6b8cf008f2843c67c72608e1f31c`.
-- Final browser-test revision: `b66b8fd9549a92010538f9132aaed55e4a18572c`. Its sole change clicks the visible survey labels; application source is identical to the deployed revision.
-- [Final automated QA — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836850311).
+- Browser interaction-fix revision: `b66b8fd9549a92010538f9132aaed55e4a18572c`. Its sole change clicks the visible survey labels; application source is identical to the deployed revision.
+- Dependency/audit-gate revision: `21a6a3595a5dae897e32ad5463d70ee8c7f8e098`; application source is still identical to the final isolated deployment. The final branch-head CI run after this audit update is recorded in issue #6.
+- [Browser regression QA — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836850311).
 - [Final isolated deployment — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836334429).
 - [Earlier same-session QA — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37834352046).
 - [Intermediate QA failure, subsequently corrected](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836334323): survey test clicked an input covered by its styled label. Local/server tests passed; actual survey submission passed. The browser test now uses the visible label.
@@ -23,6 +24,7 @@ No credentials, payment/session/event identifiers, customer addresses, receipts,
 4. Restricted isolated survey submissions to the approved test product and recipient, including approved zero-cost checkouts.
 5. Expanded browser QA to Chromium and WebKit at 320, 390, 768 and 1280px. Added verification-failure recovery and survey regression coverage. Added profile restore/update regression coverage to the generated-public-package DOM test.
 6. Expanded test-deploy triggers to include all application JavaScript, HTML, styles and assets. Deployment health now exposes and checks the exact revision and isolated profile capability. Public CI artifacts exclude protected paid worksheet screenshots.
+7. Updated the test-only transitive dependency `source-map-js` from 1.2.1 to patched 1.2.2 after the final npm audit found [GHSA-68fv-2mgg-jv7q](https://github.com/advisories/GHSA-68fv-2mgg-jv7q). The audit now reports zero known vulnerabilities. CI installs the exact lockfile with `npm ci` and runs an audit gate for high/critical findings. Customer application assets do not include this dependency.
 
 The existing secure public allowlist, server-authorized paid-module delivery, private/no-store responses, purchase expiry/grandfathering, durable fulfillment deduplication and guarded future production entrypoint were retained and retested.
 
@@ -32,6 +34,7 @@ The existing secure public allowlist, server-authorized paid-module delivery, pr
 | --- | --- |
 | Product and content suite | PASS locally and in CI — 10 careers × 7 goals, 2,692 answer variants, 186 adaptive free-form variants, 288 student scenarios, money/rebooking/buyback/service/income-lane tools, save/import, and 17 email/service subtests. |
 | Security and lifecycle suite | PASS — 16 subtests plus generated-public-package DOM integration; private profile restore/update, foreign/forged/expired access, approved-recipient isolation, optional survey fields and sanitized free diagnosis. |
+| Dependency and secret-pattern checks | PASS — npm audit reports zero known vulnerabilities after the patch; tracked-file provider-secret pattern scan found no matches. This is a scoped check, not a guarantee that arbitrary secrets cannot exist. |
 | Paid authorization | PASS — valid partial discounts and zero-cost purchases allowed; unpaid/open, unrelated, wrong-mode, expired, foreign-origin and provider-failure cases denied in automated fixtures. Policy-era 365-day expiry and older buyer terms preserved. |
 | Webhook and email retries | PASS in automated fixtures — signature rejection, concurrent events, failed-stage retry, provider idempotency, persisted successful stages and late replay deduplication. No live failure injection. |
 | Full-price hosted checkout | PASS — fresh $49 Stripe TEST checkout at 19:46 UTC; signed event completed with zero pending webhooks; actual welcome link opened protected intake and plan. No real charge. |

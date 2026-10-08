@@ -27,7 +27,7 @@ Run `node scripts/prepare-release.mjs` from the repository. It performs no netwo
 - `.release-review/api.config.json`: draft for the existing API name, guarded entrypoint, existing FOLLOWUPS binding and new durable purchase fulfillment binding; no static assets attached.
 - `.release-review/public-manifest.json`: SHA-256 hashes for the exact public files.
 
-Preparation passed: 13 public assets; no paid filenames, symlinks or unexpected directories; API and website packages are separate. Configurations remain ignored local artifacts, not an automatic deployment workflow. Existing `wrangler.jsonc` and test configuration are unchanged.
+Preparation passed: 13 public assets; no paid filenames, symlinks or unexpected directories; API and website packages are separate. Configurations remain ignored local artifacts, not an automatic deployment workflow. The preparation command does not modify existing `wrangler.jsonc` or test configuration. The isolated test config separately includes test-only durable fulfillment and lifecycle bindings.
 
 ## Ordered execution, only after explicit release approval
 

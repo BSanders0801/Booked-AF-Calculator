@@ -21,7 +21,7 @@ Worker name:
 
 `booked-af-email-test`
 
-The test config intentionally has no production KV binding. TestFulfillment and TestLifecycle Durable Objects hold only isolated purchase-delivery state and test profile data. Never add the production FOLLOWUPS namespace.
+The test config intentionally has no production KV binding. TestPurchaseFulfillment and TestLifecycle Durable Objects hold only isolated purchase-delivery state and test profile data. Never add the production FOLLOWUPS namespace.
 
 ## Required test secrets
 
@@ -82,7 +82,7 @@ Set these only on the test Worker:
 - `STRIPE_WEBHOOK_SECRET` — signing secret from the test webhook endpoint
 - `RESEND_API_KEY` — approved sending key for the test delivery
 - `TEST_RECIPIENT_EMAIL` — the sole approved test inbox (required by the isolated wrapper)
-- `TEST_FULFILLMENT` — test-only durable purchase-delivery binding
+- `FULFILLMENT` — test-only durable purchase-delivery binding to `TestPurchaseFulfillment` in this isolated Worker
 - `TEST_LIFECYCLE` — test-only durable profile/event binding
 
 No real TURNSTILE or REPORT secret is needed for this isolated workflow. Reports remain disabled. Do not add production KV bindings or production secrets.
