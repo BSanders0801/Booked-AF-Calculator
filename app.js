@@ -552,7 +552,7 @@ function mountEmailVerification(form, error) {
   widget = api.render(container, {
    sitekey: emailSiteKey, action: 'booked_email', size: 'flexible',
    callback: value => { token = value; notice(''); },
-   'expired-callback': () => { token = ''; notice('Verification expired. Please verify again.'); },
+   'expired-callback': () => { token = ''; if (!disposed && widget !== undefined) api.reset(widget); notice('Verification expired. Please complete the new verification below. Your answers are saved.'); },
    'error-callback': () => { token = ''; notice('Verification could not finish. Please refresh and try again.'); },
    'timeout-callback': () => { token = ''; notice('Verification timed out. Please try again.'); }
   });
@@ -613,7 +613,7 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
     failure = 'Email sign-ups need a short break. Your details are still here. Please try again in a few minutes.';
     throw new Error('Rate limited');
    }
-   if (response.status === 403) failure = 'Verification expired. Please verify again and resubmit.';
+   if (response.status === 403) failure = 'Verification was not accepted. Please complete the new verification and try again. If you are testing a preview, use the official website instead.';
    if (response.status === 503) failure = 'Email is temporarily unavailable. Your details are still here. Please try again shortly.';
    if (response.status === 400) failure = 'Please check your name and email. If this continues, restart the questionnaire.';
    if (!response.ok) throw new Error('Submission failed: ' + response.status);
@@ -633,8 +633,9 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
    console.warn('BOOKED AF email submission:', err.name, err.message);
    if (form.isConnected) {
     error.dataset.submission = 'true';
-    disposeEmailWidget();verification=null;
-    form.querySelectorAll('[data-email-verification]').forEach(node=>node.remove());
+    // Turnstile tokens are single-use. Keep the answers and widget in place,
+    // but issue a fresh challenge after every failed request.
+    if (verification) verification.reset();
     error.textContent = failure + ' (Reference: ' + failureCode + ')';
     error.focus();
    }
