@@ -27,7 +27,9 @@ export default {
       if(request.method!=='POST')return response('Method not allowed',405);
       if(request.headers.get('Origin')!==testOrigin)return response('Wrong test origin',403);
       let data;try{const body=await request.clone().text();if(body.length>30000)return response('Too large',413);data=JSON.parse(body);}catch{return response('Invalid request',400);}
-      if(String(data.email||'').trim().toLowerCase()!==env.TEST_RECIPIENT_EMAIL.toLowerCase() || data.type!=='breakdown')return response('Test recipient not approved',403);
+      if(data.type!=='breakdown')return response('Unsupported test submission',400);
+      if(String(data.email||'').trim().toLowerCase()!==env.TEST_RECIPIENT_EMAIL.toLowerCase())
+        return Response.json({success:false,code:'TEST_RECIPIENT_NOT_APPROVED'},{status:403,headers:{'Cache-Control':'no-store'}});
       if(env.TEST_LIFECYCLE)return env.TEST_LIFECYCLE.get(env.TEST_LIFECYCLE.idFromName('approved-test-inbox')).fetch(request);
       return worker.fetch(request,{...env,TURNSTILE_SECRET_KEY:'1x0000000000000000000000000000000AA'},ctx);
     }

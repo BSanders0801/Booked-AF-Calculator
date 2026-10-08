@@ -17,7 +17,10 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secu
   await page.addInitScript(()=>{window.qaVerificationResets=0;window.turnstile={render:(el,opts)=>{window.qaVerify=opts.callback;opts.callback('fixture-token');return 1},remove:()=>{},reset:()=>{window.qaVerificationResets++;window.qaVerify('fixture-token-renewed')}}});
   await page.route('**/*',route=>{const url=route.request().url();
    if(url.startsWith('http://127.0.0.1:8766')||url.startsWith('blob:'))return route.continue();
-   if(url.endsWith('/lead-test')&&route.request().method()==='POST'&&leadAttempts++===0)return route.fulfill({status:403,contentType:'application/json',body:JSON.stringify({success:false})});
+   if(url.endsWith('/lead-test')&&route.request().method()==='POST'){
+    const attempt=leadAttempts++;
+    if(attempt<2)return route.fulfill({status:403,contentType:'application/json',body:JSON.stringify({success:false,...(attempt===1?{code:'TEST_RECIPIENT_NOT_APPROVED'}:{})})});
+   }
    if(url.endsWith('/survey')){surveyPayload=route.request().postDataJSON();return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({success:true})});}
    if(url.endsWith('/paid-content'))return route.fulfill({status:route.request().headers().authorization==='Bearer cs_test_fixture'?200:403,contentType:'text/javascript',body:bundle});
    return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ready:true,schemas:['short-v5'],success:true,paid:false})});
@@ -41,11 +44,21 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secu
    const next=page.locator('#next');if(await next.count())await next.click();
   }
   assert.equal(await page.evaluate(()=>state.view),'email');
-  await page.locator('input[name="name"]').fill('Test');await page.locator('input[name="email"]').fill('recipient@example.invalid');
+  await page.locator('input[name="name"]').fill('Test');await page.locator('input[name="email"]').fill('other@example.invalid');
   await page.locator('#form button[type="submit"]').click();
   await page.waitForFunction(()=>window.qaVerificationResets===1);
-  assert.equal(await page.locator('input[name="email"]').inputValue(),'recipient@example.invalid');
+  assert.equal(await page.locator('input[name="email"]').inputValue(),'other@example.invalid');
   assert.equal(await page.evaluate(()=>state.view),'email');
+  assert.match(await page.locator('#app').innerText(),/Verification was not accepted/);
+  assert.doesNotMatch(await page.locator('#app').innerText(),/use the official website instead/);
+  await page.locator('#form button[type="submit"]').click();
+  await page.waitForFunction(()=>window.qaVerificationResets===2);
+  assert.match(await page.locator('#app').innerText(),/only accepts the email approved for testing/);
+  assert.doesNotMatch(await page.locator('#app').innerText(),/Verification was not accepted/);
+  assert.equal(await page.locator('input[name="name"]').inputValue(),'Test');
+  assert.equal(await page.locator('input[name="email"]').inputValue(),'other@example.invalid');
+  assert.equal(await page.evaluate(()=>state.view),'email');
+  await page.locator('input[name="email"]').fill('recipient@example.invalid');
   await page.locator('#form button[type="submit"]').click();await page.waitForFunction(()=>state.view==='result');
   assert(!/MONTHLY MONEY MAP|STEAL THESE WORDS/.test(await page.locator('#app').innerText()));
   await page.screenshot({path:path.join(out,`${width}-free.png`),fullPage:true});
@@ -79,7 +92,7 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secu
   assert.deepEqual(surveyPayload.more,[],'survey allows omitted optional help topics');
   assert.equal(surveyPayload.session_id,'cs_test_fixture');
   assert.deepEqual(errors,[]);
-  results.push({engine,width,verificationRetry:'pass',freeForm:'pass',navigation:'pass',clientTampering:'denied',protectedLoad:'pass',moneyMap:'pass',restore:'pass',optionalSurveyTopics:'pass',overflow:false,errors});await page.close();
+  results.push({engine,width,verificationRetry:'pass',recipientCorrection:'pass',freeForm:'pass',navigation:'pass',clientTampering:'denied',protectedLoad:'pass',moneyMap:'pass',restore:'pass',optionalSurveyTopics:'pass',overflow:false,errors});await page.close();
  }
  fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2));
  }finally{await browser.close();server.close()}

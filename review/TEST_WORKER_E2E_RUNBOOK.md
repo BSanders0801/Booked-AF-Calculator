@@ -1,6 +1,6 @@
 # BOOKED AF — TEST WORKER / END-TO-END PURCHASE RUNBOOK
 
-**Status:** Fresh October 8 hosted checkouts, provider delivery and paid-link restore passed. Inbox and physical-device confirmation remain open. See [current verification](LAUNCH_VERIFICATION_2026-10-08.md).
+**Status:** Fresh October 8 hosted checkouts, provider delivery, inbox receipt and paid-link restore passed. Physical-device confirmation remains open. See [current verification](LAUNCH_VERIFICATION_2026-10-08.md).
 **Updated:** October 8, 2026.
 
 ## Purpose
@@ -86,6 +86,20 @@ Set these only on the test Worker:
 - `TEST_LIFECYCLE` — test-only durable profile/event binding
 
 No real TURNSTILE or REPORT secret is needed for this isolated workflow. Reports remain disabled. Do not add production KV bindings or production secrets.
+
+### Phone test: use the approved email
+
+Use the exact approved test recipient for both the free Breakdown and Stripe test
+checkout. Gmail delivery does not make a different Gmail address an approved test
+recipient. The receiving inbox can differ from the address entered on the form.
+
+A green test Turnstile widget does not establish recipient approval. The isolated
+form returns `403` with `TEST_RECIPIENT_NOT_APPROVED` for a different address,
+before any verification, email or profile operation. The generated test UI explains
+the address restriction and keeps the answers and typed details so the tester can
+correct the address and resubmit. The response does not reveal the approved inbox.
+Other verification failures keep a separate retry message. Test failures must not
+direct the tester to make a production purchase or submit on the live website.
 
 Do not commit any secret.
 

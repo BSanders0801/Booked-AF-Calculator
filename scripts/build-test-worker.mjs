@@ -38,6 +38,12 @@ export async function buildTestWorker(config) {
       content = content.replace("const emailSiteKey = '0x4AAAAAAFDEaTJ_ybTjAuWb';","const emailSiteKey = '1x00000000000000000000AA';");
       content = content.replace('await fetch(emailServiceUrl, {',"await fetch(emailServiceUrl+'/lead-test', {");
       content = content.replace('fetch(emailServiceUrl,{', "fetch(emailServiceUrl+'/health',{");
+      content = replaceOne(content, /if \(response.status === 403\) failure = '[^\n]+';/, `if (response.status === 403) {
+    const rejection = await response.clone().json().catch(() => ({}));
+    failure = rejection.code === 'TEST_RECIPIENT_NOT_APPROVED'
+      ? 'This test site only accepts the email approved for testing. Use that address and try again. Your answers are saved.'
+      : 'Verification was not accepted. Please complete the new verification and try again. Your answers are saved.';
+   }`);
     }
     if(file==='lifecycle-ui.js')content=content.replace('fetch(emailServiceUrl,{',"fetch(emailServiceUrl+'/health',{");
     content = content.replace(/https:\/\/(?:www\.)?bookedandfabulous\.com/g, origin);
