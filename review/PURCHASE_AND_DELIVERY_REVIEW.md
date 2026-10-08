@@ -1,5 +1,7 @@
 # YOUR NEXT 30 — purchase and delivery review
 
+> Current status: see [October 8 launch verification](LAUNCH_VERIFICATION_2026-10-08.md). Fresh full-price and BETA100 isolated checkouts, provider delivery and protected access passed. Actual new-message inbox confirmation and physical-device testing remain open; historical evidence below is not final-candidate approval.
+
 Reviewed October 6, 2026 (LA). Draft review only; this document does not authorize production release.
 
 ## Confirmed offer and delivery

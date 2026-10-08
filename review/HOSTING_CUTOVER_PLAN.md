@@ -1,6 +1,6 @@
-# Hosting and source privacy — approval proposal
+# Hosting and source privacy — approved direction, release execution gated
 
-Prepared October 7, 2026, 10:40 PM LA time. No production changes performed.
+Prepared October 7, 2026; updated October 8. The hosting/private-source direction was approved October 7 at 10:53 PM LA time. Production execution is still gated on inbox/device verification and explicit release approval. No production changes performed.
 
 ## Findings
 
@@ -11,7 +11,7 @@ Sources:
 - https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits
 - https://developers.cloudflare.com/workers/static-assets/
 
-## Proposed decision
+## Approved direction
 
 Use Cloudflare Workers Static Assets for the generated public-only website, keep the existing Cloudflare API endpoint for payment verification and email, then make the existing source repository private. The isolated environment already exercises this provider's assets and Worker runtime. No new vendor account or paid plan has been purchased. Confirm account capacity/cost before provisioning.
 
@@ -45,4 +45,4 @@ Before cutover, retain a public-only maintenance package and known-good secured 
 
 ## Current unresolved checks
 
-Fresh welcome emails still do not appear in the connected Workspace mailbox, including a new search this turn. Resend delivered status was verified previously. No additional email was sent and no mail configuration changed in this turn. Physical iPhone testing still requires Bradley's device. Hosting migration and source visibility are proposed decisions, not authorized production actions.
+Fresh October 8 full-price and BETA100 test welcomes report delivered at the provider, but exact Message-ID searches did not find them in the connected Workspace mailbox. Physical iPhone testing still requires the owner's device. See [current verification](LAUNCH_VERIFICATION_2026-10-08.md) for evidence and exact gates. Direction approval is recorded; production deployment, DNS cutover and repository visibility changes still require explicit release authorization. No production mail configuration changed.

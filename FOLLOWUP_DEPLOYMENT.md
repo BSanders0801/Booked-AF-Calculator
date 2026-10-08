@@ -1,5 +1,7 @@
 # BOOKED AF follow-up email deployment
 
+> Production is already configured. Do not recreate its KV namespace or change schedules from this historical setup guide. Preserve current FOLLOWUPS data/bindings and record live configuration before an explicitly approved release. The current production-cutover procedure is [review/HOSTING_CUTOVER_PLAN.md](review/HOSTING_CUTOVER_PLAN.md); the isolated test lifecycle uses separate durable storage.
+
 The email Worker now uses two delivery methods:
 
 - Day 7 Breakdown check-in: Resend scheduled email

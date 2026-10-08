@@ -1,7 +1,7 @@
 # BOOKED AF — TEST WORKER / END-TO-END PURCHASE RUNBOOK
 
-**Status:** Baseline full-price and BETA100 end-to-end checks passed October 6; repeat against the final deployed release candidate before beta.
-**Updated:** October 6, 2026.
+**Status:** Fresh October 8 hosted checkouts, provider delivery and paid-link restore passed. Inbox and physical-device confirmation remain open. See [current verification](LAUNCH_VERIFICATION_2026-10-08.md).
+**Updated:** October 8, 2026.
 
 ## Purpose
 
@@ -21,7 +21,7 @@ Worker name:
 
 `booked-af-email-test`
 
-The test config intentionally has no production KV binding.
+The test config intentionally has no production KV binding. TestFulfillment and TestLifecycle Durable Objects hold only isolated purchase-delivery state and test profile data. Never add the production FOLLOWUPS namespace.
 
 ## Required test secrets
 
@@ -67,8 +67,7 @@ The generated `.test-worker/` and `.test-website/` directories are ignored by Gi
 Production `email-worker.mjs`, `wrangler.jsonc`, `app.js`, and `site-ui.js` are not
 modified. The test artifact replaces production links, allows only its own
 origin, removes review bypasses, rejects live sessions/events/keys, and limits
-email delivery to the approved test inbox. Lead signup, saved-profile, survey
-submission and report APIs are outside this isolated checkout test scope.
+email delivery to the approved test inbox. The isolated `/lead-test`, `/profile`, `/events` and `/survey` routes exercise real lifecycle behavior using test-only durable storage. Private reports remain disabled. The signup uses official dummy verification keys only on the isolated host; production challenge validation is preserved.
 
 If webhook creation succeeds but secret upload fails, stop and securely recover
 the existing test webhook secret. Do not create duplicate endpoints or rotate a
@@ -83,11 +82,10 @@ Set these only on the test Worker:
 - `STRIPE_WEBHOOK_SECRET` — signing secret from the test webhook endpoint
 - `RESEND_API_KEY` — approved sending key for the test delivery
 - `TEST_RECIPIENT_EMAIL` — the sole approved test inbox (required by the isolated wrapper)
-- `TURNSTILE_SECRET_KEY` only if testing Breakdown signup through the same environment
-- `REPORT_SECRET` only if testing the private conversion summary
+- `TEST_FULFILLMENT` — test-only durable purchase-delivery binding
+- `TEST_LIFECYCLE` — test-only durable profile/event binding
 
-The isolated wrapper currently disables signup, survey submissions and reports.
-Do not add those optional secrets or a production KV binding to this deployment.
+No real TURNSTILE or REPORT secret is needed for this isolated workflow. Reports remain disabled. Do not add production KV bindings or production secrets.
 
 Do not commit any secret.
 
@@ -150,7 +148,26 @@ Use a preview/local build or a temporary non-production site configuration that 
    - replay after recovery sends once
 
 6. Expired-policy fixture / automated test
-   - remains green alongside live end-to-end evidence
+   - remains green alongside real test-provider end-to-end evidence
+
+7. Free profile continuity
+   - approved inbox signup shows sanitized diagnosis only
+   - private email link restores the same diagnosis
+   - changing stage saves to isolated storage and updates diagnosis immediately
+   - reopening the link retains updated answers; forged/foreign/expired profile access fails
+
+8. Purchaser survey
+   - approved test purchase can submit required answers with optional topics left blank
+   - invalid supplied topics and wrong recipient/product/mode are rejected
+   - thank-you state and provider-delivered response stay inside the approved test workflow
+
+9. Responsive and access recovery
+   - Chromium and WebKit at 320/390/768/1280px
+   - challenge failure retains form input and offers retry
+   - actual welcome links reopen paid content; refresh without private credentials requires verification
+   - only free/marketing screenshots are uploaded to public CI artifacts
+
+The `/health` response must report the expected commit in `revision`, with isolated/ready/checkout/webhook/profiles true. Health is not purchase or inbox evidence.
 
 ## Evidence to record privately
 

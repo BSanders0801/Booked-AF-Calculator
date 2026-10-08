@@ -1,66 +1,66 @@
-# BOOKED AF launch verification — 2026-10-08 UTC
+# BOOKED AF launch verification — October 8, 2026 UTC
 
-**Decision: NOT READY for production release.** Development changes and isolated tests are complete within the available environment. The public-source exposure, current inbox confirmation, physical-device check, and production release gate remain open.
+**Decision: HOLD production release.** The development fixes and isolated application checks are complete. Fresh inbox receipt, a physical iPhone check, and the approved production cutover/source-privacy execution remain open. Production has not received the secure candidate.
 
 ## Candidate and evidence
 
-- Repository: `BSanders0801/Booked-AF-Calculator`
-- Development branch: `build/next30-shell-p04`
-- Secure delivery implementation: `bf770f41cef123357fb82e0b34b2570132c55a24`
-- Final code revision: `627eba038d37edb91584eb5bec951e079244dda7`
-- [Final automated QA — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37724136274)
-- [Final isolated deployment — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37724136278)
-- [Initial secure candidate QA — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37722961556)
-- [Initial secure candidate isolated deployment — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37722961553)
+- Repository: `BSanders0801/Booked-AF-Calculator`; branch: `build/next30-shell-p04`; tracking: [issue #6](https://github.com/BSanders0801/Booked-AF-Calculator/issues/6).
+- Final application revision deployed to test: `1d59e173016c6b8cf008f2843c67c72608e1f31c`.
+- Final browser-test revision: `b66b8fd9549a92010538f9132aaed55e4a18572c`. Its sole change clicks the visible survey labels; application source is identical to the deployed revision.
+- [Final automated QA — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836850311).
+- [Final isolated deployment — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836334429).
+- [Earlier same-session QA — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37834352046).
+- [Intermediate QA failure, subsequently corrected](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836334323): survey test clicked an input covered by its styled label. Local/server tests passed; actual survey submission passed. The browser test now uses the visible label.
 - Test application: https://booked-af-email-test.wild-recipe-42df.workers.dev
-- Release tracking: https://github.com/BSanders0801/Booked-AF-Calculator/issues/6
 
-Payment/session/event identifiers, customer addresses, receipts, credentials and private return links are intentionally excluded.
+No credentials, payment/session/event identifiers, customer addresses, receipts, private profile links or private purchase links belong in this report or the issue.
 
-## Completed changes
+## Changes completed during this continuation
 
-1. Build an explicit public-asset package. Paid lessons, scripts, calculations, worksheets, detailed recipes and implementation modules are excluded from static delivery and compiled into a server-only module.
-2. Add `/paid-content` server authorization. Each new delivery verifies the purchase against Stripe before returning implementation code. Missing, forged, unpaid, unrelated, expired, foreign-origin and wrong-mode credentials fail closed. Authorized responses use `private, no-store` and vary on origin/authorization.
-3. Replace public paid rendering with a small loader. A browser flag or saved plan file alone cannot obtain implementation content. Remove the purchase credential from the address bar after access loads. Reopening the welcome link re-verifies access and restores saved work. Reload without that link requires re-verification; it preserves saved answers.
-4. Serialize purchase fulfillment per checkout using isolated Durable Objects. Persist successful survey/welcome stages across retries and replays; retain provider idempotency keys. Ambiguous sends older than the provider retry window stop for reconciliation instead of blindly sending duplicates.
-5. Return only the free diagnosis allowlist to browsers and emails, with matching free-result copy. Remove hidden paid recipe data from public bundles.
-6. Add an approved-recipient-only test form using Cloudflare's official dummy verification keys. Fix the real-provider response mismatch found during manual testing; production verification logic was not changed by this fix.
-7. Add a future `secure-api-worker.mjs` release entrypoint that refuses paid endpoints unless live configuration and durable fulfillment are present. It is reviewed source only: existing production configuration and deployment remain untouched.
-8. Restrict future public QA artifacts to public screens and sanitized result summaries; paid worksheet screenshots are excluded.
+1. Added an isolated durable profile store so real signup, private profile restoration, career-stage updates and analytics can be exercised without binding production FOLLOWUPS data. Test messages remain restricted to the approved inbox; live keys/events/sessions and production bindings fail closed.
+2. Restored the server's sanitized free diagnosis on private-link reopen. Fixed a second bug discovered in the hosted flow: changing career stage saved new answers but displayed fallback diagnosis until reopening. Saves now refresh the diagnosis immediately and ignore stale responses for answers changed during an in-flight save. Removed a repeated storage notice.
+3. Fixed the survey's optional help-topics field. The UI said optional but both client and server required a choice. Empty selections now submit; invalid supplied topics still fail validation. Hosted submission and provider delivery were verified.
+4. Restricted isolated survey submissions to the approved test product and recipient, including approved zero-cost checkouts.
+5. Expanded browser QA to Chromium and WebKit at 320, 390, 768 and 1280px. Added verification-failure recovery and survey regression coverage. Added profile restore/update regression coverage to the generated-public-package DOM test.
+6. Expanded test-deploy triggers to include all application JavaScript, HTML, styles and assets. Deployment health now exposes and checks the exact revision and isolated profile capability. Public CI artifacts exclude protected paid worksheet screenshots.
 
-## Test results
+The existing secure public allowlist, server-authorized paid-module delivery, private/no-store responses, purchase expiry/grandfathering, durable fulfillment deduplication and guarded future production entrypoint were retained and retested.
 
-| Check | Result and scope |
+## Verification results
+
+| Check | Result and evidence scope |
 | --- | --- |
-| Fresh full-price hosted checkout | PASS — $49 in Stripe test mode; completed/paid, test event processed, protected intake and plan opened. Checkout completed 03:31 UTC on the secure candidate. No real payment. |
-| Fresh BETA100 hosted checkout | PASS — 100% discount, $0 due, completed/paid, test event processed, protected plan restored. Checkout completed 03:40 UTC on the secure candidate. |
-| Real webhook processing | PASS — both completed events report zero pending webhooks; each produced one welcome and one scheduled survey record. |
-| Welcome delivery | PARTIAL — both actual Resend messages report delivered; contents and isolated return links verified. Fresh receipt in the connected Workspace mailbox was not found, including exact Message-ID searches. Provider delivery is not inbox confirmation. |
-| Purchase restoration | PASS — real BETA100 welcome link reopened and restored saved paid content. On final deployment, unauthorized refresh remained locked until the link was reopened. |
-| Real free form | PASS after fix — final deployment accepted the approved test recipient at 03:46 UTC; browser showed diagnosis only; actual free email reported delivered and matched the diagnosis. |
-| Deployed anonymous access | PASS — missing credential 401; forged test and live credentials 403; no paid code returned. Direct paid module, preview script and private bundle paths returned 404. |
-| Authorization edge cases | PASS in automated tests — unpaid/open, unrelated offer, expired purchase, foreign origin, wrong mode, Stripe failure; valid partial discount and zero-cost sessions allowed. |
-| Webhook failure/retry/replay | PASS in automated tests — signature rejection, recipient restriction, concurrent events, failed-stage retries, successful-stage deduplication and three-day replay. |
-| Responsive browser behavior | PASS in Chromium at 320, 390, 768 and 1280px — navigation, free submission, checkout destination, protected intake, calculation, save/import, re-verification, no horizontal overflow or page errors. Provider responses are mocked in these responsive tests; real hosted checkout was exercised separately in the cloud desktop browser. |
-| Existing product suite | PASS — 10 careers × 7 goals; 2,692 answer variants; 186 adaptive free-form variants; 288 school scenarios; money/rebooking/buyback/services/lanes and save/restore checks; 17 email/service subtests. |
-| Additional security suite | PASS — 14 subtests plus generated-public-bundle DOM integration on final code revision. |
-| Actual mobile hardware | NOT RUN — responsive emulation does not establish iPhone/Safari or Android device behavior. |
-| Cloud profile continuity | Mocked integration tests pass. The isolated checkout environment deliberately has no production FOLLOWUPS binding; real cross-device cloud-profile and survey submission were not exercised there. Purchased-plan file import was exercised with browser mocks and purchase-link restoration was exercised against the real test service. |
+| Product and content suite | PASS locally and in CI — 10 careers × 7 goals, 2,692 answer variants, 186 adaptive free-form variants, 288 student scenarios, money/rebooking/buyback/service/income-lane tools, save/import, and 17 email/service subtests. |
+| Security and lifecycle suite | PASS — 16 subtests plus generated-public-package DOM integration; private profile restore/update, foreign/forged/expired access, approved-recipient isolation, optional survey fields and sanitized free diagnosis. |
+| Paid authorization | PASS — valid partial discounts and zero-cost purchases allowed; unpaid/open, unrelated, wrong-mode, expired, foreign-origin and provider-failure cases denied in automated fixtures. Policy-era 365-day expiry and older buyer terms preserved. |
+| Webhook and email retries | PASS in automated fixtures — signature rejection, concurrent events, failed-stage retry, provider idempotency, persisted successful stages and late replay deduplication. No live failure injection. |
+| Full-price hosted checkout | PASS — fresh $49 Stripe TEST checkout at 19:46 UTC; signed event completed with zero pending webhooks; actual welcome link opened protected intake and plan. No real charge. |
+| BETA100 hosted checkout | PASS — fresh 100% discount, $0 Stripe TEST checkout at 19:50 UTC; signed event completed with zero pending webhooks; paid access restored. The actual session reported paid; no_payment_required is separately tested by fixtures. |
+| Welcome and survey scheduling | PASS at provider — exactly one welcome and one scheduled Day 14 survey observed for each new purchase. Both welcomes report delivered. Surveys are scheduled for October 22. Actual future receipt is not yet testable. |
+| Fresh inbox receipt | UNCONFIRMED — exact Message-ID searches across the connected Workspace mailbox found neither new welcome. This is not proof of failure in the actual recipient mailbox. Resend delivered status does not prove inbox placement. |
+| Final-deployment paid restore | PASS — reopened both actual welcome links after the final application deployment; protected Money Map loaded and retained test input 5000; private purchase credentials removed from the address bar. Earlier reload without the link correctly required re-verification. |
+| Real free Breakdown | PASS — student form completed at 19:50 UTC using the isolated dummy challenge; on-screen diagnosis and delivered email matched; no paid worksheets, scripts, calculations or detailed plan exposed. FIRST 90 stays coming-soon with optional updates. |
+| Real saved profile | PASS — opened actual email link in a new tab, restored server diagnosis, changed student to working stage and reopened the updated profile. Retested a different stage change after the final fix: diagnosis refreshed immediately, save confirmation appeared, and only one storage notice remained. Real independent-device testing remains below. |
+| Real purchaser survey | PASS — submitted through the actual test purchase with help topics left blank on the final deployment. Thank-you state appeared; response email reports delivered at 20:02 UTC. |
+| Deployed anonymous/forged access | PASS on final revision — missing purchase credential 401, forged test/live and foreign-origin requests 403 with private/no-store; protected module, preview and private-bundle paths 404; forged profile access 401/no-store. |
+| Chromium and WebKit responsive QA | PASS — both engines at all four widths, public navigation, challenge-failure recovery, free form, protected intake, Money Map, save/import, access re-verification and optional survey submission. Provider responses are mocked here; real hosted flows were tested separately. |
+| Release packaging | PASS — local prepare-release generates 13 audited public assets, separate API-only paid module, review-only host/API configs and hashes. Existing FOLLOWUPS binding retained in the draft API configuration; no deployment occurs. |
+| Physical iPhone/Safari | NOT RUN — WebKit and responsive viewport testing do not prove real-device email-link opening, keyboard behavior or checkout return. |
 
-The final follow-up revision changed dummy form validation, same-target test-deploy binding recognition, release guard source/tests and QA artifact selection. Checkout/authorization/fulfillment behavior from the successful real checkouts was unchanged. Automated QA and deployment were rerun, then the actual form and purchase restoration were retested.
+Full-price/BETA100 checkouts were completed on revision `8617effbfc97664b43acb84e768ad5ea12cd559c`. The final application revision only changed survey optional-field validation and profile diagnosis rendering, with related regression tests. Checkout, fulfillment and paid authorization source stayed unchanged; both real welcome links and the corrected survey/profile flows were reverified after that deployment.
 
-## Remaining launch blockers and decisions
+## Remaining launch gates requiring the owner
 
-1. **Public repository and history expose paid implementation source.** Securing the website package cannot secure copies already available through public branches/history. Earlier public QA artifacts also contain paid screen captures and expire after seven days. Repository visibility/hosting migration requires the owner's decision; changing visibility can affect publishing and access. Do not change visibility or rewrite history blindly. Recommended outcome: private implementation source with an explicitly public-only static deployment. Historical downloads cannot be recalled.
-2. **Fresh welcome inbox receipt remains unconfirmed.** Inspect the approved recipient's actual mailbox/forwarding path. No DNS, Spacemail or production Resend changes were made to resolve this. October 6 inbox evidence is historical and does not prove these new messages arrived in the inbox.
-3. **Physical phone verification remains open.** Check the final isolated candidate on an actual phone, including email-link opening, form keyboard behavior, hosted checkout and plan restore. Desktop cloud-browser and responsive Chromium checks passed.
-4. **Release deployment is not applied.** Production still runs its existing sources and security behavior. An approved release must publish only the generated public assets, deploy the guarded API entrypoint with a production durable fulfillment binding, preserve the existing FOLLOWUPS binding/schedules, and remove public copies from the active hosting root. Prepare a rollback that does not re-expose paid assets. No production release is authorized by this report.
-5. **Existing purchase policy should be acknowledged at release.** Current purchase links are bearer credentials that can be replayed while valid; the existing one-year expiry remains unchanged and is tested. No new pricing, expiry or account-policy decision was made.
+1. **Confirm actual receipt of the two new welcome emails** in the approved test inbox, including spam and the actual mailbox/forwarding destination. They were sent October 8 at approximately 12:47 PM and 12:50 PM Los Angeles time. Open their access links. A connected Workspace search is not access to every mailbox in that delivery path. No DNS, historical Spacemail or production email setting was changed.
+2. **Complete one physical iPhone/Safari pass** on the final isolated application: free form and keyboard, actual email-link opening, saved profile, test checkout return, paid plan/tool entry, and plan-file save/import. Use only the approved recipient and test checkout; never enter a real card in testing.
+3. **Authorize the production release/cutover only after the first two gates pass.** Hosting/source-privacy direction was approved October 7, 10:53 PM Los Angeles time. That did not authorize deployment, DNS changes or making the repository private now. Execute [HOSTING_CUTOVER_PLAN.md](HOSTING_CUTOVER_PLAN.md), preserve existing purchase links/profile data/schedules, and use a public-only rollback.
 
-## Live checkout identification (read-only)
+## Security limitation that remains until cutover
 
-The current production JavaScript CTA points to `https://buy.stripe.com/6oU9AU5F72l05pA4RTaAw01`, which Stripe identifies as **BOOKED AF: Your Next 30**, $49. The other active $49 link, `https://buy.stripe.com/4gM00k6Jb4t87xIfwxaAw00`, is **BOOKED AF Deep Dive** and is not the current CTA. Both remain active, their return URLs remain unchanged, and historical purchase compatibility was preserved. No deactivation is needed for this verification.
+**The current public repository, history and existing production publication still expose paid implementation source.** The secure test package prevents anonymous access through its own static host, but cannot retract public historical copies. Earlier public QA artifacts may also include paid screen captures. Making the repository private before replacing GitHub Pages could disrupt the existing site. Do not mark this security requirement closed until the approved cutover has removed the public source publication and unauthenticated old-origin checks pass. Prior downloads/forks cannot be recalled.
 
-## Change boundaries
+## Live checkout identification and boundaries
 
-No production website deploy, live Stripe mutation, Cloudflare DNS change, Spacemail change, or Resend production-setting change was performed. Only isolated test checkouts used test payment details. Test messages went through the existing approved test-recipient workflow. No real customers were charged. No secrets were committed or included in issue evidence.
+Read-only verification identified the current production CTA as the $49 **BOOKED AF: Your Next 30** Payment Link ending `6oU9AU5F72l05pA4RTaAw01`. The other active $49 **BOOKED AF Deep Dive** link is legacy and is not the current CTA. Both remain active; existing return URLs and historical buyer compatibility are preserved.
+
+No production website/Worker deployment, live Stripe mutation, DNS change, production email-setting change, repository-visibility change, release merge or real customer charge was performed. Only the development branch and isolated test environment were updated. Issue #6 remains open for the concrete gates above.
