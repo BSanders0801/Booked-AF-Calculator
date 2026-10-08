@@ -5,16 +5,28 @@
 ## Candidate and evidence
 
 - Repository: `BSanders0801/Booked-AF-Calculator`; branch: `build/next30-shell-p04`; tracking: [issue #6](https://github.com/BSanders0801/Booked-AF-Calculator/issues/6).
-- Final application revision deployed to test: `1d59e173016c6b8cf008f2843c67c72608e1f31c`.
+- Current test deployment: `318e7ed57537dc406b045221ea5346b19a8be87d`, adding accurate test-recipient rejection messages and retry coverage.
+- Earlier full hosted checkout/email/profile baseline: `1d59e173016c6b8cf008f2843c67c72608e1f31c`. The current change preserves checkout, fulfillment and production source.
 - Browser interaction-fix revision: `b66b8fd9549a92010538f9132aaed55e4a18572c`. Its sole change clicks the visible survey labels; application source is identical to the deployed revision.
-- Dependency/audit-gate revision: `21a6a3595a5dae897e32ad5463d70ee8c7f8e098`; application source is still identical to the final isolated deployment. The final branch-head CI run after this audit update is recorded in issue #6.
+- Dependency/audit-gate revision: `21a6a3595a5dae897e32ad5463d70ee8c7f8e098`; application source at that checkpoint was identical to the earlier isolated deployment. The final branch-head CI run after this audit update is recorded in issue #6.
 - [Browser regression QA — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836850311).
-- [Final isolated deployment — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836334429).
+- [Earlier isolated deployment — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836334429).
 - [Earlier same-session QA — success](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37834352046).
 - [Intermediate QA failure, subsequently corrected](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37836334323): survey test clicked an input covered by its styled label. Local/server tests passed; actual survey submission passed. The browser test now uses the visible label.
 - Test application: https://booked-af-email-test.wild-recipe-42df.workers.dev
 
 No credentials, payment/session/event identifiers, customer addresses, receipts, private profile links or private purchase links belong in this report or the issue.
+
+## iPhone rejection follow-up — October 8, 2:40 PM LA
+
+The owner's screenshot showed test Turnstile success followed by a generic 403. The entered address differed from the previously approved sole test recipient. The isolated endpoint returned `Test recipient not approved` for a synthetic unapproved address, confirming that recipient rejection was mislabeled as verification failure.
+
+Revision `318e7ed57537dc406b045221ea5346b19a8be87d` returns a machine-readable `TEST_RECIPIENT_NOT_APPROVED` error and maps it to an accurate test-only message. The form retains answers and details for correction; actual verification failures retain a separate retry message. The approved-recipient restriction, production application, live Stripe, DNS and email settings were not changed. The response never exposes the approved inbox.
+
+- [Full QA passed](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37848925834): existing product/security checks plus recipient correction and verification retry in Chromium and WebKit at 320/390/768/1280px (eight browser/viewport combinations).
+- [Isolated deploy and smoke checks passed](https://github.com/BSanders0801/Booked-AF-Calculator/actions/runs/37848925841).
+- Direct deployed checks confirmed the exact revision, healthy isolated environment, updated public form messages, and the precise 403 code for a synthetic unapproved address. No personal address or new email was submitted in this follow-up.
+- The earlier actual checkout/email evidence remains the baseline; it was not represented as a new purchase in this follow-up. A successful physical iPhone retry is still required.
 
 ## Changes completed during this continuation
 
