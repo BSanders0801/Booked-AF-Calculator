@@ -7,3 +7,5 @@ review.html
 .dev.vars*
 .env*
 .browser-review/
+.private-assets/
+tests/node_modules

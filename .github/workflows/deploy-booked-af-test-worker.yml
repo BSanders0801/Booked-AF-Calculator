@@ -7,6 +7,10 @@ on:
       - '.github/workflows/deploy-booked-af-test-worker.yml'
       - 'wrangler.test.jsonc'
       - 'test-worker.mjs'
+      - 'paid-content.mjs'
+      - 'paid-loader.js'
+      - 'fulfillment-store.mjs'
+      - 'scripts/build-secure-site.mjs'
       - 'scripts/build-test-worker.mjs'
       - 'scripts/deploy-test-worker.mjs'
       - 'scripts/test-cloudflare-account.mjs'
@@ -41,7 +45,7 @@ jobs:
         with:
           node-version: 24
       - name: Verify isolated payment behavior
-        run: node --test tests/test-cloudflare-account.mjs tests/test-isolation.mjs tests/stripe-welcome.mjs tests/survey.mjs tests/service-readiness.mjs
+        run: node --test --test-concurrency=1 tests/secure-delivery.mjs tests/test-cloudflare-account.mjs tests/test-isolation.mjs tests/stripe-welcome.mjs tests/survey.mjs tests/service-readiness.mjs
       - name: Check credential presence without exposing values
         run: node scripts/deploy-test-worker.mjs --check
       - name: Deploy only the isolated test environment

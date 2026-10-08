@@ -2,6 +2,7 @@
 import {mkdir, readFile, writeFile, readdir, copyFile, rm} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
+import {buildSecureSite} from './build-secure-site.mjs';
 const root = resolve(import.meta.dirname, '..');
 
 export function validateTestBuild({origin, checkoutUrl, paymentLinkId}) {
@@ -28,29 +29,21 @@ export async function buildTestWorker(config) {
   await rm(generated, {recursive:true, force:true});
   await mkdir(resolve(out, 'assets'), {recursive:true});
   await mkdir(generated, {recursive:true});
-  const files = ['index.html','site.css','day-math.js','breakdown-core.js','site-content.js','next30-core.js','next30-ui.js','next30-rebooking.js','next30-buyback.js','next30-services.js','next30-lanes.js','next30-shell.js','app.js','lifecycle-ui.js','site-ui.js'];
-  for (const file of files) {
-    let content = await readFile(resolve(root, file), 'utf8');
+  await buildSecureSite(out,generated,(content,file)=>{
     if (file === 'app.js') {
       content = replaceOne(content, /const emailServiceUrl = '[^']+';/, `const emailServiceUrl = ${JSON.stringify(origin)};`);
       content = replaceOne(content, /const next30CheckoutUrl = '[^']+';/, `const next30CheckoutUrl = ${JSON.stringify(checkoutUrl)};`);
-      // Readiness belongs to the API route; the root serves the test website.
+      content = content.replace("const emailSiteKey = '0x4AAAAAAFDEaTJ_ybTjAuWb';","const emailSiteKey = '1x00000000000000000000AA';");
+      content = content.replace('await fetch(emailServiceUrl, {',"await fetch(emailServiceUrl+'/lead-test', {");
       content = content.replace('fetch(emailServiceUrl,{', "fetch(emailServiceUrl+'/health',{");
-      content = content.replaceAll('cs_(?:live|test)_', 'cs_test_');
     }
-    if (file === 'site-ui.js') {
-      content = replaceOne(content, /const preview = [^\n]+;/, 'const preview = false;');
-      content = replaceOne(content, /const previewHost = [^\n]+;/, 'const previewHost = false;');
-    }
+    if(file==='lifecycle-ui.js')content=content.replace('fetch(emailServiceUrl,{',"fetch(emailServiceUrl+'/health',{");
     content = content.replace(/https:\/\/(?:www\.)?bookedandfabulous\.com/g, origin);
     content = content.replace(/https:\/\/buy\.stripe\.com\/[A-Za-z0-9_]+/g, checkoutUrl);
     if (/https:\/\/booked-af-email\./.test(content) || /https:\/\/buy\.stripe\.com\/(?!test_)/.test(content))
       throw Error('Production payment routing remains in test assets.');
-    await writeFile(resolve(out, file), content);
-  }
-  for (const file of await readdir(resolve(root, 'assets'))) {
-    if (/\.(png|webp|svg|jpg|jpeg|gif|ico)$/i.test(file)) await copyFile(resolve(root,'assets',file), resolve(out,'assets',file));
-  }
+    return content;
+  });
   let worker = await readFile(resolve(root, 'email-worker.mjs'), 'utf8');
   worker = replaceOne(worker, /const ORIGINS = new Set\([^\n]+\);/, `const ORIGINS = new Set([${JSON.stringify(origin)}]);`);
   worker = replaceOne(worker, /const next30PaymentLinkIds = new Set\([^\n]+\);/, `const next30PaymentLinkIds = new Set([${JSON.stringify(paymentLinkId)}]);`);
@@ -62,6 +55,9 @@ export async function buildTestWorker(config) {
   if (String(recipient || '').toLowerCase() !== String(env.TEST_RECIPIENT_EMAIL || '').toLowerCase()) return new Response('Test recipient not approved', {status:403});`);
   worker = replaceOne(worker, /const surveyScheduled = await schedulePurchaseSurvey\(env, session, email, firstName\);/, `const surveyScheduled = await schedulePurchaseSurvey(env, session, email, firstName);
   if (!surveyScheduled) return new Response('Survey scheduling failed', {status:502});`);
+  worker = worker.replace('(env.FOLLOWUPS||isStudent(answers))','env.FOLLOWUPS');
+  worker = worker.replaceAll("bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],",'');
+  worker = worker.replace("if (!verified.success || verified.hostname !== new URL(origin).hostname || verified.action !== 'booked_email')","if (!verified.success || verified.hostname !== 'localhost' || verified.action !== 'test')");
   worker = worker.replace(/https:\/\/(?:www\.)?bookedandfabulous\.com/g, origin);
   await writeFile(resolve(generated, 'email-worker.mjs'), worker);
   await writeFile(resolve(generated, 'config.mjs'), `export const testOrigin = ${JSON.stringify(origin)};\n`);

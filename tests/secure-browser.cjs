@@ -1,0 +1,72 @@
+// Exercise the shipped public package with the actual protected bundle. Provider requests are mocked.
+const {chromium}=require('playwright');
+const fs=require('fs'),http=require('http'),path=require('path'),assert=require('assert/strict');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secure');
+(async()=>{
+ const {buildTestWorker}=await import('../scripts/build-test-worker.mjs');
+ const base='https://booked-af-email-test.fixture.workers.dev';
+ await buildTestWorker({origin:base,checkoutUrl:'https://buy.stripe.com/test_fixture',paymentLinkId:'plink_fixture'});
+ const bundle=(await import('../.test-worker/paid-bundle.mjs')).default;
+ const publicRoot=path.join(root,'.test-website');
+ const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://localhost');const rel=url.pathname==='/'?'index.html':url.pathname.slice(1);const p=path.resolve(publicRoot,rel);if(!p.startsWith(publicRoot+path.sep)){res.writeHead(404).end();return}try{res.setHeader('Content-Type',p.endsWith('.js')?'text/javascript':p.endsWith('.css')?'text/css':p.endsWith('.html')?'text/html':'application/octet-stream');res.end(fs.readFileSync(p))}catch{res.writeHead(404).end()}}).listen(8766,'127.0.0.1');
+ const browser=await chromium.launch({headless:true});const results=[];fs.mkdirSync(out,{recursive:true});
+ try{for(const width of [320,390,768,1280]){
+  const page=await browser.newPage({viewport:{width,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.addInitScript(()=>{window.turnstile={render:(el,opts)=>{opts.callback('fixture-token');return 1},remove:()=>{},reset:()=>{}}});
+  await page.route('**/*',route=>{const url=route.request().url();
+   if(url.startsWith('http://127.0.0.1:8766')||url.startsWith('blob:'))return route.continue();
+   if(url.endsWith('/paid-content'))return route.fulfill({status:route.request().headers().authorization==='Bearer cs_test_fixture'?200:403,contentType:'text/javascript',body:bundle});
+   return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ready:true,schemas:['short-v5'],success:true,paid:false})});
+  });
+  await page.goto('http://127.0.0.1:8766');
+  await page.waitForFunction(()=>typeof state!=='undefined');
+  assert.equal(await page.evaluate(()=>typeof BookedNext30),'undefined');
+  // Tampering with local state does not conjure paid source or assets.
+  await page.evaluate(()=>{state.next30Verified=true;state.view='deepresult';render()});
+  assert.equal(await page.locator('#money-map').count(),0);
+  await page.reload();
+  for(const view of ['intro','sample','next30sample','paid','plans','about','privacy','contact']){
+   await page.evaluate(view=>{state.view=view;render()},view);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${width} ${view} overflow`);
+  }
+  await page.locator('header [data-nav="question"]').click();
+  let steps=0;
+  while(await page.evaluate(()=>state.view==='question')){
+   assert(++steps<40);
+   const choices=page.locator('[data-value]');await choices.first().click();
+   const next=page.locator('#next');if(await next.count())await next.click();
+  }
+  assert.equal(await page.evaluate(()=>state.view),'email');
+  await page.locator('input[name="name"]').fill('Test');await page.locator('input[name="email"]').fill('recipient@example.invalid');
+  await page.locator('#form button[type="submit"]').click();await page.waitForFunction(()=>state.view==='result');
+  assert(!/MONTHLY MONEY MAP|STEAL THESE WORDS/.test(await page.locator('#app').innerText()));
+  await page.screenshot({path:path.join(out,`${width}-free.png`),fullPage:true});
+  await page.goto('http://127.0.0.1:8766/?next30=paid&session_id=cs_test_fixture');
+  await page.waitForSelector('[data-next30-choice]');
+  // Go through real intake controls rather than force a paid result.
+  await page.locator('[data-next30-choice="color"]').click();await page.locator('#next30-next').click();
+  steps=0;
+  while(await page.evaluate(()=>state.view==='deepintake')){
+   assert(++steps<40);
+   if(await page.locator('#next30-next').isDisabled()){const money=page.locator('[data-next30-choice="money"]');await (await money.count()?money:page.locator('[data-next30-choice]').first()).click();}
+   await page.locator('#next30-next').click();
+  }
+  await page.locator('#money-map').waitFor();
+  await page.selectOption('#mmm-pay-type','employee');
+  for(const [k,v] of Object.entries({gross:5000,tips:500,bonus:0,net:4200,days:16}))await page.locator('#mmm-emp-'+k).fill(String(v));
+  await page.locator('#mmm-calc').click();
+  assert.match(await page.locator('#mmm-result').innerText(),/5,500/);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${width} paid overflow`);
+  await page.screenshot({path:path.join(out,`${width}-paid.png`),fullPage:true});
+  const portable=await page.evaluate(()=>JSON.stringify(state.careerData));
+  await page.reload();assert.equal(await page.locator('#money-map').count(),0,'refresh without private credential must reverify');
+  await page.goto('http://127.0.0.1:8766/?next30=paid&session_id=cs_test_fixture');await page.locator('#money-map').waitFor();
+  assert.equal(await page.locator('#mmm-emp-gross').inputValue(),'5000');
+  await page.locator('#next30-import').setInputFiles({name:'saved-plan.json',mimeType:'application/json',buffer:Buffer.from(portable)});
+  await page.waitForSelector('#mmm-emp-gross');assert.equal(await page.locator('#mmm-emp-gross').inputValue(),'5000');
+  assert.deepEqual(errors,[]);
+  results.push({width,freeForm:'pass',navigation:'pass',clientTampering:'denied',protectedLoad:'pass',moneyMap:'pass',restore:'pass',overflow:false,errors});await page.close();
+ }
+ fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2));
+ }finally{await browser.close();server.close()}
+})().catch(e=>{console.error(e);process.exit(1)});

@@ -2,7 +2,7 @@ name: BOOKED AF QA
 
 on:
   push:
-    branches: [main]
+    branches: [main, build/next30-shell-p04]
   pull_request:
   workflow_dispatch:
 
@@ -23,13 +23,13 @@ jobs:
         run: npm --prefix tests install --no-audit --no-fund
 
       - name: Run BOOKED AF test suite
-        run: npm --prefix tests test
+        run: npm --prefix tests test && npm --prefix tests run test:security
 
       - name: Install browser for responsive review
         run: cd tests && npx playwright install --with-deps chromium
 
       - name: Check phone and desktop layouts
-        run: node tests/browser-layout.cjs
+        run: node tests/browser-layout.cjs && node tests/secure-browser.cjs
 
       - name: Save responsive review screenshots
         if: always()

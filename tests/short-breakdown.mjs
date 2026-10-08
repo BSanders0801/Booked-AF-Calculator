@@ -183,7 +183,7 @@ assert.match(build(chairAnswer('clients')).snapshot,/color clients/i);
 
 // Worker source must contain the exact shared core.
 const workerSource=fs.readFileSync('email-worker.mjs','utf8');
-assert(workerSource.includes(core));
+assert(workerSource.replace(/\r\n/g,'\n').includes(core.replace(/\r\n/g,'\n')));
 
 const calls=[];
 const wc=vm.createContext({
