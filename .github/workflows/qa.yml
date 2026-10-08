@@ -20,7 +20,10 @@ jobs:
           node-version: 24
 
       - name: Install test dependencies
-        run: npm --prefix tests install --no-audit --no-fund
+        run: npm --prefix tests ci --no-audit --no-fund
+
+      - name: Audit test dependencies
+        run: npm --prefix tests audit --audit-level=high
 
       - name: Run BOOKED AF test suite
         run: npm --prefix tests test && npm --prefix tests run test:security && node scripts/prepare-release.mjs
