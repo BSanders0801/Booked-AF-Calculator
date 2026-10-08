@@ -45,7 +45,7 @@ const subdomain=resolvedAccount.subdomain;
 const origin=`https://${target}.${subdomain}.workers.dev`;
 const settings=(await cf(`/workers/scripts/${target}/settings`,true))?.result;
 if (settings && (!settings.bindings?.some(b=>b.name==='BOOKED_AF_TEST_MARKER' && b.type==='plain_text' && b.text===marker) ||
-    (settings.bindings || []).some(b => !['secret_text','plain_text','assets'].includes(b.type) && !(b.type==='durable_object_namespace' && b.name==='FULFILLMENT' && b.class_name==='TestPurchaseFulfillment' && !b.script_name))))
+    (settings.bindings || []).some(b => !['secret_text','plain_text','assets'].includes(b.type) && !(b.type==='durable_object_namespace' && b.name==='FULFILLMENT' && b.class_name==='TestPurchaseFulfillment' && (!b.script_name || b.script_name===target)))))
   throw Error('Existing target has not been identified as our isolated test Worker. Stop for review.');
 const domainResult=await cf('/workers/domains?service='+target);
 const domains=domainResult.result;

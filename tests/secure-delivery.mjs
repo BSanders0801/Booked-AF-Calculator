@@ -59,9 +59,10 @@ test('isolated free form uses test verification and only the approved recipient;
  const data={schema:'short-v5',type:'breakdown',email:env.TEST_RECIPIENT_EMAIL,name:'Test',token:'XXXX.DUMMY.TOKEN.XXXX',answers:context.fill()};
  const req=body=>new Request(origin+'/lead-test',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify(body)});
  const old=globalThis.fetch,sent=[];
- globalThis.fetch=async(url,opts)=>{if(String(url).includes('turnstile')){assert.equal(JSON.parse(opts.body).secret,'1x0000000000000000000000000000000AA');return Response.json({success:true,hostname:'localhost',action:'test'});}sent.push(JSON.parse(opts.body));return Response.json({id:'mail_fixture'});};
+ globalThis.fetch=async(url,opts)=>{if(String(url).includes('turnstile')){assert.equal(JSON.parse(opts.body).secret,'1x0000000000000000000000000000000AA');return Response.json({success:true,hostname:'example.com',metadata:{result_with_testing_key:true}});}sent.push(JSON.parse(opts.body));return Response.json({id:'mail_fixture'});};
  try{
   assert.equal((await worker.fetch(req({...data,email:'not-approved@example.invalid'}),env)).status,403);
+  assert.equal((await worker.fetch(req({...data,token:'not-a-dummy-token'}),env)).status,403);
   const r=await worker.fetch(req(data),env);assert.equal(r.status,200);const body=await r.json();assert.equal(body.success,true);assert(body.breakdown.title);assert(!body.breakdown.plan);
   assert(sent.length>0);for(const email of sent){assert.deepEqual(email.to,[env.TEST_RECIPIENT_EMAIL]);assert.equal(email.bcc,undefined);assert.doesNotMatch(email.text,/DO THESE 3 THINGS|MONTHLY MONEY MAP|STEAL THESE WORDS/);}
  }finally{globalThis.fetch=old;}

@@ -36,7 +36,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: booked-af-responsive-review
-          path: .browser-review/
+          # Public repositories must not publish screenshots of paid lessons or worksheets.
+          path: |
+            .browser-review/*-intro.png
+            .browser-review/*-paid.png
+            .browser-review/secure/*-free.png
+            .browser-review/secure/results.json
           retention-days: 7
           include-hidden-files: true
           if-no-files-found: error

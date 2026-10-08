@@ -57,7 +57,7 @@ export async function buildTestWorker(config) {
   if (!surveyScheduled) return new Response('Survey scheduling failed', {status:502});`);
   worker = worker.replace('(env.FOLLOWUPS||isStudent(answers))','env.FOLLOWUPS');
   worker = worker.replaceAll("bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],",'');
-  worker = worker.replace("if (!verified.success || verified.hostname !== new URL(origin).hostname || verified.action !== 'booked_email')","if (!verified.success || verified.hostname !== 'localhost' || verified.action !== 'test')");
+  worker = worker.replace("if (!verified.success || verified.hostname !== new URL(origin).hostname || verified.action !== 'booked_email')","if (!verified.success || data.token !== 'XXXX.DUMMY.TOKEN.XXXX')");
   worker = worker.replace(/https:\/\/(?:www\.)?bookedandfabulous\.com/g, origin);
   await writeFile(resolve(generated, 'email-worker.mjs'), worker);
   await writeFile(resolve(generated, 'config.mjs'), `export const testOrigin = ${JSON.stringify(origin)};\n`);
