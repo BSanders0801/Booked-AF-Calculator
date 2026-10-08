@@ -26,10 +26,10 @@ jobs:
         run: npm --prefix tests test && npm --prefix tests run test:security && node scripts/prepare-release.mjs
 
       - name: Install browser for responsive review
-        run: cd tests && npx playwright install --with-deps chromium
+        run: cd tests && npx playwright install --with-deps chromium webkit
 
       - name: Check phone and desktop layouts
-        run: node tests/browser-layout.cjs && node tests/secure-browser.cjs
+        run: node tests/browser-layout.cjs && node tests/secure-browser.cjs && BROWSER_ENGINE=webkit node tests/secure-browser.cjs
 
       - name: Save responsive review screenshots
         if: always()
@@ -42,6 +42,8 @@ jobs:
             .browser-review/*-paid.png
             .browser-review/secure/*-free.png
             .browser-review/secure/results.json
+            .browser-review/secure-webkit/*-free.png
+            .browser-review/secure-webkit/results.json
           retention-days: 7
           include-hidden-files: true
           if-no-files-found: error

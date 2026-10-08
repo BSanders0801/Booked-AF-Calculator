@@ -3,8 +3,11 @@ import worker from './.test-worker/email-worker.mjs';
 import bundle from './.test-worker/paid-bundle.mjs';
 import {deliverPaidContent} from './paid-content.mjs';
 import {testOrigin} from './.test-worker/config.mjs';
+import {testRevision} from './.test-worker/config.mjs';
+import {testLifecycleClass} from './test-lifecycle-store.mjs';
 
 export const TestPurchaseFulfillment=fulfillmentClass(worker);
+export const TestLifecycle=testLifecycleClass(worker);
 
 export default {
   async fetch(request, env, ctx) {
@@ -16,7 +19,7 @@ export default {
     const ready = /^(?:sk|rk)_test_/.test(env.STRIPE_SECRET_KEY || '') &&
       /^whsec_/.test(env.STRIPE_WEBHOOK_SECRET || '') && !!env.RESEND_API_KEY &&
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(env.TEST_RECIPIENT_EMAIL || '');
-    if (url.pathname === '/health') return Response.json({isolated:true,ready,checkout:ready,webhook:ready,schemas:['short-v5']},{headers:{'Cache-Control':'no-store'}});
+    if (url.pathname === '/health') return Response.json({isolated:true,ready,checkout:ready,webhook:ready,profiles:!!env.TEST_LIFECYCLE,revision:testRevision,schemas:['short-v5']},{headers:{'Cache-Control':'no-store'}});
     if (!ready) return response('Test environment not configured', 503);
     if (url.pathname === '/paid-content') return deliverPaidContent(request,env,ctx,this,bundle,new Set([testOrigin]));
     if (url.pathname === '/lead-test') {
@@ -25,8 +28,14 @@ export default {
       if(request.headers.get('Origin')!==testOrigin)return response('Wrong test origin',403);
       let data;try{const body=await request.clone().text();if(body.length>30000)return response('Too large',413);data=JSON.parse(body);}catch{return response('Invalid request',400);}
       if(String(data.email||'').trim().toLowerCase()!==env.TEST_RECIPIENT_EMAIL.toLowerCase() || data.type!=='breakdown')return response('Test recipient not approved',403);
+      if(env.TEST_LIFECYCLE)return env.TEST_LIFECYCLE.get(env.TEST_LIFECYCLE.idFromName('approved-test-inbox')).fetch(request);
       return worker.fetch(request,{...env,TURNSTILE_SECRET_KEY:'1x0000000000000000000000000000000AA'},ctx);
     }
+    if(['/profile','/events'].includes(url.pathname)&&env.TEST_LIFECYCLE){
+      if(request.headers.get('Origin')!==testOrigin)return response('Wrong test origin',403);
+      return env.TEST_LIFECYCLE.get(env.TEST_LIFECYCLE.idFromName('approved-test-inbox')).fetch(request);
+    }
+    if(url.pathname==='/survey')return worker.fetch(request,env,ctx);
     if (url.pathname === '/stripe-webhook') return worker.fetch(request, env, ctx);
     if (url.pathname === '/verify-checkout') {
       if (request.method !== 'OPTIONS' && !/^cs_test_[A-Za-z0-9]+$/.test(url.searchParams.get('session_id') || ''))

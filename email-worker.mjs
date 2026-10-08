@@ -1147,7 +1147,7 @@ const ANALYTICS_EVENTS=new Set(['site_visit','student_start','student_complete',
 async function digestHex(value){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 function randomToken(){return [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function kvJSON(kv,key){const raw=await kv.get(key);return raw?JSON.parse(raw):null;}
-function profilePublic(p){return {id:p.id,careerStatus:p.careerStatus,history:p.history,answers:p.answers,schema:p.schema,done:p.done||{},first90Interest:!!p.first90Interest,updatedAt:p.updatedAt};}
+function profilePublic(p){return {breakdown:publicBreakdown(buildShortBreakdown(p.answers)),id:p.id,careerStatus:p.careerStatus,history:p.history,answers:p.answers,schema:p.schema,done:p.done||{},first90Interest:!!p.first90Interest,updatedAt:p.updatedAt};}
 function cleanDone(done,answers){const ids=new Set(buildShortBreakdown(answers).plan.steps.map(s=>s.id));return Object.fromEntries(Object.entries(done||{}).filter(([k,v])=>ids.has(k)&&typeof v==='boolean'));}
 async function prepareProfileLink(env,email,name,answers,interest){
  if(!env.FOLLOWUPS)throw new Error('Profile storage unavailable');

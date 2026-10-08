@@ -34,6 +34,7 @@
   try{
    const p=await profileRequest('open');
    restoreSchema(p.schema);state.answers=validateShortAnswers(p.answers);state.done=p.done||{};state.emailSent=true;state.index=0;
+   if(p.breakdown){state.freePublicCopy={schema:state.schema,answers:JSON.stringify(state.answers),copy:p.breakdown};try{sessionStorage.setItem('booked-free-copy',JSON.stringify(state.freePublicCopy))}catch{}}
    lastSaved=JSON.stringify({answers:state.answers,done:state.done});
    try{sessionStorage.setItem(deliveryKey,JSON.stringify({schema:state.schema,answers:state.answers,emailSent:true,name:state.name||''}));}catch{}
    history.replaceState(null,'',location.pathname+location.search+'#my-breakdown');state.view='result';render();

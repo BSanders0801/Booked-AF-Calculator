@@ -6,6 +6,11 @@ on:
     paths:
       - '.github/workflows/deploy-booked-af-test-worker.yml'
       - 'wrangler.test.jsonc'
+      - '*.js'
+      - '*.mjs'
+      - 'index.html'
+      - 'site.css'
+      - 'assets/**'
       - 'test-worker.mjs'
       - 'paid-content.mjs'
       - 'paid-loader.js'
@@ -45,7 +50,7 @@ jobs:
         with:
           node-version: 24
       - name: Verify isolated payment behavior
-        run: node --test --test-concurrency=1 tests/secure-delivery.mjs tests/test-cloudflare-account.mjs tests/test-isolation.mjs tests/stripe-welcome.mjs tests/survey.mjs tests/service-readiness.mjs
+        run: node --test --test-concurrency=1 tests/secure-delivery.mjs tests/test-cloudflare-account.mjs tests/test-isolation.mjs tests/test-lifecycle.mjs tests/stripe-welcome.mjs tests/survey.mjs tests/service-readiness.mjs
       - name: Check credential presence without exposing values
         run: node scripts/deploy-test-worker.mjs --check
       - name: Deploy only the isolated test environment
@@ -58,7 +63,7 @@ jobs:
           const base='https://booked-af-email-test.wild-recipe-42df.workers.dev';
           const health=await fetch(base+'/health',{signal:AbortSignal.timeout(15000)});
           const data=await health.json();
-          if(!health.ok||data.isolated!==true||data.ready!==true||data.checkout!==true||data.webhook!==true)
+          if(!health.ok||data.isolated!==true||data.ready!==true||data.checkout!==true||data.webhook!==true||data.profiles!==true||data.revision!==process.env.GITHUB_SHA)
             throw Error('Isolated checkout Worker readiness failed');
           const invalid=await fetch(base+'/verify-checkout?session_id=cs_live_fake',{signal:AbortSignal.timeout(15000)});
           const denied=await invalid.json();

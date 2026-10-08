@@ -1,7 +1,9 @@
 // Exercise the shipped public package with the actual protected bundle. Provider requests are mocked.
-const {chromium}=require('playwright');
+const {chromium,webkit}=require('playwright');
+const engine=process.env.BROWSER_ENGINE||'chromium';
+if(!['chromium','webkit'].includes(engine))throw Error('Unknown browser engine');
 const fs=require('fs'),http=require('http'),path=require('path'),assert=require('assert/strict');
-const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secure');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secure'+(engine==='chromium'?'':'-'+engine));
 (async()=>{
  const {buildTestWorker}=await import('../scripts/build-test-worker.mjs');
  const base='https://booked-af-email-test.fixture.workers.dev';
@@ -9,12 +11,13 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secu
  const bundle=(await import('../.test-worker/paid-bundle.mjs')).default;
  const publicRoot=path.join(root,'.test-website');
  const server=http.createServer((req,res)=>{const url=new URL(req.url,'http://localhost');const rel=url.pathname==='/'?'index.html':url.pathname.slice(1);const p=path.resolve(publicRoot,rel);if(!p.startsWith(publicRoot+path.sep)){res.writeHead(404).end();return}try{res.setHeader('Content-Type',p.endsWith('.js')?'text/javascript':p.endsWith('.css')?'text/css':p.endsWith('.html')?'text/html':'application/octet-stream');res.end(fs.readFileSync(p))}catch{res.writeHead(404).end()}}).listen(8766,'127.0.0.1');
- const browser=await chromium.launch({headless:true});const results=[];fs.mkdirSync(out,{recursive:true});
+ const browser=await ({chromium,webkit}[engine]).launch({headless:true});const results=[];fs.mkdirSync(out,{recursive:true});
  try{for(const width of [320,390,768,1280]){
-  const page=await browser.newPage({viewport:{width,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.addInitScript(()=>{window.turnstile={render:(el,opts)=>{opts.callback('fixture-token');return 1},remove:()=>{},reset:()=>{}}});
+  const page=await browser.newPage({viewport:{width,height:900}});const errors=[];let leadAttempts=0;page.on('pageerror',e=>errors.push(e.message));
+  await page.addInitScript(()=>{window.qaVerificationResets=0;window.turnstile={render:(el,opts)=>{window.qaVerify=opts.callback;opts.callback('fixture-token');return 1},remove:()=>{},reset:()=>{window.qaVerificationResets++;window.qaVerify('fixture-token-renewed')}}});
   await page.route('**/*',route=>{const url=route.request().url();
    if(url.startsWith('http://127.0.0.1:8766')||url.startsWith('blob:'))return route.continue();
+   if(url.endsWith('/lead-test')&&route.request().method()==='POST'&&leadAttempts++===0)return route.fulfill({status:403,contentType:'application/json',body:JSON.stringify({success:false})});
    if(url.endsWith('/paid-content'))return route.fulfill({status:route.request().headers().authorization==='Bearer cs_test_fixture'?200:403,contentType:'text/javascript',body:bundle});
    return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ready:true,schemas:['short-v5'],success:true,paid:false})});
   });
@@ -38,6 +41,10 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secu
   }
   assert.equal(await page.evaluate(()=>state.view),'email');
   await page.locator('input[name="name"]').fill('Test');await page.locator('input[name="email"]').fill('recipient@example.invalid');
+  await page.locator('#form button[type="submit"]').click();
+  await page.waitForFunction(()=>window.qaVerificationResets===1);
+  assert.equal(await page.locator('input[name="email"]').inputValue(),'recipient@example.invalid');
+  assert.equal(await page.evaluate(()=>state.view),'email');
   await page.locator('#form button[type="submit"]').click();await page.waitForFunction(()=>state.view==='result');
   assert(!/MONTHLY MONEY MAP|STEAL THESE WORDS/.test(await page.locator('#app').innerText()));
   await page.screenshot({path:path.join(out,`${width}-free.png`),fullPage:true});
@@ -65,7 +72,7 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secu
   await page.locator('#next30-import').setInputFiles({name:'saved-plan.json',mimeType:'application/json',buffer:Buffer.from(portable)});
   await page.waitForSelector('#mmm-emp-gross');assert.equal(await page.locator('#mmm-emp-gross').inputValue(),'5000');
   assert.deepEqual(errors,[]);
-  results.push({width,freeForm:'pass',navigation:'pass',clientTampering:'denied',protectedLoad:'pass',moneyMap:'pass',restore:'pass',overflow:false,errors});await page.close();
+  results.push({engine,width,verificationRetry:'pass',freeForm:'pass',navigation:'pass',clientTampering:'denied',protectedLoad:'pass',moneyMap:'pass',restore:'pass',overflow:false,errors});await page.close();
  }
  fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2));
  }finally{await browser.close();server.close()}

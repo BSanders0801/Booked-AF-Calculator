@@ -24,6 +24,8 @@ function replaceOne(text, pattern, value) {
 export async function buildTestWorker(config) {
   validateTestBuild(config);
   const {origin, checkoutUrl, paymentLinkId} = config;
+  const revision=process.env.GITHUB_SHA || 'local';
+  if(!/^(?:[a-f0-9]{40}|local)$/.test(revision))throw Error('Invalid build revision');
   const out = resolve(root, '.test-website'), generated = resolve(root, '.test-worker');
   await rm(out, {recursive:true, force:true});
   await rm(generated, {recursive:true, force:true});
@@ -56,11 +58,16 @@ export async function buildTestWorker(config) {
   worker = replaceOne(worker, /const surveyScheduled = await schedulePurchaseSurvey\(env, session, email, firstName\);/, `const surveyScheduled = await schedulePurchaseSurvey(env, session, email, firstName);
   if (!surveyScheduled) return new Response('Survey scheduling failed', {status:502});`);
   worker = worker.replace('(env.FOLLOWUPS||isStudent(answers))','env.FOLLOWUPS');
+  worker = worker.replace('const customerEmail = session.customer_details?.email || session.customer_email || \'\';',
+    `if(!isNext30Checkout(session))return reply({success:false},403);
+    const customerEmail = session.customer_details?.email || session.customer_email || '';
+    if(customerEmail.toLowerCase()!==env.TEST_RECIPIENT_EMAIL.toLowerCase())return reply({success:false},403);`);
+  worker = worker.replaceAll("to:['hello@bookedandfabulous.com']",'to:[env.TEST_RECIPIENT_EMAIL]');
   worker = worker.replaceAll("bcc:email === 'hello@bookedandfabulous.com' ? undefined : ['hello@bookedandfabulous.com'],",'');
   worker = worker.replace("if (!verified.success || verified.hostname !== new URL(origin).hostname || verified.action !== 'booked_email')","if (!verified.success || data.token !== 'XXXX.DUMMY.TOKEN.XXXX')");
   worker = worker.replace(/https:\/\/(?:www\.)?bookedandfabulous\.com/g, origin);
   await writeFile(resolve(generated, 'email-worker.mjs'), worker);
-  await writeFile(resolve(generated, 'config.mjs'), `export const testOrigin = ${JSON.stringify(origin)};\n`);
+  await writeFile(resolve(generated, 'config.mjs'), `export const testOrigin = ${JSON.stringify(origin)};\nexport const testRevision=${JSON.stringify(revision)};\n`);
   console.log('Built isolated test website and Worker; no production source modified.');
 }
 

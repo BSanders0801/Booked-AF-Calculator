@@ -18,7 +18,7 @@ if (config.name !== target || config.main !== 'test-worker.mjs' || config.routes
     config.assets?.directory !== './.test-website' || config.assets?.binding !== 'ASSETS' || config.assets?.run_worker_first !== true ||
     config.build?.command !== 'node scripts/build-test-worker.mjs' || config.vars?.BOOKED_AF_TEST_MARKER !== marker ||
     Object.keys(config).some(k=>!['name','main','compatibility_date','workers_dev','keep_vars','build','assets','routes','vars','previews','durable_objects','migrations'].includes(k)) ||
-    Object.keys(config.vars).length !== 1 || JSON.stringify(config.durable_objects)!==JSON.stringify({bindings:[{name:'FULFILLMENT',class_name:'TestPurchaseFulfillment'}]}) || JSON.stringify(config.migrations)!==JSON.stringify([{tag:'test-fulfillment-v1',new_sqlite_classes:['TestPurchaseFulfillment']}])) throw Error('Unsafe test configuration.');
+    Object.keys(config.vars).length !== 1 || JSON.stringify(config.durable_objects)!==JSON.stringify({bindings:[{name:'FULFILLMENT',class_name:'TestPurchaseFulfillment'},{name:'TEST_LIFECYCLE',class_name:'TestLifecycle'}]}) || JSON.stringify(config.migrations)!==JSON.stringify([{tag:'test-fulfillment-v1',new_sqlite_classes:['TestPurchaseFulfillment']},{tag:'test-lifecycle-v1',new_sqlite_classes:['TestLifecycle']}])) throw Error('Unsafe test configuration.');
 if (process.env.GITHUB_ACTIONS === 'true' && process.env.GITHUB_REF !== 'refs/heads/build/next30-shell-p04') throw Error('Wrong deployment branch.');
 
 async function api(base, path, token, params, allowMissing=false) {
@@ -45,7 +45,7 @@ const subdomain=resolvedAccount.subdomain;
 const origin=`https://${target}.${subdomain}.workers.dev`;
 const settings=(await cf(`/workers/scripts/${target}/settings`,true))?.result;
 if (settings && (!settings.bindings?.some(b=>b.name==='BOOKED_AF_TEST_MARKER' && b.type==='plain_text' && b.text===marker) ||
-    (settings.bindings || []).some(b => !['secret_text','plain_text','assets'].includes(b.type) && !(b.type==='durable_object_namespace' && b.name==='FULFILLMENT' && b.class_name==='TestPurchaseFulfillment' && (!b.script_name || b.script_name===target)))))
+    (settings.bindings || []).some(b => !['secret_text','plain_text','assets'].includes(b.type) && !(b.type==='durable_object_namespace' && ((b.name==='FULFILLMENT' && b.class_name==='TestPurchaseFulfillment') || (b.name==='TEST_LIFECYCLE' && b.class_name==='TestLifecycle')) && (!b.script_name || b.script_name===target)))))
   throw Error('Existing target has not been identified as our isolated test Worker. Stop for review.');
 const domainResult=await cf('/workers/domains?service='+target);
 const domains=domainResult.result;
