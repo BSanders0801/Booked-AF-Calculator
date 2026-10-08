@@ -3,3 +3,5 @@ Deploy the tested free/paid content boundary revision after PR #4.
 Only the existing isolated test Worker is authorized; production deployment remains prohibited.
 
 October 7 final-candidate isolated deployment/check request following QA fix PR #5. Never deploy production.
+
+Candidate checkpoint, October 8. Revalidate test-only checkout workflow. Production excluded.
