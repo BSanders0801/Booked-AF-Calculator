@@ -40,6 +40,13 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
   for(let n=0;n<100&&!w.document.querySelector('#profile-save-status');n++)await new Promise(r=>setTimeout(r,5));
   assert.equal(saves,1,'diagnosis refresh does not cause a save loop');
   assert.match(w.document.querySelector('#app').textContent,/SERVER DIAGNOSIS AFTER UPDATE/);
+  const checkout=w.document.querySelector('#paid');
+  assert.equal(checkout.tagName,'A');
+  assert(checkout.classList.contains('checkout-link'));
+  assert.equal(checkout.href,'https://buy.stripe.com/test_fixture');
+  assert.equal(checkout.onclick,null,'working result goes directly to checkout, without an intermediate sales screen');
+  assert.match(checkout.textContent,/\$49/);
+  assert.match(w.document.querySelector('#app').textContent,/12 months of online access/);
   assert.equal(w.document.querySelectorAll('.storage-note').length,1);
   assert.match(JSON.parse(w.sessionStorage.getItem('booked-free-copy')).copy.title,/AFTER UPDATE/);
 

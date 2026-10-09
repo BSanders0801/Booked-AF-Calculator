@@ -93,9 +93,14 @@ if (!matching.length) {
 }
 wrangler(['secret','bulk'],JSON.stringify(bindings));
 const updated=await stripe('/v1/payment_links/'+encodeURIComponent(link.id),{
+  'name_collection[individual][enabled]':'true',
+  'name_collection[individual][optional]':'false',
   'after_completion[type]':'redirect',
   'after_completion[redirect][url]':origin+'/?next30=paid&session_id={CHECKOUT_SESSION_ID}'
 });
+if (updated.name_collection?.individual?.enabled !== true || updated.name_collection?.individual?.optional !== false)
+  throw Error('Required customer name could not be verified on the test Payment Link.');
+console.log('Test checkout customer name is required.');
 if (updated.livemode !== false || updated.after_completion?.redirect?.url !== origin+'/?next30=paid&session_id={CHECKOUT_SESSION_ID}')
   throw Error('Test-only return URL update could not be verified.');
 const health=await fetch(origin+'/health',{signal:AbortSignal.timeout(15000)});
