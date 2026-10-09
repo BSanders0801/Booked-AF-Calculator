@@ -31,7 +31,7 @@ async function boot(paid=true,saved=null){
     assert(++steps<25);if($('#next30-next').disabled)click('[data-next30-choice]');click('#next30-next');
    }
    assert.equal(run('state.currentCareerPlan.role'),role);assert($('#next30-workmath'));assert.equal(w.document.querySelectorAll('[data-next30-copy]').length,3);
-   assert(!$('#app').textContent.includes('undefined'));assert.equal(run('state.currentCareerPlan.supporting.length'),7);
+   assert(!$('#app').textContent.includes('undefined'));assert.equal(run('state.currentCareerPlan.supporting.length'),role==='education'?6:7);
   }
   run(`state.careerData.answers=fillCareer({careers:['color','bridal'],primary:'color',goal:'money',color_pay:'self'});state.careerData.currentId=null;state.view='deepresult';render()`);
   const input=(id,v)=>{const el=$('#n30-'+id);assert(el);el.value=String(v);el.dispatchEvent(new w.Event('input',{bubbles:true}))};

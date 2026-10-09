@@ -59,16 +59,16 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   d.click('header [data-nav="paid"]');assert.match(d.$('#app').textContent,/YOUR CAREER. ONE PAYMENT/);
   d.click('[data-nav="next30sample"]');assert.match(d.$('#app').textContent,/A PLAN YOU CAN ACTUALLY USE/);assert.doesNotMatch(d.$('#app').textContent,/STOP THIS|WEEK 1|ONE SCRIPT TO STEAL/);
   d.click('[data-nav="paid"]');d.click('.checkout-link');assert.match(d.$('#preview-checkout-note').textContent,/Checkout is kept off/);
-  d.click('header [data-nav="question"]');assert.match(d.$('#app').textContent,/WHERE ARE YOU IN YOUR HAIR CAREER/);d.click('[data-value="working"]');d.click('#next');assert.match(d.$('#app').textContent,/WHAT’S YOUR HAIR GAME/);
+  d.click('header [data-nav="question"]');assert.match(d.$('#app').textContent,/Where are you in your hair career/);d.click('[data-value="working"]');d.click('#next');assert.match(d.$('#app').textContent,/What do you do in the hair world/);
   for(let i=0;i<20&&d.$('#next');i++){d.click('.choice');d.click('#next');}
   await tick();assert(d.$('#form'));assert(!d.$('#skip'));assert(!d.$('#plan'));
   d.click('#form button[type="submit"]');assert.equal(d.network.posts,0);
   const beforeEmail=JSON.parse(d.w.localStorage.getItem(savedKey));
-  d.$('#email').value='test@example.test';
+  d.$('#name').value='Bradley';d.$('#email').value='test@example.test';
   await d.$('#form').onsubmit({preventDefault(){}});
   assert.match(d.$('#error').textContent,/temporarily unavailable/);assert(!d.$('#plan'));
   d.click('header [data-nav="intro"]');d.click('header [data-nav="resume"]');d.click('#resume-free');
-  await tick();assert(d.$('#form'));d.network.accept=true;d.$('#email').value='test@example.test';
+  await tick();assert(d.$('#form'));d.network.accept=true;d.$('#name').value='Bradley';d.$('#email').value='test@example.test';
   await d.$('#form').onsubmit({preventDefault(){}});
   assert.match(d.$('#app').textContent,/WHAT MAY BE GETTING IN THE WAY/);assert.equal(d.network.posts,2);
   assert(!d.$('#plan'));assert(!d.$('#daymath'));assert(!d.$('[data-task]'));
@@ -92,18 +92,18 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   const blocked=start({blocked:true});blocked.click('header [data-nav="question"]');blocked.click('.choice');assert.equal(blocked.$('#storage-error').hidden,false);
   const paid=start({search:'?deepdive=paid&session_id=cs_test_123',hash:'#my-plan',saved});assert.match(paid.$('#app').textContent,/Checking your payment/);assert(!paid.$('#dnext'));
   // Student enters through the same front door, with no working-business questions.
-  const directStudent=start();directStudent.click('.student-entry');assert.match(directStudent.$('#app').textContent,/WHAT KIND OF HAIR WORK INTERESTS YOU/);
+  const directStudent=start();directStudent.click('.student-entry');assert.match(directStudent.$('#app').textContent,/What kind of work can you see yourself doing/);
   const student=start();student.click('header [data-nav="question"]');student.click('[data-value="school"]');student.click('#next');
   let studentScreens=[];
   while(student.$('#next')){studentScreens.push(student.$('#app h2').textContent);student.click('.choice');student.click('#next');}
   assert(!studentScreens.some(t=>/PAYS THE BILLS|FULL IS YOUR BOOK|WORK CALENDAR|TALK PAY/.test(t)));
   await tick();assert(student.$('#first90-optin'));assert.equal(student.$('#first90-optin').checked,false);
-  student.network.accept=true;student.$('#email').value='test@example.test';await student.$('#form').onsubmit({preventDefault(){}});
+  student.network.accept=true;student.$('#name').value='Bradley';student.$('#email').value='test@example.test';await student.$('#form').onsubmit({preventDefault(){}});
   assert.match(student.$('#app').textContent,/WHAT MAY BE GETTING IN THE WAY/);assert(!student.$('#daymath'));assert.match(student.$('#paid').textContent,/FIRST 90/);
   student.click('#paid');assert.match(student.$('#app').textContent,/nothing to buy yet/);assert(!student.$('.checkout-link'));
-  student.click('#first90-email');await tick();assert(student.$('#first90-optin').checked);student.$('#email').value='test@example.test';await student.$('#form').onsubmit({preventDefault(){}});
+  student.click('#first90-email');await tick();assert(student.$('#first90-optin').checked);student.$('#name').value='Bradley';student.$('#email').value='test@example.test';await student.$('#form').onsubmit({preventDefault(){}});
   student.click('#paid');assert.match(student.$('#app').textContent,/YOU’RE ON THE LIST/);student.click('#first90-back');assert(!student.$('[data-task]'));
-  student.click('[data-career-update]');assert.match(student.$('#app').textContent,/WHERE ARE YOU IN YOUR HAIR CAREER/);student.click('[data-value="building"]');student.click('#next');assert.match(student.$('#app').textContent,/WHAT’S YOUR HAIR GAME/);
+  student.click('[data-career-update]');assert.match(student.$('#app').textContent,/Where are you in your hair career/);student.click('[data-value="building"]');student.click('#next');assert.match(student.$('#app').textContent,/What do you do in the hair world/);
   for(const s of sessions)assert.equal(s.errors.length,0,s.errors.map(e=>e.stack).join('\n'));
   console.log('PASS: homepage copy; quiz; required email; blank and failed email blocked; accepted email unlocks; resume, refresh, free-content boundary and retired calculator route; URL bypass blocked; privacy and clearing; corrupt/blocked storage; paid-route isolation. No real emails or payments.');
  }finally{for(const s of sessions)s.dom.window.close();}

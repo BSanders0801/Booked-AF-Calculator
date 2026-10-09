@@ -62,6 +62,12 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secu
   await page.locator('#form button[type="submit"]').click();await page.waitForFunction(()=>state.view==='result');
   assert(!/MONTHLY MONEY MAP|STEAL THESE WORDS/.test(await page.locator('#app').innerText()));
   await page.screenshot({path:path.join(out,`${width}-free.png`),fullPage:true});
+  // Render the new named-service input from the shipped public package.
+  await page.evaluate(()=>{restoreSchema(SHORT_SCHEMA);state.answers={careerstage:'working',worktype:['color'],goal:['money'],paymodel:'commission'};state.index=questions.findIndex(q=>q.id==='servicehours');state.view='question';render()});
+  await page.locator('#service-name').fill('Root touch-up');await page.locator('#service-hours').fill('1');await page.locator('#service-minutes').fill('45');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${width} service-time overflow`);
+  await page.locator('#service-time-form button[type="submit"]').click();
+  assert.deepEqual(await page.evaluate(()=>state.answers.servicehours),{service:'Root touch-up',hours:1,minutes:45});
   await page.goto('http://127.0.0.1:8766/?next30=paid&session_id=cs_test_fixture');
   await page.waitForSelector('[data-next30-choice]');
   // Go through real intake controls rather than force a paid result.
@@ -81,6 +87,12 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secu
   await page.screenshot({path:path.join(out,`${width}-paid.png`),fullPage:true});
   const portable=await page.evaluate(()=>JSON.stringify(state.careerData));
   await page.reload();assert.equal(await page.locator('#money-map').count(),0,'refresh without private credential must reverify');
+  // Render the new named-service input from the shipped public package.
+  await page.evaluate(()=>{restoreSchema(SHORT_SCHEMA);state.answers={careerstage:'working',worktype:['color'],goal:['money'],paymodel:'commission'};state.index=questions.findIndex(q=>q.id==='servicehours');state.view='question';render()});
+  await page.locator('#service-name').fill('Root touch-up');await page.locator('#service-hours').fill('1');await page.locator('#service-minutes').fill('45');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${width} service-time overflow`);
+  await page.locator('#service-time-form button[type="submit"]').click();
+  assert.deepEqual(await page.evaluate(()=>state.answers.servicehours),{service:'Root touch-up',hours:1,minutes:45});
   await page.goto('http://127.0.0.1:8766/?next30=paid&session_id=cs_test_fixture');await page.locator('#money-map').waitFor();
   assert.equal(await page.locator('#mmm-emp-gross').inputValue(),'5000');
   await page.locator('#next30-import').setInputFiles({name:'saved-plan.json',mimeType:'application/json',buffer:Buffer.from(portable)});

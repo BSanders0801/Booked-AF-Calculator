@@ -15,6 +15,7 @@ const complete=input=>{
   while(changed && guard++<100){
     changed=false;
     for(const q of visible(out)){
+      if(q.type==='service-time'){if(!out[q.id]||typeof out[q.id]!=='object')out[q.id]={service:'Root touch-up',hours:1,minutes:30};continue;}
       const list=Array.from(choices(q,out));
       const allowed=new Set(list.map(x=>x[0]));
       if(q.multi){
@@ -63,8 +64,8 @@ assert.equal(lane(owner),'owner');
 assert.equal(lane(manager),'manager');
 assert(!('primarywork' in owner));
 assert(!('primarywork' in manager));
-assert.match(Array.from(choices(byId('goal'),owner),x=>x[1]).join(' '),/business to make more/i);
-assert.match(Array.from(choices(byId('goal'),manager),x=>x[1]).join(' '),/role to pay better/i);
+assert.match(Array.from(choices(byId('goal'),owner),x=>x[1]).join(' '),/More profit without more hours/i);
+assert.match(Array.from(choices(byId('goal'),manager),x=>x[1]).join(' '),/Pay that matches/i);
 assert.equal(build(owner).plan.steps.length,3);
 assert.equal(build(manager).plan.steps.length,3);
 
@@ -218,6 +219,9 @@ assert.equal((await wc.worker.fetch(request({schema:'bogus',answers:chairAnswer(
 assert.equal((await wc.worker.fetch(request({schema:'short-v4',answers:chairAnswer('clients')}),env)).status,400);
 assert.equal((await wc.worker.fetch(request({schema:'short-v5',answers:{goal:['time']}}),env)).status,400);
 
+for(const name of ['', '   ', '---'])assert.equal((await wc.worker.fetch(request({name,schema:'short-v5',answers:chairAnswer('clients')}),env)).status,400);
+assert.equal((await wc.worker.fetch(request({schema:'short-v5',answers:{...chairAnswer('money'),servicehours:'long'}}),env)).status,400);
+
 // Legacy still works.
 const legacy=vm.runInContext('Object.fromEntries(questions.filter(q=>!q.when).map(q=>[q.id,q.choices[0][0]]))',wc);
 vm.runInContext('globalThis.legacyQuestions=questions',wc);
@@ -244,7 +248,7 @@ for(const goal of ['clients','return','money','keep','time','stable']){
   const navAnswers=chairAnswer(goal);
   vm.runInContext('state.answers='+JSON.stringify(navAnswers)+';render()',ac);
   const count=visible(navAnswers).length;
-  for(let i=1;i<count;i++)element('next').onclick();
+  for(let i=1;i<count;i++){if(element('app').innerHTML.includes('id="service-time-form"')){element('service-name').value='Root touch-up';element('service-hours').value='1';element('service-minutes').value='30';element('service-time-form').onsubmit({preventDefault(){},currentTarget:{reportValidity(){return true}}});}else element('next').onclick();}
   assert(element('app').innerHTML.includes('SEE MY BREAKDOWN'));
   element('back').onclick();
   assert(element('app').innerHTML.includes('Question '+(count-1)+' of '+count));

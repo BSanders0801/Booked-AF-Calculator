@@ -7,9 +7,9 @@ assert.equal(roles.length,10);
 for(const role of roles)for(const goal of goals){
  const answers=fill({careers:[role],goal,load:'busy',available:'hour'}),plan=api.build(answers);
  assert.equal(plan.role,role);assert.equal(plan.missions.length,4);assert(plan.scripts.length>=3);assert(plan.checklist.length>=6);
- assert.equal(plan.supporting.length,7);assert(plan.metrics.length>=3);assert(plan.tool.title);
+ assert.equal(plan.supporting.length,role==='education'?6:7);assert(plan.metrics.length>=3);assert(plan.tool.title);
  assert(!JSON.stringify(plan).includes('undefined'));assert(!JSON.stringify(plan).includes('[object Object]'));
- assert(api.questions(answers).length>=11&&api.questions(answers).length<=14);
+ assert(api.questions(answers).length>=10&&api.questions(answers).length<=14);
  for(const q of api.questions(answers)){
   assert(q.purpose);assert(new Set(q.choices.map(x=>x[0])).size===q.choices.length);
   const missing={...answers};delete missing[q.id];assert(!api.complete(missing));
@@ -30,8 +30,8 @@ assert.equal(api.primary(mixed),'session');assert.equal(api.build(mixed).seconda
 const switched=fill({...mixed,primary:'bridal'});assert(!Object.keys(switched).some(x=>x.startsWith('session_')));assert.equal(api.build(switched).role,'bridal');
 assert.deepEqual(Array.from(api.cleanAnswers({careers:['other'],other_sources:['referrals','unknown']}).other_sources),['unknown']);
 const bridal=fill({careers:['bridal'],goal:'clients',bridal_inquiry:['vendors','search']});assert(api.build(bridal).supporting.find(x=>x.id==='bridal_inquiry').action.includes('vendors'));assert(api.build(bridal).supporting.find(x=>x.id==='bridal_inquiry').action.includes('service area'));
-const manager=api.build(fill({careers:['manager'],goal:'money'}));assert(!manager.tool.share);assert.match(manager.tool.earnedLabel,/Actual pay/);assert.doesNotMatch(manager.doNow,/salon.*sales.*your.*income/i);
-const hourly=api.build(fill({careers:['color'],goal:'money',color_pay:'hourly'}));assert(!hourly.tool.share);assert.match(hourly.tool.earnedLabel,/Actual pay/);
+const manager=api.build(fill({careers:['manager'],goal:'money'}));assert(!manager.tool.share);assert.match(manager.tool.earnedLabel,/actually paid/);assert.doesNotMatch(manager.doNow,/salon.*sales.*your.*income/i);
+const hourly=api.build(fill({careers:['color'],goal:'money',color_pay:'hourly'}));assert(!hourly.tool.share);assert.match(hourly.tool.earnedLabel,/actually paid/);
 assert(hourly.scripts.some(x=>x[0]==='PAY CONVERSATION'));assert.match(hourly.missions[2].tasks[0],/PAY CONVERSATION/);
 assert.deepEqual(Object.keys(api.cleanAnswers(null)),[]);
 assert.equal(api.valueMath({additionalKept:-10,extraCosts:5,price:49}).afterPurchase,-64);

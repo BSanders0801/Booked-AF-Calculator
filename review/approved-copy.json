@@ -1,0 +1,1673 @@
+{
+  "paid": {
+    "careers": {
+      "title": "What do you do in the hair world?",
+      "labels": [
+        "Color.",
+        "Cutting and styling.",
+        "Extensions.",
+        "Editorial, commercial, film, or TV work.",
+        "Bridal and events.",
+        "Education or beauty brand work.",
+        "Own a salon.",
+        "Manage a salon.",
+        "Just getting started—or getting back into it.",
+        "Something else."
+      ],
+      "note": "Pick everything that applies. You don’t have to fit in one box."
+    },
+    "primary": {
+      "title": "You do more than one thing. Where should we start?",
+      "labels": null,
+      "note": "Pick one. We can make a separate plan for the others."
+    },
+    "goal": {
+      "title": "Thirty days from now, what would make you say, “That was worth it”?",
+      "labels": [
+        "More clients or paid gigs I actually want.",
+        "Getting paid more for the work I already do.",
+        "More repeat clients and referrals.",
+        "Knowing where my money goes—and keeping more of it.",
+        "A life that doesn’t revolve around work.",
+        "Steadier income. Less holding my breath.",
+        "I need help figuring out where to start."
+      ],
+      "note": "Pick one. Your entire life doesn’t need a makeover by Tuesday."
+    },
+    "load": {
+      "title": "How’s your book looking?",
+      "labels": [
+        "Starting or rebuilding. Plenty of openings.",
+        "I have clients. I could use more.",
+        "Busy, but there’s still room.",
+        "Full, or pretty close.",
+        "I need to look at the actual numbers."
+      ]
+    },
+    "owner_load": {
+      "title": "How busy is your salon?",
+      "labels": [
+        "Starting or rebuilding. Plenty of empty chairs.",
+        "We have clients. There’s room for more.",
+        "Busy, with some openings.",
+        "Full, or pretty close.",
+        "I need to check the numbers."
+      ]
+    },
+    "available": {
+      "title": "How much time can you realistically give this each week?",
+      "labels": [
+        "About 15 minutes. Let’s start there.",
+        "About an hour.",
+        "About 2 hours.",
+        "3 hours or more."
+      ]
+    },
+    "budget": {
+      "title": "What can you spend on bringing in more business this month?",
+      "labels": [
+        "$0. Work with what I’ve got.",
+        "$1–$100.",
+        "$101–$300.",
+        "More than $300, if it makes sense."
+      ]
+    },
+    "savings": {
+      "title": "If you couldn’t work, how long would your savings cover the bills?",
+      "labels": [
+        "There’s no cushion yet.",
+        "Less than 2 months.",
+        "2 to under 6 months.",
+        "6 months or more.",
+        "I need to do the math."
+      ]
+    },
+    "savinghabit": {
+      "title": "Are you putting money aside?",
+      "labels": [
+        "The bills get it first.",
+        "When I can. My income changes.",
+        "Yes. I make it a regular thing.",
+        "I need to check what I’m actually saving."
+      ]
+    },
+    "color_pay": {
+      "title": "How do you get paid?",
+      "labels": [
+        "Commission.",
+        "Hourly.",
+        "I work for myself. The money comes to me—and so do the bills.",
+        "A mix."
+      ]
+    },
+    "color_control": {
+      "title": "Who gets the final say on your prices and appointment times?",
+      "labels": [
+        "I do.",
+        "The salon and I decide together.",
+        "The salon does."
+      ]
+    },
+    "color_signature": {
+      "title": "What kind of color work do you want more of?",
+      "labels": [
+        "Blondes, highlights, and lived-in color.",
+        "Gray coverage and root touch-ups.",
+        "Color corrections and big changes.",
+        "Vivids and creative color.",
+        "A little of everything."
+      ],
+      "multi": true,
+      "note": "Pick all that apply."
+    },
+    "color_time": {
+      "title": "Are you finishing on time, or is your next client already waiting?",
+      "labels": [
+        "I usually finish on time.",
+        "Some appointments run over.",
+        "I’m running behind more often than I’d like.",
+        "I haven’t paid attention to it."
+      ]
+    },
+    "color_product": {
+      "title": "Do you know what you spend on color and supplies for each client?",
+      "labels": [
+        "Yes. I track it.",
+        "I have a rough idea.",
+        "No. I need to figure that out.",
+        "The salon covers it."
+      ]
+    },
+    "color_consult": {
+      "title": "Before you mix the color, what have you and your client agreed on?",
+      "labels": null,
+      "multi": true,
+      "note": "Pick all that apply."
+    },
+    "color_return": {
+      "title": "Your client’s color looks great. What happens before they leave?",
+      "labels": [
+        "We decide when they need to come back and book it.",
+        "I ask if they want to rebook.",
+        "The front desk takes it from there.",
+        "We say goodbye. The next appointment is anyone’s guess."
+      ]
+    },
+    "cut_pay": {
+      "title": "How do you get paid?",
+      "labels": [
+        "Commission.",
+        "Hourly.",
+        "I work for myself. The money comes to me—and so do the bills.",
+        "A mix."
+      ]
+    },
+    "cut_control": {
+      "title": "Who gets the final say on your prices and appointment times?",
+      "labels": [
+        "I do.",
+        "The salon and I decide together.",
+        "The salon does."
+      ]
+    },
+    "cut_specialty": {
+      "title": "What do you want to see more of on your book?",
+      "labels": [
+        "Haircuts and big changes.",
+        "Curls, coils, and texture.",
+        "Short cuts and barbering.",
+        "Blowouts and styling.",
+        "A little of everything."
+      ],
+      "note": "Pick one to focus on this month."
+    },
+    "cut_time": {
+      "title": "Do you have enough time booked for each client?",
+      "labels": [
+        "Usually, yes.",
+        "No. I’m rushing to stay on schedule.",
+        "More than I need. I could tighten up my day.",
+        "Some clients need more time than they’re booked for."
+      ]
+    },
+    "cut_consult": {
+      "title": "Their hair looks great when they leave. Can they do it at home?",
+      "labels": [
+        "Yes. I show them how.",
+        "Sometimes. Depends on how much we cover.",
+        "We’re usually rushing by then.",
+        "I should probably ask."
+      ]
+    },
+    "cut_return": {
+      "title": "Before they leave, what’s the plan for their next appointment?",
+      "labels": [
+        "I tell them when to come back and what to book.",
+        "I ask if they want to rebook.",
+        "The front desk takes it from there.",
+        "I wait for the “Are you free tomorrow?” text."
+      ]
+    },
+    "cut_extras": {
+      "title": "The appointment just got more complicated. Does the price change with it?",
+      "labels": [
+        "Yes. We agree on the extra time and cost first.",
+        "No. Apparently, the extra work is my gift to them.",
+        "The salon decides what costs extra.",
+        "Depends on the day. I need a better answer."
+      ]
+    },
+    "extensions_pay": {
+      "title": "How do you get paid for extension work?",
+      "labels": [
+        "Commission.",
+        "Hourly.",
+        "I collect the payment and cover the costs.",
+        "A mix."
+      ]
+    },
+    "extensions_hair": {
+      "title": "Who pays for the hair before you order it?",
+      "labels": [
+        "The client. Before I place the order.",
+        "I pay upfront.",
+        "The salon handles it.",
+        "It depends."
+      ]
+    },
+    "extensions_quote": {
+      "title": "When you quote extensions, what does the client know they’re paying for?",
+      "labels": [
+        "The hair, installation, maintenance, and removal.",
+        "Mostly the hair and installation.",
+        "We talk it through, but I don’t spell it out in writing.",
+        "I need to make that clearer."
+      ]
+    },
+    "extensions_timing": {
+      "title": "Do you know the time and costs for a new install versus maintenance?",
+      "labels": [
+        "Yes. I track them separately.",
+        "I have a rough idea.",
+        "No. I lump it all together."
+      ]
+    },
+    "extensions_maintenance": {
+      "title": "Does your extension client leave knowing what maintenance involves?",
+      "labels": [
+        "Yes—and their next appointment is booked.",
+        "Yes, but they book later.",
+        "I’m usually chasing them to come back.",
+        "I’m still figuring out how to handle that."
+      ]
+    },
+    "extensions_adjustments": {
+      "title": "When extensions need an unexpected fix, who covers the extra time and cost?",
+      "labels": [
+        "I’m clear about what’s included and what costs extra.",
+        "Usually me. More unpaid work.",
+        "It rarely comes up.",
+        "I haven’t kept track."
+      ]
+    },
+    "extensions_stock": {
+      "title": "How much unused extension hair do you have sitting around?",
+      "labels": [
+        "Very little. I order for booked clients.",
+        "Some leftovers.",
+        "Enough that I should probably know what it’s worth.",
+        "I need to check."
+      ]
+    },
+    "session_market": {
+      "title": "What kind of jobs do you want more of?",
+      "labels": [
+        "Commercials and brand campaigns.",
+        "Editorial.",
+        "Celebrity and red carpet.",
+        "Film and TV.",
+        "A mix."
+      ],
+      "note": "Pick one to focus on this month."
+    },
+    "session_agency": {
+      "title": "Who handles your bookings?",
+      "labels": [
+        "My agent or rep.",
+        "I do.",
+        "Both."
+      ]
+    },
+    "session_scope": {
+      "title": "Before you say yes to a job, what’s confirmed?",
+      "labels": [
+        "The rate, hours, location, and what I’m expected to do.",
+        "Usually just the rate and date.",
+        "I say yes. The details show up later."
+      ]
+    },
+    "session_overrun": {
+      "title": "The job runs long. Are you getting paid for the extra time?",
+      "labels": [
+        "Yes. We agreed on that before the job.",
+        "I have to bring it up while I’m there.",
+        "Usually not. I eat the extra time.",
+        "I need to check the terms."
+      ]
+    },
+    "session_expenses": {
+      "title": "Are you paying job expenses out of your own pocket upfront?",
+      "labels": [
+        "Often.",
+        "Sometimes.",
+        "Rarely or never."
+      ]
+    },
+    "session_payment": {
+      "title": "The job’s done. How long until you get paid?",
+      "labels": [
+        "Within 2 weeks.",
+        "More than 2 weeks, up to a month.",
+        "More than a month.",
+        "Depends. Chasing payment is apparently part of the job."
+      ]
+    },
+    "session_followup": {
+      "title": "You’ve done a great job. How do you stay on their radar?",
+      "labels": [
+        "I stay in touch with the people I worked with.",
+        "My rep handles it.",
+        "I share the work when I have permission.",
+        "I wait for the phone to ring."
+      ]
+    },
+    "bridal_team": {
+      "title": "How do you work weddings and events?",
+      "labels": [
+        "Mostly on my own.",
+        "I book the jobs and bring a team.",
+        "I work on someone else’s team.",
+        "A mix."
+      ]
+    },
+    "bridal_inquiry": {
+      "title": "Where are your wedding and event clients finding you?",
+      "labels": [
+        "Past clients and referrals.",
+        "Planners, venues, and other vendors.",
+        "Google or my website.",
+        "Social media.",
+        "I need to start asking."
+      ]
+    },
+    "bridal_quote": {
+      "title": "What does your quote include?",
+      "labels": [
+        "Services, number of people, travel, timing, and extras.",
+        "Mostly the hair. We sort out the rest later.",
+        "It changes with every job."
+      ]
+    },
+    "bridal_trial": {
+      "title": "How do you handle the trial appointment?",
+      "labels": [
+        "The client knows what it costs and what we’ll cover.",
+        "It’s included, but I haven’t checked what it costs me.",
+        "We figure it out as we go.",
+        "My work doesn’t involve trials."
+      ]
+    },
+    "bridal_timeline": {
+      "title": "How far in advance do you know the schedule for the wedding or event?",
+      "labels": [
+        "Early enough to plan my day.",
+        "Last minute, usually.",
+        "I find out when I get there."
+      ]
+    },
+    "bridal_changes": {
+      "title": "They add another person or change the location. What happens?",
+      "labels": [
+        "I confirm the changes and any extra charges in writing.",
+        "We talk or text about it, but don’t clearly confirm the new price.",
+        "I make it work and absorb the extra time or cost."
+      ]
+    },
+    "bridal_after": {
+      "title": "The event’s over. Do they hear from you again?",
+      "labels": [
+        "Yes. I thank them and ask for a review or referral.",
+        "Sometimes, when I remember.",
+        "No. I’m on to the next one."
+      ]
+    },
+    "education_buyer": {
+      "title": "Who pays you for your education work?",
+      "labels": [
+        "Salons or salon groups.",
+        "A beauty brand or distributor.",
+        "Stylists who book and pay directly.",
+        "A mix."
+      ]
+    },
+    "education_format": {
+      "title": "What do you want to do more of this month?",
+      "labels": [
+        "Teach in person.",
+        "Teach live online.",
+        "Sell a recorded class or resource.",
+        "I need to figure that out."
+      ]
+    },
+    "education_outcome": {
+      "title": "What will someone know how to do after taking your class?",
+      "labels": [
+        "Something specific they can use right away.",
+        "A few new things, but they may need help putting them into practice.",
+        "I need to get clearer on that."
+      ]
+    },
+    "education_prep": {
+      "title": "Are you counting prep and follow-up as work time?",
+      "labels": [
+        "Yes. All of it.",
+        "Some of it.",
+        "No. Just the time I’m teaching."
+      ]
+    },
+    "education_expenses": {
+      "title": "Who covers travel, models, and supplies when you teach?",
+      "labels": [
+        "We agree on that before I book the job.",
+        "It all comes out of my fee.",
+        "I usually figure it out afterward.",
+        "It depends on the job."
+      ]
+    },
+    "education_proof": {
+      "title": "They liked the class. Did they actually use anything you taught?",
+      "labels": [
+        "I follow up and ask what’s working.",
+        "I ask for feedback, but not what they’ve put into practice.",
+        "If they book another class, I take that as a good sign.",
+        "Good question. I need to ask."
+      ]
+    },
+    "owner_model": {
+      "title": "What pays the salon’s bills?",
+      "labels": [
+        "A team working on commission.",
+        "Chair or suite rentals.",
+        "A mix of employees and renters.",
+        "Mostly me, behind the chair."
+      ]
+    },
+    "owner_pay": {
+      "title": "After the salon’s bills are paid, how much is left for you?",
+      "labels": [
+        "I know the number.",
+        "I have a rough idea.",
+        "Whatever I can transfer without something bouncing.",
+        "I need to work that out."
+      ]
+    },
+    "owner_bookings": {
+      "title": "Is the whole salon busy, or just a few people?",
+      "labels": [
+        "Most of the team stays busy.",
+        "A few people carry most of the business.",
+        "It depends on the day.",
+        "I need to check the numbers."
+      ]
+    },
+    "owner_team": {
+      "title": "What needs the most attention with your team?",
+      "labels": [
+        "Finding the right people.",
+        "Giving clients a consistently good experience.",
+        "Training and support.",
+        "The team’s doing well.",
+        "It’s just me right now."
+      ]
+    },
+    "owner_return": {
+      "title": "Who makes sure clients book their next appointment?",
+      "labels": [
+        "Everyone knows their part.",
+        "Each stylist does their own thing.",
+        "It falls on the front desk.",
+        "We need to get clear on that."
+      ]
+    },
+    "owner_stock": {
+      "title": "How do you keep track of products and supplies?",
+      "labels": [
+        "We track what we use and what we have.",
+        "We reorder when something runs low.",
+        "We have too much sitting around.",
+        "I need to see what’s actually there."
+      ]
+    },
+    "owner_delegation": {
+      "title": "What still lands on your plate every day?",
+      "labels": [
+        "Pretty much everything.",
+        "Clients and client problems.",
+        "Scheduling, ordering, and paperwork.",
+        "Most things run without me."
+      ]
+    },
+    "manager_pay": {
+      "title": "How do you get paid to manage the salon?",
+      "labels": [
+        "Salary.",
+        "Hourly.",
+        "Base pay plus bonuses or commission.",
+        "I manage the salon and take my own clients."
+      ]
+    },
+    "manager_authority": {
+      "title": "What can you actually change without asking the owner?",
+      "labels": [
+        "Most day-to-day decisions.",
+        "I can make suggestions. The owner decides.",
+        "I’m responsible for the results, but don’t have much say."
+      ]
+    },
+    "manager_responsibility": {
+      "title": "What’s on your plate?",
+      "labels": [
+        "Scheduling and bookings.",
+        "Staff support and training.",
+        "Client problems and service standards.",
+        "Stock, orders, and costs.",
+        "Reports and business targets."
+      ]
+    },
+    "manager_reports": {
+      "title": "Do you get to see the numbers you’re expected to improve?",
+      "labels": [
+        "Yes.",
+        "Some, but not all.",
+        "Not really.",
+        "We haven’t agreed on what I’m supposed to be improving."
+      ]
+    },
+    "manager_handoff": {
+      "title": "When something needs the owner’s attention, what happens?",
+      "labels": [
+        "We’re clear on what I handle and when they step in.",
+        "I wait—and follow up.",
+        "It usually ends up back on me."
+      ]
+    },
+    "manager_team": {
+      "title": "What makes the day harder than it needs to be?",
+      "labels": [
+        "Not enough people when we need them.",
+        "The client experience depends too much on who’s working.",
+        "People need more training or help.",
+        "Someone thought someone else was handling it.",
+        "We’re in a pretty good rhythm."
+      ]
+    },
+    "manager_offduty": {
+      "title": "When you’re off, are you actually off?",
+      "labels": [
+        "Yes. Work stays at work.",
+        "Mostly, but I still answer messages.",
+        "No. I’m regularly working on my own time.",
+        "I’m off the clock, but my head’s still at the salon."
+      ]
+    },
+    "restart_starting": {
+      "title": "Are you starting fresh or starting over?",
+      "labels": [
+        "I’m starting my career in hair.",
+        "I’m coming back after a break.",
+        "I’ve moved and need to build a clientele.",
+        "I’m still working, but I need a fresh start."
+      ]
+    },
+    "restart_setup": {
+      "title": "Do you have a place to take clients?",
+      "labels": [
+        "Yes. Now I need people in the chair.",
+        "I’m looking for the right salon.",
+        "I’m getting my own space ready.",
+        "I’m still figuring that part out."
+      ]
+    },
+    "restart_service": {
+      "title": "What do you want people booking you for first?",
+      "labels": [
+        "Color.",
+        "Cutting and styling.",
+        "Extensions.",
+        "Bridal, events, or on-location work.",
+        "That’s what I need help figuring out."
+      ]
+    },
+    "restart_proof": {
+      "title": "If someone asked to see your work, what would you show them?",
+      "labels": [
+        "Recent photos that show what I do best.",
+        "Older work. My camera roll needs attention.",
+        "A few good examples. I need more.",
+        "I need to get some work photographed."
+      ]
+    },
+    "restart_network": {
+      "title": "Who knows you’re taking clients?",
+      "labels": [
+        "My past clients.",
+        "People I’ve worked with.",
+        "People in my area.",
+        "Me. So that’s a problem."
+      ]
+    },
+    "restart_barrier": {
+      "title": "What’s standing between you and taking clients?",
+      "labels": [
+        "My confidence needs to catch up with my skills.",
+        "I need more practice.",
+        "I need somewhere to work.",
+        "I’m ready. I need clients."
+      ]
+    },
+    "restart_schedule": {
+      "title": "How much can you work without rearranging your entire life?",
+      "labels": [
+        "One regular day or a few set hours each week.",
+        "A few days a week.",
+        "I have room for a full schedule.",
+        "It varies. I need flexibility."
+      ]
+    },
+    "other_format": {
+      "title": "What do you actually get paid to do?",
+      "labels": [
+        "See clients.",
+        "Work shoots, events, or other projects.",
+        "Work for an employer.",
+        "Teach, create content, or sell products.",
+        "A mix. One job title doesn’t cover it."
+      ]
+    },
+    "other_buyer": {
+      "title": "Who’s paying you?",
+      "labels": [
+        "Individual clients.",
+        "Businesses or brands.",
+        "An employer.",
+        "More than one of these."
+      ]
+    },
+    "other_scope": {
+      "title": "Before you start, is everyone clear on the work and the price?",
+      "labels": [
+        "Yes. We agree upfront.",
+        "Usually.",
+        "The details sometimes show up after I’ve started."
+      ]
+    },
+    "other_sources": {
+      "title": "Where does your paid work come from?",
+      "labels": [
+        "People who’ve hired me before.",
+        "Referrals.",
+        "Online searches.",
+        "I reach out and ask for the work.",
+        "I haven’t kept track."
+      ]
+    },
+    "other_costs": {
+      "title": "After the costs, do you know what you actually made?",
+      "labels": [
+        "Yes. I check.",
+        "I have a rough idea.",
+        "No. I know what came in, not what stayed.",
+        "I’m paid a wage or salary."
+      ]
+    },
+    "other_repeat": {
+      "title": "Do people hire you again?",
+      "labels": [
+        "Yes, and it’s a steady part of my income.",
+        "Yes, but I’d like more of it.",
+        "Most of my work is one-off.",
+        "This doesn’t apply to my role."
+      ]
+    },
+    "other_time": {
+      "title": "What’s eating up time you’re not getting paid for?",
+      "labels": [
+        "Getting everything ready.",
+        "Getting to and from jobs.",
+        "Messages, scheduling, and paperwork.",
+        "The extras that somehow became part of the job.",
+        "Most of my work time is paid."
+      ]
+    }
+  },
+  "extraOptions": {
+    "color_signature": [
+      [
+        "brunette",
+        "Brunettes and dimensional color.",
+        "Choose one brunette or dimensional result to show the clients you want to book."
+      ]
+    ],
+    "education_prep": [
+      [
+        "unknown",
+        "I haven’t checked.",
+        "Record prep, teaching and follow-up hours for one class."
+      ]
+    ],
+    "owner_delegation": [
+      [
+        "staff",
+        "Staff questions and issues.",
+        "Agree which staff questions the team can resolve and which need you."
+      ]
+    ],
+    "restart_network": [
+      [
+        "friends",
+        "Friends and family.",
+        "Tell friends and family what you offer and how to book."
+      ]
+    ],
+    "restart_barrier": [
+      [
+        "schedule",
+        "I need to figure out what fits my life.",
+        "Choose a reliable work block that fits your current commitments."
+      ]
+    ],
+    "other_scope": [
+      [
+        "unclear",
+        "Too much gets assumed. Not enough gets agreed on.",
+        "Confirm the work, price, timing and boundaries in writing before starting."
+      ]
+    ],
+    "other_costs": [
+      [
+        "unknown",
+        "I need a way to figure that out.",
+        "Record one job’s pay and costs before making changes."
+      ]
+    ],
+    "other_repeat": [
+      [
+        "new",
+        "It’s too early to tell.",
+        "Start tracking which buyers return before judging repeat demand."
+      ]
+    ]
+  },
+  "removed": [
+    "education_followup"
+  ],
+  "free": {
+    "careerstage": {
+      "title": "Where are you in your hair career?",
+      "labels": [
+        "In school. Taking it one mannequin at a time.",
+        "Licensed and building—or rebuilding.",
+        "Behind the chair and already working.",
+        "Beyond the chair, or doing a bit of everything.",
+        "Thinking about getting into hair."
+      ],
+      "note": ""
+    },
+    "studentinterest": {
+      "title": "What kind of work can you see yourself doing?",
+      "labels": [
+        "Color.",
+        "Cutting and styling.",
+        "Extensions.",
+        "Editorial and commercial work.",
+        "Bridal and events.",
+        "Education and beauty brand work.",
+        "Ask me after a few more classes."
+      ],
+      "note": "Pick all that apply. You’re allowed to change your mind."
+    },
+    "graduation": {
+      "title": "How much school do you have left?",
+      "labels": [
+        "3 months or less. Nearly there.",
+        "About 4–6 months.",
+        "More than 6 months. Still in it.",
+        "Good question. My finish date keeps moving."
+      ],
+      "note": ""
+    },
+    "practice": {
+      "title": "Have you worked on actual people yet?",
+      "labels": [
+        "Yes. Regularly.",
+        "A few. Building up to it.",
+        "Not yet. Still mannequin territory."
+      ],
+      "note": ""
+    },
+    "direction": {
+      "title": "What’s the plan after graduation?",
+      "labels": [
+        "A salon job where I can keep learning.",
+        "Rent a chair or suite and work for myself.",
+        "Freelance work—shoots, weddings, or events.",
+        "Get through graduation. Then figure it out."
+      ],
+      "note": ""
+    },
+    "readiness": {
+      "title": "What do you feel least ready for?",
+      "labels": [
+        "Choosing a salon that’s actually right for me.",
+        "Getting people in my chair.",
+        "Talking through the service before I start.",
+        "Getting clients to book their next visit.",
+        "Understanding what I’ll actually get paid.",
+        "Saying no without a ten-minute apology."
+      ],
+      "note": "Pick what you want help with first."
+    },
+    "salonevidence": {
+      "title": "What do you know about the places you’re considering?",
+      "labels": [
+        "I’ve checked the training, pay, costs, and how I’d get clients.",
+        "I’ve visited or interviewed, but I still need those answers.",
+        "They look good on Instagram. That’s most of my research.",
+        "I haven’t started looking yet."
+      ],
+      "note": ""
+    },
+    "worktype": {
+      "title": "What do you do in the hair world?",
+      "labels": [
+        "Color.",
+        "Cutting and styling.",
+        "Extensions.",
+        "Editorial, commercial, or session work.",
+        "Bridal, events, or on-location work.",
+        "Education or beauty brand work.",
+        "Own or manage a salon.",
+        "I’m trained or licensed, but not taking clients right now.",
+        "Something else."
+      ],
+      "note": "Pick everything that applies. One job title rarely covers it."
+    },
+    "leadershiprole": {
+      "title": "Do you own the salon or manage it?",
+      "labels": [
+        "I own it.",
+        "I manage it. My name isn’t on the lease."
+      ],
+      "note": ""
+    },
+    "primarywork": {
+      "title": "You do a few things. Which one brings in the most money?",
+      "labels": null,
+      "note": ""
+    },
+    "full": {
+      "title": "How full is your book, really?",
+      "labels": [
+        "Pretty empty. I’m getting started.",
+        "A few clients. Plenty of openings.",
+        "About half full.",
+        "Busy, but there’s room.",
+        "Full, or close to it."
+      ],
+      "note": ""
+    },
+    "days": {
+      "title": "How many days a week can clients book with you?",
+      "labels": [
+        "I’m not taking appointments yet.",
+        "1 day.",
+        "2 days.",
+        "3 days.",
+        "4 days.",
+        "5 days.",
+        "6–7 days."
+      ],
+      "note": "Count the days you offer appointments—even if nobody’s booked yet."
+    },
+    "workload": {
+      "title": "Are you getting enough paid work?",
+      "labels": [
+        "None right now.",
+        "Some. I need more.",
+        "About half as much as I’d like.",
+        "Almost. I have room for a few more jobs.",
+        "Yes. I don’t need to add more."
+      ],
+      "note": ""
+    },
+    "workdays": {
+      "title": "How many days a week are you working, including the stuff nobody pays you for?",
+      "labels": [
+        "I’m not working right now.",
+        "1 day.",
+        "2 days.",
+        "3 days.",
+        "4 days.",
+        "5 days.",
+        "6–7 days.",
+        "It changes every week."
+      ],
+      "note": "Count prep, travel, supply runs, and admin."
+    },
+    "goal": {
+      "title": "Alright. What needs to change?",
+      "labels": null,
+      "note": "Pick everything that applies."
+    },
+    "goalpriority": {
+      "title": "We’re not fixing everything by Friday. Where should we start?",
+      "labels": null,
+      "note": "Choose one of the goals you just selected. The others still count."
+    },
+    "paywait": {
+      "title": "The work’s done. How long are you waiting for the money?",
+      "labels": [
+        "2 weeks or less.",
+        "More than 2 weeks, up to a month.",
+        "More than 1 month, up to 2 months.",
+        "More than 2 months, up to 3 months.",
+        "More than 3 months.",
+        "Depends on who’s paying me."
+      ],
+      "note": ""
+    },
+    "workexpenses": {
+      "title": "What comes out of your pocket to do the job?",
+      "labels": [
+        "Products and supplies.",
+        "Extension hair, wigs, or hairpieces.",
+        "Tools and replacing what wears out.",
+        "Travel, parking, rides, and baggage fees.",
+        "Assistants or other people working with me.",
+        "Agency, booking, or business fees.",
+        "Almost nothing. The client or employer covers it.",
+        "I need to look. Those little charges add up."
+      ],
+      "note": "Pick all that apply."
+    },
+    "jobsource": {
+      "title": "Where is your paid work actually coming from?",
+      "labels": [
+        "My agent or rep.",
+        "Clients or brands hiring me again.",
+        "Referrals and word of mouth.",
+        "Social media or my portfolio.",
+        "Brands, producers, planners, or clients reaching out directly.",
+        "It’s not coming in consistently yet.",
+        "I need to start tracking that."
+      ],
+      "note": "Pick all that apply. Bookings, not likes."
+    },
+    "outreach": {
+      "title": "What are you doing to get more paid work?",
+      "labels": [
+        "Staying in touch with my agent or rep.",
+        "Following up with people who’ve hired me before.",
+        "Updating and sharing my work.",
+        "Getting to know the people who hire hair teams.",
+        "Reaching out and asking for the job.",
+        "Thinking about it. Haven’t done much yet."
+      ],
+      "note": "Pick all that apply."
+    },
+    "repeatwork": {
+      "title": "Once someone hires you, do they hire you again?",
+      "labels": [
+        "I’m new. Too soon to tell.",
+        "Not often enough.",
+        "Some do. Some disappear.",
+        "Most of the people I want to work with hire me again.",
+        "I haven’t tracked it."
+      ],
+      "note": ""
+    },
+    "repeatfollow": {
+      "title": "The job’s done. Do they hear from you again?",
+      "labels": [
+        "I send a thank-you or follow-up.",
+        "I share the work when I have permission.",
+        "I stay in touch with the people who hired me.",
+        "My agent handles that.",
+        "No. I wait for the next call."
+      ],
+      "note": "Pick all that apply."
+    },
+    "sessionagency": {
+      "title": "Does an agency take a cut of your pay?",
+      "labels": [
+        "Yes.",
+        "Sometimes.",
+        "No."
+      ],
+      "note": ""
+    },
+    "sessionfront": {
+      "title": "How often are you covering job expenses before you get paid?",
+      "labels": [
+        "Often.",
+        "Sometimes.",
+        "Rarely or never.",
+        "It’s covered before the job."
+      ],
+      "note": "Travel, supplies, assistants—the money leaves your account first."
+    },
+    "paymodel": {
+      "title": "How do you get paid?",
+      "labels": [
+        "Commission.",
+        "Hourly.",
+        "I work for myself. The money comes to me—and so do the bills.",
+        "I own the salon.",
+        "A mix, or I need help sorting it out."
+      ],
+      "note": ""
+    },
+    "hourlytime": {
+      "title": "Are you working hours that aren’t showing up on your paycheck?",
+      "labels": [
+        "No. My paid hours match my work hours.",
+        "Sometimes. Messages, setup, or cleanup happen off the clock.",
+        "Yes. More than I’d like.",
+        "I need to compare my hours with my pay."
+      ],
+      "note": ""
+    },
+    "spend": {
+      "title": "What does a client usually spend in your chair?",
+      "labels": [
+        "I’m not taking clients yet.",
+        "I need to check.",
+        "Under $100.",
+        "$100–$199.",
+        "$200–$349.",
+        "$350 or more."
+      ],
+      "note": "Services only. Leave out tips and take-home products."
+    },
+    "returning": {
+      "title": "They came once. Are they coming back?",
+      "labels": [
+        "Too soon to tell. I’m still building.",
+        "Not enough of them.",
+        "Some do. Some apparently entered witness protection.",
+        "Most come back.",
+        "Almost everyone comes back.",
+        "I haven’t tracked it."
+      ],
+      "note": ""
+    },
+    "costs": {
+      "title": "After the salon gets its share and your work expenses are paid, what’s left?",
+      "labels": [
+        "I know the number, and it works for me.",
+        "I know the number. It needs to be bigger.",
+        "I have a rough idea.",
+        "That’s what I need help figuring out."
+      ],
+      "note": "Before personal bills and taxes."
+    },
+    "visibility": {
+      "title": "Where are your paying clients finding you?",
+      "labels": [
+        "Instagram or TikTok.",
+        "The salon sends them my way.",
+        "Referrals and word of mouth.",
+        "Google or my website.",
+        "New clients aren’t finding me yet.",
+        "Good question. I need to start asking."
+      ],
+      "note": "Pick all that apply."
+    },
+    "marketing": {
+      "title": "What have you actually tried to fill your book?",
+      "labels": [
+        "Posting my work.",
+        "Asking clients, friends, and people I know for referrals.",
+        "Meeting people locally and introducing myself.",
+        "Paying for ads or promotions.",
+        "Not much yet. I need somewhere to start."
+      ],
+      "note": "Pick all that apply."
+    },
+    "network": {
+      "title": "Which of these would you actually do this week?",
+      "labels": null,
+      "note": ""
+    },
+    "urgency": {
+      "title": "How soon do you need more clients?",
+      "labels": [
+        "Yesterday. The bills aren’t taking a break.",
+        "I need things moving in the next month.",
+        "I have some breathing room. I want steady growth."
+      ],
+      "note": ""
+    },
+    "nextvisit": {
+      "title": "Do you talk about their next visit before they leave?",
+      "labels": [
+        "Yes. What they’ll need and when to come back.",
+        "I ask if they want to rebook.",
+        "The front desk handles that conversation.",
+        "We say goodbye and leave the rest to chance."
+      ],
+      "note": ""
+    },
+    "followup": {
+      "title": "They left without rebooking. Who makes the next move?",
+      "labels": [
+        "I reach out when they’re due back.",
+        "My booking system sends a reminder.",
+        "The front desk follows up.",
+        "They do. I wait.",
+        "I’m not actually sure anyone follows up."
+      ],
+      "note": "Pick all that apply."
+    },
+    "servicehours": {
+      "title": "Think about the service you book most often. How long does it take, including setup and cleanup?",
+      "labels": null,
+      "note": "Name the service, then enter the total hours and minutes."
+    },
+    "workcosts": {
+      "title": "Which work expenses are you paying for?",
+      "labels": [
+        "Color, extension hair, and supplies.",
+        "Chair or suite rent.",
+        "Card fees, booking apps, and software.",
+        "An assistant or team.",
+        "The salon covers my work expenses.",
+        "I need to check what’s coming out of my money."
+      ],
+      "note": "Pick all that apply."
+    },
+    "costleak": {
+      "title": "Where do you think you’re losing money?",
+      "labels": [
+        "The salon’s share, rent, or fees.",
+        "Color, extension hair, and supplies.",
+        "Discounts, free fixes, and my generous inability to charge for extras.",
+        "Apps, card fees, and subscriptions.",
+        "Payroll and the salon’s bills.",
+        "If I knew, I wouldn’t be asking for help."
+      ],
+      "note": "Pick one to look at first."
+    },
+    "weeklyhours": {
+      "title": "How many hours a week does this career get out of you?",
+      "labels": [
+        "Under 20 hours.",
+        "20–30 hours.",
+        "31–40 hours.",
+        "More than 40 hours.",
+        "I’ve lost track. That probably says something."
+      ],
+      "note": "Clients, prep, cleanup, travel, admin. Answering hair messages from bed still counts."
+    },
+    "targetdays": {
+      "title": "How many days a week do you actually want to work?",
+      "labels": [
+        "1 day.",
+        "2 days.",
+        "3 days.",
+        "4 days.",
+        "5 days.",
+        "Same days. I’d just like to leave earlier.",
+        "Help me figure out what’s realistic."
+      ],
+      "note": ""
+    },
+    "overrun": {
+      "title": "What keeps you at the salon longer than you want?",
+      "labels": [
+        "Gaps between clients. Still here. Not earning.",
+        "Appointments running over.",
+        "My inability to stop squeezing people in.",
+        "Messages and paperwork after my last client.",
+        "Nothing major. I usually finish on time.",
+        "I need to figure out where the day goes."
+      ],
+      "note": "Pick the biggest one."
+    },
+    "timeleak": {
+      "title": "Outside the actual job, what takes up the most time?",
+      "labels": [
+        "Getting there and back.",
+        "Prep, shopping, packing my kit, or fittings.",
+        "Waiting around.",
+        "Jobs that run longer than planned.",
+        "Invoices, emails, scheduling, and follow-up.",
+        "It’s manageable.",
+        "I haven’t tracked it."
+      ],
+      "note": ""
+    },
+    "savings": {
+      "title": "If you couldn’t work, how long would your savings cover the bills?",
+      "labels": [
+        "There’s no cushion yet.",
+        "Less than 2 months.",
+        "2 to under 6 months.",
+        "6 months or more.",
+        "I need to do the math."
+      ],
+      "note": "Rent, food, and everything else that doesn’t stop charging you."
+    },
+    "futurehabit": {
+      "title": "Is money actually making it into savings?",
+      "labels": [
+        "The bills get it first.",
+        "I mean to save. Then somehow I spend what’s left.",
+        "When I can. My income changes.",
+        "Yes. I put money away regularly."
+      ],
+      "note": ""
+    },
+    "futurefear": {
+      "title": "What do you want your savings to do for you first?",
+      "labels": [
+        "Get me through a slow month or an emergency.",
+        "Let me take time off without panicking.",
+        "Support me later in life. I’m not doing hair forever.",
+        "Help me move into work that’s easier on my body.",
+        "Help me figure out where to start."
+      ],
+      "note": ""
+    }
+  },
+  "leadership": {
+    "workload": {
+      "title": "How’s the salon’s book looking?",
+      "labels": [
+        "We’re not taking clients yet.",
+        "Too many empty chairs.",
+        "About half full.",
+        "Busy, with some openings.",
+        "Full, or close to it."
+      ],
+      "note": "The whole team—not just your busiest stylist."
+    },
+    "jobsource": {
+      "title": "How are paying clients finding the salon?",
+      "labels": [
+        "Outside booking services or partners.",
+        "Former clients coming back.",
+        "Referrals and word of mouth.",
+        "Social media.",
+        "Google, our website, or contacting us directly.",
+        "New clients aren’t coming in consistently.",
+        "We should probably start asking."
+      ],
+      "note": "Pick all that apply."
+    },
+    "outreach": {
+      "title": "What are you doing to fill the salon’s book?",
+      "labels": [
+        "Working with outside booking services or partners.",
+        "Reaching out to past clients.",
+        "Showing off the team’s work.",
+        "Connecting with local people and businesses.",
+        "Promoting specific services or open appointments.",
+        "We need to move past hoping the phone rings."
+      ],
+      "note": "Pick all that apply."
+    },
+    "repeatwork": {
+      "title": "Are the salon’s clients coming back?",
+      "labels": [
+        "We’re new. Too soon to tell.",
+        "Not often enough.",
+        "Some do. Some disappear.",
+        "Most come back.",
+        "We haven’t checked the numbers."
+      ],
+      "note": ""
+    },
+    "repeatfollow": {
+      "title": "They leave the salon without rebooking. Then what?",
+      "labels": [
+        "Their stylist follows up.",
+        "We keep showing our work so they remember us.",
+        "We check in when they’re due back.",
+        "The front desk handles it.",
+        "We wait and hope they book."
+      ],
+      "note": "Pick all that apply."
+    },
+    "timeleak": {
+      "title": "What keeps eating up your time at the salon?",
+      "labels": [
+        "Salon errands and travel.",
+        "Supplies, setup, and getting everything ready.",
+        "Waiting around when the schedule falls apart.",
+        "Days that never seem to end on time.",
+        "Scheduling, messages, paperwork, and follow-up.",
+        "It’s manageable.",
+        "I need to see where my time’s going."
+      ],
+      "note": ""
+    }
+  },
+  "manager": {
+    "workexpenses": {
+      "title": "Which salon expenses are you expected to keep an eye on?",
+      "labels": [
+        "Products and supplies.",
+        "Extension hair, wigs, or hairpieces.",
+        "Tools and equipment.",
+        "Travel and work errands.",
+        "Staffing.",
+        "Booking systems, card fees, and software.",
+        "The owner handles the money.",
+        "We need to get clear on what’s my responsibility."
+      ],
+      "note": "Pick all that apply."
+    }
+  },
+  "studentHabits": {
+    "clients": {
+      "title": "How are you getting people into your chair?",
+      "labels": [
+        "I ask them and book them through school.",
+        "I post my work. The part where I tell them how to book needs work.",
+        "So far? Hoping someone asks."
+      ],
+      "note": ""
+    },
+    "consultation": {
+      "title": "Before you start, have you talked through more than the inspiration photo?",
+      "labels": [
+        "Yes. The result, time, upkeep, and price.",
+        "Some of it. I’m not consistent yet.",
+        "I need help knowing what to ask."
+      ],
+      "note": ""
+    },
+    "rebooking": {
+      "title": "Do you bring up the next appointment, or hope they bring it up?",
+      "labels": [
+        "I tell them when to come back and why.",
+        "I ask if they want to rebook. That’s about as far as I get.",
+        "I haven’t gotten comfortable asking yet."
+      ],
+      "note": ""
+    },
+    "money": {
+      "title": "They’ve told you what the job pays. Do you know what that leaves you?",
+      "labels": [
+        "Yes. I’ve checked my costs and what’s still before taxes.",
+        "I know the rate or percentage. The rest is a little foggy.",
+        "Not yet. I need to see the actual math."
+      ],
+      "note": ""
+    },
+    "boundaries": {
+      "title": "Someone asks for something you’re not ready to do. What comes out of your mouth?",
+      "labels": [
+        "Let’s get my instructor involved.",
+        "Sure. Followed by a small internal panic.",
+        "I need help saying what I can—and can’t—do yet."
+      ],
+      "note": ""
+    }
+  },
+  "freeGoals": {
+    "chair": [
+      "More clients. Those empty appointments aren’t paying rent.",
+      "More money without adding another day.",
+      "Clients who come back.",
+      "Money that stays in my account long enough to get acquainted.",
+      "I love doing hair. It doesn’t need custody of my entire life.",
+      "A financial cushion. I’m tired of one surprise bill being an event."
+    ],
+    "session": [
+      "More paid jobs on my calendar.",
+      "Better pay for the jobs I’m already doing.",
+      "More people hiring me again.",
+      "Less money disappearing into the cost of doing the job.",
+      "Work that leaves room for a life.",
+      "Savings for when the phone isn’t ringing."
+    ],
+    "events": [
+      "More paid bookings.",
+      "Making more from each booking.",
+      "More referrals and repeat business.",
+      "Keeping more after the expenses.",
+      "A weekend off occasionally. Imagine.",
+      "Savings for the quieter months."
+    ],
+    "education": [
+      "More paid teaching or brand work.",
+      "Getting paid properly for the work involved.",
+      "Brands and teams bringing me back.",
+      "Keeping more after travel, prep, and supplies.",
+      "Work that doesn’t take over my entire life.",
+      "A cushion between bookings."
+    ],
+    "owner": [
+      "More clients coming through the door.",
+      "More profit without more hours from me.",
+      "Clients who come back.",
+      "Knowing where the salon’s money is going.",
+      "I own the salon. I’d like it to stop owning me.",
+      "A cushion for slow months and surprise bills."
+    ],
+    "manager": [
+      "More clients coming through the door.",
+      "Pay that matches what I’m responsible for.",
+      "More clients coming back.",
+      "A better handle on the numbers I’m expected to improve.",
+      "Being off work when I’m off work.",
+      "Personal savings so every paycheck isn’t already spoken for."
+    ],
+    "other": [
+      "More paid work.",
+      "More money without more hours.",
+      "More people hiring me again.",
+      "Knowing where the money goes—and keeping more.",
+      "A career that leaves room for the rest of my life.",
+      "Savings for when things don’t go to plan."
+    ]
+  },
+  "network": {
+    "past": "Ask happy clients to send someone my way.",
+    "salon": "Ask the salon to promote a service I want more bookings for.",
+    "portfolio": "Post a great result and make it easy to book.",
+    "local": "Meet someone locally who could refer clients.",
+    "models": "Book a model for the kind of work I want to show.",
+    "none": "You pick. That’s why I’m here."
+  },
+  "tools": {
+    "next30-shell.js": {
+      "Service sales you produced this month": "What did you personally earn from selling products this month?",
+      "Gross wages / commission before taxes": "What did you earn in wages or commission before anything came out?",
+      "Additional tips": "Any tips that aren’t already counted above?",
+      "Additional bonuses / incentives": "Any bonuses or extra incentive pay?",
+      "Payroll deductions / benefits": "What came out of your paycheck for retirement or benefits?",
+      "Taxes withheld": "How much was taken out for taxes?",
+      "Other payroll deductions": "Any other paycheck deductions?",
+      "Net paycheck / take-home deposited": "How much pay actually landed in your account?",
+      "Days worked this month": "How many days did you work this month?",
+      "Client payments collected": "How much money did you collect from clients?",
+      "Refunds / chargebacks": "How much did you give back in refunds or lose to chargebacks?",
+      "Direct service costs": "What did you spend on supplies to do the work?",
+      "Rent / suite / chair rent": "What did you pay in chair or suite rent?",
+      "Processing fees": "How much went to payment-processing fees?",
+      "Booking / software": "What did you pay for booking apps and work software?",
+      "Insurance / licensing": "What did you pay for business insurance and licensing?",
+      "Assistant / payroll": "What did you spend on assistants or staff?",
+      "Marketing": "What did you spend on marketing?",
+      "Other operating expenses": "Any other work expenses we haven’t counted?",
+      "Tax reserve you chose to set aside": "How much are you setting aside for taxes?",
+      "Lane name": "Where does this income come from?",
+      "How this lane pays you": "How are you paid for this work?",
+      "What you make in a month, before personal income taxes": "How much do you want to make each month before personal income taxes?",
+      "Current days worked per week": "How many days a week are you working now?",
+      "Current weeks worked per year": "How many weeks a year are you working now?",
+      "What you want to make in a year, before personal income taxes": "What do you want to make in a year?",
+      "Desired days worked per week": "How many days a week do you want to work?",
+      "Desired weeks worked per year": "How many weeks a year do you want to work?",
+      "Optional maximum clients per day": "What’s the most clients you want to see in a day?",
+      "Average client spend": "What does a client spend with you, on average?",
+      "Average clients per workday": "How many clients do you see on an average workday?",
+      "Average hours available to clients each workday": "How many hours a day can you realistically spend with clients?",
+      "Hours spent with paying clients on an average day": "How many hours do you actually spend with paying clients on an average day?",
+      "Days worked per week": "How many days a week do you work?",
+      "Average service sales / client revenue per day, if known": "If you know it, how much do you average per hour in service sales?",
+      "Consistently weak day / time block": "What part of your week is consistently too quiet?",
+      "New-client capacity per week": "How many new clients could you comfortably fit into your week?",
+      "What’s worth keeping?": "What worked? Let’s keep that.",
+      "What needs a change?": "What needs changing before you give it another month?",
+      "What are you done wasting time on?": "What took up your time and gave you nothing worth keeping?"
+    },
+    "next30-rebooking.js": {
+      "Review outcomes through this date": "What time period are you tracking? Review outcomes through this date.",
+      "Anonymous client ID": "Which client is this? Use a private code, not their full name.",
+      "Guest type": "Was this their first visit?",
+      "Service category": "What did you do for them?",
+      "Original client source (optional)": "How did they find you in the first place? (Optional)",
+      "Completed visit date": "When were they in your chair?",
+      "Earliest reasonable return (weeks)": "How soon would they reasonably need to come back? (Weeks)",
+      "Latest reasonable return (weeks)": "How long could they go before the result needs attention? (Weeks)",
+      "Eligible for maintenance / return tracking?": "Is this something they’ll need to maintain?",
+      "Did you recommend maintenance timing?": "Did you tell them when to come back?",
+      "Booked before leaving?": "Did they leave with their next appointment booked?",
+      "Next appointment date, if prebooked": "When are they booked to come back?",
+      "Prebook cancelled or no-showed?": "Did they cancel or no-show?",
+      "Has the client actually returned?": "Did they actually come back?",
+      "Actual return date, if returned": "When did they come back?",
+      "Reason for not rebooking / notes (optional)": "Anything worth noting about why they did—or didn’t—rebook? (Optional)"
+    },
+    "next30-buyback.js": {
+      "Income basis": "Which income number are we using?",
+      "Representative period (for example, four completed normal weeks)": "Which 4 full weeks are we looking at?",
+      "Current workdays per week": "How many days a week are you working now?",
+      "Trial workdays per week": "How many days a week do you want to try working?",
+      "Working weeks per year for both schedules": "How many weeks a year do you plan to work?",
+      "Average weekly personal income before tax, after work costs": "What do you make in an average week after work costs, before taxes?",
+      "Your annual personal-income target on that same basis": "What do you want to make in a year, using that same income measure?",
+      "Day or days you want back": "Which day—or days—do you want back?",
+      "Weekly income contribution of those days": "How much do those days currently earn you each week after work costs?",
+      "Weekly hours in the block you would remove": "How many client hours would need to move to another day?",
+      "Usable empty appointment hours on the remaining days": "How many open appointment hours do you have on the days you’re keeping?",
+      "Appointment hours you could move into those gaps": "How many appointment hours could realistically move into those openings?",
+      "Income contribution of those moved appointments": "How much would those moved appointments earn you each week after work costs?",
+      "Trial notes: income, all work hours, clients moved, what to keep or change": "Anything else we need to account for? Your limits, energy, other work, or what you want that day back for."
+    },
+    "next30-services.js": {
+      "Service name": "Which service are we looking at?",
+      "Client service total after discounts/refunds; exclude tips and sales tax": "What did the client actually pay? After discounts and refunds. Leave out tips and sales tax.",
+      "Booked hours": "How much time was booked? (Hours)",
+      "Actual service hours, including setup and cleanup": "How long did it actually take, including setup and cleanup? (Hours)",
+      "Direct materials, including color, hair or supplies": "What did the color, hair, and other supplies cost?",
+      "Ran over?": "Did the appointment run over?",
+      "Redo or adjustment flag?": "Did you have to redo or adjust anything afterward?",
+      "Strategic value (ideal clients, maintenance, specialty)": "Why is this service worth keeping on your menu?",
+      "Service name (use the same name as the audit)": "Which service are we testing a price change for? Use the same name as the audit.",
+      "Representative period for both scenarios": "What time period are we comparing? Use the same period for both prices.",
+      "Whose income are we testing?": "How do you earn money from this service?",
+      "Commission % (only for a simple percentage agreement)": "What’s your commission percentage? Simple percentage agreements only.",
+      "Current client price": "What do you charge now?",
+      "Proposed client price": "What price are you considering?",
+      "Variable materials/work costs you pay per appointment": "What supplies and other per-appointment costs come out of your money?",
+      "Transaction fee % you personally or your business pays": "What percentage goes to payment-processing fees you cover?",
+      "Fixed transaction fee per appointment you pay": "Is there also a flat processing fee per payment?",
+      "Completed appointments at current price in this period": "How many of these appointments did you complete at the current price during this period?",
+      "Completed appointments you expect to keep at proposed price": "How many do you realistically expect to complete at the new price over the same period?",
+      "Actual hours for the same service in both scenarios": "How long does this service actually take? Use the same hours for both prices.",
+      "Have you confirmed a personal-income gap in Your Number?": "Has Your Number shown a gap between what you earn and what you need?",
+      "Is demand for this service established?": "Are people already booking this service consistently?",
+      "Can you change prices, or is salon agreement confirmed?": "Can you change the price—or has the salon agreed to it?",
+      "What does the evidence say is the main gap?": "What do the numbers say needs fixing?",
+      "Proposed effective date / notice plan": "When would the new price start, and how would you tell clients?",
+      "Who would the change apply to?": "Who would pay the new price?",
+      "Your demand evidence and why this change is needed": "What shows there’s demand, and why does this change make sense?",
+      "The clearest pattern, one change to test, and what actually happened": "What did you notice, what did you change, and what actually happened?"
+    },
+    "next30-lanes.js": {
+      "Completed 12-month baseline period": "Which 12 months are we looking at?",
+      "Your annual personal-income target after work costs, before tax": "After work expenses, what do you want to make in a year? Before taxes.",
+      "Shared work expenses in the completed 12-month period": "What did you spend on things you use across different parts of your work?",
+      "Shared work expenses budgeted for the planned year": "What will those shared expenses cost next year?",
+      "Shared work hours in the completed 12-month period": "How many hours went into keeping all those different jobs running?",
+      "Shared work hours budgeted for the planned year": "How much time are you giving that behind-the-scenes work next year? (Annual hours)",
+      "Desired working weeks in the planned year": "How many weeks do you want to work?",
+      "Desired workdays per week across all lanes": "How many days a week do you want to work? All jobs combined.",
+      "Maximum total work hours per workday": "How many work hours in a day is enough?",
+      "Lane name": "What’s bringing in this money?",
+      "How is this lane paid?": "Who pays you for this work?",
+      "Actual annual pay or revenue after refunds": "What did this work actually bring in that year?",
+      "Actual annual costs only for this lane": "What did you spend just to do this work?",
+      "Actual annual work hours only for this lane": "How many hours did this work get out of you that year?",
+      "Annual pay or revenue target for this lane": "What do you want this work to bring in next year?",
+      "Planned annual costs only for this lane": "What will it cost you to do that work next year?",
+      "Planned annual work hours only for this lane": "How many hours of your year are you willing to give it?",
+      "What supports this future lane plan?": "What’s behind that income goal?",
+      "What job should this lane do in your career?": "What do you want this part of your career to give you?",
+      "Evidence, assumptions and the next thing to confirm": "Which numbers can you back up, and which are still a hopeful guess? What do you need to check?",
+      "One lane to work on, the next action, and what happened": "What are you focusing on, what are you going to try, and how did it actually go?"
+    },
+    "next30-core.js": {
+      "Actual pay for the period you are checking": "What were you actually paid for the period you’re checking?",
+      "Collected salon income for the day or period": "How much money did the salon actually collect during this period?",
+      "Earned service or job fee, excluding reimbursements": "What did the service or job pay? Leave out reimbursements.",
+      "Work costs you personally paid": "What work expenses came out of your own money?",
+      "Hair, supplies, and other costs you paid": "What did you spend on the extension hair, supplies, and everything else needed for the job?",
+      "Team pay, travel, supplies, and other costs you paid": "After paying your team, travel, and supplies, what were the total job expenses you covered?",
+      "Payroll, rent allocated to this period, supplies, fees, and other costs": "What did it cost to run the salon during that same period? Payroll, allocated rent, supplies, fees, and the rest.",
+      "Costs you paid and will not be reimbursed for": "What did you pay out of pocket that nobody’s paying back?",
+      "All required work hours for that same work or period": "How many hours did the work actually take? Prep, cleanup, travel, messages—all of it."
+    },
+    "next30-ui.js": {
+      "What percentage of the service money do you receive? Enter 100 if you keep it before costs.": "What percentage of the service money is yours? Enter 100 if you keep it before costs.",
+      "Change in money kept before the extra costs below. Use a negative number if it fell.": "How much more money did you keep after making the change? Use a negative number if it fell. Enter extra costs below.",
+      "Extra costs of trying the change, not already deducted above": "What extra money did you spend to try it? Only costs not already subtracted above.",
+      "What you paid for this plan. Enter 0 if you used a free tester code.": "What did you pay for this plan? Enter 0 if you used a free tester code.",
+      "Extra money kept per additional booking or other paid improvement": "How much extra do you keep from each additional booking—or other paid result? After costs."
+    }
+  },
+  "metrics": {
+    "Suitable salon inquiries": "How many people contacted the salon for services that fit what you offer?",
+    "Suitable inquiries": "How many people reached out for work you actually want to do?",
+    "New salon bookings": "How many new bookings went on the salon’s calendar?",
+    "New paid bookings": "How many new paid bookings landed on your calendar?",
+    "New clients who attended": "How many of those new clients made it through the door?",
+    "Paid bookings completed": "How many appointments or jobs happened—and paid?",
+    "Past buyers you could reasonably follow up with": "Which past clients could reasonably use your services again? Enter how many you could follow up with.",
+    "Clients or buyers due for a return": "How many clients or customers were due back?",
+    "Relevant follow-ups completed": "How many did you actually contact?",
+    "New bookings from referrals": "How many new bookings came from someone saying you’re good at what you do?",
+    "Repeat bookings or referred paid work": "How many paid bookings came from people returning or sending someone your way?",
+    "Total work hours in the same length of time": "How much of your time did work take? Total hours. Even the ones in sweatpants.",
+    "Your pay for that time": "What did you earn in that time?",
+    "Money left after entered work costs": "After the work expenses you entered, what did you get to keep?",
+    "Protected off-duty blocks kept": "How many times did you take the time off you’d planned? Without turning it into a workday.",
+    "Payday or bill check-ins completed": "How many times did you sit down and check your pay and bills like you planned?",
+    "Overdue payments you are waiting for": "How much money should already be in your account, but isn’t? Overdue payments only.",
+    "Money actually set aside after bills": "How much made it into savings after the bills were paid? Actual money. Good intentions don’t count.",
+    "Your actual pay": "What did you actually get paid?",
+    "Salon money left after entered costs": "The salon brought money in. After the expenses you entered, what stayed?",
+    "Earned pay left after entered work costs": "You got paid. After the work expenses you entered, what was left?",
+    "Total required work hours": "How many hours did you put into making that money? Count all of them.",
+    "Work costs you personally pay": "How much of your own money went toward work expenses?",
+    "Work costs paid for the same period": "What did it cost you to do the work?"
+  },
+  "survey": {
+    "titles": [
+      "How did we do?",
+      "Was BOOKED AF easy to use?",
+      "Did you get something you can actually use?",
+      "What do you want more help with?",
+      "Would you recommend BOOKED AF to someone else in the hair industry?",
+      "What else should I know?"
+    ],
+    "options": {
+      "ease": [
+        "Very. I found what I needed.",
+        "Pretty easy.",
+        "I figured it out, but a few things weren’t clear.",
+        "My phone almost became a projectile."
+      ],
+      "useful": [
+        "Yes. I’m already using it.",
+        "Yes. I haven’t put it into practice yet.",
+        "A little.",
+        "Not really."
+      ],
+      "more": [
+        "Getting more clients.",
+        "Getting clients to come back.",
+        "Pricing—and actually charging it.",
+        "Making more money.",
+        "Figuring out where my money goes.",
+        "Working fewer days.",
+        "Marketing without making Instagram my second career.",
+        "Knowing what to say. Give me scripts and templates.",
+        "Classes and education.",
+        "Something else."
+      ],
+      "recommend": [
+        "Already have.",
+        "Absolutely. A few names come to mind.",
+        "Let me spend more time with it.",
+        "Probably not.",
+        "No."
+      ]
+    }
+  }
+}

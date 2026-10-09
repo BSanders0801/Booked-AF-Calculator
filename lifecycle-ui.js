@@ -83,7 +83,7 @@
   if(state.view==='email'&&student){
    const form=document.getElementById('form');
    if(form&&!document.getElementById('first90-optin')){
-    const label=document.createElement('label');label.className='checkline';label.style.letterSpacing='normal';label.innerHTML='<input type="checkbox" id="first90-optin" name="first90Interest"> Email me when BOOKED AF: FIRST 90 is available. Optional.';
+    const label=document.createElement('label');label.className='checkline';label.style.letterSpacing='normal';label.innerHTML='<input type="checkbox" id="first90-optin" name="first90Interest"> Want to know when BOOKED AF: FIRST 90 is ready? Email me when it launches. (Optional)';
     form.querySelector('button[type="submit"]').before(label);
    }
    const note=app.querySelector('.capture-note');if(note)note.innerHTML='Your email unlocks your free Breakdown and sends a private link to save and resume your profile. FIRST 90 updates are optional. We don’t send you working-professional check-ins while you’re in school. <a href="#privacy" data-nav="privacy">Privacy Policy</a>.';

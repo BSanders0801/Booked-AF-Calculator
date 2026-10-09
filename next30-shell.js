@@ -77,33 +77,33 @@
     var attrs=type==='text'?'type="text" maxlength="200"':'type="number" inputmode="decimal" step="any"';
     return '<div class="n30-field"><label for="'+id+'">'+e(label)+'</label><input class="input" '+attrs+' id="'+id+'" value="'+e(val==null?'':val)+'"><p class="fine">'+e(help||'Leave blank if you do not know it yet. Enter 0 only when it is truly zero.')+'</p></div>';
   }
-  var EMP=['service','gross','tips','bonus','benefits','taxes','other','net','days'];
+  var EMP=['retail','gross','tips','bonus','benefits','taxes','other','net','days'];
   var SELF=['payments','refunds','direct','rent','processing','software','insurance','payroll','marketing','other','reserve','days'];
 
   function employeeFields(v,p){
     p=p||'mmm-emp-';
-    return f(p+'service','Service sales you produced this month',v.service,'Optional context. This is not automatically your pay.')
-      +f(p+'gross','Gross wages / commission before taxes',v.gross,'Use the amount you were paid before personal taxes and deductions.')
-      +f(p+'tips','Additional tips',v.tips,'Only include tips not already included in gross pay. Enter 0 if none.')+f(p+'bonus','Additional bonuses / incentives',v.bonus,'Only include bonuses not already included in gross pay. Enter 0 if none.')
-      +f(p+'benefits','Payroll deductions / benefits',v.benefits)+f(p+'taxes','Taxes withheld',v.taxes)
-      +f(p+'other','Other payroll deductions',v.other)+f(p+'net','Net paycheck / take-home deposited',v.net,'Recommended if available.')
-      +f(p+'days','Days worked this month',v.days,'Optional. Used only for a per-workday view.');
+    return f(p+'retail',"What did you personally earn from selling products this month?",v.retail,'Your cut—not the register total. Before taxes. This is a breakdown of the gross pay below, not extra income.')
+      +f(p+'gross',"What did you earn in wages or commission before anything came out?",v.gross,'Use your total wages and commission, including the product commission above, before taxes and paycheck deductions.')
+      +f(p+'tips',"Any tips that aren’t already counted above?",v.tips,'Only include tips not already included in gross pay. Enter 0 if none.')+f(p+'bonus',"Any bonuses or extra incentive pay?",v.bonus,'Only include bonuses not already included in gross pay. Enter 0 if none.')
+      +f(p+'benefits',"What came out of your paycheck for retirement or benefits?",v.benefits)+f(p+'taxes',"How much was taken out for taxes?",v.taxes)
+      +f(p+'other',"Any other paycheck deductions?",v.other)+f(p+'net',"How much pay actually landed in your account?",v.net,'Recommended if available.')
+      +f(p+'days',"How many days did you work this month?",v.days,'Optional. Used only for a per-workday view.');
   }
   function selfFields(v,p){
     p=p||'mmm-self-';
-    return f(p+'payments','Client payments collected',v.payments,'Use money actually collected for the month.')
-      +f(p+'refunds','Refunds / chargebacks',v.refunds)+f(p+'direct','Direct service costs',v.direct,'Color, product, extension hair, and other direct costs you paid.')
-      +f(p+'rent','Rent / suite / chair rent',v.rent)+f(p+'processing','Processing fees',v.processing)
-      +f(p+'software','Booking / software',v.software)+f(p+'insurance','Insurance / licensing',v.insurance)
-      +f(p+'payroll','Assistant / payroll',v.payroll)+f(p+'marketing','Marketing',v.marketing)
-      +f(p+'other','Other operating expenses',v.other)+f(p+'reserve','Tax reserve you chose to set aside',v.reserve,'BOOKED AF does not assume a tax rate.')
-      +f(p+'days','Days worked this month',v.days,'Optional. Used only for a per-workday view.');
+    return f(p+'payments',"How much money did you collect from clients?",v.payments,'Use money actually collected for the month.')
+      +f(p+'refunds',"How much did you give back in refunds or lose to chargebacks?",v.refunds)+f(p+'direct',"What did you spend on supplies to do the work?",v.direct,'Color, product, extension hair, and other direct costs you paid.')
+      +f(p+'rent',"What did you pay in chair or suite rent?",v.rent)+f(p+'processing',"How much went to payment-processing fees?",v.processing)
+      +f(p+'software',"What did you pay for booking apps and work software?",v.software)+f(p+'insurance',"What did you pay for business insurance and licensing?",v.insurance)
+      +f(p+'payroll',"What did you spend on assistants or staff?",v.payroll)+f(p+'marketing',"What did you spend on marketing?",v.marketing)
+      +f(p+'other',"Any other work expenses we haven’t counted?",v.other)+f(p+'reserve',"How much are you setting aside for taxes?",v.reserve,'BOOKED AF does not assume a tax rate.')
+      +f(p+'days',"How many days did you work this month?",v.days,'Optional. Used only for a per-workday view.');
   }
   function capture(prefix,keys){
     var o={};keys.forEach(function(k){var x=document.getElementById(prefix+k);if(x)o[k]=x.value.trim()});return o;
   }
   function empResult(v){
-    var required={gross:'Gross wages / commission before taxes',tips:'Additional tips',bonus:'Additional bonuses / incentives'};
+    var required={gross:"What did you earn in wages or commission before anything came out?",tips:"Any tips that aren’t already counted above?",bonus:"Any bonuses or extra incentive pay?"};
     var missing=Object.keys(required).filter(function(k){return num(v,k)===null}).map(function(k){return required[k]});
     if(missing.length)return {complete:false,missing:missing};
     var gross=num(v,'gross'),tips=num(v,'tips'),bonus=num(v,'bonus'),base=gross+tips+bonus;
@@ -113,10 +113,10 @@
     var service=num(v,'service'),days=num(v,'days'),warn=[];
     if(net!==null&&net>base)warn.push('Your net pay is higher than the gross pay entered. These numbers may be right, but please confirm them.');
     if(service!==null&&gross>0&&(service/gross>5||gross/service>1.5))warn.push('Your service-sales and pay numbers are far enough apart that it is worth confirming your entries.');
-    return {complete:true,type:'employee',generated:service,baseline:base,takeHome:take,estimated:estimate,days:days,perDay:days&&days>0?base/days:null,warnings:warn};
+    return {complete:true,type:'employee',generated:service,retail:num(v,'retail'),baseline:base,takeHome:take,estimated:estimate,days:days,perDay:days&&days>0?base/days:null,warnings:warn};
   }
   function selfResult(v){
-    var payments=num(v,'payments');if(payments===null)return {complete:false,missing:['Client payments collected']};
+    var payments=num(v,'payments');if(payments===null)return {complete:false,missing:["How much money did you collect from clients?"]};
     var costKeys=['refunds','direct','rent','processing','software','insurance','payroll','marketing','other'];
     var missing=costKeys.filter(function(k){return num(v,k)===null});
     if(missing.length)return {complete:false,missing:missing};
@@ -130,7 +130,7 @@
       return '<div class="card"><div class="number">NOT DONE YET</div><h3>WE FOUND THE MISSING NUMBER.</h3><p>Check: '+e((r&&r.missing||[]).join(', '))+'.</p><p>Leave an unknown blank. Enter 0 only when it is truly zero.</p></div>';
     }
     if(r.type==='employee'){
-      var generated=r.generated===null?'Service sales were not entered.':'Your chair produced about <strong>'+cash(r.generated)+'</strong> in service sales.';
+      var generated=r.retail==null?'Product commission was not entered separately.':'You entered <strong>'+cash(r.retail)+'</strong> in product commission, included in your gross pay below.';
       var take=r.takeHome===null?'Take-home was not entered or fully calculable.':(r.estimated?'Estimated take-home':'Take-home entered')+': <strong>'+cash(r.takeHome)+'</strong>.';
       return '<div class="card"><div class="number">YOUR MONEY MAP</div><h3>SIX FIGURES OF WHAT? NOW WE KNOW.</h3><p>'+generated+'</p><p>You were paid about <strong>'+cash(r.baseline)+'</strong> before personal taxes/deductions, including the tips and bonuses you entered. '+take+'</p>'+(r.perDay!==null?'<p>About <strong>'+cash(r.perDay)+'</strong> in pre-personal-tax career income per workday entered.</p>':'')+'<p><strong>'+cash(r.baseline)+'</strong> is the current planning baseline we will carry into YOUR NUMBER.</p>'+r.warnings.map(function(w){return '<p class="baf-note">'+e(w)+'</p>'}).join('')+'</div>';
     }
@@ -142,11 +142,11 @@
   function laneCard(lane,i){
     lane=lane||{label:'Income lane '+(i+1),type:'self',fields:{}};
     var fields=lane.fields||{};
-    return '<section class="card" data-lane="'+i+'"><div class="grid2"><div class="n30-field"><label>Lane name</label><input class="input" id="lane-label-'+i+'" value="'+e(lane.label||'Income lane '+(i+1))+'"></div><div class="n30-field"><label>How this lane pays you</label><select class="input" id="lane-type-'+i+'"><option value="employee" '+(lane.type==='employee'?'selected':'')+'>Salon / employer</option><option value="self" '+(lane.type==='self'?'selected':'')+'>Independent / self-employed</option></select></div></div><div class="grid2">'+(lane.type==='employee'?employeeFields(fields,'lane-'+i+'-emp-'):selfFields(fields,'lane-'+i+'-self-'))+'</div><button type="button" class="secondary" data-remove-lane="'+i+'">REMOVE THIS LANE</button></section>';
+    return '<section class="card" data-lane="'+i+'"><div class="grid2"><div class="n30-field"><label>Where does this income come from?</label><input class="input" id="lane-label-'+i+'" value="'+e(lane.label||'Income lane '+(i+1))+'"></div><div class="n30-field"><label>How are you paid for this work?</label><select class="input" id="lane-type-'+i+'"><option value="employee" '+(lane.type==='employee'?'selected':'')+'>Through an employer.</option><option value="self" '+(lane.type==='self'?'selected':'')+'>Independently. I collect the money and cover the costs.</option></select></div></div><div class="grid2">'+(lane.type==='employee'?employeeFields(fields,'lane-'+i+'-emp-'):selfFields(fields,'lane-'+i+'-self-'))+'</div><button type="button" class="secondary" data-remove-lane="'+i+'">REMOVE THIS LANE</button></section>';
   }
   function mapHTML(s){
     var m=s.moneyMap;if(m.payType==='mixed'&&!m.lanes.length)m.lanes=[{label:'Income lane 1',type:'employee',fields:{}},{label:'Income lane 2',type:'self',fields:{}}];
-    return '<section class="card" id="money-map"><div class="number">YOUR TOOL</div><h2>MONTHLY MONEY MAP</h2><p>Pick one recent month that’s finished and fairly normal. Pull your pay stubs, deposits, and business expenses. Leave anything you don’t know blank. Only enter zero if it really is zero.</p><div class="n30-field"><label for="mmm-pay-type">How do you get paid?</label><select class="input" id="mmm-pay-type"><option value="">Choose one</option><option value="employee" '+(m.payType==='employee'?'selected':'')+'>I work for a salon / employer</option><option value="self" '+(m.payType==='self'?'selected':'')+'>I rent, have a suite, or work for myself</option><option value="mixed" '+(m.payType==='mixed'?'selected':'')+'>I have more than one income lane</option></select></div>'
+    return '<section class="card" id="money-map"><div class="number">YOUR TOOL</div><h2>MONTHLY MONEY MAP</h2><p>Pick one recent month that’s finished and fairly normal. Pull your pay stubs, deposits, and business expenses. Leave anything you don’t know blank. Only enter zero if it really is zero.</p><div class="n30-field"><label for="mmm-pay-type">How do you get paid?</label><select class="input" id="mmm-pay-type"><option value="">Choose one</option><option value="employee" '+(m.payType==='employee'?'selected':'')+'>Through a salon or employer.</option><option value="self" '+(m.payType==='self'?'selected':'')+'>Directly by my clients. I work for myself.</option><option value="mixed" '+(m.payType==='mixed'?'selected':'')+'>Both.</option></select></div>'
       +(m.payType==='employee'?'<div class="grid2">'+employeeFields(m.employee)+'</div>':'')
       +(m.payType==='self'?'<div class="grid2">'+selfFields(m.self)+'</div>':'')
       +(m.payType==='mixed'?'<div id="mmm-lanes">'+m.lanes.map(laneCard).join('')+'</div><button type="button" class="secondary" id="mmm-add-lane">ADD AN INCOME LANE</button>':'')
@@ -202,13 +202,14 @@
     var n=s.numberPlanner||{},base=s.moneyMap.result&&s.moneyMap.result.complete?s.moneyMap.result.baseline:null;
     if((n.currentMonthly===undefined||n.currentMonthly==='')&&base!==null)n.currentMonthly=String(base);
     return '<section class="card" id="your-number"><div class="number">NEXT · YOUR NUMBER</div><h2>WHAT DO YOU ACTUALLY WANT THIS CAREER TO PROVIDE?</h2><p>A real number. A real schedule. Time off included.</p><div class="grid2">'
-      +f('yn-current-month','What you make in a month, before personal income taxes',n.currentMonthly||'','After work expenses, before personal income taxes. We’ve filled this in from your Money Map when available.')
-      +f('yn-current-days','Current days worked per week',n.currentDays||'')
-      +f('yn-current-weeks','Current weeks worked per year',n.currentWeeks||'','Do not guess 50. Use the number that is actually true or your best honest estimate.')
-      +f('yn-desired-annual','What you want to make in a year, before personal income taxes',n.desiredAnnual||'','There is no default $100K benchmark. Pick the number your life actually needs.')
-      +f('yn-desired-days','Desired days worked per week',n.desiredDays||'','1–7 days.')
-      +f('yn-desired-weeks','Desired weeks worked per year',n.desiredWeeks||'','1–52 weeks. Time off belongs in the math.')
-      +f('yn-max-clients','Optional maximum clients per day',n.maxClients||'','How many clients can you handle in a day without running yourself into the ground?')
+      +f('yn-current-month',"How much are you making each month before personal income taxes?",n.currentMonthly||'','After work expenses, before personal income taxes. We’ve filled this in from your Money Map when available.')
+      +f('yn-current-days',"How many days a week are you working now?",n.currentDays||'')
+      +f('yn-current-weeks',"How many weeks a year are you working now?",n.currentWeeks||'','Do not guess 50. Use the number that is actually true or your best honest estimate.')
+      +f('yn-desired-month',"How much do you want to make each month before personal income taxes?",n.desiredAnnual!==undefined&&n.desiredAnnual!==''?String(Number(n.desiredAnnual)/12):'','After work costs. This updates your yearly target below.')
+      +f('yn-desired-annual',"What do you want to make in a year?",n.desiredAnnual||'','There is no default $100K benchmark. Pick the number your life actually needs.')
+      +f('yn-desired-days',"How many days a week do you want to work?",n.desiredDays||'','1–7 days.')
+      +f('yn-desired-weeks',"How many weeks a year do you want to work?",n.desiredWeeks||'','1–52 weeks. Time off belongs in the math.')
+      +f('yn-max-clients',"What’s the most clients you want to see in a day?",n.maxClients||'','How many clients can you handle in a day without running yourself into the ground?')
       +'</div><div class="actions"><button type="button" class="primary" id="yn-calc">BUILD MY NUMBER →</button></div><div id="yn-result">'+(n.result?numberPlannerResultCard(n.result):'')+'</div>'+(n.result&&n.result.complete&&n.route?routeCard(n.route):'')+'</section>';
   }
 
@@ -262,16 +263,17 @@
     if(s.nextPath!=='p03')return '';
     var d=s.dayValue||{};
     return '<section class="card" id="day-value-audit"><div class="number">NEXT PATH · WHAT YOUR DAY IS ACTUALLY WORTH</div><h2>START WITH A NORMAL DAY. NOT YOUR BEST SATURDAY.</h2><p>What clients spend matters. So does how long you spend with them. Let’s look at both, along with the gaps in your day.</p><div class="grid2">'
-      +f('dv-ticket','Average client spend',d.ticket||'')
-      +f('dv-clients','Average clients per workday',d.clients||'')
-      +f('dv-available','Average hours available to clients each workday',d.available||'','Include the hours you actually make bookable. Intentional breaks are not automatically waste.')
-      +f('dv-booked','Hours spent with paying clients on an average day',d.booked||'')
-      +f('dv-days','Days worked per week',d.days||'')
-      +f('dv-revenue','Average service sales / client revenue per day, if known',d.revenue||'','Optional. If entered, this replaces the ticket × clients estimate for day revenue.')
+      +f('dv-ticket',"What does a client spend with you, on average?",d.ticket||'')
+      +f('dv-clients',"How many clients do you see on an average workday?",d.clients||'')
+      +f('dv-available',"How many hours a day can you realistically spend with clients?",d.available||'','Include the hours you actually make bookable. Intentional breaks are not automatically waste.')
+      +f('dv-booked',"How many hours do you actually spend with paying clients on an average day?",d.booked||'')
+      +f('dv-days',"How many days a week do you work?",d.days||'')
+      +f('dv-revenue',"If you know it, how much do you average per hour in service sales?",d.hourlyRevenue||'','Optional. We multiply this by your booked client hours to estimate daily service sales.')
       +'</div><div class="actions"><button type="button" class="primary" id="dv-calc">CHECK MY DAY →</button></div><div id="dv-result">'+(d.result?dayValueResultCard(d.result):'')+'</div></section>';
   }
   function dayValueCalc(d){
-    var ticket=num(d,'ticket'),clients=num(d,'clients'),available=num(d,'available'),booked=num(d,'booked'),days=num(d,'days'),actualRevenue=num(d,'revenue');
+    var ticket=num(d,'ticket'),clients=num(d,'clients'),available=num(d,'available'),booked=num(d,'booked'),days=num(d,'days'),actualRevenue=num(d,'revenue'),hourlyRevenue=num(d,'hourlyRevenue');
+    if(hourlyRevenue!==null)actualRevenue=hourlyRevenue*booked;
     if([ticket,clients,available,booked,days].some(function(v){return v===null}))return {complete:false,message:'Complete average client spend, clients per day, available hours, booked hours, and days worked.'};
     if(ticket<0||clients<0||available<=0||booked<0||days<=0||days>7)return {complete:false,message:'Check the numbers entered. Hours and days must be usable positive values, and booked hours cannot be negative.'};
     if(booked>available)return {complete:false,message:'Booked revenue-producing hours cannot be higher than the hours you make available. Check those two numbers.'};
@@ -305,7 +307,7 @@
 
   function dayValueResultCard(r){
     if(!r||!r.complete)return '<div class="card"><h3>WE NEED A CLEAN DAY FIRST.</h3><p>'+e((r&&r.message)||'Finish the required fields above.')+'</p></div>';
-    return '<div class="card"><div class="number">YOUR DAY</div><h3>NOW WE KNOW WHAT THE DAY IS DOING.</h3><p>Normal day value: <strong>'+cash(r.dayRevenue)+'</strong>'+(r.usedActual?' using the actual day revenue you entered.':' using average client spend × clients per day.')+'</p><p>Booked-hour value: <strong>'+(r.revenuePerBookedHour===null?'Not available yet':cash(r.revenuePerBookedHour)+'/hour')+'</strong>.</p><p>Booked time: <strong>'+Math.round(r.utilization*100)+'%</strong> of the hours you make available.</p><p>Average client spend: <strong>'+cash(r.ticket)+'</strong>.</p><p class="fine">We do not judge price from revenue/hour alone, and we do not treat intentional breaks as wasted capacity.</p><div id="dv-route-slot"></div></div>';
+    return '<div class="card"><div class="number">YOUR DAY</div><h3>NOW WE KNOW WHAT THE DAY IS DOING.</h3><p>Normal day value: <strong>'+cash(r.dayRevenue)+'</strong>'+(r.usedActual?' using the service-sales amount you entered.':' using average client spend × clients per day.')+'</p><p>Booked-hour value: <strong>'+(r.revenuePerBookedHour===null?'Not available yet':cash(r.revenuePerBookedHour)+'/hour')+'</strong>.</p><p>Booked time: <strong>'+Math.round(r.utilization*100)+'%</strong> of the hours you make available.</p><p>Average client spend: <strong>'+cash(r.ticket)+'</strong>.</p><p class="fine">We do not judge price from revenue/hour alone, and we do not treat intentional breaks as wasted capacity.</p><div id="dv-route-slot"></div></div>';
   }
 
 
@@ -330,8 +332,8 @@
     if(data.shell.nextPath!=='p01')return '';
     var d=data.shell.demandSprint||{},lanes=d.lanes||chooseDemandLanes(data);
     return '<section class="card" id="demand-sprint"><div class="number">NEXT PATH · FILL THE EMPTY TUESDAY</div><h2>WHICH APPOINTMENTS DO YOU NEED TO FILL?</h2><p>Pick the day, time, or service you need more bookings for. For the next 30 days, focus on two ways to bring clients in. Keep one other way ticking along.</p><div class="grid2">'
-      +f('ds-block','Consistently weak day / time block',d.block||'','Example: Tuesday afternoon, Thursday morning, or one recurring weekly gap.','text')
-      +f('ds-capacity','New-client capacity per week',d.capacity||'','How many new paid appointments could you realistically absorb without wrecking the schedule?')
+      +f('ds-block',"What part of your week is consistently too quiet?",d.block||'','Example: Tuesday afternoon, Thursday morning, or one recurring weekly gap.','text')
+      +f('ds-capacity',"How many new clients could you comfortably fit into your week?",d.capacity||'','How many new paid appointments could you realistically absorb without wrecking the schedule?')
       +'</div><div class="card"><div class="number">FIRST WAY TO FIND CLIENTS</div><h3>'+e(lanes.primary[0])+'</h3><p>Do 5 real actions this week. Track replies, bookings, service, and source.</p></div><div class="card"><div class="number">SECOND WAY TO FIND CLIENTS</div><h3>'+e(lanes.primary[1])+'</h3><p>Do 5 real actions this week. Write down who replies and who books. Likes don’t pay the rent.</p></div><div class="card"><div class="number">KEEP THIS TICKING ALONG</div><h3>'+e(lanes.maintenance)+'</h3><p>Keep this visible without turning it into a second full-time job.</p></div><div class="actions"><button type="button" class="primary" id="ds-save">START MY 30-DAY SPRINT →</button></div><div id="ds-result">'+(d.started?'<div class="card"><h3>THE SPRINT IS SET.</h3><p>Week 1: pick the appointments you want to fill. Take five actions for each of your two ways to find clients. Week 2: keep going and ask each new inquiry how they found you. Week 3: answer interested clients and help good new clients book their next visit. Week 4: keep what brought bookings, adjust what showed promise, and drop what went nowhere.</p></div>':'')+'</div></section>';
   }
 
@@ -346,7 +348,7 @@
       +'<section class="card" id="month-review"><div class="number">DAY 30</div><h2>DID ANYTHING ACTUALLY CHANGE?</h2><p>Compare the same length of time before and after. Leave a number blank if you don’t know it. Checking every box doesn’t automatically mean you made more money.</p>'
       +plan.metrics.map(function(m){return '<div class="card"><h3>'+e(m.label)+'</h3><div class="grid2">'+f('month-base-'+m.id,'Before ('+m.unit+')',data.metrics[key+'-base-'+m.id])+f('month-now-'+m.id,'After ('+m.unit+')',data.metrics[key+'-now-'+m.id])+'</div><p id="month-delta-'+m.id+'" role="status"></p></div>'}).join('')
       +'<button type="button" class="primary" id="month-compare">SHOW ME WHAT CHANGED →</button><p id="month-status" role="status"></p>'
-      +['keep','adjust','stop'].map(function(k){return '<div class="n30-field"><label for="month-'+k+'">'+({keep:'What’s worth keeping?',adjust:'What needs a change?',stop:'What are you done wasting time on?'})[k]+'</label><textarea class="input" id="month-'+k+'" maxlength="2000">'+e(review[k]||'')+'</textarea></div>'}).join('')
+      +['keep','adjust','stop'].map(function(k){return '<div class="n30-field"><label for="month-'+k+'">'+({keep:"What worked? Let’s keep that.",adjust:"What needs changing before you give it another month?",stop:"What took up your time and gave you nothing worth keeping?"})[k]+'</label><textarea class="input" id="month-'+k+'" maxlength="2000">'+e(review[k]||'')+'</textarea></div>'}).join('')
       +'<button type="button" class="secondary" id="month-save-review">SAVE MY CHECK-IN</button><p id="month-review-status" role="status">'+(review.saved?'Your check-in is saved on this device.':'')+'</p></section></section>';
   }
   function bindMonth(data,plan){
@@ -398,6 +400,7 @@
       var n=data.shell.numberPlanner||{},fields=['currentMonthly','currentDays','currentWeeks','desiredAnnual','desiredDays','desiredWeeks','maxClients'];
       var ids={currentMonthly:'yn-current-month',currentDays:'yn-current-days',currentWeeks:'yn-current-weeks',desiredAnnual:'yn-desired-annual',desiredDays:'yn-desired-days',desiredWeeks:'yn-desired-weeks',maxClients:'yn-max-clients'};
       fields.forEach(function(k){var x=document.getElementById(ids[k]);if(x)x.oninput=function(){n[k]=x.value.trim();data.shell.numberPlanner=n;next30Save()}});
+      var monthlyTarget=document.getElementById('yn-desired-month');if(monthlyTarget)monthlyTarget.oninput=function(){n.desiredAnnual=this.value.trim()===''?'':String(Number(this.value)*12);document.getElementById('yn-desired-annual').value=n.desiredAnnual;data.shell.numberPlanner=n;next30Save()};var annualTarget=document.getElementById('yn-desired-annual');if(annualTarget)annualTarget.oninput=function(){n.desiredAnnual=this.value.trim();monthlyTarget.value=n.desiredAnnual===''?'':String(Number(n.desiredAnnual)/12);data.shell.numberPlanner=n;next30Save()};
       var calc=document.getElementById('yn-calc');if(calc)calc.onclick=function(){
         fields.forEach(function(k){var x=document.getElementById(ids[k]);if(x)n[k]=x.value.trim()});
         n.result=calculateNumberPlanner(n);
@@ -418,8 +421,8 @@
       };
     }
     if(data.shell.nextPath==='p03'){
-      var d=data.shell.dayValue||{},dFields=['ticket','clients','available','booked','days','revenue'];
-      var dIds={ticket:'dv-ticket',clients:'dv-clients',available:'dv-available',booked:'dv-booked',days:'dv-days',revenue:'dv-revenue'};
+      var d=data.shell.dayValue||{},dFields=['ticket','clients','available','booked','days','hourlyRevenue'];
+      var dIds={ticket:'dv-ticket',clients:'dv-clients',available:'dv-available',booked:'dv-booked',days:'dv-days',hourlyRevenue:'dv-revenue'};
       dFields.forEach(function(k){var x=document.getElementById(dIds[k]);if(x)x.oninput=function(){d[k]=x.value.trim();data.shell.dayValue=d;next30Save()}});
       var dCalc=document.getElementById('dv-calc');if(dCalc)dCalc.onclick=function(){
         dFields.forEach(function(k){var x=document.getElementById(dIds[k]);if(x)d[k]=x.value.trim()});

@@ -45,13 +45,13 @@ async function boot(paid=true,saved=null,url=null){
  assert.equal(run('state.careerData.shell.rebooking.rows.length'),1);assert.match($('#p02-summary').textContent,/100.0%/);
  $('[data-p02-edit]').click();input('p02-client','<script>alert(1)</script>');$('#p02-form').dispatchEvent(new w.Event('submit',{cancelable:true}));
  assert.equal(run('state.careerData.shell.rebooking.rows.length'),1);assert(!$('#p02-rows script'),'Client text is escaped');
- for(const [k,v] of Object.entries({total:100,blocked:20,returning:40,newClients:10}))input('p02-cov-4-'+k,v);
+ for(const [k,v] of Object.entries({available:80,blocked:20,returning:40,newClients:10}))input('p02-cov-4-'+k,v);
  $('#p02-cov-calc').click();assert.match($('#p02-cov-result-4').textContent,/50.0%/);
  $('[data-p02-week]').checked=true;$('[data-p02-week]').dispatchEvent(new w.Event('change'));
  input('p02-client','draft-client');
  const saved=w.localStorage.getItem('booked-af-career-next30-v2');assert.equal(b.errors.length,0);b.dom.window.close();
  b=await boot(true,saved);({w,run,$,input}=b);run(`state.view='deepresult';render()`);
- assert.equal($('#p02-client').value,'draft-client');assert($('[data-p02-week]').checked);assert.equal($('#p02-cov-4-total').value,'100');assert.equal(run('state.careerData.shell.rebooking.rows.length'),1);
+ assert.equal($('#p02-client').value,'draft-client');assert($('[data-p02-week]').checked);assert.equal($('#p02-cov-4-available').value,'80');assert.equal(run('state.careerData.shell.rebooking.rows.length'),1);
  // Select P02 from the money-path result, rather than only entering directly.
  run(`state.careerData.answers.goal='money';state.careerData.shell.nextPath='p02';render()`);assert($('#rebooking-tracker'));
  $('[data-p02-delete]').click();assert.equal(run('state.careerData.shell.rebooking.rows.length'),0);

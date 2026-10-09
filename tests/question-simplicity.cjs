@@ -12,7 +12,7 @@ const run=code=>vm.runInContext(code,ctx);
 const json=code=>JSON.parse(JSON.stringify(run(code)));
 const $=selector=>w.document.querySelector(selector);
 const click=selector=>{assert($(selector),'Missing '+selector);$(selector).click();assert.equal(errors.length,0,errors.map(e=>e.stack).join('\n'))};
-run(`function completeShort(input){const a={...input};for(const q of shortQuestions){if(q.when&&!q.when(a))continue;if(a[q.id]===undefined){const value=shortChoices(q,a)[0][0];a[q.id]=q.multi?[value]:value}}return validateShortAnswers(a)}`);
+run(`function completeShort(input){const a={...input};for(const q of shortQuestions){if(q.when&&!q.when(a))continue;if(q.type==='service-time'){a[q.id]={service:'Root touch-up',hours:1,minutes:30};continue;}if(a[q.id]===undefined){const value=shortChoices(q,a)[0][0];a[q.id]=q.multi?[value]:value}}return validateShortAnswers(a)}`);
 try {
  run(`restoreSchema(SHORT_SCHEMA);state.answers=completeShort({worktype:['owner'],leadershiprole:'manager',goal:['money','time'],goalpriority:'money'})`);
  const delivered=json('answersForDelivery()');

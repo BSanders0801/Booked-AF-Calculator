@@ -19,6 +19,7 @@
     for (const q of list) {
       const allowed = new Set((schema === SHORT_SCHEMA ? shortChoices(q, clean) : q.choices).map(choice => choice[0]));
       const raw = answers[q.id];
+      if(q.type==='service-time'){const value=cleanServiceTime(raw);if(value)clean[q.id]=value;continue;}
       if (q.multi) {
         if (!Array.isArray(raw)) continue;
         let values = [...new Set(raw.filter(value => allowed.has(value)))];
