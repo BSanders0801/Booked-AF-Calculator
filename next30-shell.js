@@ -262,6 +262,7 @@
   function dayValueHTML(s){
     if(s.nextPath!=='p03')return '';
     var d=s.dayValue||{};
+    if(d.hourlyRevenue===undefined&&num(d,'revenue')!==null){if(num(d,'booked')>0)d.hourlyRevenue=String(num(d,'revenue')/num(d,'booked'));delete d.revenue;d.result=null;}
     return '<section class="card" id="day-value-audit"><div class="number">NEXT PATH · WHAT YOUR DAY IS ACTUALLY WORTH</div><h2>START WITH A NORMAL DAY. NOT YOUR BEST SATURDAY.</h2><p>What clients spend matters. So does how long you spend with them. Let’s look at both, along with the gaps in your day.</p><div class="grid2">'
       +f('dv-ticket',"What does a client spend with you, on average?",d.ticket||'')
       +f('dv-clients',"How many clients do you see on an average workday?",d.clients||'')

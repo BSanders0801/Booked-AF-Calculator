@@ -39,6 +39,9 @@ const {JSDOM}=require('jsdom');
  run(`state.careerData.shell.nextPath='p03';render()`);
  for(const [id,value] of Object.entries({'dv-ticket':100,'dv-clients':4,'dv-available':8,'dv-booked':5,'dv-days':4,'dv-revenue':90}))input(id,value);
  $('#dv-calc').click();assert.equal(run('state.careerData.shell.dayValue.result.dayRevenue'),450,'Hourly sales must be multiplied by booked hours');
+ run(`state.careerData.shell.dayValue={ticket:'100',clients:'4',available:'8',booked:'5',days:'4',revenue:'450'};render()`);
+ assert.equal($('#dv-revenue').value,'90','Saved daily sales must be visibly converted to hourly sales');
+ input('dv-revenue','');$('#dv-calc').click();assert.equal(run('state.careerData.shell.dayValue.result.dayRevenue'),400,'Clearing hourly sales must not reuse a hidden legacy daily amount');
  assert.equal(errors.length,0,errors.map(e=>e.stack).join('\n'));
  }finally{w.close()}
  const rebook=require('../next30-rebooking.js');assert.equal(rebook.coverage({available:'80',blocked:'20',returning:'40',newClients:'10'}).returning,50);assert.equal(rebook.coverage({available:'80',blocked:'',returning:'40',newClients:'10'}).returning,50);
