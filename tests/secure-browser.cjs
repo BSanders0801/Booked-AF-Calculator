@@ -98,9 +98,10 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'.browser-review/secu
   await page.locator('#next30-import').setInputFiles({name:'saved-plan.json',mimeType:'application/json',buffer:Buffer.from(portable)});
   await page.waitForSelector('#mmm-emp-gross');assert.equal(await page.locator('#mmm-emp-gross').inputValue(),'5000');
   await page.goto('http://127.0.0.1:8766/?survey=paid&session_id=cs_test_fixture#survey');
-  for(const [name,value] of Object.entries({rating:'5',ease:'pretty easy',useful:'using it',recommend:'probably'}))await page.locator(`label:has(input[name="${name}"][value="${value}"])`).click();
+  for(const [name,value] of Object.entries({rating:'5',ease:'pretty easy',useful:'using it',recommend:'absolutely'}))await page.locator(`label:has(input[name="${name}"][value="${value}"])`).click();
   await page.locator('#booked-survey button[type="submit"]').click();
   await page.getByRole('heading',{name:'THANK YOU.',exact:true}).waitFor();
+  assert.equal(surveyPayload.recommend,'absolutely');
   assert.deepEqual(surveyPayload.more,[],'survey allows omitted optional help topics');
   assert.equal(surveyPayload.session_id,'cs_test_fixture');
   assert.deepEqual(errors,[]);
