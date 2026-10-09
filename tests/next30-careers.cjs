@@ -35,7 +35,7 @@ const hourly=api.build(fill({careers:['color'],goal:'money',color_pay:'hourly'})
 assert(hourly.scripts.some(x=>x[0]==='PAY CONVERSATION'));assert.match(hourly.missions[2].tasks[0],/PAY CONVERSATION/);
 assert.deepEqual(Object.keys(api.cleanAnswers(null)),[]);
 assert.equal(api.valueMath({additionalKept:-10,extraCosts:5,price:49}).afterPurchase,-64);
-const owner=api.build(fill({careers:['owner'],goal:'keep'}));assert.match(owner.tool.warning,/not automatically.*take-home/);
+const owner=api.build(fill({careers:['owner'],goal:'keep'}));assert.match(owner.tool.warning,/isn’t automatically yours to take home/);
 assert.equal(api.seed({worktype:['owner'],leadershiprole:'manager'}).careers[0],'manager');
 assert.equal(api.seed({worktype:['session','events'],primarywork:'events'}).primary,'bridal');
 assert.equal(api.workMath({earned:1000,costs:200,hours:8,share:50}).left,300);
