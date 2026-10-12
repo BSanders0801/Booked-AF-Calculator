@@ -98,11 +98,11 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   reload.click('[data-clear-progress]');assert.equal(reload.w.localStorage.getItem(savedKey),null);assert.equal(reload.w.sessionStorage.getItem(deliveryKey),null);
   const empty=start({hash:'#my-plan'});assert(empty.$('#next'));assert(empty.$('#next').disabled);
   const bad=start({hash:'#my-plan',saved:{...saved,answers:{goal:'<script>'}}});assert(bad.$('#next'));assert.equal(bad.errors.length,0);
-  const blocked=start({blocked:true});blocked.click('header [data-nav="intro"]');d.click('.brand-hero [data-nav="question"]');blocked.click('.choice');assert.equal(blocked.$('#storage-error').hidden,false);
+  const blocked=start({blocked:true});blocked.click('header [data-nav="intro"]');blocked.click('.brand-hero [data-nav="question"]');blocked.click('.choice');assert.equal(blocked.$('#storage-error').hidden,false);
   const paid=start({search:'?deepdive=paid&session_id=cs_test_123',hash:'#my-plan',saved});assert.match(paid.$('#app').textContent,/Checking your payment/);assert(!paid.$('#dnext'));
   // Student enters through the same front door, with no working-business questions.
-  const directStudent=start();directStudent.click('header [data-nav="question"]');directStudent.click('[data-value="school"]');directStudent.click('#next');assert.match(directStudent.$('#app').textContent,/WHAT KIND OF HAIR WORK INTERESTS YOU/);
-  const student=start();student.click('header [data-nav="question"]');student.click('[data-value="school"]');student.click('#next');
+  const directStudent=start();directStudent.click('header [data-nav="intro"]');directStudent.click('.brand-hero [data-nav="question"]');directStudent.click('[data-value="school"]');directStudent.click('#next');assert.match(directStudent.$('#app').textContent,/WHAT KIND OF HAIR WORK INTERESTS YOU/);
+  const student=start();student.click('header [data-nav="intro"]');student.click('.brand-hero [data-nav="question"]');student.click('[data-value="school"]');student.click('#next');
   let studentScreens=[];
   while(student.$('#next')){studentScreens.push(student.$('#app h2').textContent);student.click('.choice');student.click('#next');}
   assert(!studentScreens.some(t=>/PAYS THE BILLS|FULL IS YOUR BOOK|WORK CALENDAR|TALK PAY/.test(t)));
