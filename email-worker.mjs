@@ -1211,8 +1211,37 @@ async function lifecycleAPI(request,env){
  }catch{return reply({success:false,error:'Your profile could not be saved. Your answers are still in this browser.'},503);}
 }
 
+async function prelaunchSignup(request,env){
+ const origin=request.headers.get('Origin')||'';
+ const headers={'Content-Type':'application/json','Cache-Control':'no-store','Vary':'Origin'};
+ if(ORIGINS.has(origin))Object.assign(headers,{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type'});
+ const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers});
+ if(!ORIGINS.has(origin))return reply({success:false},403);
+ if(request.method==='OPTIONS')return new Response(null,{status:204,headers});
+ if(request.method!=='POST')return reply({success:false},405);
+ if(!env.RESEND_API_KEY||!env.TURNSTILE_SECRET_KEY||!env.PRELAUNCH_SEGMENT_ID)return reply({success:false,error:'Signup is not ready yet.'},503);
+ if(!request.headers.get('Content-Type')?.startsWith('application/json'))return reply({success:false},415);
+ let data;try{data=await limitedJSON(request)}catch{return reply({success:false,error:'Check your details.'},400)}
+ if(!data||typeof data!=='object'||data.consent!==true||data.honey)return reply({success:false,error:'Please confirm permission.'},400);
+ const name=typeof data.name==='string'?data.name.trim():'';
+ const email=typeof data.email==='string'?data.email.trim().toLowerCase():'';
+ if(!name||name.length>60||!/^[\\p{L}\\p{M} '\\u2019-]+$/u.test(name)||email.length>254||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))return reply({success:false,error:'Check your name and email.'},400);
+ if(typeof data.token!=='string'||!data.token||data.token.length>2048)return reply({success:false,error:'Please complete verification.'},400);
+ try{
+ const vr=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:env.TURNSTILE_SECRET_KEY,response:data.token,remoteip:request.headers.get('CF-Connecting-IP')||undefined}),signal:AbortSignal.timeout(8000)});
+ if(!vr.ok)return reply({success:false,error:'Verification unavailable.'},503);
+ const v=await vr.json();
+ if(!v.success||v.hostname!==new URL(origin).hostname||v.action!=='booked_prelaunch')return reply({success:false,error:'Please verify again.'},403);
+ const res=await fetch('https://api.resend.com/contacts',{method:'POST',headers:{Authorization:'Bearer '+env.RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,first_name:name,unsubscribed:false,segments:[{id:env.PRELAUNCH_SEGMENT_ID}]}),signal:AbortSignal.timeout(12000)});
+ if(res.status===409)return reply({success:true,alreadyJoined:true});
+ if(!res.ok)return reply({success:false,error:'We could not save your signup. Please try later.'},502);
+ return reply({success:true});
+ }catch{return reply({success:false,error:'Signup is temporarily unavailable.'},503)}
+}
+
 export default {
   async fetch(request, env, ctx) {
+    if(new URL(request.url).pathname==='/prelaunch')return prelaunchSignup(request,env);
     if(['/profile','/events'].includes(new URL(request.url).pathname))return lifecycleAPI(request,env);
     if (new URL(request.url).pathname === '/stripe-webhook') return stripeWelcome(request, env);
     if (new URL(request.url).pathname === '/verify-checkout') return verifyCheckout(request, env);
