@@ -56,7 +56,7 @@ async function boot(paid=true,saved=null){
   click('[data-next30-sample="session"]');assert.match($('#app').textContent,/WHOLE-JOB MATH|whole-job math/);assert.match($('#app').textContent,/EXAMPLE ONLY/);assert(!$('#next30-import'));
   assert.match($('.example-math').textContent,/48.57/);
   for(const [role,rate] of [['color','61.25'],['bridal','50.00'],['session','48.57']]){
-   run("state.view='intro';render()");click(`[data-example-role="${role}"]`);
+   run("state.view='next30sample';render()");click(`[data-next30-sample="${role}"]`);
    assert.equal(run('state.view'),'next30sample');assert.match($('.example-math').textContent,new RegExp(rate.replace('.','\\.')));
    assert.equal($(`[data-next30-sample="${role}"]`).getAttribute('aria-pressed'),'true');
   }
