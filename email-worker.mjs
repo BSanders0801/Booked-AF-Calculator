@@ -997,7 +997,7 @@ Your $49 plan is ready to build. Answer a few questions, and we'll figure out wh
 
 Keep this email as your access link. Save your finished plan file, too; it doesn't automatically sync between devices.
 
-START MY NEXT 30: ${customerNext30Url}
+BUILD MY NEXT 30: ${customerNext30Url}
 
 Fully booked is great. Booked on your terms is better.
 Bradley
