@@ -504,7 +504,7 @@ if(r.schema===SHORT_SCHEMA)return shortEmailCopy(r,name);
  return "THE BOOKED AF BREAKDOWN\n\n"+(name?name+", here’s":"Here’s")+" your Breakdown.\n\nYOUR BOOK RIGHT NOW\n"+r.stage+"\n\nFIX THIS FIRST\n"+r.fix.title+"\n"+r.fix.body+
  "\n\nDO THESE 3 THINGS\n"+r.plan.steps.map((step,i)=>(i+1)+". "+step.title+"\n"+step.body).join("\n\n")+
  "\n\nWATCH THIS\n"+r.plan.checkTitle+"\n"+r.plan.check+"\n"+r.plan.rule+money+
- "\n\nThis is a starting point based on your answers, not a promise of income.\n\nBOOKED AF\nLove your career. Keep your life.\nbookedandfabulous.com";
+ "\n\nThis is a starting point based on your answers, not a promise of income.\n\nBOOKED AF\nFully booked is great. Booked on your terms is better.\nbookedandfabulous.com";
 }
 // Lead requests stay in the background. Never navigate to the form provider.
 // Send validated form details to our email Worker after Turnstile verification.
