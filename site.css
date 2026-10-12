@@ -231,3 +231,6 @@ body .bradley-lessons .story-body{padding-top:16px}
  .next30-panel #income-lanes td[data-label="Job / evidence"]::before,.next30-panel #income-lanes td[data-label="Actions"]::before{display:block;margin-bottom:8px}
  .next30-panel #income-lanes td[data-label="Actions"] button{width:100%;margin:4px 0}
 }
+
+/* Keep functional labels readable inside the light career example card. */
+body .baf-sample-panel .baf-link{color:#1b171a;border-color:#66505e}
