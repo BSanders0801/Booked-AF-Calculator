@@ -29,7 +29,9 @@ test('verified Your Next 30 checkout sends welcome and schedules Day 14 survey',
     assert.match(survey.html,/session_id=cs_test_123/);
     const welcome=sent.find(x=>x.body.subject==='You’re in. Let’s make some moves.').body;
     assert.equal(welcome.to[0],'alex@example.com');
-    assert.match(welcome.text,/START MY NEXT 30: https:\/\/bookedandfabulous.com\/\?next30=paid&session_id=cs_test_123/);
+    assert.match(welcome.text,/BUILD MY NEXT 30: https:\/\/bookedandfabulous.com\/\?next30=paid&session_id=cs_test_123/);
+    assert.match(welcome.html,/YOU PAID. WE HAVE WORK TO DO/);
+    assert.match(welcome.html,/BUILD MY NEXT 30/);
   } finally {globalThis.fetch=original}
 });
 
