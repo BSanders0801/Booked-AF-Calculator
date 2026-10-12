@@ -42,7 +42,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   assert.match(d.$('#app').textContent,/3 minutes. A clearer picture. Email required/);
   assert.doesNotMatch(d.$('#app').textContent,/Deep Dive|YOUR STAGE/);
   assert.equal(d.$('.brand-logo').getAttribute('src'),'assets/booked-af-logo.webp');
-  assert.match(d.$('#app').textContent,/YOUR CHAIR IS A BUSINESS.YOUR LIFE IS NOT THE OVERHEAD/);
+  assert.match(d.$('#app').textContent,/YOUR BOOKED AFBREAKDOWN/);
   assert.equal(d.w.document.querySelectorAll('.brand-hero button').length,1);
   assert.match(d.$('#app').textContent,/Your work changes.So should the advice/);
   assert.equal(d.w.document.querySelectorAll('[data-career-sample]').length,5);

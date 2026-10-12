@@ -2,7 +2,7 @@
 
 **Status:** Canonical support-response copy.
 **Updated:** October 6, 2026.
-**Voice:** Short, clear, human, Bradley. No corporate support language.
+**Creative authority:** ../docs/BOOKED_AF_BRAND_BIBLE.md. Use its transactional standard.
 **Policy:** YOUR NEXT 30 is $49 once. Policy-era purchases include 12 months of online access. Readable downloads remain theirs. Change-of-mind purchases are final once access is delivered. Duplicate charges are corrected. Unresolved delivery/access failures are refunded. The two-business-day commitment is a reply target, not a guaranteed resolution deadline.
 
 ## General rule
@@ -27,7 +27,7 @@ BOOKED AF
 
 Hey [FIRST NAME],
 
-I found the purchase. The access link should be working, so something clearly isn't behaving.
+I found your purchase. Let’s check why the access link isn’t opening.
 
 Send me:
 - what device/browser you're using
@@ -46,7 +46,7 @@ BOOKED AF
 
 Hey [FIRST NAME],
 
-Yep. If the same purchase went through twice, we're fixing that.
+If the same purchase went through twice, we’ll correct the duplicate.
 
 Send me the Stripe receipt or purchase references for both charges so I can match them correctly.
 
@@ -60,9 +60,9 @@ BOOKED AF
 
 Hey [FIRST NAME],
 
-We weren't able to get your access working, and I'm not going to make you keep paying for something you couldn't use.
+We weren’t able to resolve the access problem. Your purchase qualifies for a refund under our delivery policy.
 
-I'm refunding the affected purchase.
+I’ve approved a refund for the affected purchase. I’ll confirm once it has been processed.
 
 Stripe handles the return to the original payment method, so the time it takes to show back up can depend on the bank.
 

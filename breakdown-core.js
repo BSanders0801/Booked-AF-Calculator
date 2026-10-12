@@ -471,7 +471,7 @@ function publicBreakdown(r) {
 }
 function publicBreakdownEmail(r,name) {
  const p=publicBreakdown(r);
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nThis is a starting point for understanding the problem, not a personalized action plan or an income forecast.\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF\nLove your career. Keep your life.';
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nThis is a starting point for understanding the problem, not a personalized action plan or an income forecast.\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
 }
 function shortEmailCopy(r,name) { return publicBreakdownEmail(r,name); }
 
