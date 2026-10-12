@@ -50,7 +50,6 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   assert.equal(d.w.document.querySelectorAll('[data-career-sample]').length,5);
   d.click('[data-career-sample="session"]');
   assert.match(d.$('[data-career-sample-panel]').textContent,/FIND OUT WHAT THE JOB ACTUALLY PAID/);
-  d.click('[data-nav="sample"]');
   assert.match(d.$('#app').textContent,/SHOW MEWHAT I GET/);
   assert.equal(d.w.document.querySelectorAll('[data-career-sample]').length,5);
   d.click('[data-career-sample="events"]');
