@@ -58,7 +58,7 @@ test('Breakdown schedules distinct Day 7 and Day 30 emails and queues Day 60 and
     assert.match(day7.text,/practical tools and four-week plan are inside YOUR NEXT 30/);
     assert.match(day7.html,/OPEN MY BREAKDOWN/);
 
-    const day30 = emails.find(x=>x.body.subject==='30 days later. Are we rich yet?').body;
+    const day30 = emails.find(x=>x.body.subject==='30 days later. What changed?').body;
     assert.equal(day30.scheduled_at,'in 30 days');
     assert.match(day30.html,/REVISIT MY BREAKDOWN →/);
 
@@ -92,7 +92,7 @@ test('scheduled handler sends due 60 and 90 day queue items with different copy'
     const day60=emails.find(x=>x.body.subject==='60 days in. What actually stuck?').body;
     const day90=emails.find(x=>x.body.subject==='90 days later. Apparently we do quarterly reviews now.').body;
     assert.match(day60.text,/We’re looking for patterns now/);
-    assert.match(day90.text,/Three months is enough time to stop calling everything a fluke/);
+    assert.match(day90.text,/Let’s look back at the last 3 months/);
     assert.doesNotMatch(day90.text,/Did your stage change/);
     assert.equal(FOLLOWUPS.map.size,0);
   } finally { globalThis.fetch=original; }

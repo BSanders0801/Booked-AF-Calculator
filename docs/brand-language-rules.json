@@ -1,0 +1,7 @@
+{
+  "no-profanity": "\\b(?:shit|damn|fuck|fucking|bitch|gtfo|hell)\\b",
+  "disputed-tagline": "your chair is a business.{0,50}your life is not the overhead",
+  "retired-positioning": "make more\\.\\s*work less\\.\\s*live better|your talent should buy you freedom|your career owes you a life|love your career\\.\\s*keep your life|fully booked\\..{0,50}completely miserable|build your future now|build a brighter tomorrow",
+  "receipts-catchphrase": "no advice without receipts|receipts (?:are receipting|have entered the chat|over inspiration)|bring receipts|receipts, not inspiration|numbers give it receipts",
+  "coach-cliches": "boss babe|girlboss|rise and grind|hustle harder|slay,? queen|six.figure stylist secrets|unlock your (?:full earning )?potential|manifest your dream clientele|become the CEO of your chair"
+}

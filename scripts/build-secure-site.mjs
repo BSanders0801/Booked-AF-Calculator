@@ -29,7 +29,6 @@ export async function secureSources(){
  for(const name of paidFiles)html=html.replace(new RegExp('<script src="'+name.replace('.','\\.')+'[^\"]*" defer></script>'),'');
  html=html.replace('</head>','<meta name="referrer" content="no-referrer"></head>').replace('<script src="app.js','<script src="paid-loader.js" defer></script><script src="app.js');
  const files={'index.html':html,'app.js':app,'breakdown-core.js':publicCore,'site-content.js':publicPages,'site-ui.js':ui};
- files['app.js']=files['app.js'].replaceAll('fix the damn thing','fix the thing');
  for(const name of ['site.css','lifecycle-ui.js','paid-loader.js'])files[name]=await readFile(resolve(root,name),'utf8');
  return files;
 }

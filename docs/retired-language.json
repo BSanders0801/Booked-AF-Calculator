@@ -1,0 +1,611 @@
+[
+  {
+    "language": "FULLY BOOKED. COMPLETELY MISERABLE.",
+    "status": "awaiting a final decision",
+    "reason": "Appears in earlier material or a draft; current approval is not established. Withhold; do not substitute it for the disputed tagline.",
+    "source": "Earlier email templates, social artwork and homepage review branch",
+    "exception": "None"
+  },
+  {
+    "language": "Love your career. Keep your life.",
+    "status": "awaiting a final decision",
+    "reason": "Appears in earlier material or a draft; current approval is not established. Withhold; do not substitute it for the disputed tagline.",
+    "source": "Earlier email templates, social artwork and homepage review branch",
+    "exception": "None"
+  },
+  {
+    "language": "YOUR CAREER OWES YOU A LIFE.",
+    "status": "awaiting a final decision",
+    "reason": "Appears in earlier material or a draft; current approval is not established. Withhold; do not substitute it for the disputed tagline.",
+    "source": "Earlier email templates, social artwork and homepage review branch",
+    "exception": "None"
+  },
+  {
+    "language": "YOUR CHAIR IS A BUSINESS. YOUR LIFE IS NOT THE OVERHEAD.",
+    "status": "awaiting a final decision",
+    "reason": "Disputed October 12; withhold from current copy. No replacement is approved.",
+    "source": "Voice-aligned Master; October 9–12 context",
+    "exception": "None"
+  },
+  {
+    "language": "$19 / $29 / $39 membership offers",
+    "status": "historical only",
+    "reason": "Old proposals, not current membership targets; do not confuse the separate future FIRST 90 $29 test.",
+    "source": "Master Source and earlier plans",
+    "exception": "Dated financial history and the separate future FIRST 90 $29 test remain valid records."
+  },
+  {
+    "language": "30 days later. Are we rich yet?",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/email-worker.mjs",
+    "exception": "None"
+  },
+  {
+    "language": "A toner.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "Built by a hairdresser with almost 30 years behind the chair",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "By now, something should be getting clearer.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/email-worker.mjs",
+    "exception": "None"
+  },
+  {
+    "language": "Deep Dive",
+    "status": "historical only",
+    "reason": "Superseded public paid-product name; use YOUR NEXT 30.",
+    "source": "Master Source, earlier plans, and October 12 live Stripe line item on plink_1UJbGMK8mAQwUniDbDofJPiQ",
+    "exception": "Compatibility routes, stored keys and immutable purchase history retain their identifiers."
+  },
+  {
+    "language": "Diagnostic career education",
+    "status": "historical only",
+    "reason": "Superseded public descriptor; diagnosis-first product logic remains.",
+    "source": "Master Source and earlier plans",
+    "exception": "Internal diagnosis-first methods remain valid; this restriction concerns public positioning."
+  },
+  {
+    "language": "Fewer stupid hours.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "Filming remains locked to October 12",
+    "status": "historical only",
+    "reason": "October 12 shoot canceled. October 18 or 26 requested; no replacement date confirmed. October 19 DMV remains a constraint.",
+    "source": "Production board and October 12 conversation context",
+    "exception": "None"
+  },
+  {
+    "language": "Free Breakdown includes three actions, seven-day checklist and calculators",
+    "status": "historical only",
+    "reason": "Superseded October 6 free/paid boundary: free explains the problem; paid supplies implementation.",
+    "source": "Earlier repository Bible, Master, production board; current instruction",
+    "exception": "None"
+  },
+  {
+    "language": "GET BOOKED. MAKE MONEY. HAVE A LIFE.",
+    "status": "historical only",
+    "reason": "Superseded primary positioning or organizing framework; do not restore as current copy.",
+    "source": "Earlier Bibles, Master revisions and repository history",
+    "exception": "None"
+  },
+  {
+    "language": "Growth is funny like that.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/email-worker.mjs",
+    "exception": "None"
+  },
+  {
+    "language": "LOOK WHO CAME BACK FOR RECEIPTS.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "Love your career. Keep your life.<br>",
+    "status": "awaiting a final decision",
+    "reason": "Historical sign-off withheld pending current tagline decision",
+    "source": "product/email-worker.mjs",
+    "exception": "None"
+  },
+  {
+    "language": "MAKE MORE. WORK LESS. LIVE BETTER.",
+    "status": "historical only",
+    "reason": "Superseded primary positioning or organizing framework; do not restore as current copy.",
+    "source": "Earlier Bibles, Master revisions and repository history",
+    "exception": "None"
+  },
+  {
+    "language": "NO RECEIPTS YET.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "Numbers give it receipts.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "SHOW ME MY 90-DAY NUMBERS",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/email-worker.mjs",
+    "exception": "None"
+  },
+  {
+    "language": "SHOW ME THE RECEIPTS.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "STOP TRADING YOUR WHOLE LIFE FOR A PAYCHECK.",
+    "status": "historical only",
+    "reason": "Superseded primary positioning or organizing framework; do not restore as current copy.",
+    "source": "Earlier Bibles, Master revisions and repository history",
+    "exception": "None"
+  },
+  {
+    "language": "THE CLIENT ISN’T ALWAYS RIGHT. SOMETIMES THEY’RE JUST WRONG WITH CONFIDENCE.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "THE RECEIPTS",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "THE RECEIPTS ARE RECEIPTING.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "THE RECEIPTS HAVE ENTERED THE CHAT.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "THE ROSTER",
+    "status": "historical only",
+    "reason": "Superseded working name; HEADLINER remains a future initiative.",
+    "source": "Master Source and earlier plans",
+    "exception": "Compatibility routes, stored keys and immutable purchase history retain their identifiers."
+  },
+  {
+    "language": "That is what progress with receipts looks like.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "This time, don’t just look at whether they went up or down. Look at what actually changed because of something you did.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/email-worker.mjs",
+    "exception": "None"
+  },
+  {
+    "language": "Three months is enough time to stop calling everything a fluke.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/email-worker.mjs",
+    "exception": "None"
+  },
+  {
+    "language": "Two separate shoots for the first five lessons",
+    "status": "historical only",
+    "reason": "Superseded production schedule; preserve only as dated history.",
+    "source": "Earlier repository Bible, Master, production board; current instruction",
+    "exception": "None"
+  },
+  {
+    "language": "YOU DO NOT GET A PRIZE FOR OPENING EVERY TAB.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "YOUR PRICE SHOULD SOLVE A BUSINESS PROBLEM. NOT AN INSECURITY PROBLEM.",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "Your Book. Your Money. Your Life.",
+    "status": "historical only",
+    "reason": "Superseded primary positioning or organizing framework; do not restore as current copy.",
+    "source": "Earlier Bibles, Master revisions and repository history",
+    "exception": "None"
+  },
+  {
+    "language": "Your talent should buy you freedom.",
+    "status": "historical only",
+    "reason": "Superseded primary positioning or organizing framework; do not restore as current copy.",
+    "source": "Earlier Bibles, Master revisions and repository history",
+    "exception": "None"
+  },
+  {
+    "language": "a number that looks suspicious",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/site-content.js",
+    "exception": "None"
+  },
+  {
+    "language": "your toner at the state line",
+    "status": "historical only",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/site-content.js",
+    "exception": "None"
+  },
+  {
+    "language": "DRINK THE DAMN COFFEE IF YOU LOVE IT.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "DRINK THE DAMN COFFEE. JUST KNOW WHAT IT COSTS.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "DUST THAT SHIT OFF. AND TRY AGAIN.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "Every line needs a joke / attitude",
+    "status": "prohibited",
+    "reason": "Humor must serve the point; no forced jokes or condescension.",
+    "source": "Earlier repository Bible, Master, production board; current instruction",
+    "exception": "None"
+  },
+  {
+    "language": "Generic salon-business-coach voice, guru slogans, boss-babe language",
+    "status": "prohibited",
+    "reason": "Rejected creative direction. Use concrete salon facts and practical teaching.",
+    "source": "Earlier repository Bible, Master, production board; current instruction",
+    "exception": "None"
+  },
+  {
+    "language": "High humor intensity in errors, loading and checkout",
+    "status": "prohibited",
+    "reason": "Recovery, payment status and access require simple, reassuring language.",
+    "source": "Earlier repository Bible, Master, production board; current instruction",
+    "exception": "None"
+  },
+  {
+    "language": "I CUT A DAY AND THE OTHER DAYS BECAME HELL.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "LOOK AT YOU, MAKING MONEY AND SHIT.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "Language Bible is the ultimate creative authority",
+    "status": "prohibited",
+    "reason": "Replaced by BOOKED_AF_BRAND_BIBLE.md. Legacy file is a pointer.",
+    "source": "Earlier repository Bible, Master, production board; current instruction",
+    "exception": "None"
+  },
+  {
+    "language": "Mild swearing / PG-13 language is allowed in paid education",
+    "status": "prohibited",
+    "reason": "Current no-profanity instruction applies to every surface.",
+    "source": "Earlier repository Bible, Master, production board; current instruction",
+    "exception": "None"
+  },
+  {
+    "language": "NO ADVICE WITHOUT RECEIPTS.",
+    "status": "prohibited",
+    "reason": "Rejected public language or catchphrase. Preserve evidence-based recommendations without this wording.",
+    "source": "October 9–12 context and current reconciliation instruction",
+    "exception": "Literal payment receipts and expense records remain permitted; no changes to technical keys."
+  },
+  {
+    "language": "Never use Next or Continue",
+    "status": "prohibited",
+    "reason": "Use the clearest action label, including plain navigation.",
+    "source": "Earlier repository Bible, Master, production board; current instruction",
+    "exception": "None"
+  },
+  {
+    "language": "PAY YOURSELF TO TAKE THE DAMN VACATION",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "PUT TAX DATES ON THE DAMN CALENDAR.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "Receipts as a recurring public brand catchphrase",
+    "status": "prohibited",
+    "reason": "Rejected public language or catchphrase. Preserve evidence-based recommendations without this wording.",
+    "source": "October 9–12 context and current reconciliation instruction",
+    "exception": "Literal payment receipts and expense records remain permitted; no changes to technical keys."
+  },
+  {
+    "language": "SET THE OUT-OF-OFFICE. THEN GTFO.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "SLAY, QUEEN. / OKAY, OVERACHIEVER. WE SEE YOU.",
+    "status": "prohibited",
+    "reason": "Forced celebration and judgment; retired with the future-membership prototype.",
+    "source": "Legacy app.js membership views",
+    "exception": "None"
+  },
+  {
+    "language": "SLAY, QUEEN. YOU WORKED THE SHIT OUT OF THAT.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "Saturday is apparently a personality trait",
+    "status": "prohibited",
+    "reason": "Rejected public language or catchphrase. Preserve evidence-based recommendations without this wording.",
+    "source": "October 9–12 context and current reconciliation instruction",
+    "exception": "None"
+  },
+  {
+    "language": "THE “OH SHIT” FILE.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "TOOLS ARE FOR USING, BABE.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "WELL, DAMN. THAT ACTUALLY WORKED.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "WHERE THE HELL DID THEY COME FROM?",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "WHY THE HELL ARE YOU DOING THAT?",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "YOU CAN RUN THE SHOW. YOU DON’T HAVE TO BE THE WHOLE DAMN SHOW.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "YOU WORKED THE SHIT OUT OF THAT.",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "YOUR NEXT 30 IS YOURS",
+    "status": "prohibited",
+    "reason": "Rejected public language or catchphrase. Preserve evidence-based recommendations without this wording.",
+    "source": "October 9–12 context and current reconciliation instruction",
+    "exception": "None"
+  },
+  {
+    "language": "do the whole damn math",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "dump what just gave you more shit to do",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "fix the damn thing",
+    "status": "prohibited",
+    "reason": "Current voice, accuracy or plain-language correction",
+    "source": "product/app.js",
+    "exception": "None"
+  },
+  {
+    "language": "six figures in physical therapy",
+    "status": "prohibited",
+    "reason": "Rejected public language or catchphrase. Preserve evidence-based recommendations without this wording.",
+    "source": "October 9–12 context and current reconciliation instruction",
+    "exception": "None"
+  },
+  {
+    "language": "BUILD YOUR FUTURE NOW.",
+    "status": "historical only",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "BUILD A BRIGHTER TOMORROW.",
+    "status": "historical only",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Money. Career. Body. Life.",
+    "status": "historical only",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "BRING RECEIPTS",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "Literal expense/payment receipts remain permitted."
+  },
+  {
+    "language": "Receipts over inspiration",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "Literal expense/payment receipts remain permitted."
+  },
+  {
+    "language": "Receipts, not inspiration",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "Literal expense/payment receipts remain permitted."
+  },
+  {
+    "language": "Rise and grind",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Boss babe",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Girlboss",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Hustle harder",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Slay",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Six-figure stylist secrets",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Unlock your potential",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Level up your business",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Manifest your dream clientele",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "Become the CEO of your chair",
+    "status": "prohibited",
+    "reason": "Retired historical positioning or explicitly rejected public catchphrase/coaching cliché. Do not reuse in current copy.",
+    "source": "Earlier Bibles, audit, operating plan and legacy screenshots",
+    "exception": "None"
+  },
+  {
+    "language": "BOOKED AF | Hair Business Coach",
+    "status": "awaiting a final decision",
+    "reason": "Observed in TikTok editing screenshot; final profile name is truncated. Conflicts with current positioning. Withhold from new copy pending decision.",
+    "source": "October 12 TikTok screenshots",
+    "exception": "Preserve historical screenshots unchanged."
+  }
+]
