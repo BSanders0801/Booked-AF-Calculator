@@ -199,3 +199,10 @@ body .bradley-lessons .story-body{padding-top:16px}
 .profile-status p:last-child{margin-bottom:0}
 .first90-panel{max-width:680px;margin:auto}.first90-panel h1{font-size:clamp(2.5rem,8vw,4.5rem);line-height:1.05}
 @media(max-width:600px){.brand-hero .hero-copy h1{font-size:clamp(2.3rem,9vw,3.5rem)}.student-entry{max-width:28rem}.hero-philosophy{font-size:1rem}}
+
+/* BOOKED AF focused homepage — review branch only */
+body:has(.brand-hero) .brand-hero{grid-template-columns:minmax(0,1fr);max-width:100%;min-height:clamp(500px,80svh,780px);padding:clamp(36px,6vw,84px) clamp(20px,5vw,72px)}
+body:has(.brand-hero) .brand-hero .hero-copy{max-width:920px}
+body:has(.brand-hero) .brand-hero h1{font-size:clamp(42px,7vw,88px);overflow-wrap:normal}
+body:has(.brand-hero) .brand-hero .primary{min-width:min(100%,300px)}
+@media(max-width:640px){body:has(.brand-hero) .brand-hero{min-height:0;padding:46px 20px 54px}body:has(.brand-hero) .brand-hero h1{font-size:clamp(39px,10vw,64px)}body:has(.brand-hero) .brand-hero .hero-subline{font-size:18px}body:has(.brand-hero) .brand-hero .primary{width:100%}}
