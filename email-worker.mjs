@@ -1225,7 +1225,7 @@ async function prelaunchSignup(request,env){
  if(!data||typeof data!=='object'||data.consent!==true||data.honey)return reply({success:false,error:'Please confirm permission.'},400);
  const name=typeof data.name==='string'?data.name.trim():'';
  const email=typeof data.email==='string'?data.email.trim().toLowerCase():'';
- if(!name||name.length>60||!/^[\\p{L}\\p{M} '\\u2019-]+$/u.test(name)||email.length>254||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))return reply({success:false,error:'Check your name and email.'},400);
+ if(!name||name.length>60||!/^[\p{L}\p{M} '\u2019-]+$/u.test(name)||email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return reply({success:false,error:'Check your name and email.'},400);
  if(typeof data.token!=='string'||!data.token||data.token.length>2048)return reply({success:false,error:'Please complete verification.'},400);
  try{
  const vr=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:env.TURNSTILE_SECRET_KEY,response:data.token,remoteip:request.headers.get('CF-Connecting-IP')||undefined}),signal:AbortSignal.timeout(8000)});
