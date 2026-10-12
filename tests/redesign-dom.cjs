@@ -107,7 +107,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   while(student.$('#next')){studentScreens.push(student.$('#app h2').textContent);student.click('.choice');student.click('#next');}
   assert(!studentScreens.some(t=>/PAYS THE BILLS|FULL IS YOUR BOOK|WORK CALENDAR|TALK PAY/.test(t)));
   await tick();assert(student.$('#first90-optin'));assert.equal(student.$('#first90-optin').checked,false);
-  student.network.accept=true;student.$('#name').value='Test';student.$('#email').value='test@example.test';await student.$('#form').onsubmit({preventDefault(){}});
+  student.network.accept=true;student.$('#name').value='Test';student.$('#name').value='Test';student.$('#email').value='test@example.test';await student.$('#form').onsubmit({preventDefault(){}});
   assert.match(student.$('#app').textContent,/FIX THIS FIRST/);assert(!student.$('#daymath'));assert.match(student.$('#paid').textContent,/FIRST 90/);
   student.click('#paid');assert.match(student.$('#app').textContent,/nothing to buy yet/);assert(!student.$('.checkout-link'));
   student.click('#first90-email');await tick();assert(student.$('#first90-optin').checked);student.$('#email').value='test@example.test';await student.$('#form').onsubmit({preventDefault(){}});
