@@ -66,7 +66,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   d.click('header [data-nav="paid"]');assert.match(d.$('#app').textContent,/YOUR CAREER. ONE PAYMENT/);
   d.click('[data-nav="next30sample"]');assert.match(d.$('#app').textContent,/YOUR KIND OF PLAN/);assert.match(d.$('#app').textContent,/STOP THIS/);assert.match(d.$('#app').textContent,/WEEK 1/);assert.equal(d.w.document.querySelectorAll('[data-next30-sample]').length,10);
   d.click('[data-nav="paid"]');d.click('.checkout-link');assert.match(d.$('#preview-checkout-note').textContent,/Checkout is kept off/);
-  d.click('header [data-nav="question"]');assert.match(d.$('#app').textContent,/WHERE ARE YOU IN YOUR HAIR CAREER/);d.click('[data-value="working"]');d.click('#next');assert.match(d.$('#app').textContent,/WHAT’S YOUR HAIR GAME/);
+  d.click('header [data-nav="intro"]');d.click('.brand-hero [data-nav="question"]');assert.match(d.$('#app').textContent,/WHERE ARE YOU IN YOUR HAIR CAREER/);d.click('[data-value="working"]');d.click('#next');assert.match(d.$('#app').textContent,/WHAT’S YOUR HAIR GAME/);
   for(let i=0;i<20&&d.$('#next');i++){d.click('.choice');d.click('#next');}
   await tick();assert(d.$('#form'));assert(!d.$('#skip'));assert(!d.$('#plan'));
   d.click('#form button[type="submit"]');assert.equal(d.network.posts,0);
@@ -98,7 +98,7 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
   reload.click('[data-clear-progress]');assert.equal(reload.w.localStorage.getItem(savedKey),null);assert.equal(reload.w.sessionStorage.getItem(deliveryKey),null);
   const empty=start({hash:'#my-plan'});assert(empty.$('#next'));assert(empty.$('#next').disabled);
   const bad=start({hash:'#my-plan',saved:{...saved,answers:{goal:'<script>'}}});assert(bad.$('#next'));assert.equal(bad.errors.length,0);
-  const blocked=start({blocked:true});blocked.click('header [data-nav="question"]');blocked.click('.choice');assert.equal(blocked.$('#storage-error').hidden,false);
+  const blocked=start({blocked:true});blocked.click('header [data-nav="intro"]');d.click('.brand-hero [data-nav="question"]');blocked.click('.choice');assert.equal(blocked.$('#storage-error').hidden,false);
   const paid=start({search:'?deepdive=paid&session_id=cs_test_123',hash:'#my-plan',saved});assert.match(paid.$('#app').textContent,/Checking your payment/);assert(!paid.$('#dnext'));
   // Student enters through the same front door, with no working-business questions.
   const directStudent=start();directStudent.click('header [data-nav="question"]');directStudent.click('[data-value="school"]');directStudent.click('#next');assert.match(directStudent.$('#app').textContent,/WHAT KIND OF HAIR WORK INTERESTS YOU/);
