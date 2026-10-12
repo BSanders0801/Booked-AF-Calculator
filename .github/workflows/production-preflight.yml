@@ -1,0 +1,57 @@
+name: BOOKED AF production preflight
+on:
+  push:
+    branches: [build/next30-shell-p04]
+    paths: ['.github/workflows/production-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFARE_API_TOKEN }}
+    steps:
+      - name: Inspect production release prerequisites without changes
+        run: |
+          node --input-type=module <<'JS'
+          const token=process.env.CLOUDFLARE_API_TOKEN;
+          if(!token)throw Error('Production preflight credential unavailable');
+          const account='30ec5e35d67ddd1a1bab06c2263b2159';
+          const root='https://api.cloudflare.com/client/v4';
+          async function read(path){
+            const r=await fetch(root+path,{headers:{Authorization:'Bearer '+token},signal:AbortSignal.timeout(20000)});
+            let data;try{data=await r.json()}catch{return {ok:false,status:r.status}};
+            return {ok:r.ok&&data.success===true,status:r.status,result:data.result};
+          }
+          const base='/accounts/'+account+'/workers/scripts/booked-af-email';
+          const results={readOnly:true};
+          const dep=await read(base+'/deployments');
+          results.productionDeploymentReadable=dep.ok;
+          const versions=dep.result?.deployments?.[0]?.versions;
+          results.singleActiveVersion=Array.isArray(versions)&&versions.length===1&&versions[0].percentage===100;
+          if(results.singleActiveVersion){
+            const v=await read(base+'/versions/'+versions[0].version_id);
+            const names=(v.result?.resources?.bindings||[]).map(b=>b.name);
+            results.productionBindingsReadable=v.ok;
+            results.existingRequiredBindingsPresent=['RESEND_API_KEY','TURNSTILE_SECRET_KEY','STRIPE_SECRET_KEY','STRIPE_WEBHOOK_SECRET','FOLLOWUPS'].every(n=>names.includes(n));
+            results.fulfillmentBindingPresent=names.includes('FULFILLMENT');
+          }
+          const schedules=await read(base+'/schedules');
+          results.schedulesReadable=schedules.ok;
+          results.scheduleCount=Array.isArray(schedules.result)?schedules.result.length:null;
+          const domains=await read('/accounts/'+account+'/workers/domains');
+          results.workerDomainsReadable=domains.ok;
+          results.websiteAlreadyOnWorkers=domains.ok&&Array.isArray(domains.result)&&domains.result.some(d=>d.hostname==='bookedandfabulous.com');
+          const zones=await read('/zones?name=bookedandfabulous.com');
+          results.websiteZoneReadable=zones.ok;
+          const zone=zones.result;
+          results.websiteZoneFound=Array.isArray(zone)&&zone.length===1;
+          if(results.websiteZoneFound){
+            const dns=await read('/zones/'+zone[0].id+'/dns_records?per_page=100');
+            results.websiteDNSReadable=dns.ok;
+            results.mailRecordsPresent=dns.ok&&Array.isArray(dns.result)&&dns.result.some(d=>d.type==='MX');
+          }
+          console.log(JSON.stringify(results,null,2));
+          console.log('Read-only inspection finished. No code, routes, DNS, schedules, secrets or access settings changed.');
+          JS
