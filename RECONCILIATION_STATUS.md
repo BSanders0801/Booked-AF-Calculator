@@ -13,7 +13,7 @@ The uploaded tree is byte-identical to local candidate 43e33f684d47d37dc90448cb5
 - The received paid welcome link reopened verified access. The received free-profile link restored the same diagnosis.
 - Email provider records confirmed delivery and corrected Day 7/30 follow-ups plus Day 14 purchaser surveys scheduled to the approved test inbox.
 - Twenty older queued messages with retired wording were canceled. Four newly corrected test follow-ups remain scheduled.
-- A sample-card button contrast correction and image-load assertion were added after visual review; their final QA run is pending.
+- Final QA run 38303215449 passed after the sample-card button contrast correction and image-load assertion. Final isolated deployment run 38303215397 passed. The hosted button label was read-verified and the final mobile screenshot was inspected with the original founder photo loaded.
 
 ## Open external release work
 
