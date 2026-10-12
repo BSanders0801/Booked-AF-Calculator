@@ -1,0 +1,27 @@
+// Conversion smoke checks for review branch. No network, charges or real email.
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const {JSDOM}=require('jsdom');
+const html=fs.readFileSync('index.html','utf8');
+const css=fs.readFileSync('site.css','utf8');
+const {document}=new JSDOM(html).window;
+const hero=document.querySelector('#app .brand-hero');
+assert(hero,'Homepage hero exists');
+const heroText=hero.textContent.replace(/\s+/g,' ').trim();
+assert.match(heroText,/HAIRDRESSERS/i,'Audience needs to be explicit above fold');
+assert.match(heroText,/what.s working|what.s costing/i,'Specific service explained');
+assert.match(heroText,/FULLY BOOKED/i,'Brand provocation retained');
+const primary=hero.querySelectorAll('button.primary');
+assert.equal(primary.length,1,'One dominant first action');
+assert.equal(primary[0].dataset.nav,'question','Primary action should begin Breakdown');
+assert.match(primary[0].textContent,/BREAKDOWN/);
+assert.match(heroText,/email/i,'Disclosure of email capture appears before click');
+const paid=document.querySelector('#app a[data-nav="paid"]');
+assert(paid,'Paid offer visible in homepage body');
+assert.match(paid.textContent,/\$49/,'Price is visible before navigating');
+assert(document.querySelector('#app').textContent.indexOf('YOUR NEXT 30')>document.querySelector('#app').textContent.indexOf('BREAKDOWN'),'Paid offer follows primary free intro');
+assert.equal(document.querySelectorAll('#app [data-career-sample]').length,0,'Career tabs should be on examples page');
+assert(document.querySelector('header [data-nav="resume"]'),'Returning customers must keep plan access');
+assert.match(css,/body:has\(\.brand-hero\) \.brand-hero\{grid-template-columns:minmax\(0,1fr\)/,'Hero must have one column');
+assert.match(css,/@media\(max-width:640px\)/,'Narrow mobile hero rule');
+console.log('PASS: brand-led first screen, one primary path, free disclosure, visible $49 price, customer recovery link, and narrow-screen stylesheet rules.');
