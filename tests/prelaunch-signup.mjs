@@ -18,6 +18,12 @@ test('verified signup saves contact once, using existing mailing list',async()=>
  try{const response=await worker.fetch(req(),env);assert.equal(response.status,200);assert.deepEqual(await response.json(),{success:true});assert.equal(calls.length,2);assert.equal(calls[1].url,'https://api.resend.com/contacts');assert.equal(calls[1].body.email,'alex@example.com');assert.equal(calls[1].body.segments[0].id,'fed93505-852a-4ddd-9124-b1972cae26a8');}
  finally{globalThis.fetch=original}
 });
+test('does not resubscribe or misrepresent a previously unsubscribed contact',async()=>{
+ const original=globalThis.fetch;
+ globalThis.fetch=async u=>String(u).includes('siteverify')?Response.json({success:true,hostname:'bookedandfabulous.com',action:'booked_prelaunch'}):new Response(JSON.stringify({message:'Already exists'}),{status:409});
+ try{const response=await worker.fetch(req(),env);assert.equal(response.status,200);assert.deepEqual(await response.json(),{success:true,alreadyJoined:true});assert.match(fs.readFileSync('prelaunch.html','utf8'),/already subscribed/);}
+ finally{globalThis.fetch=original}
+});
 test('site links to separate consent form; no marketing preselection',()=>{
  const home=fs.readFileSync('index.html','utf8'),page=fs.readFileSync('prelaunch.html','utf8');
  assert.match(home,/prelaunch\.html/);assert.match(page,/type="checkbox" id="consent" required/);assert.doesNotMatch(page,/id="consent"[^>]*checked/);assert.match(page,/unsubscribe anytime/);assert.match(page,/booked_prelaunch/);
