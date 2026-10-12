@@ -12,10 +12,12 @@ The uploaded tree is byte-identical to local candidate 43e33f684d47d37dc90448cb5
 - Fresh BETA100 and full-price $49 sandbox checkouts succeeded. Both opened protected access and both welcome emails arrived in Gmail at 1:05 and 1:06 PM LA time. No live charge was created.
 - The received paid welcome link reopened verified access. The received free-profile link restored the same diagnosis.
 - Email provider records confirmed delivery and corrected Day 7/30 follow-ups plus Day 14 purchaser surveys scheduled to the approved test inbox.
+- Twenty older queued messages with retired wording were canceled. Four newly corrected test follow-ups remain scheduled.
+- A sample-card button contrast correction and image-load assertion were added after visual review; their final QA run is pending.
 
 ## Open external release work
 
-Stripe branding write was rejected for missing connection permissions after reauthentication. Branding, logo/support settings and the legacy active Deep Dive link remain unchanged.
+Stripe branding write was rejected for missing connection permissions after reauthentication. Branding, logo/support settings and the legacy active payment link remain unchanged.
 
 Read-only production preflight run 38302246443 confirmed existing production service bindings and schedules are readable. FULFILLMENT is absent, the website is not on Workers, and the website DNS zone was not found in the connected Cloudflare account. Complete and verify the secure hosting migration before production release; do not merge into main merely to publish the source root.
 
