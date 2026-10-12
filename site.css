@@ -233,4 +233,4 @@ body .bradley-lessons .story-body{padding-top:16px}
 }
 
 /* Keep functional labels readable inside the light career example card. */
-body .baf-sample-panel .baf-link{color:#1b171a;border-color:#66505e}
+body .baf-sample-panel .secondary{color:#1b171a;border-color:#66505e;background:transparent}
