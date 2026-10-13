@@ -1,0 +1,53 @@
+name: BOOKED AF prepare domain DNS
+on:
+  push:
+    branches: [build/next30-shell-p04]
+    paths: [.github/workflows/release-domain-prepare.yml]
+permissions:
+  contents: read
+concurrency:
+  group: booked-af-production-release
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: 30ec5e35d67ddd1a1bab06c2263b2159
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Create free zone and copy verified existing DNS
+        run: |
+          node --input-type=module <<'JS'
+          const account=process.env.CLOUDFLARE_ACCOUNT_ID;
+          const name='bookedandfabulous.com';
+          const expected=[{"type":"A","name":"bookedandfabulous.com","content":"185.199.108.153","ttl":1800,"proxied":false},{"type":"A","name":"bookedandfabulous.com","content":"185.199.110.153","ttl":1800,"proxied":false},{"type":"A","name":"bookedandfabulous.com","content":"185.199.109.153","ttl":1800,"proxied":false},{"type":"A","name":"bookedandfabulous.com","content":"185.199.111.153","ttl":1800,"proxied":false},{"type":"CNAME","name":"rsend.bookedandfabulous.com","content":"rsend.forge.rmta.net","ttl":1800,"proxied":false},{"type":"CNAME","name":"send.bookedandfabulous.com","content":"send.forge.rmta.net","ttl":1800,"proxied":false},{"type":"CNAME","name":"www.bookedandfabulous.com","content":"bsanders0801.github.io","ttl":1800,"proxied":false},{"type":"MX","name":"bookedandfabulous.com","content":"smtp.google.com","priority":1,"ttl":60},{"type":"TXT","name":"bookedandfabulous.com","content":"google-site-verification=VJygPNEAFlJP21Gy5yglQSBPOH846Rh0Tv9o8Lh1D_U","ttl":1800},{"type":"TXT","name":"bookedandfabulous.com","content":"v=spf1 include:_spf.google.com ~all","ttl":1800},{"type":"TXT","name":"google._domainkey.bookedandfabulous.com","content":"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApoU1GXftf21GAracm2oDf5bNQqZCopqF4lGzStq0N8RGPTXRdKR8lyXB3xNScK14m3lNJ0S0AdrSc+dOyc3/C6DaJqFdfD7EI3wbeXO7IDiJWXkXQGELYkTlx2iZQJlWRpxStFnCNGAaA15vfbid3zrRdH0udXNpbQhY0Vcnv0aGiBts8Hb5VM6OuBElsGU5M2zoxnHw3GbblZnC+lely+eihUcSfF/njs3gprJ7wrneyIS6A71/l06qhmpMQv9v5ToKlVIWF5MiI6hwqw4o6n8sx5PdBfdMtQJDQ4vK+kXmUc4WkUUMAiudmw9dmzreYsd/TZu1h1ScuH9rUIAdAQIDAQAB","ttl":1800},{"type":"TXT","name":"resend._domainkey.bookedandfabulous.com","content":"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDI0l/ZIheNhJIljpC+JyhZ7i7pnsvpfS2vN80604IaXZQJoTIH3jnlIoGh7XfYgyHuLHI83sOLBJJE1aE7HHeJGlXfsCXSzuqcpx1JoOyNueZ5uSu1S226MYXu+3A1g+RyEapFeTRD/3RxTeXlm1qCs7g7kGUQhWcovgjyuh0zZwIDAQAB","ttl":1800}];
+          async function api(path,method='GET',body){
+            const r=await fetch('https://api.cloudflare.com/client/v4'+path,{method,headers:{Authorization:'Bearer '+process.env.CLOUDFLARE_API_TOKEN,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+            const d=await r.json();if(!r.ok||!d.success)throw Error(method+' '+path+' '+r.status+' '+JSON.stringify(d.errors));return d.result;
+          }
+          let zones=await api('/zones?name='+name);
+          if(zones.length>1)throw Error('Multiple zones; inspect first');
+          let zone=zones[0];
+          if(!zone)zone=await api('/zones','POST',{account:{id:account},name,type:'full'});
+          if(zone.account.id!==account||zone.name!==name)throw Error('Wrong account or zone');
+          console.log('ZONE',JSON.stringify({id:zone.id,name:zone.name,status:zone.status,name_servers:zone.name_servers,plan:zone.plan?.name}));
+          if(zone.plan?.price>0)throw Error('Unexpected paid zone plan');
+          let current=await api('/zones/'+zone.id+'/dns_records?per_page=100');
+          const normalized=r=>[r.type,r.name,r.content.replace(/\.$/,'').replace(/^"|"$/g,''),r.priority??'',r.ttl].join('|');
+          for(const wanted of expected){
+           const exact=current.find(r=>normalized(r)===normalized(wanted));
+           if(exact){if(exact.proxied)throw Error('Existing record proxy differs');continue;}
+           const conflict=current.filter(r=>r.type===wanted.type&&r.name===wanted.name&&!expected.some(x=>normalized(x)===normalized(r)));
+           if(conflict.length)throw Error('Existing '+wanted.type+' '+wanted.name+' differs; no mutation');
+           await api('/zones/'+zone.id+'/dns_records','POST',wanted);
+           console.log('COPIED',wanted.type,wanted.name);
+          }
+          current=await api('/zones/'+zone.id+'/dns_records?per_page=100');
+          for(const wanted of expected)if(!current.some(r=>normalized(r)===normalized(wanted)&&!r.proxied))throw Error('Record verification failed');
+          console.log('VERIFIED',expected.length,'records. No registrar or website routing changes.');
+          console.log('DNSSEC',JSON.stringify(await api('/zones/'+zone.id+'/dnssec')));
+          JS
