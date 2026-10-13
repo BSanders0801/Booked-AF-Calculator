@@ -1,0 +1,68 @@
+name: BOOKED AF release hosting stage
+on:
+  push:
+    branches: [build/next30-shell-p04]
+    paths: [.github/workflows/release-hosting-stage.yml]
+permissions:
+  contents: read
+concurrency:
+  group: booked-af-production-release
+  cancel-in-progress: false
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: 30ec5e35d67ddd1a1bab06c2263b2159
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Build and validate public-only package
+        run: |
+          node scripts/prepare-release.mjs
+          node tests/release-guard.mjs
+          node tests/secure-delivery.mjs
+          node scripts/prepare-release.mjs
+      - name: Verify account and stage website without domain changes
+        run: |
+          node --input-type=module <<'JS'
+          import {readFile,writeFile} from 'node:fs/promises';
+          import {execFileSync} from 'node:child_process';
+          const account=process.env.CLOUDFLARE_ACCOUNT_ID;
+          const root='https://api.cloudflare.com/client/v4/accounts/'+account;
+          async function get(path,optional=false){
+            const r=await fetch(root+path,{headers:{Authorization:'Bearer '+process.env.CLOUDFLARE_API_TOKEN}});
+            if(optional&&r.status===404)return null;
+            const d=await r.json();if(!r.ok||!d.success)throw Error('Provider read failed '+r.status);return d.result;
+          }
+          if((await get('/workers/subdomain')).subdomain!=='wild-recipe-42df')throw Error('Account mismatch');
+          const scripts=await get('/workers/scripts');
+          if(!Array.isArray(scripts)||scripts.length>=90)throw Error('Worker capacity needs review');
+          const existing=await get('/workers/scripts/booked-af-site/settings',true);
+          if(existing)throw Error('Website target already exists; inspect before replacing');
+          const prod=await get('/workers/scripts/booked-af-email/settings');
+          console.log('Production binding names:',prod.bindings.map(b=>b.name).join(', '));
+          console.log('Production migration tag:',prod.migration_tag||'none');
+          const schedules=await get('/workers/scripts/booked-af-email/schedules');
+          console.log('Production schedules:',JSON.stringify(schedules));
+          console.log('Website staging uses static assets only; no subscription is purchased.');
+          // The provider hostname must not start a purchase before the domain and API release.
+          const p='.website-preview/app.js';
+          const source=await readFile(p,'utf8');
+          if(!source.includes("const next30CheckoutUrl = 'https://buy.stripe.com/6oU9AU5F72l05pA4RTaAw01';"))throw Error('Checkout boundary changed');
+          await writeFile(p,source.replace("const next30CheckoutUrl = 'https://buy.stripe.com/6oU9AU5F72l05pA4RTaAw01';","const next30CheckoutUrl = '#checkout-pending';"));
+          try{execFileSync('npx',['--yes','wrangler@4.148.0','deploy','--config','.release-review/site.config.json'],{stdio:'pipe',timeout:240000});}
+          catch{throw Error('Static host deployment failed; provider output withheld');}
+          const origin='https://booked-af-site.wild-recipe-42df.workers.dev';
+          const response=await fetch(origin);
+          const html=await response.text();
+          if(!response.ok||!html.includes('paid-loader.js'))throw Error('Hosted website verification failed');
+          for(const path of ['/next30-core.js','/email-worker.mjs','/.private-assets/paid-bundle.mjs']){
+            const r=await fetch(origin+path);if(r.status!==404)throw Error('Private asset denial failed');
+          }
+          console.log('Public-only website staged and private source denied: '+origin);
+          console.log('No production API, domain, DNS, mail, payment link or repository visibility was changed.');
+          JS
