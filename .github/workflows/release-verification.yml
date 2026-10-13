@@ -1,0 +1,43 @@
+name: BOOKED AF release verification
+on:
+  push:
+    branches: [build/next30-shell-p04]
+    paths: [.github/workflows/release-verification.yml]
+permissions:
+  contents: read
+concurrency:
+  group: booked-af-production-release
+  cancel-in-progress: false
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: 30ec5e35d67ddd1a1bab06c2263b2159
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Inspect deployed release without mutations
+        run: |
+          node --input-type=module <<'JS'
+          const base='https://api.cloudflare.com/client/v4/accounts/'+process.env.CLOUDFLARE_ACCOUNT_ID;
+          async function read(path){const r=await fetch(base+path,{headers:{Authorization:'Bearer '+process.env.CLOUDFLARE_API_TOKEN}});const d=await r.json();if(!r.ok||!d.success)throw Error('Provider read failed '+r.status);return d.result;}
+          for(const name of ['booked-af-site','booked-af-email']){
+            const root='/workers/scripts/'+name;
+            const settings=await read(root+'/settings');
+            console.log(name,JSON.stringify({bindings:settings.bindings.map(b=>({name:b.name,type:b.type,class_name:b.class_name})),migration:settings.migration_tag}));
+            console.log(name,'subdomain',JSON.stringify(await read(root+'/subdomain')));
+            console.log(name,'deployments',JSON.stringify(await read(root+'/deployments')));
+          }
+          for(const path of ['/','/app.js','/next30-core.js','/.private-assets/paid-bundle.mjs']){
+            const r=await fetch('https://booked-af-site.wild-recipe-42df.workers.dev'+path);
+            const t=await r.text();console.log('SITE',path,r.status,t.includes('paid-loader.js'),t.includes('#checkout-pending'),t.slice(0,80));
+          }
+          for(const path of ['/health','/paid-content','/verify-checkout?session_id=invalid']){
+            const r=await fetch('https://booked-af-email.wild-recipe-42df.workers.dev'+path);
+            console.log('API',path,r.status,r.headers.get('cache-control'),(await r.text()).slice(0,700));
+          }
+          JS
