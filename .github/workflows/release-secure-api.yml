@@ -1,0 +1,75 @@
+name: BOOKED AF secure API release
+on:
+  push:
+    branches: [build/next30-shell-p04]
+    paths: [.github/workflows/release-secure-api.yml]
+permissions:
+  contents: read
+concurrency:
+  group: booked-af-production-release
+  cancel-in-progress: false
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: 30ec5e35d67ddd1a1bab06c2263b2159
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Build and validate public-only package
+        run: |
+          node scripts/prepare-release.mjs
+          node tests/release-guard.mjs
+          node tests/secure-delivery.mjs
+          node scripts/prepare-release.mjs
+      - name: Deploy guarded production API preserving current settings
+        run: |
+          node --input-type=module <<'JS'
+          import {readFile,writeFile} from 'node:fs/promises';
+          import {execFileSync} from 'node:child_process';
+          const root='https://api.cloudflare.com/client/v4/accounts/'+process.env.CLOUDFLARE_ACCOUNT_ID;
+          async function get(path){const r=await fetch(root+path,{headers:{Authorization:'Bearer '+process.env.CLOUDFLARE_API_TOKEN}});const d=await r.json();if(!r.ok||!d.success)throw Error('Provider read failed '+r.status);return d.result;}
+          const base='/workers/scripts/booked-af-email';
+          if((await get('/workers/subdomain')).subdomain!=='wild-recipe-42df')throw Error('Account mismatch');
+          const before=await get(base+'/settings');
+          const expected=['FOLLOWUPS','RESEND_API_KEY','STRIPE_SECRET_KEY','STRIPE_WEBHOOK_SECRET','TURNSTILE_SECRET_KEY'];
+          if(JSON.stringify(before.bindings.map(b=>b.name).sort())!==JSON.stringify(expected.sort()))throw Error('Unexpected production bindings');
+          if(before.migration_tag)throw Error('Existing durable migration requires review');
+          if(before.bindings.some(b=>b.name!=='FOLLOWUPS'&&b.type!=='secret_text'))throw Error('Unexpected secret type');
+          if(before.bindings.find(b=>b.name==='FOLLOWUPS')?.namespace_id!=='c1030f222e4047ba8fc03636900a14fc')throw Error('Profile store mismatch');
+          const deployments=await get(base+'/deployments');
+          const active=deployments.deployments?.[0]?.versions;
+          if(active?.length!==1||active[0].percentage!==100)throw Error('Concurrent rollout');
+          const schedules=await get(base+'/schedules');
+          if(!Array.isArray(schedules.schedules))throw Error('Cannot preserve schedules');
+          const domains=await get('/workers/domains');
+          const ownDomains=domains.filter(d=>d.service==='booked-af-email');
+          if(ownDomains.length)throw Error('Custom API routing requires review');
+          const cfg=JSON.parse(await readFile('.release-review/api.config.json','utf8'));
+          cfg.triggers={crons:schedules.schedules.map(s=>s.cron)};
+          cfg.observability=before.observability||{enabled:false};
+          await writeFile('.release-review/api.config.json',JSON.stringify(cfg));
+          console.log('Preserving active version '+active[0].version_id+' and all five bindings; schedule '+cfg.triggers.crons.join(','));
+          const fresh=await get(base+'/deployments');
+          if(JSON.stringify(fresh.deployments?.[0]?.versions)!==JSON.stringify(active))throw Error('Production changed during preparation');
+          try{execFileSync('npx',['--yes','wrangler@4.148.0','deploy','--config','.release-review/api.config.json','--keep-vars'],{stdio:'pipe',timeout:240000});}
+          catch(e){const output=String(e.stderr||'')+String(e.stdout||'');const safe=output.replace(/(?:Bearer\\s+\\S+|sk_(?:live|test)_\\w+|re_\\w+|whsec_\\w+)/g,'[redacted]');console.error(safe.slice(-4000));throw Error('Secure API deployment failed');}
+          const after=await get(base+'/settings');
+          for(const name of expected)if(!after.bindings.some(b=>b.name===name))throw Error('Binding missing after deployment');
+          if(!after.bindings.some(b=>b.name==='FULFILLMENT'&&b.class_name==='PurchaseFulfillment'))throw Error('Fulfillment binding missing');
+          const afterSchedules=await get(base+'/schedules');
+          if(JSON.stringify(afterSchedules.schedules.map(s=>s.cron))!==JSON.stringify(cfg.triggers.crons))throw Error('Schedule mismatch');
+          const origin='https://booked-af-email.wild-recipe-42df.workers.dev';
+          const health=await (await fetch(origin+'/health')).json();
+          console.log('Health:',JSON.stringify(health));
+          if(!health.launchReady)throw Error('Live API readiness failed');
+          const denied=await fetch(origin+'/paid-content');
+          if(denied.status!==401||!denied.headers.get('cache-control')?.includes('no-store'))throw Error('Anonymous denial failed');
+          const invalid=await fetch(origin+'/verify-checkout?session_id=invalid');
+          if(invalid.status!==400)throw Error('Invalid purchase denial failed');
+          console.log('Secure production API deployed; durable fulfillment present; secrets, profiles and cron preserved.');
+          JS
