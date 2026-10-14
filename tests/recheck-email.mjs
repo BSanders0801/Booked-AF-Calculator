@@ -15,7 +15,7 @@ function fakeKV() {
 
 const baseEnv = {RESEND_API_KEY:'resend_test_only',TURNSTILE_SECRET_KEY:'turnstile_test_only'};
 
-test('Breakdown schedules distinct Day 7 and Day 30 emails and queues Day 60 and Day 90', async () => {
+test('Breakdown delivers the requested result without enrolling the customer in unready marketing', async () => {
   const original = globalThis.fetch;
   const emails = [];
   const FOLLOWUPS = fakeKV();
@@ -44,33 +44,20 @@ test('Breakdown schedules distinct Day 7 and Day 30 emails and queues Day 60 and
     assert.equal(response.status,200);
     const result = await response.json();
     assert.equal(result.success,true);
-    assert.equal(result.followupScheduled7,true);
-    assert.equal(result.followupScheduled,true);
-    assert.equal(result.followupQueued60,true);
-    assert.equal(result.followupQueued90,true);
-    assert.equal(emails.length,3);
+    assert.equal(result.followupScheduled7,false);
+    assert.equal(result.followupScheduled,false);
+    assert.equal(result.followupQueued60,false);
+    assert.equal(result.followupQueued90,false);
+    assert.equal(emails.length,1);
 
     const immediate = emails.find(x=>x.body.subject==='Your BOOKED AF Breakdown').body;
     assert.match(immediate.text,/\nBradley\nBOOKED AF\n/);
 
-    const day7 = emails.find(x=>x.body.subject==='A week later. Still on your mind?').body;
-    assert.equal(day7.scheduled_at,'in 7 days');
-    assert.match(day7.text,/practical tools and four-week plan are inside YOUR NEXT 30/);
-    assert.match(day7.html,/OPEN MY BREAKDOWN/);
-
-    const day30 = emails.find(x=>x.body.subject==='30 days later. What changed?').body;
-    assert.equal(day30.scheduled_at,'in 30 days');
-    assert.match(day30.html,/REVISIT MY BREAKDOWN →/);
-
-    const queued=[...FOLLOWUPS.map.entries()].filter(([key])=>key.startsWith('followup:')).map(([key,value])=>({key,record:JSON.parse(value)}));
-    assert.equal(queued.length,2);
-    assert.deepEqual(new Set(queued.map(x=>x.record.kind)),new Set(['60','90']));
-    assert.ok(queued.every(x=>x.key.startsWith('followup:')));
-    assert.ok(queued.every(x=>/booked-v5-short-/.test(x.record.idempotencyKey)));
+    assert.equal([...FOLLOWUPS.map.keys()].filter(key=>key.startsWith('followup:')).length,0);
   } finally { globalThis.fetch = original; }
 });
 
-test('scheduled handler sends due 60 and 90 day queue items with different copy', async () => {
+test('scheduled handler preserves legacy queues without sending unready marketing', async () => {
   const original = globalThis.fetch;
   const FOLLOWUPS = fakeKV();
   const due=Date.now()-1000;
@@ -88,13 +75,8 @@ test('scheduled handler sends due 60 and 90 day queue items with different copy'
     let pending;
     worker.scheduled({}, {...baseEnv,FOLLOWUPS}, {waitUntil(p){pending=p;}});
     await pending;
-    assert.equal(emails.length,2);
-    const day60=emails.find(x=>x.body.subject==='60 days in. What actually stuck?').body;
-    const day90=emails.find(x=>x.body.subject==='90 days later. Apparently we do quarterly reviews now.').body;
-    assert.match(day60.text,/We’re looking for patterns now/);
-    assert.match(day90.text,/Let’s look back at the last 3 months/);
-    assert.doesNotMatch(day90.text,/Did your stage change/);
-    assert.equal(FOLLOWUPS.map.size,0);
+    assert.equal(emails.length,0);
+    assert.equal(FOLLOWUPS.map.size,2);
   } finally { globalThis.fetch=original; }
 });
 

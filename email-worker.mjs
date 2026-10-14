@@ -919,7 +919,12 @@ async function queueLongFollowup(env, dueMs, idempotencyKey, kind, email, name) 
   return true;
 }
 
+// Promotional follow-ups stay paused until consent, unsubscribe and suppression
+// are implemented and verified. Preserve drafts and existing queue records.
+const MARKETING_FOLLOWUPS_READY = false;
+
 async function processLongFollowups(env) {
+  if (!MARKETING_FOLLOWUPS_READY) return;
   if (!env.FOLLOWUPS || typeof env.FOLLOWUPS.list !== 'function' || !env.RESEND_API_KEY) return;
   let cursor;
   const now = Date.now();
@@ -1378,7 +1383,7 @@ export default {
       let followupQueued60 = false;
       let followupQueued90 = false;
       const scheduleFollowups=async()=>{
-      if (data.type === 'breakdown' && !isStudent(answers)) {
+      if (MARKETING_FOLLOWUPS_READY && data.type === 'breakdown' && !isStudent(answers)) {
         try {
           const followup7Response = await fetch('https://api.resend.com/emails', {
             method:'POST',
