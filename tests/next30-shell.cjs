@@ -15,7 +15,7 @@ for(const [id,v] of Object.entries({'yn-current-days':4,'yn-current-weeks':48,'y
 $('#yn-calc').click();
 assert.equal(w.document.querySelectorAll('#next30-month details summary').length,5);assert($('#month-review'));
 const task=$('[data-month-task]');task.checked=true;task.dispatchEvent(new w.Event('change'));input('month-keep','Keep <this> & that');$('#month-save-review').click();run('render()');assert($('[data-month-task]').checked);assert.equal($('#month-keep').value,'Keep <this> & that');
-const metric=run('state.currentCareerPlan.metrics[0].id');input('month-base-'+metric,0);input('month-now-'+metric,10);$('#month-compare').click();assert.match($('#month-delta-'+metric).textContent,/more/);input('month-base-'+metric,'');$('#month-compare').click();assert.match($('#month-delta-'+metric).textContent,/blank/);
+const metric=run('state.currentCareerPlan.metrics[0].id');input('month-base-'+metric,0);input('month-now-'+metric,10);$('#month-compare').click();assert.match($('#month-delta-'+metric).textContent,/more/);assert.match($('#month-meaning').textContent,/SOMETHING MOVED THE RIGHT WAY/);run('render()');assert.match($('#month-meaning').textContent,/SOMETHING MOVED THE RIGHT WAY/);input('month-base-'+metric,'');$('#month-compare').click();assert.match($('#month-delta-'+metric).textContent,/blank/);assert.equal($('#month-meaning').textContent.trim(),'');
 run('state.careerData=null;render()');assert($('[data-month-task]').checked);assert.equal($('#month-keep').value,'Keep <this> & that');
 // A zero must remain visible after render, not turn into an unknown.
 run(`state.careerData.metrics['color-money-base-'+state.currentCareerPlan.metrics[0].id]=0;render()`);
