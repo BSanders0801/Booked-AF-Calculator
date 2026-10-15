@@ -26,10 +26,19 @@ The Cloudflare browser/UI is not required for current operation. The attempted c
 
 Current operating decision: keep GitHub Pages as the branded public host and keep the Worker API for secure backend functions. Cloudflare custom-domain migration is deferred and is not a current launch blocker.
 
+## Verified paid-product progress
+
+- Monthly Money Map, YOUR NUMBER, Day Value, Fill the Empty Tuesday, Rebooking, service economics/pricing, income lanes and buy-back-a-day paths are implemented on the paid-product branch.
+- Four-week actions, save/resume and Day 30 review are implemented.
+- Day 30 now explicitly shows THEN / NOW / CHANGE / WHAT IT MEANS without claiming causation.
+- Day 30 includes a next-cycle handoff that sends the buyer back to update the Money Map and YOUR NUMBER before routing to the next problem.
+- QA for the Day 30 interpretation and next-cycle handoff passed on October 15. The isolated test-worker deployment for the handoff also passed.
+- New checkout remains disabled until the complete paid experience passes the remaining release gates.
+
 ## Still unfinished
 
 - Physical iPhone/Safari owner-device verification.
-- Paid product/tool completion and continuing QA.
+- Final first-five buyer-journey review and continuing QA as product changes land.
 - Filming/media work according to the current production calendar.
 - Source-repository privacy remains unresolved while Pages is the live host.
 - Future hosting/privacy migration only after a safe replacement path is verified.
