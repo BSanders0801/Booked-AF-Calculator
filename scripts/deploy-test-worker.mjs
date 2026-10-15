@@ -103,8 +103,27 @@ if (updated.name_collection?.individual?.enabled !== true || updated.name_collec
 console.log('Test checkout customer name is required.');
 if (updated.livemode !== false || updated.after_completion?.redirect?.url !== origin+'/?next30=paid&session_id={CHECKOUT_SESSION_ID}')
   throw Error('Test-only return URL update could not be verified.');
-const health=await fetch(origin+'/health',{signal:AbortSignal.timeout(15000)});
-const status=await health.json();
-if (!health.ok || status.isolated !== true || status.ready !== true) throw Error('Isolated Worker is not ready.');
+async function verifyHealth(){
+  let lastError=null;
+  for(let attempt=1;attempt<=5;attempt++){
+    try{
+      const health=await fetch(origin+'/health',{signal:AbortSignal.timeout(15000)});
+      if(!health.ok){
+        if(health.status>=500){lastError=Error('Temporary isolated Worker health response.');}
+        else throw Error('Isolated Worker health check was rejected.');
+      }else{
+        const status=await health.json();
+        if(status.isolated!==true||status.ready!==true)throw Error('Isolated Worker is not ready.');
+        return;
+      }
+    }catch(error){
+      lastError=error;
+      if(error?.message==='Isolated Worker health check was rejected.'||error?.message==='Isolated Worker is not ready.')throw error;
+    }
+    if(attempt<5)await new Promise(resolve=>setTimeout(resolve,2000*attempt));
+  }
+  throw Error('Isolated Worker health check could not be reached after deployment. '+(lastError?.message||''));
+}
+await verifyHealth();
 console.log('Test webhook, secret bindings and test return URL configured.');
 console.log('This is deployment readiness only. Inbox receipt and paid-access E2E tests are still required.');
