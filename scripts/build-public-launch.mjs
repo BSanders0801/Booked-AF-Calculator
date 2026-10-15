@@ -6,7 +6,7 @@ const notice='<section class="baf-section"><p class="baf-kicker">YOUR NEXT 30 ·
 await buildSecureSite(out,new URL('../.private-assets/',import.meta.url).pathname,(s,name)=>{
  if(name==='app.js')s=s.replace("const next30CheckoutUrl = 'https://buy.stripe.com/6oU9AU5F72l05pA4RTaAw01';","const next30CheckoutUrl = '#deep-dive';");
  if(name==='site-content.js')s+='\nsitePages.paid='+JSON.stringify(notice)+';\n';
- if(name==='index.html')s=s.replace('data-product-nav>Your Next 30 · $49','data-product-nav>Your Next 30');
+ if(name==='index.html')s=s.replace('data-product-nav>Your Next 30 · $49','data-product-nav>Your Next 30').replace(/((?:src|href)="[a-z-]+\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=public-20261015-1"');
  return s;
 });
 for(const [name,body] of Object.entries({
