@@ -388,7 +388,8 @@
       +plan.metrics.map(function(m){return '<div class="card"><h3>'+e(m.label)+'</h3><div class="grid2">'+f('month-base-'+m.id,'THEN · '+m.unit,data.metrics[key+'-base-'+m.id])+f('month-now-'+m.id,'NOW · '+m.unit,data.metrics[key+'-now-'+m.id])+'</div><div class="number">CHANGE</div><p id="month-delta-'+m.id+'" role="status"></p></div>'}).join('')
       +'<button type="button" class="primary" id="month-compare">SHOW ME WHAT CHANGED →</button><p id="month-status" role="status"></p><div id="month-meaning">'+monthMeaningHTML(monthMeaning(plan,data.metrics,key))+'</div>'
       +['keep','adjust','stop'].map(function(k){return '<div class="n30-field"><label for="month-'+k+'">'+({keep:"What worked? Let’s keep that.",adjust:"What needs changing before you give it another month?",stop:"What took up your time and gave you nothing worth keeping?"})[k]+'</label><textarea class="input" id="month-'+k+'" maxlength="2000">'+e(review[k]||'')+'</textarea></div>'}).join('')
-      +'<button type="button" class="secondary" id="month-save-review">SAVE MY CHECK-IN</button><p id="month-review-status" role="status">'+(review.saved?'Your check-in is saved on this device.':'')+'</p></section></section>';
+      +'<button type="button" class="secondary" id="month-save-review">SAVE MY CHECK-IN</button><p id="month-review-status" role="status">'+(review.saved?'Your check-in is saved on this device.':'')+'</p></section>'
+      +'<section class="card" id="month-next-cycle"><div class="number">WHAT’S NEXT</div><h2>UPDATE THE BASELINE. THEN PICK THE NEXT PROBLEM.</h2><p>Before you start another 30 days, update your Money Map and YOUR NUMBER with what is true now. Then use the route it gives you instead of automatically repeating the same plan.</p><button type="button" class="primary" id="month-recheck">RECHECK MY NUMBER & NEXT PATH →</button></section></section>';
   }
   function bindMonth(data,plan){
     var key=plan.role+'-money',all=document.querySelectorAll('[data-month-task]');
@@ -410,6 +411,7 @@
     };
     ['keep','adjust','stop'].forEach(function(k){var x=document.getElementById('month-'+k);if(x)x.oninput=function(){data.shell.review[k]=x.value;data.shell.review.saved=false;next30Save()}});
     var save=document.getElementById('month-save-review');if(save)save.onclick=function(){data.shell.review.saved=true;data.shell.phase='day30';var ok=next30Save();document.getElementById('month-review-status').textContent=ok?'Your check-in is saved on this device.':'This browser couldn’t save your check-in. Copy your notes before closing it.'};
+    var recheck=document.getElementById('month-recheck');if(recheck)recheck.onclick=function(){data.shell.phase='recheck';next30Save();var target=document.getElementById('money-map');if(target&&typeof target.scrollIntoView==='function')target.scrollIntoView({behavior:'smooth',block:'start'});var pay=document.getElementById('mmm-pay-type');if(pay)pay.focus()};
   }
 
   function renderMoney(data,plan){
