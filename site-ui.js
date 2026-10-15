@@ -5,7 +5,7 @@
   const maxAge = 30 * 24 * 60 * 60 * 1000;
   const publicRoutes = {intro:'home', paid:'deep-dive', about:'about', contact:'contact', privacy:'privacy', sample:'sample', next30sample:'next-30-sample', survey:'survey',plans:'my-plans',first90:'first-90'};
   const freeViews = ['question','teaser','result','plan','daymath','email'];
-  const preview = window.BOOKED_AF_REVIEW === true || !['bookedandfabulous.com','www.bookedandfabulous.com'].includes(location.hostname);
+  const preview = false;
   let lastFreeView = 'question';
   let lastScreen = '';
   let restoringHistory = false;
@@ -19,6 +19,7 @@
     for (const q of list) {
       const allowed = new Set((schema === SHORT_SCHEMA ? shortChoices(q, clean) : q.choices).map(choice => choice[0]));
       const raw = answers[q.id];
+      if(q.type==='service-time'){const value=cleanServiceTime(raw);if(value)clean[q.id]=value;continue;}
       if (q.multi) {
         if (!Array.isArray(raw)) continue;
         let values = [...new Set(raw.filter(value => allowed.has(value)))];
@@ -125,8 +126,9 @@
     document.querySelector('.progress').hidden = state.view !== 'question';
     if (document.querySelector('[data-career-sample-panel]')) renderCareerSample('chair');
     if (['result','plan'].includes(state.view)) {
+      app.querySelector('.storage-note')?.remove();
       const note = document.createElement('p'); note.className = 'storage-note';
-      note.innerHTML = 'Your free plan is saved in this browser for up to 30 days. On a shared device? <a href="#privacy" data-nav="privacy">Clear your saved plan here.</a>';
+      note.innerHTML = 'Your free Breakdown is saved in this browser for up to 30 days. On a shared device? <a href="#privacy" data-nav="privacy">Clear your saved Breakdown here.</a>';
       app.append(note);
     }
     if (state.view === 'result') {
@@ -158,11 +160,6 @@
             const data = new FormData(form);
             const more = data.getAll('more');
             status.hidden = true;
-            if (!more.length) {
-              status.textContent = 'Pick at least one thing you want me to go deeper on.';
-              status.hidden = false;
-              return;
-            }
             button.disabled = true;
             button.textContent = 'SENDING…';
             try {
@@ -172,10 +169,9 @@
                 credentials:'omit',
                 body:JSON.stringify({
                   session_id:sessionId,
-                  useful_rating:Number(data.get('useful_rating')),
-                  ease_rating:Number(data.get('ease_rating')),
-                  most_useful:String(data.get('most_useful') || ''),
-                  unclear:String(data.get('unclear') || ''),
+                  rating:Number(data.get('rating')),
+                  ease:data.get('ease'),
+                  useful:data.get('useful'),
                   more,
                   recommend:data.get('recommend'),
                   comments:String(data.get('comments') || '')
@@ -183,12 +179,12 @@
               });
               const result = await response.json().catch(()=>({}));
               if (!response.ok || result.success !== true) throw new Error(result.error || 'Survey could not be sent.');
-              form.innerHTML = '<div class="baf-card baf-featured"><p class="baf-kicker">THANK YOU. SERIOUSLY.</p><h2>THIS HELPS.</h2><p>I’m building BOOKED AF around what actually helps people behind the chair — not what sounds good on a sales page.</p><p>Your feedback helps me make it better.</p><p><strong>YOUR CAREER OWES YOU A LIFE.</strong></p><div class="baf-actions"><button type="button" data-nav="intro">Back to BOOKED AF →</button></div></div>';
+              form.innerHTML = '<div class="baf-card baf-featured"><p class="baf-kicker">Got it.</p><h2>THANK YOU.</h2><p>The nice answers are lovely. The useful answers are even better.</p><p>Bradley will actually read this.</p><div class="baf-actions"><button type="button" data-nav="intro">Back to BOOKED AF →</button></div></div>';
             } catch (error) {
               status.textContent = error.message || 'Survey could not be sent. Please try again.';
               status.hidden = false;
               button.disabled = false;
-              button.textContent = 'TELL BRADLEY →';
+              button.textContent = 'SEND IT TO BRADLEY →';
             }
           });
         }
@@ -197,19 +193,31 @@
     if (state.view === 'plans') {
       const free = document.getElementById('resume-free');
       const hasFree = Object.keys(state.answers).length > 0;
-      free.textContent = hasFree ? 'Open my free plan →' : 'Start my free Breakdown →';
-      document.getElementById('free-resume-note').textContent = hasFree ? 'Your free answers are saved in this browser. Let’s pick up there.' : 'No free plan saved in this browser yet. Start here, or use the link in your Breakdown email.';
+      free.textContent = hasFree ? 'Open my free Breakdown →' : 'Start my free Breakdown →';
+      document.getElementById('free-resume-note').textContent = hasFree ? 'Your free answers are saved in this browser. Let’s pick up there.' : 'No free Breakdown saved in this browser yet. Start here, or use the link in your Breakdown email.';
       free.onclick = () => go(hasFree ? lastFreeView : 'question');
       const paid = document.getElementById('resume-paid');
+      const previewHost = false;
       if (state.next30Verified === true) {
         paid.hidden = false;
-        document.getElementById('paid-resume-note').textContent = 'Your purchase is verified for this visit. Open your plan or continue your answers.';
+        document.getElementById('paid-resume-note').textContent = state.deepPreview ? 'Preview access is on. Open the test plan and walk through it like a customer.' : 'Your purchase is verified for this visit. Open your plan or continue your answers.';
+        paid.textContent = state.deepPreview ? 'Open preview plan →' : 'Open my Next 30 →';
         paid.onclick = () => {state.view = BookedNext30.complete(next30Ensure().answers) ? 'deepresult' : 'deepintake'; render();};
+      } else if (previewHost) {
+        paid.hidden = false;
+        paid.textContent = 'Start preview plan →';
+        document.getElementById('paid-resume-note').textContent = 'Preview only. Start a test plan without checkout so we can QA the full experience.';
+        paid.onclick = () => {
+          state.next30Verified = true;
+          state.deepPreview = true;
+          state.view = 'deepintake';
+          render();
+        };
       }
     }
     if (state.view === 'email') {
       const note = app.querySelector('.capture-note');
-      if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. We’ll also send a few check-ins over the next 90 days so you can recheck your plan and numbers. This does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
+      if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. We’ll also send a few check-ins over the next 90 days so you can revisit your career and priorities. This does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
       const heading = app.querySelector('.capture-wordmark');
       if (heading) heading.innerHTML = '<img src="assets/booked-af-logo.webp" alt="BOOKED AF - Booked & Fabulous" width="230" height="109" style="max-width:100%;height:auto">';
     }
@@ -223,6 +231,8 @@
     document.title = 'BOOKED AF | ' + (titles[state.view] || 'My next move');
   }
   render = function () {
+    if(state.view==='plan')state.view='result';
+    if(['daymath','membertool','membership'].includes(state.view))state.view=isStudent(state.answers)?'first90':'paid';
     const active = document.activeElement;
     const choice = active?.dataset?.value ?? active?.dataset?.next30Choice;
     const screenKey = state.view + ':' + (state.view === 'question' ? state.index : state.view === 'deepintake' ? (state.careerData?.currentId ?? state.deepIndex) : '');
@@ -236,7 +246,7 @@
     if (sitePages[state.view]) {
       disposeEmailWidget(); disposeEmailWidget = () => {};
       app.innerHTML = sitePages[state.view];
-      if(state.view==='next30sample'&&typeof renderNext30Sample==='function')renderNext30Sample();
+
     } else originalRender();
     enhance(); save();
     const route = routeFor();
@@ -272,8 +282,8 @@
     const nav = e.target.closest('[data-nav]');
     if (nav) { e.preventDefault(); go(nav.dataset.nav); return; }
     if (e.target.closest('[data-clear-progress]')) {
-      BookedLifecycle.clear();state.first90Interest=false;state.answers = {}; state.done = {}; state.name = ''; state.index = 0; state.emailSent = false;
-      try { localStorage.removeItem(key); sessionStorage.removeItem(deliveryKey); sessionStorage.removeItem('booked-af-email-draft'); } catch (_) {}
+      BookedLifecycle.clear();state.careerData=null;state.first90Interest=false;state.answers = {}; state.done = {}; state.name = ''; state.index = 0; state.emailSent = false;
+      try { localStorage.removeItem(key); localStorage.removeItem('booked-af-career-next30-v2'); sessionStorage.removeItem('booked-af-career-next30-v1'); sessionStorage.removeItem(deliveryKey); sessionStorage.removeItem('booked-af-email-draft'); } catch (_) {}
       go('intro');
     }
     if (preview && e.target.closest('.checkout-link')) {

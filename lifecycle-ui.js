@@ -7,17 +7,30 @@
  const offerReady=fetch(emailServiceUrl,{credentials:'omit',signal:AbortSignal.timeout(5000)}).then(r=>r.json()).then(data=>{first90Offer=data.features?.first90||null;}).catch(()=>{});
  let session='';
  try{session=sessionStorage.getItem('booked-af-funnel-session')||'';if(!/^[-a-zA-Z0-9]{16,80}$/.test(session)){session=crypto.randomUUID();sessionStorage.setItem('booked-af-funnel-session',session);}}catch{session=crypto.randomUUID();}
+ let source='direct';
+ try{
+  const params=new URLSearchParams(location.search);
+  const incoming=String(params.get('src')||params.get('utm_source')||params.get('source')||'').trim().toLowerCase();
+  if(/^[a-z0-9_-]{1,40}$/.test(incoming)&&incoming!=='student-share')sessionStorage.setItem('booked-af-acquisition-source',incoming);
+  const saved=String(sessionStorage.getItem('booked-af-acquisition-source')||'').trim().toLowerCase();
+  if(/^[a-z0-9_-]{1,40}$/.test(saved))source=saved;
+ }catch{}
  try{const saved=JSON.parse(localStorage.getItem(profileKey)||'null');if(/^[a-f0-9]{64}$/.test(saved?.token||'')){access=saved.token;profile=saved.profile;}}catch{}
  const emitted=new Set();
  function track(event,category){
-  const id=event+':'+(category||'');if(emitted.has(id))return;emitted.add(id);
-  fetch(emailServiceUrl+'/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event,session,...(category?{category}:{})}),credentials:'omit',keepalive:true}).then(r=>{if(!r.ok)emitted.delete(id);}).catch(()=>emitted.delete(id));
+  const id=event+':'+(category||'')+':'+source;if(emitted.has(id))return;emitted.add(id);
+  fetch(emailServiceUrl+'/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event,session,source,...(category?{category}:{})}),credentials:'omit',keepalive:true}).then(r=>{if(!r.ok)emitted.delete(id);}).catch(()=>emitted.delete(id));
  }
  function persist(){try{localStorage.setItem(profileKey,JSON.stringify({token:access,profile}));}catch{}}
  async function profileRequest(action,extra={}){
   const r=await fetch(emailServiceUrl+'/profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,token:access,...extra}),credentials:'omit',signal:AbortSignal.timeout(15000)});
   const data=await r.json();if(!r.ok||data.success!==true)throw new Error(data.error||'We couldn’t connect to your saved profile. Try again.');
   profile=data.profile;persist();return profile;
+ }
+ function setPublicCopy(p){
+  if(!p.breakdown)return;
+  state.freePublicCopy={schema:state.schema,answers:JSON.stringify(state.answers),copy:p.breakdown};
+  try{sessionStorage.setItem('booked-free-copy',JSON.stringify(state.freePublicCopy));}catch{}
  }
  async function openProfile(token){
   access=token;
@@ -26,6 +39,7 @@
   try{
    const p=await profileRequest('open');
    restoreSchema(p.schema);state.answers=validateShortAnswers(p.answers);state.done=p.done||{};state.emailSent=true;state.index=0;
+   setPublicCopy(p);
    lastSaved=JSON.stringify({answers:state.answers,done:state.done});
    try{sessionStorage.setItem(deliveryKey,JSON.stringify({schema:state.schema,answers:state.answers,emailSent:true,name:state.name||''}));}catch{}
    history.replaceState(null,'',location.pathname+location.search+'#my-breakdown');state.view='result';render();
@@ -40,7 +54,14 @@
   const value=JSON.stringify({answers,done:state.done});if(value===lastSaved)return;
   saving=true;
   let saved=false;
-  try{await profileRequest('save',{answers,done:state.done});lastSaved=value;saved=true;showSaveStatus('Saved to your career profile.');}
+  try{
+   const p=await profileRequest('save',{answers,done:state.done});lastSaved=value;saved=true;
+   // A pending save must not apply diagnosis text to answers edited while it was in flight.
+   if(value===JSON.stringify({answers:state.answers,done:state.done})){
+    setPublicCopy(p);if(state.view==='result')render();
+   }
+   showSaveStatus('Saved to your career profile.');
+  }
   catch(error){showSaveStatus(error.message+' Your browser copy is still available.',true);}
   finally{saving=false;if(saved)saveProfile();}
  }
@@ -51,9 +72,7 @@
   notice.textContent=message;
   if(error){const retry=document.createElement('button');retry.className='secondary';retry.textContent='Retry saving';retry.onclick=saveProfile;notice.append(document.createElement('br'),retry);}
  }
- function studentResultHTML(r){
-  return `<div class="eyebrow">Your BOOKED AF Breakdown</div><div class="card"><div class="number">YOUR CAREER RIGHT NOW</div><h3>${r.stage}</h3><p>${r.snapshot}</p></div><div class="card"><div class="number">FIX THIS FIRST</div><h2>${r.top.title}</h2><p>${r.intro}</p></div><div class="eyebrow">DO THESE 3 THINGS</div>${r.plan.steps.map((s,i)=>`<div class="card"><div class="number">0${i+1} / DAY ${s.day}</div><h3>${s.title}</h3><p>${s.body}</p></div>`).join('')}<div class="card"><div class="number">WATCH THIS</div><h3>${r.plan.checkTitle}</h3><p>${r.plan.check}</p><p>${r.plan.rule}</p></div><div class="actions"><button class="primary" id="plan">OPEN MY 7-DAY CHECKLIST →</button><button class="secondary" id="share">SAVE / SHARE MY BREAKDOWN</button></div><div class="card"><div class="number">COMING NEXT</div><h3>BOOKED AF: FIRST 90</h3><p>A first-90-days plan built around what you need to get right first. It isn’t available to buy yet. Your free plan is ready now.</p><button class="secondary" id="paid">FIRST 90 UPDATES →</button></div><div class="actions"><button class="secondary" id="edit">EDIT ANSWERS</button><button class="secondary" id="restart">START OVER</button><button class="secondary" data-career-update>I’VE FINISHED SCHOOL →</button><button class="subtle" data-student-share>Share the free student Breakdown</button></div>`;
- }
+ function studentResultHTML(r){return shortResultHTML(r);}
  sitePages.first90=`<section class="first90-panel"><p class="eyebrow">BOOKED AF: FIRST 90</p><h1>THE FIRST 90.<br><span class="pink">COMING NEXT.</span></h1><p class="lead">The first salon. The first clients. The first paycheck. A plan for the part that gets real fast.</p><p>We’re testing what students actually need before building the full product. There’s nothing to buy yet.</p><div class="card" id="first90-interest-panel"></div><div class="actions"><button class="secondary" id="first90-back">Back to my free Breakdown →</button></div></section>`;
  function enhance(){
   const student=isStudent(state.answers);
@@ -64,7 +83,7 @@
   if(state.view==='email'&&student){
    const form=document.getElementById('form');
    if(form&&!document.getElementById('first90-optin')){
-    const label=document.createElement('label');label.className='checkline';label.style.letterSpacing='normal';label.innerHTML='<input type="checkbox" id="first90-optin" name="first90Interest"> Email me when BOOKED AF: FIRST 90 is available. Optional.';
+    const label=document.createElement('label');label.className='checkline';label.style.letterSpacing='normal';label.innerHTML='<input type="checkbox" id="first90-optin" name="first90Interest"> Want to know when BOOKED AF: FIRST 90 is ready? Email me when it launches. (Optional)';
     form.querySelector('button[type="submit"]').before(label);
    }
    const note=app.querySelector('.capture-note');if(note)note.innerHTML='Your email unlocks your free Breakdown and sends a private link to save and resume your profile. FIRST 90 updates are optional. We don’t send you working-professional check-ins while you’re in school. <a href="#privacy" data-nav="privacy">Privacy Policy</a>.';
@@ -83,7 +102,7 @@
   if(state.view==='first90'){
    const panel=document.getElementById('first90-interest-panel');
    if(!student){panel.innerHTML='<h2>Start with your free Breakdown.</h2><p>We’ll use your school and clinic experience to find what to fix first.</p><a class="primary" href="#student-breakdown">START MY STUDENT BREAKDOWN →</a>';}
-   else if(profile?.first90Interest||state.first90Interest){panel.innerHTML='<h2>YOU’RE ON THE LIST.</h2><p>We’ve saved your FIRST 90 interest. No payment has been taken. Keep working on your free seven-day plan.</p>';}
+   else if(profile?.first90Interest||state.first90Interest){panel.innerHTML='<h2>YOU’RE ON THE LIST.</h2><p>We’ve saved your FIRST 90 interest. No payment has been taken. Your free Breakdown is saved in your career profile.</p>';}
    else{panel.innerHTML='<h2>Want to hear when it’s ready?</h2><p>Send yourself your free Breakdown and tick the optional FIRST 90 box.</p><button class="primary" id="first90-email">GET FIRST 90 UPDATES →</button>';document.getElementById('first90-email').onclick=()=>{state.view='email';render();document.getElementById('first90-optin').checked=true;};}
    offerReady.then(()=>{
     if(state.view!=='first90'||!first90Offer||first90Offer.status!=='live'||first90Offer.price!==29)return;
@@ -107,6 +126,7 @@
   }
  });
  app.addEventListener('change',event=>{if(event.target.matches('[data-task]')){saveProfile();if(isStudent(state.answers)){const r=buildShortBreakdown(state.answers);if(r.plan.steps.every(s=>state.done[s.id]))track('student_plan_complete',r.category);}}});
- window.BookedLifecycle={session,track,enhance,clear,openProfile,saveProfile,studentResultHTML,hasAccess:()=>!!access};
+ window.BookedLifecycle={session,source,track,enhance,clear,openProfile,saveProfile,studentResultHTML,hasAccess:()=>!!access};
+ track('site_visit');
  if(new URLSearchParams(location.search).get('source')==='student-share')track('student_referral');
 })();
