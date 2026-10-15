@@ -339,6 +339,44 @@
   }
 
 
+  function monthMeaning(plan,metrics,key){
+    var compared=0,improved=0,worse=0,same=0,context=0;
+    plan.metrics.forEach(function(m){
+      var before=metrics[key+'-base-'+m.id],after=metrics[key+'-now-'+m.id];
+      if(before===undefined||after===undefined||String(before).trim()===''||String(after).trim()==='')return;
+      var b=Number(before),a=Number(after);if(!Number.isFinite(b)||!Number.isFinite(a)||a<0||b<0)return;
+      compared++;
+      var delta=a-b;
+      if(delta===0){same++;return}
+      if(m.better==='up'){delta>0?improved++:worse++;return}
+      if(m.better==='down'){delta<0?improved++:worse++;return}
+      context++;
+    });
+    if(!compared)return null;
+    var title='',body='';
+    if(improved>0&&worse===0){
+      title='SOMETHING MOVED THE RIGHT WAY.';
+      body='Keep the change connected to the strongest result for another cycle before adding a new strategy.';
+    }else if(worse>0&&improved===0){
+      title='DON’T PUSH HARDER AT A WORSE RESULT.';
+      body='Go back to the last stable version. Change one thing, then compare the same numbers again.';
+    }else if(improved>0&&worse>0){
+      title='BETTER IN ONE PLACE. WORSE IN ANOTHER.';
+      body='Protect what improved. Fix one weak number before adding more work to the plan.';
+    }else if(same>0&&improved===0&&worse===0){
+      title='THE NUMBERS DIDN’T MOVE YET.';
+      body='Do not repeat another month on autopilot. Change one variable and measure the same thing again.';
+    }else{
+      title='YOU HAVE A COMPARISON. NOT A VERDICT.';
+      body='Use the numbers with your notes. Keep what helped, adjust what did not, and avoid changing everything at once.';
+    }
+    return {compared:compared,improved:improved,worse:worse,same:same,context:context,title:title,body:body};
+  }
+  function monthMeaningHTML(m){
+    if(!m)return '';
+    return '<div class="card"><div class="number">WHAT IT MEANS</div><h3>'+e(m.title)+'</h3><p>'+e(m.body)+'</p><p class="fine">This shows movement in the numbers you entered. It does not prove what caused the change.</p></div>';
+  }
+
   function monthHTML(data,plan){
     if(!data.shell.numberPlanner.result||!data.shell.numberPlanner.result.complete)return '';
     var key=plan.role+'-money',review=data.shell.review||{};
@@ -347,8 +385,8 @@
       +plan.missions.map(function(week,i){return '<details class="card"'+(i===0?' open':'')+'><summary>WEEK '+week.week+' · '+e(titles[i])+'</summary>'+week.tasks.map(function(task,j){var id=next30TaskKey(key,week.week,j,task);return '<label class="checkline"><input type="checkbox" data-month-task="'+e(id)+'" '+(data.checks[id]?'checked':'')+'><span>'+e(task)+'</span></label>'}).join('')+'<p class="fine">Keep an eye on: '+e(week.watch)+'</p></details>'}).join('')
       +'<details class="card"><summary>WORDS YOU CAN USE</summary>'+plan.scripts.map(function(script){return '<h3>'+e(script[0])+'</h3><p>'+e(script[1])+'</p>'}).join('')+'</details>'
       +'<section class="card" id="month-review"><div class="number">DAY 30</div><h2>DID ANYTHING ACTUALLY CHANGE?</h2><p>Compare the same length of time before and after. Leave a number blank if you don’t know it. Checking every box doesn’t automatically mean you made more money.</p>'
-      +plan.metrics.map(function(m){return '<div class="card"><h3>'+e(m.label)+'</h3><div class="grid2">'+f('month-base-'+m.id,'Before ('+m.unit+')',data.metrics[key+'-base-'+m.id])+f('month-now-'+m.id,'After ('+m.unit+')',data.metrics[key+'-now-'+m.id])+'</div><p id="month-delta-'+m.id+'" role="status"></p></div>'}).join('')
-      +'<button type="button" class="primary" id="month-compare">SHOW ME WHAT CHANGED →</button><p id="month-status" role="status"></p>'
+      +plan.metrics.map(function(m){return '<div class="card"><h3>'+e(m.label)+'</h3><div class="grid2">'+f('month-base-'+m.id,'THEN · '+m.unit,data.metrics[key+'-base-'+m.id])+f('month-now-'+m.id,'NOW · '+m.unit,data.metrics[key+'-now-'+m.id])+'</div><div class="number">CHANGE</div><p id="month-delta-'+m.id+'" role="status"></p></div>'}).join('')
+      +'<button type="button" class="primary" id="month-compare">SHOW ME WHAT CHANGED →</button><p id="month-status" role="status"></p><div id="month-meaning">'+monthMeaningHTML(monthMeaning(plan,data.metrics,key))+'</div>'
       +['keep','adjust','stop'].map(function(k){return '<div class="n30-field"><label for="month-'+k+'">'+({keep:"What worked? Let’s keep that.",adjust:"What needs changing before you give it another month?",stop:"What took up your time and gave you nothing worth keeping?"})[k]+'</label><textarea class="input" id="month-'+k+'" maxlength="2000">'+e(review[k]||'')+'</textarea></div>'}).join('')
       +'<button type="button" class="secondary" id="month-save-review">SAVE MY CHECK-IN</button><p id="month-review-status" role="status">'+(review.saved?'Your check-in is saved on this device.':'')+'</p></section></section>';
   }
@@ -365,7 +403,10 @@
         var delta=a-b,value=m.unit==='money'?cash(Math.abs(delta)):String(Number(Math.abs(delta).toFixed(2)));
         out.textContent=delta===0?'No change in the numbers entered.':value+' '+(delta>0?'more':'less')+' '+(m.unit==='money'?'':m.unit)+' than before.';
         if(m.unit==='hours')out.textContent+=' Check what you earned alongside the hours.';count++;
-      });document.getElementById('month-status').textContent=count?'These numbers show what changed. They don’t prove what caused it. Use them to decide what to keep doing.':'Add a before and after number when you have them.';
+      });
+      var meaning=monthMeaning(plan,data.metrics,key);data.shell.review.meaning=meaning;next30Save();
+      document.getElementById('month-status').textContent=count?'These numbers show what changed. They don’t prove what caused it. Use them to decide what to keep doing.':'Add a THEN and NOW number when you have them.';
+      var meaningOut=document.getElementById('month-meaning');if(meaningOut)meaningOut.innerHTML=monthMeaningHTML(meaning);
     };
     ['keep','adjust','stop'].forEach(function(k){var x=document.getElementById('month-'+k);if(x)x.oninput=function(){data.shell.review[k]=x.value;data.shell.review.saved=false;next30Save()}});
     var save=document.getElementById('month-save-review');if(save)save.onclick=function(){data.shell.review.saved=true;data.shell.phase='day30';var ok=next30Save();document.getElementById('month-review-status').textContent=ok?'Your check-in is saved on this device.':'This browser couldn’t save your check-in. Copy your notes before closing it.'};
