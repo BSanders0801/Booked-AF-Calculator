@@ -89,7 +89,7 @@ The verified explanatory promise is: We look at your book, your numbers, and how
 
 The verified product philosophy is: No giant course library. No generic plan. Fix the thing that matters now.
 
-The current primary tagline is unresolved. Consult the retired-language register for withheld and historical lines. Do not substitute a favourite older slogan or elevate a calibration example to hero copy. Drafts can identify the brand and product plainly while this decision remains open.
+On October 13, Bradley explicitly restored GET BOOKED. MAKE MONEY. HAVE A LIFE. as the core positioning in the final production-launch instruction. This later approval supersedes the earlier unresolved status for that line. Other withheld lines remain withheld.
 
 ## Visual demeanor and accessibility
 

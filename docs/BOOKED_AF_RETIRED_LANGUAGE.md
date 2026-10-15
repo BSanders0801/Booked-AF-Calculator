@@ -18,7 +18,7 @@ Draft effective October 12, 2026. The canonical Brand Bible governs creative use
 | Fewer stupid hours. | historical only | Current voice, accuracy or plain-language correction | product/app.js |
 | Filming remains locked to October 12 | historical only | October 12 shoot canceled. October 18 or 26 requested; no replacement date confirmed. October 19 DMV remains a constraint. | Production board and October 12 conversation context |
 | Free Breakdown includes three actions, seven-day checklist and calculators | historical only | Superseded October 6 free/paid boundary: free explains the problem; paid supplies implementation. | Earlier repository Bible, Master, production board; current instruction |
-| GET BOOKED. MAKE MONEY. HAVE A LIFE. | historical only | Superseded primary positioning or organizing framework; do not restore as current copy. | Earlier Bibles, Master revisions and repository history |
+| GET BOOKED. MAKE MONEY. HAVE A LIFE. | restored October 13 | Explicitly restored as core positioning in Bradley’s final production-launch instruction. | October 13 final production-launch instruction |
 | Growth is funny like that. | historical only | Current voice, accuracy or plain-language correction | product/email-worker.mjs |
 | LOOK WHO CAME BACK FOR RECEIPTS. | historical only | Current voice, accuracy or plain-language correction | product/app.js |
 | Love your career. Keep your life.<br> | awaiting a final decision | Historical sign-off withheld pending current tagline decision | product/email-worker.mjs |
