@@ -1,48 +1,49 @@
-# Hosting and source privacy — approved direction, release execution gated
+# Hosting and source privacy — current workaround
 
-Prepared October 7, 2026; updated October 8. The hosting/private-source direction was approved October 7 at 10:53 PM LA time. Welcome-inbox verification is complete. Production website execution is still gated on physical-device verification and explicit release approval. The separately authorized email migration is complete; no production application deployment was performed.
+Updated October 15, 2026.
 
-## Findings
+## Current verified state
 
-The repository is public, has GitHub Pages enabled, and contains the live custom domain in CNAME. Making it private first is unsafe: GitHub documents that Pages sites on GitHub Free are unpublished when the source becomes private. The account's plan has not been verified. GitHub also restricts using Pages primarily for commercial transactions, so merely upgrading the GitHub plan is not the proposed solution.
+- The public BOOKED AF site is deployed successfully from `main` through GitHub Pages at the custom domain `https://bookedandfabulous.com/`.
+- Pages deployment for commit `63dc726e9df9bda4c1f710844caa02612e318dd7` completed successfully on October 15.
+- The public `main` artifact contains the simplified launch site and keeps new YOUR NEXT 30 purchases disabled while the paid product is unfinished.
+- Existing buyer access still uses the guarded Cloudflare Worker API at `booked-af-email.wild-recipe-42df.workers.dev`.
+- The separate public-only Cloudflare static host `booked-af-site.wild-recipe-42df.workers.dev` was deployed and verified. Private paid files return 404 there.
+- The secure API deployment added durable fulfillment and was verified: health is ready, anonymous paid-content access returns 401 with no-store, and invalid checkout verification returns 400 with no-store.
+- Email, Stripe webhook handling, FOLLOWUPS storage, secrets, and the existing daily schedule were preserved.
 
-Sources:
-- https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility
-- https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits
-- https://developers.cloudflare.com/workers/static-assets/
+## Cloudflare browser/UI blocker
 
-## Approved direction
+The Cloudflare web interface is not required for normal site operation.
 
-Use Cloudflare Workers Static Assets for the generated public-only website, keep the existing Cloudflare API endpoint for payment verification and email, then make the existing source repository private. The isolated environment already exercises this provider's assets and Worker runtime. No new vendor account or paid plan has been purchased. Confirm account capacity/cost before provisioning.
+The attempted custom-domain migration is blocked specifically because the existing GitHub Actions Cloudflare token cannot create a Cloudflare DNS zone. The provider returned:
 
-Keep both existing Stripe payment links and all Resend settings unchanged. Keep the public domain and existing private purchase links working. Never publish the repository root or the private bundle as static assets.
+`Requires permission com.cloudflare.api.account.zone.create`
 
-## Prepared locally
+Do not treat this as a website outage or a reason to restart deployment work.
 
-Run `node scripts/prepare-release.mjs` from the repository. It performs no network requests or deployment. It builds:
+## Active workaround
 
-- `.website-preview/`: explicit public assets only, audited file paths.
-- `.private-assets/paid-bundle.mjs`: API-only module, excluded from website.
-- `.release-review/site.config.json`: draft static site configuration, no custom-domain routes and no SPA fallback for missing files.
-- `.release-review/api.config.json`: draft for the existing API name, guarded entrypoint, existing FOLLOWUPS binding and new durable purchase fulfillment binding; no static assets attached.
-- `.release-review/public-manifest.json`: SHA-256 hashes for the exact public files.
+Until Cloudflare zone creation can be authorized cleanly:
 
-Preparation passed: 13 public assets; no paid filenames, symlinks or unexpected directories; API and website packages are separate. Configurations remain ignored local artifacts, not an automatic deployment workflow. The preparation command does not modify existing `wrangler.jsonc` or test configuration. The isolated test config separately includes test-only durable fulfillment and lifecycle bindings.
+1. Keep the public website on GitHub Pages at `bookedandfabulous.com`.
+2. Keep checkout for new YOUR NEXT 30 purchases disabled.
+3. Keep the existing Cloudflare Worker endpoint for transactional email, purchase verification, existing-buyer access, and follow-up infrastructure.
+4. Do not change website DNS, Google Workspace MX/SPF/DKIM, Resend records, Stripe links, or mail routing.
+5. Do not attempt repeated Cloudflare zone-creation runs with the current token.
+6. Treat the Cloudflare custom-domain/static-host migration as deferred infrastructure work, not a current launch blocker.
 
-## Ordered execution, only after explicit release approval
+## Source-privacy limitation
 
-1. Finish the real iPhone check. New welcome messages are confirmed in the recipient mailbox and preserved in Gmail. Recheck the exact release code's automated gates.
-2. Privately record current production Worker versions, all bindings, schedules, domain routing, DNS and GitHub Pages settings. Verify that the generated API configuration preserves every required existing binding and schedule. Confirm durable migration tag is unused and old objects need no migration. Stop on differences; the local config is a review draft, not proof of live configuration parity.
-3. Prepare the new static host at its provider URL; initially keep paid entry disabled until the guarded API is ready. Do not expose paid source. Preserve the current live hostname and customer paths until the approved cutover.
-4. Deploy the guarded API at its existing address, keeping its secrets and profile data, Stripe webhook endpoint and email settings unchanged. Verify current-purchase authorization and no-store responses without creating a real charge. Check scheduled work and historical purchase compatibility.
-5. Under the approved hosting/DNS change, attach the existing website hostname to the generated public-only host. Preserve every unrelated DNS record, especially mail, SPF/DKIM/DMARC and verification records. Verify HTTPS, free form, navigation, links, private restore, API CORS and anonymous asset denial at the real hostname. Recheck both apex and www routing before retiring the old origin.
-6. Retire old GitHub Pages publication only after the new host is verified. Make the source repository private and verify collaborator/integration access and CI availability. Public forks and historical downloads are not recalled; inspect any existing forks separately. Do not rewrite history or delete artifacts without explicit approval.
-7. Verify no paid files remain accessible through the old Pages URL, old hosting paths or current source/history to an unauthenticated visitor. Account for propagation/caches rather than asserting instant removal.
+The source repository is still public. Do not make it private while GitHub Pages is the live host unless the account's private-Pages capability has first been verified and a tested replacement public host is live.
 
-## Rollback
+The generated public site itself excludes the private paid bundle, but repository history/branches remain a separate source-privacy concern. Do not claim that source privacy is solved.
 
-Before cutover, retain a public-only maintenance package and known-good secured API version. If the launch fails, serve maintenance/public-only content and pause new checkout entry while preserving existing purchase recovery. Do not roll back to a public source-root deployment or remove durable fulfillment history. Restoring the old unsecured production website would reopen the paid-content leak and is not an acceptable security rollback.
+## What remains
 
-## Current unresolved checks
+- Physical owner-device iPhone/Safari verification.
+- Continued product completion and QA.
+- A future source-privacy/hosting migration once a safe host/domain path is available.
+- Only then consider retiring GitHub Pages and changing repository visibility.
 
-Fresh October 8 full-price and BETA100 test welcomes were opened in Spacemail and subsequently copied into Gmail. The separately approved email-only Google MX/SPF/DKIM cutover and send/receive/reply checks are complete; preserve those new records during any website cutover. Physical iPhone testing still requires the owner's device. See [current verification](LAUNCH_VERIFICATION_2026-10-08.md) and [email migration record](EMAIL_MIGRATION_2026-10-08.md). Direction approval is recorded; production website deployment, website DNS cutover and repository visibility changes still require explicit release authorization.
+This workaround supersedes older instructions that treated Cloudflare custom-domain cutover as an immediate launch blocker.
