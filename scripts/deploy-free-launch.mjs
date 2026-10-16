@@ -15,7 +15,7 @@ const cfg=JSON.parse(await readFile('.release-review/api.config.json','utf8'));c
 await writeFile('.release-review/api.config.json',JSON.stringify(cfg));
 if(JSON.stringify((await api(base+'/deployments')).deployments?.[0]?.versions)!==JSON.stringify(active))throw Error('Production changed');
 console.log('Preserving production version',active[0].version_id,'all six bindings and existing schedules.');
-try{execFileSync('npx',['--yes','wrangler@4.148.0','deploy','--config','.release-review/api.config.json','--keep-vars'],{stdio:'pipe',timeout:240000});}catch(e){console.error(String(e.stderr||'').replace(/(?:Bearer\s+\S+|sk_(?:live|test)_\w+|re_\w+|whsec_\w+)/g,'[redacted]').slice(-2000));throw Error('API deployment failed');}
+if(process.env.VERIFY_ONLY!=='true'){try{execFileSync('npx',['--yes','wrangler@4.148.0','deploy','--config','.release-review/api.config.json','--keep-vars'],{stdio:'pipe',timeout:240000});}catch(e){console.error(String(e.stderr||'').replace(/(?:Bearer\s+\S+|sk_(?:live|test)_\w+|re_\w+|whsec_\w+)/g,'[redacted]').slice(-2000));throw Error('API deployment failed');}}
 const after=await api(base+'/settings');
 for(const name of expected)if(!after.bindings.some(b=>b.name===name))throw Error('Missing preserved binding');
 if(JSON.stringify((await api(base+'/schedules')).schedules.map(s=>s.cron))!==JSON.stringify(cfg.triggers.crons))throw Error('Schedule changed');
@@ -24,4 +24,4 @@ for(const [path,status] of [['/paid-content',401],['/verify-checkout?session_id=
 console.log('Free-launch API verified. Marketing remains paused; paid guards verified.');
 const zones=await api('/zones?name=bookedandfabulous.com');
 console.log('Domain zone:',JSON.stringify(zones.map(z=>({name:z.name,status:z.status,name_servers:z.name_servers}))));
-if(zones.length===1){const records=await api('/zones/'+zones[0].id+'/dns_records?per_page=100');console.log('DNS inventory:',JSON.stringify(records.map(r=>({type:r.type,name:r.name,content:r.content,priority:r.priority,proxied:r.proxied}))));}
+if(zones.length===1){try{const records=await api('/zones/'+zones[0].id+'/dns_records?per_page=100');console.log('DNS inventory:',JSON.stringify(records.map(r=>({type:r.type,name:r.name,content:r.content,priority:r.priority,proxied:r.proxied}))));}catch{console.log('DNS record inventory BLOCKED: token cannot read zone records. No DNS changed.');}}
