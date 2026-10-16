@@ -2,7 +2,9 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
 const account='30ec5e35d67ddd1a1bab06c2263b2159',root='https://api.cloudflare.com/client/v4',base='/accounts/'+account+'/workers/scripts/booked-af-email';
-async function api(path){const r=await fetch(root+path,{headers:{Authorization:'Bearer '+process.env.CLOUDFLARE_API_TOKEN},signal:AbortSignal.timeout(20000)});const d=await r.json();if(!r.ok||!d.success)throw Error('Provider read failed '+r.status);return d.result;}
+const launchToken=(process.env.CLOUDFLARE_API_TOKEN||'').trim();
+if(!/^[A-Za-z0-9_-]{20,200}$/.test(launchToken))throw Error('Saved launch token has unexpected formatting. Copy only the token value into the repository secret.');
+async function api(path){const r=await fetch(root+path,{headers:{Authorization:'Bearer '+launchToken},signal:AbortSignal.timeout(20000)});const d=await r.json();if(!r.ok||!d.success)throw Error('Provider read failed '+r.status);return d.result;}
 if((await api('/accounts/'+account+'/workers/subdomain')).subdomain!=='wild-recipe-42df')throw Error('Wrong account');
 const before=await api(base+'/settings'),deployments=await api(base+'/deployments'),active=deployments.deployments?.[0]?.versions,schedules=await api(base+'/schedules');
 const expected=['FOLLOWUPS','FULFILLMENT','RESEND_API_KEY','STRIPE_SECRET_KEY','STRIPE_WEBHOOK_SECRET','TURNSTILE_SECRET_KEY'];
