@@ -2,7 +2,7 @@ name: BOOKED AF free launch consent release
 on:
   push:
     branches: [launch/free-consent-20261016]
-    paths: [.github/workflows/free-launch-20261016.yml, scripts/deploy-free-launch.mjs]
+    paths: [.github/workflows/free-launch-20261016.yml, scripts/deploy-free-launch.mjs, email-worker.mjs]
 permissions:
   contents: read
 concurrency:

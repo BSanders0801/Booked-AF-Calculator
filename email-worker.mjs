@@ -1412,7 +1412,7 @@ export default {
       }
       const sent = await response.json();
       if (!sent.id) return reply({success:false}, 502);
-      const contactKey='contact:'+await digestHex(email),latestContact=await kvJSON(env.FOLLOWUPS,contactKey);latestContact.breakdownEmailId=sent.id;latestContact.breakdownEmailAcceptedAt=new Date().toISOString();await env.FOLLOWUPS.put(contactKey,JSON.stringify(latestContact));
+      await env.FOLLOWUPS.put('contact-delivery:'+await digestHex(email),JSON.stringify({emailId:sent.id,acceptedAt:new Date().toISOString()}));
       try{
         const session=/^[-a-zA-Z0-9]{16,80}$/.test(data.analyticsSession||'')?data.analyticsSession:crypto.randomUUID();
         if(data.type==='breakdown'&&isStudent(answers)){
