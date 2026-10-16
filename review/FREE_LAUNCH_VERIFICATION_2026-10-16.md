@@ -41,3 +41,5 @@ Backend source: 09c38d5f8d168029b00329c6b9aefd5b4a4f1e60; initial consent implem
 - Do not call the full launch complete until fresh live email flow and source privacy are resolved.
 
 User action needed: complete Cloudflare authentication in the provided browser handoff. Then inspect destination DNS and authenticate Spaceship as needed; do not switch nameservers until every existing mail/security record is preserved. Continue fresh visitor testing after credential protection clears.
+
+Additional verified access limit: verification-only workflow 38972643483 passed; the current deployment token cannot read the FOLLOWUPS KV contact-list records. Future campaign retrieval requires authorized Cloudflare dashboard/KV access. No records were exported or changed by this read-only probe.
