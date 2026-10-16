@@ -31,3 +31,20 @@ assert.ok(['pending','subscribed','unsubscribed'].includes(contact.marketingStat
 const deliveryResponse=await get(kvBase+'/values/'+encodeURIComponent('contact-delivery:'+contactHash),{headers:{Authorization:'Bearer '+token}});assert.equal(deliveryResponse.status,200);const delivery=await deliveryResponse.json();assert.ok(delivery.emailId);assert.ok(Date.parse(delivery.acceptedAt)>=Date.parse('2026-10-16T23:00:00Z'));
 const keys=await cf('/accounts/30ec5e35d67ddd1a1bab06c2263b2159/storage/kv/namespaces/c1030f222e4047ba8fc03636900a14fc/keys?prefix='+encodeURIComponent('contact:'+contactHash)+'&limit=100');assert.ok(keys.okay);assert.equal(keys.data.length,1);assert.ok(!keys.data[0].expiration,'Contact must not expire');
 console.log('PRODUCTION VISITOR STORAGE PASS',JSON.stringify({requiredNameSaved:true,emailMatchesApprovedInbox:true,source:contact.source,schema:contact.schema,marketingStatus:contact.marketingStatus,consentVersion:contact.consentVersion,requestedAt:contact.breakdownRequestedAt,deliveryAcceptedAt:delivery.acceptedAt,persistentWithoutTTL:true,matchingContactRecords:keys.data.length}));
+
+async function readApprovedContact(){const r=await get(kvBase+'/values/'+encodeURIComponent('contact:'+contactHash),{headers:{Authorization:'Bearer '+token}});assert.equal(r.status,200);return r.json();}
+async function awaitStatus(wanted){for(let n=0;n<18;n++){const c=await readApprovedContact();if(c.marketingStatus===wanted)return c;await new Promise(r=>setTimeout(r,5000));}throw Error('Approved test preference not persisted: '+wanted);}
+const beforePreferences=await readApprovedContact();
+assert.ok(/^[a-f0-9]{64}$/.test(beforePreferences.confirmToken));assert.ok(/^[a-f0-9]{64}$/.test(beforePreferences.unsubscribeToken));
+const confirmURL=api+'/confirm-subscription?token='+beforePreferences.confirmToken,unsubscribeURL=api+'/unsubscribe?token='+beforePreferences.unsubscribeToken;
+for(const url of [confirmURL,unsubscribeURL]){const r=await get(url);assert.equal(r.status,200);assert.ok(r.headers.get('cache-control').includes('no-store'));assert.ok((await r.text()).includes('method="post"'));}
+assert.equal((await readApprovedContact()).marketingStatus,beforePreferences.marketingStatus,'GET must not change preferences');
+if(beforePreferences.marketingStatus==='pending'||beforePreferences.marketingStatus==='subscribed'){
+ const confirmed=await get(confirmURL,{method:'POST'});assert.equal(confirmed.status,200);assert.ok((await confirmed.text()).includes('Your subscription is confirmed.'));
+ const subscribed=await awaitStatus('subscribed');assert.ok(subscribed.consentConfirmedAt);assert.equal(subscribed.consentVersion,'2026-10-16');
+ const unsubscribe=await get(unsubscribeURL,{method:'POST'});assert.equal(unsubscribe.status,200);assert.ok((await unsubscribe.text()).includes('unsubscribed'));
+ const suppressed=await awaitStatus('unsubscribed');assert.ok(suppressed.unsubscribedAt);
+}
+assert.equal((await get(confirmURL,{method:'POST'})).status,400,'Old confirmation must not reverse unsubscribe');
+assert.equal((await readApprovedContact()).marketingStatus,'unsubscribed');
+console.log('PRODUCTION CONSENT API PASS: approved test address confirmation persisted, unsubscribe persisted, GET is nonmutating, old confirmation cannot resubscribe. Test address left unsubscribed; no marketing sent.');
