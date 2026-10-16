@@ -43,3 +43,16 @@ Backend source: 09c38d5f8d168029b00329c6b9aefd5b4a4f1e60; initial consent implem
 User action needed: complete Cloudflare authentication in the provided browser handoff. Then inspect destination DNS and authenticate Spaceship as needed; do not switch nameservers until every existing mail/security record is preserved. Continue fresh visitor testing after credential protection clears.
 
 Additional verified access limit: verification-only workflow 38972643483 passed; the current deployment token cannot read the FOLLOWUPS KV contact-list records. Future campaign retrieval requires authorized Cloudflare dashboard/KV access. No records were exported or changed by this read-only probe.
+
+## Latest verified update — October 16, 2026, 3:24 PM LA time
+
+This section supersedes the earlier DNS/KV permission blockers above.
+
+- Dedicated BOOKED_AF_LAUNCH_TOKEN is saved in GitHub Secrets and verified working. No credential values were exposed or committed. Workflow 38975400094 passed on 0e872e1.
+- DNS and contact-store administration reads now work. Contact store currently has zero contact records; no production signup has yet been verified.
+- Existing Cloudflare public Worker host now matches the approved free-launch release. Paid file paths return 404; checkout remains held.
+- Cloudflare imported rsend CNAME had a typo (forge.mta.net versus authoritative forge.rmta.net). Corrected after agreement between Cloudflare and Google DNS resolvers. Missing send CNAME was copied. A and www records were set DNS-only to preserve existing Pages behavior during the initial nameserver transition.
+- Twelve authoritative website/mail DNS records were verified in the destination, including Google Workspace MX/SPF, Google DKIM and Resend DKIM. No authoritative DMARC TXT currently exists. No source DNS/email records were removed.
+- One controlled free Breakdown was submitted through the existing isolated test Worker to the previously approved test inbox. Inbox receipt at 3:22 PM LA time was verified. Sender is hello@bookedandfabulous.com; SPF and aligned DKIM pass. It returned personalized free clarity without paid methods. This does not establish the production-domain Turnstile/signup flow.
+- Registrar DNSSEC DS record is present with TTL 86400 seconds. Nameservers MUST NOT change until the DNSSEC transition is coordinated and cached trust records are safe. No registrar DNSSEC or nameservers were changed. Cloudflare zone remains pending.
+- Remaining gates: registrar authentication/DNSSEC transition; production visitor submission and contact/consent verification; rendered final-state QA; source-repository privacy.
