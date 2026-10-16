@@ -31,6 +31,10 @@ for(const item of expected){
  const existing=records.find(r=>equal(r,item));
  if(existing){if(item.proxied===false&&existing.proxied){await api(base+'/'+existing.id,'PATCH',{proxied:false});console.log('Set DNS-only:',item.type,item.name);}continue;}
  const conflicting=records.filter(r=>r.name===item.name&&r.type===item.type&&!expected.some(e=>equal(e,r)));
+ if(conflicting.length===1&&item.type==='CNAME'&&item.name==='rsend.'+domain&&item.content==='rsend.forge.rmta.net'&&conflicting[0].content==='rsend.forge.mta.net'){
+  const check=await(await fetch('https://dns.google/resolve?name='+item.name+'&type=CNAME')).json();if(!check.Answer?.some(r=>r.type===5&&r.data.replace(/\.$/,'')===item.content))throw Error('Independent DNS confirmation failed');
+  await api(base+'/'+conflicting[0].id,'PATCH',{content:item.content,proxied:false});console.log('Corrected verified imported CNAME:',item.name);continue;
+ }
  if(conflicting.length)throw Error('Destination conflict: '+item.type+' '+item.name+'; retained existing record for review');
  await api(base,'POST',item);console.log('Copied authoritative record:',item.type,item.name);
 }
