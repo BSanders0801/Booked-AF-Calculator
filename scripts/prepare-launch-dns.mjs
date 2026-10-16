@@ -40,4 +40,6 @@ for(const item of expected){
 }
 records=await api(base+'?per_page=100');for(const e of expected)if(!records.some(r=>equal(r,e)&&(e.proxied===undefined||r.proxied===e.proxied)))throw Error('DNS copy verification failed: '+e.name);
 const ds=(await dns(domain,'DS')).filter(r=>r.type===43);if(ds.length)console.log('CUTOVER BLOCKED: registrar DNSSEC DS records are present. Do not change nameservers until registrar DNSSEC transition is coordinated.');
-console.log(JSON.stringify({domain,zoneStatus:zone.status,authoritativeNameservers:authoritative,assignedNameservers:zone.name_servers,verifiedAuthoritativeRecords:expected.length,workspaceMXPreserved:expected.some(r=>r.type==='MX'&&r.content==='smtp.google.com'),googleDKIMPreserved:true,resendDKIMPreserved:true,dmarcPresent:expected.some(r=>r.name==='_dmarc.'+domain&&r.type==='TXT'),dnssecDS:ds.length>0,cutoverReady:ds.length===0,nameserversChanged:false}));
+const earliestSafeCutover='2026-10-17T22:45:00Z';
+const dsCacheWaitComplete=Date.now()>=Date.parse(earliestSafeCutover);
+console.log(JSON.stringify({earliestSafeCutover,dsCacheWaitComplete,domain,zoneStatus:zone.status,authoritativeNameservers:authoritative,assignedNameservers:zone.name_servers,verifiedAuthoritativeRecords:expected.length,workspaceMXPreserved:expected.some(r=>r.type==='MX'&&r.content==='smtp.google.com'),googleDKIMPreserved:true,resendDKIMPreserved:true,dmarcPresent:expected.some(r=>r.name==='_dmarc.'+domain&&r.type==='TXT'),dnssecDS:ds.length>0,cutoverReady:ds.length===0&&dsCacheWaitComplete,nameserversChanged:false}));
