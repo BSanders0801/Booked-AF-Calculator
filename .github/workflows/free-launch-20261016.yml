@@ -2,7 +2,7 @@ name: BOOKED AF free launch consent release
 on:
   push:
     branches: [launch/free-consent-20261016]
-    paths: [.github/workflows/free-launch-20261016.yml, scripts/deploy-free-launch.mjs, scripts/prepare-launch-dns.mjs, scripts/prepare-launch-host.mjs, scripts/check-controlled-free-email.mjs, email-worker.mjs]
+    paths: [.github/workflows/free-launch-20261016.yml, scripts/deploy-free-launch.mjs, scripts/prepare-launch-dns.mjs, scripts/prepare-launch-host.mjs, scripts/check-controlled-free-email.mjs, scripts/build-public-launch.mjs, scripts/verify-live-free-launch.mjs, email-worker.mjs]
 permissions:
   contents: read
 concurrency:
@@ -39,5 +39,7 @@ jobs:
         run: node scripts/check-controlled-free-email.mjs
       - name: Prepare verified public-only Worker host
         run: node scripts/prepare-launch-host.mjs
+      - name: Verify actual production domain and free signup configuration
+        run: node scripts/verify-live-free-launch.mjs
       - name: Preserve and verify destination DNS before registrar cutover
         run: node scripts/prepare-launch-dns.mjs
