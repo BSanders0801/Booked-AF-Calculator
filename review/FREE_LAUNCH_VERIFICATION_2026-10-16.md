@@ -1,70 +1,40 @@
 # BOOKED AF free launch verification — October 16, 2026
 
-Status: public release deployed; complete launch certification BLOCKED.
-
+Status: public free release is deployed and production HTTP checks pass; complete visitor/email/source-privacy certification remains unfinished.
 Production: https://bookedandfabulous.com/
-Public commit: 10672dd107da16c00e58bd65986b87ee4e5215da.
-Backend source: 09c38d5f8d168029b00329c6b9aefd5b4a4f1e60; initial consent implementation 48b1f19c0e09b5c167efb0579d2281c9b2a7ac22. Deployed Worker version verified as 157d9e3d-9e66-44eb-aeb3-f424cc297546. Verification-only workflow 38972514872 passed.
+Public commit: 59c6838055dd78fc8388a52c2cf14b73134708fa (supersedes 10672dd).
+Backend source: 09c38d5f8d168029b00329c6b9aefd5b4a4f1e60.
+Current infrastructure verification: 4e1ccfce15a49e1b18d31854919c2c43e43965ab.
+GitHub Pages deployment 38977557757 succeeded. Full verification workflow 38977746368 succeeded.
 
-## Changes
+## Verified current production
+- HTTPS homepage and all eight public script/style/index assets return 200 and match approved generated free release after line-ending normalization. HTTP apex, HTTP www and HTTPS www redirect 301 to https://bookedandfabulous.com/.
+- Removed dormant Stripe checkout URL from site-content.js, as well as existing app checkout disable; asset version public-20261016-2. Every checked public text asset contains no buy.stripe.com URL.
+- Required name and email input configuration and optional unchecked marketing checkbox verified. Production service CORS allows the actual site origin. API reports launchReady.
+- Anonymous paid-content endpoint returns401/no-store. Tested paid module, source-worker and private-bundle site paths return404. Existing buyer access recovery preserved.
+- Free scoring, consent/storage/suppression, security/lifecycle tests pass. No marketing announcements sent; promotional sequences remain paused.
+- Controlled isolated test Breakdown email previously received at approved hello@bookedandfabulous.com inbox with SPF and aligned DKIM pass. Repeat controlled workflow uses existing idempotency. This is not production visitor submission proof.
 
-- Added optional unchecked marketing consent, with email confirmation before subscription.
-- Added normalized persistent contact records in the existing FOLLOWUPS namespace, separate from saved-profile access and delivery metadata. No customer data deleted.
-- Added POST-confirmed subscription and unsubscribe pages; GET requests do not change preferences. Unchecked Breakdown requests preserve suppression.
-- Kept promotional sequences paused. No marketing announcements sent.
-- Preserved existing Breakdown scoring, questionnaire, brand, email layout, existing buyer API bindings, secrets and schedules.
-- Updated privacy disclosure and versioned public assets. The $49 checkout remains held.
+## Cloudflare access works through API
+BOOKED_AF_LAUNCH_TOKEN is securely stored in GitHub Secrets, valid through October23, scoped to the approved account/domain. No token value printed or committed.
+Actual reads succeeded for DNS records, DNSSEC, SSL setting, Worker routes, Worker custom domains, deployed service configuration and contact KV. Worker deployments and DNS record repair were performed successfully.
+Latest contact-store retrieval returns zero contact keys.
+The Cloudflare dashboard browser rejection does not prevent these API operations. A separate OpenAI browser credential-protection error affects UI actions; this also prevented GitHub administration UI inspection.
+DNSSEC edit API documentation accepts DNS Write permission, which the current token has; no new broad token is currently needed.
 
-## Verified
+## DNS transition
+Only bookedandfabulous.com changed. With explicit action-time approval, Spaceship DNSSEC disabled at2026-10-16T22:40:20Z; resulting UI verified Disabled. Public DoH returned no DS answer afterward.
+Nameservers remain launch1.spaceship.net and launch2.spaceship.net. Current Pages A records and Google Workspace MX continue resolving.
+Cloudflare pending zone assigned faye.ns.cloudflare.com and zeus.ns.cloudflare.com. Twelve authoritative website/email records verified in destination, including Google MX/SPF/DKIM and Resend DKIM.
+Fixed imported rsend CNAME typo to rsend.forge.rmta.net; added missing send CNAME; initial website records DNS-only. No mail record removed. No authoritative DMARC exists.
+Prior DS TTL86400 seconds. Script now explicitly enforces earliestSafeCutover2026-10-17T22:45:00Z even when DS lookup is already empty.
+Follow-up automation scheduled2026-10-17T23:41:18Z /4:41PM Pacific. Recheck prerequisites, migrate, then re-enable Cloudflare DNSSEC with corresponding Spaceship DS. Current free Pages launch can function while this infrastructure migration waits.
 
-- Pages deployment for 10672dd succeeded. Live index, app, site-content, site-ui, CSS, paid-loader and both logo assets returned 200 and exactly matched release bytes.
-- HTTPS works. www and HTTP redirect to https://bookedandfabulous.com/.
-- Production API health ready; anonymous paid-content returns 401/no-store; invalid purchase verification and invalid unsubscribe links return 400/no-store.
-- Paid modules, API source and private bundle paths tested at the production domain return 404. Public build guard excludes paid implementation.
-- 180 adaptive answer variations, 288 student scenarios, consent/storage/suppression tests, email parity and nine security/lifecycle tests passed. These used mocked email providers and isolated storage; they are not evidence of fresh production email delivery.
-- October 15 isolated deployment failure occurred after successful deployment when a health fetch lost its TLS socket. Later existing runs passed after bounded health retries.
-- Draft PR #3 contains unfinished paid work and was not merged.
+## Remaining concrete work
+- Fresh visitor completes actual production questionnaire and submits approved test name/email through real Turnstile; verify persistent contact, inbox receipt, confirmation, unsubscribe and deduplication.
+- Rendered desktop/mobile and returning-visitor QA. Latest fresh browser tab successfully displayed live homepage, but clicking Get my free Breakdown again returned credential_observation_restricted. Use supported manual browser handoff; do not bypass protections.
+- Paid source remains exposed in development repository branches/history despite safe deployed asset allowlist. Draft PR3 is unfinished paid work and must not merge.
+- Alternative privacy path investigated: separate public-only Pages repository then private source repository. Connector exposes no repository creation/administration tools; GitHub settings browser inspection was stopped by the same credential protection. Do not turn source private until branded site hosting continuity is verified.
+- October15 isolated deployment failure was post-deploy TLS health-fetch loss; later retries passed. Latest production deployment and live HTTP verification succeeded.
 
-## DNS and authentication gates
-
-- Authoritative nameservers remain launch1.spaceship.net and launch2.spaceship.net.
-- Cloudflare zone exists and is pending; assigned nameservers are faye.ns.cloudflare.com and zeus.ns.cloudflare.com.
-- Current API token can read the zone summary but receives 403 reading DNS records. Nameservers were not changed because the complete destination mail-record inventory could not be checked.
-- Public DNS returned Google Workspace MX smtp.google.com, Google SPF, Google DKIM and Resend DKIM. The queried _dmarc hostname returned no TXT answer.
-- Cloudflare and Spaceship browser sessions were logged out. Secure Cloudflare authentication returned submission_failed without a visible provider error. Browser credential protection then blocked the production visitor interaction test.
-
-## Unverified / unresolved
-
-- A fresh production visitor submission, persistent record from that submission, actual inbox delivery, confirmation and unsubscribe through a real delivered test email remain unverified.
-- Mobile/desktop rendered final-state QA and returning-visitor browser proof remain incomplete. HTTP release bytes and behavior tests passed.
-- Repository development branches/history remain public. Public site asset protection does not solve source-repository privacy. Do not switch visibility until private Pages capability or a replacement host/domain route is verified.
-- Do not call the full launch complete until fresh live email flow and source privacy are resolved.
-
-User action needed: complete Cloudflare authentication in the provided browser handoff. Then inspect destination DNS and authenticate Spaceship as needed; do not switch nameservers until every existing mail/security record is preserved. Continue fresh visitor testing after credential protection clears.
-
-Additional verified access limit: verification-only workflow 38972643483 passed; the current deployment token cannot read the FOLLOWUPS KV contact-list records. Future campaign retrieval requires authorized Cloudflare dashboard/KV access. No records were exported or changed by this read-only probe.
-
-## Latest verified update — October 16, 2026, 3:24 PM LA time
-
-This section supersedes the earlier DNS/KV permission blockers above.
-
-- Dedicated BOOKED_AF_LAUNCH_TOKEN is saved in GitHub Secrets and verified working. No credential values were exposed or committed. Workflow 38975400094 passed on 0e872e1.
-- DNS and contact-store administration reads now work. Contact store currently has zero contact records; no production signup has yet been verified.
-- Existing Cloudflare public Worker host now matches the approved free-launch release. Paid file paths return 404; checkout remains held.
-- Cloudflare imported rsend CNAME had a typo (forge.mta.net versus authoritative forge.rmta.net). Corrected after agreement between Cloudflare and Google DNS resolvers. Missing send CNAME was copied. A and www records were set DNS-only to preserve existing Pages behavior during the initial nameserver transition.
-- Twelve authoritative website/mail DNS records were verified in the destination, including Google Workspace MX/SPF, Google DKIM and Resend DKIM. No authoritative DMARC TXT currently exists. No source DNS/email records were removed.
-- One controlled free Breakdown was submitted through the existing isolated test Worker to the previously approved test inbox. Inbox receipt at 3:22 PM LA time was verified. Sender is hello@bookedandfabulous.com; SPF and aligned DKIM pass. It returned personalized free clarity without paid methods. This does not establish the production-domain Turnstile/signup flow.
-- Registrar DNSSEC DS record is present with TTL 86400 seconds. Nameservers MUST NOT change until the DNSSEC transition is coordinated and cached trust records are safe. No registrar DNSSEC or nameservers were changed. Cloudflare zone remains pending.
-- Remaining gates: registrar authentication/DNSSEC transition; production visitor submission and contact/consent verification; rendered final-state QA; source-repository privacy.
-
-## Registrar access verified — October 16, 2026
-
-Spaceship password and email verification completed through secure browser authentication. Signed-in Bradley Sanders account and bookedandfabulous.com Advanced DNS detail were verified. All 12 registrar records match the preserved source DNS snapshot. DNSSEC is enabled and the platform automatically manages the existing DS record. The custom DS preparation panel currently has zero records and says staged records are applied when the corresponding nameservers are selected. The existing DNS record-type picker does not offer DNSKEY, so Cloudflare's continuous multi-signer migration prerequisite could not be met through the available registrar interface. No existing DNSSEC or nameservers have been changed. A specific security confirmation is needed before temporarily disabling DNSSEC; the browser policy requires action-time approval for reducing a security protection. Keep current nameservers until cached DS records are safe, then migrate and re-enable DNSSEC.
-
-Production-domain browser visitor interaction remains blocked by browser credential protection despite direct navigation. Isolated test delivery and production file/guard checks remain verified, but do not relabel these as production signup proof.
-
-## Approved registrar change — 2026-10-16T22:40:20Z
-
-User explicitly approved the temporary DNSSEC disable and continued launch work. Spaceship Disable DNSSEC was submitted and the resulting UI verified DNSSEC Disabled. Nameservers remain launch1.spaceship.net and launch2.spaceship.net. No website or email records were removed. Google DNS-over-HTTPS subsequently returned Status 0 with no DS answer; NS, Google MX and all four Pages A addresses still resolve. The prior DS TTL was 86400 seconds. Use conservative earliest cutover 2026-10-17T22:45:00Z, after rechecking DS absence and complete destination records. Re-enable DNSSEC using Cloudflare's DS after migration. Production end-to-end visitor browser verification and public repository source privacy remain unresolved; no claim of complete launch is made.
-
-Follow-up automation successfully created for 2026-10-17T23:41:18Z (4:41 PM America/Los_Angeles), beyond the conservative cache wait. It will recheck prerequisites and continue the authorized migration and remaining launch verification; successful future completion is not guaranteed. Final local HTTP rechecks returned 502 for apex/www and 403 for API health, while search fetch could not access apex/www. These probes do not establish a site outage or current HTTPS success. Earlier HTTP/redirect/file checks remain historical verified results; repeat from an authorized environment before certifying launch. No additional user action is currently requested.
+No full LIVE claim until actual production signup and source privacy are resolved.
