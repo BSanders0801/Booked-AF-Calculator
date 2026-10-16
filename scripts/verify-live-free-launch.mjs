@@ -20,3 +20,14 @@ const pre=await get(api,{method:'OPTIONS',headers:{Origin:site,'Access-Control-R
 const health=await(await get(api)).json();assert.equal(health.launchReady,true);
 const denied=await get(api+'/paid-content',{headers:{Origin:site}});assert.equal(denied.status,401);assert.ok(denied.headers.get('cache-control').includes('no-store'));
 console.log('PRODUCTION DOMAIN PASS: exact free release, required fields, optional consent, CORS, ready API, held checkout and protected paid assets. This is not a successful visitor submission test.');
+
+const approvedTestEmail='hello@bookedandfabulous.com';
+const contactHash=createHash('sha256').update(approvedTestEmail).digest('hex');
+const kvBase='https://api.cloudflare.com/client/v4/accounts/30ec5e35d67ddd1a1bab06c2263b2159/storage/kv/namespaces/c1030f222e4047ba8fc03636900a14fc';
+const contactResponse=await get(kvBase+'/values/'+encodeURIComponent('contact:'+contactHash),{headers:{Authorization:'Bearer '+token}});
+assert.equal(contactResponse.status,200,'Production test contact not saved');const contact=await contactResponse.json();
+assert.equal(contact.email,approvedTestEmail);assert.ok(contact.name?.trim());assert.equal(contact.source,'free-breakdown');assert.ok(Date.parse(contact.breakdownRequestedAt)>=Date.parse('2026-10-16T23:00:00Z'));
+assert.ok(['pending','subscribed','unsubscribed'].includes(contact.marketingStatus));assert.equal(contact.consentVersion,'2026-10-16');
+const deliveryResponse=await get(kvBase+'/values/'+encodeURIComponent('contact-delivery:'+contactHash),{headers:{Authorization:'Bearer '+token}});assert.equal(deliveryResponse.status,200);const delivery=await deliveryResponse.json();assert.ok(delivery.emailId);assert.ok(Date.parse(delivery.acceptedAt)>=Date.parse('2026-10-16T23:00:00Z'));
+const keys=await cf('/accounts/30ec5e35d67ddd1a1bab06c2263b2159/storage/kv/namespaces/c1030f222e4047ba8fc03636900a14fc/keys?prefix='+encodeURIComponent('contact:'+contactHash)+'&limit=100');assert.ok(keys.okay);assert.equal(keys.data.length,1);assert.ok(!keys.data[0].expiration,'Contact must not expire');
+console.log('PRODUCTION VISITOR STORAGE PASS',JSON.stringify({requiredNameSaved:true,emailMatchesApprovedInbox:true,source:contact.source,schema:contact.schema,marketingStatus:contact.marketingStatus,consentVersion:contact.consentVersion,requestedAt:contact.breakdownRequestedAt,deliveryAcceptedAt:delivery.acceptedAt,persistentWithoutTTL:true,matchingContactRecords:keys.data.length}));
