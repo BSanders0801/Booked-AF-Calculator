@@ -25,3 +25,7 @@ console.log('Free-launch API verified. Marketing remains paused; paid guards ver
 const zones=await api('/zones?name=bookedandfabulous.com');
 console.log('Domain zone:',JSON.stringify(zones.map(z=>({name:z.name,status:z.status,name_servers:z.name_servers}))));
 if(zones.length===1){try{const records=await api('/zones/'+zones[0].id+'/dns_records?per_page=100');console.log('DNS inventory:',JSON.stringify(records.map(r=>({type:r.type,name:r.name,content:r.content,priority:r.priority,proxied:r.proxied}))));}catch{console.log('DNS record inventory BLOCKED: token cannot read zone records. No DNS changed.');}}
+try{
+ const keys=await api('/accounts/'+account+'/storage/kv/namespaces/c1030f222e4047ba8fc03636900a14fc/keys?prefix=contact%3A&limit=100');
+ console.log('Persistent contact store admin retrieval:',JSON.stringify({readable:true,contactKeysOnFirstPage:keys.length}));
+}catch{console.log('Persistent contact store admin retrieval BLOCKED: current deployment token lacks KV read access. Runtime storage is covered by behavior tests.');}
