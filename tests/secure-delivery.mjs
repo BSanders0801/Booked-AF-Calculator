@@ -5,7 +5,7 @@ import {createHmac} from 'node:crypto';
 import {buildTestWorker} from '../scripts/build-test-worker.mjs';
 const origin='https://booked-af-email-test.fixture.workers.dev';
 await buildTestWorker({origin,checkoutUrl:'https://buy.stripe.com/test_fixture',paymentLinkId:'plink_fixture'});
-const {default:worker,TestPurchaseFulfillment}=await import('../test-worker.mjs');
+const {default:worker,TestPurchaseFulfillment,TestLifecycle}=await import('../test-worker.mjs');
 const env={BOOKED_AF_TEST_MARKER:'booked-af-isolated-test',STRIPE_SECRET_KEY:'sk_test_fixture',STRIPE_WEBHOOK_SECRET:'whsec_fixture',RESEND_API_KEY:'fixture',TEST_RECIPIENT_EMAIL:'recipient@example.invalid',ASSETS:{fetch:async()=>new Response('missing',{status:404})}};
 const paid={id:'cs_test_fixture',livemode:false,status:'complete',mode:'payment',amount_subtotal:4900,amount_total:4900,currency:'usd',payment_status:'paid',payment_link:'plink_fixture',created:Math.floor(Date.now()/1000),customer_details:{email:env.TEST_RECIPIENT_EMAIL,name:'Test'}};
 const request=(id='cs_test_fixture',extra={})=>new Request(origin+'/paid-content',{method:'POST',headers:{Authorization:'Bearer '+id,Origin:origin},...extra});
@@ -68,7 +68,8 @@ test('isolated free form uses test verification and only the approved recipient;
   assert.equal(sent.length,0,'unapproved addresses must not send mail');
   assert.equal((await worker.fetch(req({...data,type:'founding'}),env)).status,400);
   assert.equal((await worker.fetch(req({...data,token:'not-a-dummy-token'}),env)).status,403);
-  const r=await worker.fetch(req(data),env);assert.equal(r.status,200);const body=await r.json();assert.equal(body.success,true);assert(body.breakdown.title);assert(!body.breakdown.plan);
+  const entries=new Map(),ctx={storage:{get:async k=>entries.get(k),put:async(k,v)=>entries.set(k,v)},blockConcurrencyWhile:fn=>fn()};const obj=new TestLifecycle(ctx,env);const testEnv={...env,TEST_LIFECYCLE:{idFromName:n=>n,get:()=>obj}};
+ const r=await worker.fetch(req(data),testEnv);assert.equal(r.status,200);const body=await r.json();assert.equal(body.success,true);assert(body.breakdown.title);assert(!body.breakdown.plan);
   assert(sent.length>0);for(const email of sent){assert.deepEqual(email.to,[env.TEST_RECIPIENT_EMAIL]);assert.equal(email.bcc,undefined);assert.doesNotMatch(email.text,/DO THESE 3 THINGS|MONTHLY MONEY MAP|STEAL THESE WORDS/);}
  }finally{globalThis.fetch=old;}
 });

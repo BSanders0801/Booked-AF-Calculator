@@ -1,0 +1,32 @@
+name: BOOKED AF free launch consent release
+on:
+  push:
+    branches: [launch/free-consent-20261016]
+    paths: [.github/workflows/free-launch-20261016.yml, scripts/deploy-free-launch.mjs]
+permissions:
+  contents: read
+concurrency:
+  group: booked-af-production-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFARE_API_TOKEN }}
+      WRANGLER_SEND_METRICS: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify free capture, consent, scoring and security
+        run: |
+          node scripts/check-brand-language.mjs
+          node tests/launch-consent.mjs
+          node tests/short-breakdown.mjs
+          node tests/student-lifecycle.mjs
+          node --test --test-concurrency=1 tests/recheck-email.mjs tests/secure-delivery.mjs tests/release-guard.mjs tests/test-lifecycle.mjs
+          node scripts/prepare-release.mjs
+      - name: Deploy API preserving secrets, storage and existing buyers
+        run: node scripts/deploy-free-launch.mjs

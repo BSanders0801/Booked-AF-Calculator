@@ -747,7 +747,7 @@ function validateAnswers(input) {
 }
 
 function emailHTML(title, text) {
-  const lineHTML=line=>esc(line).replace(/https:\/\/bookedandfabulous\.com\/#resume-profile\/[a-f0-9]{64}/g,url=>'<a href="'+url+'" style="color:#d00069;font-weight:bold;overflow-wrap:anywhere">OPEN MY SAVED PROFILE →</a>');
+  const lineHTML=line=>esc(line).replace(/https:\/\/bookedandfabulous\.com\/#resume-profile\/[a-f0-9]{64}/g,url=>'<a href="'+url+'" style="color:#d00069;font-weight:bold;overflow-wrap:anywhere">OPEN MY SAVED PROFILE →</a>').replace(/https:\/\/booked-af-email\.wild-recipe-42df\.workers\.dev\/(confirm-subscription|unsubscribe)\?token=[a-f0-9]{64}/g,(url,action)=>'<a href="'+url+'" style="color:#d00069;font-weight:bold">'+(action==='confirm-subscription'?'CONFIRM MY EMAIL UPDATES':'UNSUBSCRIBE FROM UPDATES')+'</a>');
   const paragraphs = text.split(/\n\n+/).map(part => {
     const lines = part.split('\n');
     const heading = lines.length > 1 && lines[0] === lines[0].toUpperCase();
@@ -1306,8 +1306,45 @@ async function conversionSummary(request, env) {
   return reply({success:true,days,sources,generated_at:new Date().toISOString()});
 }
 
+// Free-launch contacts are separate from saved-profile access and paid fulfillment.
+// Contacts have no TTL. No marketing sequence is activated by this module.
+const CONSENT_COPY='Email me BOOKED AF updates and offers. Optional. I can unsubscribe anytime.';
+async function saveLaunchContact(env,email,name,data){
+ if(!env.FOLLOWUPS)throw Error('Contact storage unavailable');
+ const key=await digestHex(email),previous=await kvJSON(env.FOLLOWUPS,'contact:'+key),now=new Date().toISOString();
+ const record={...previous,email,name,createdAt:previous?.createdAt||now,updatedAt:now,source:'free-breakdown',schema:data.schema||'legacy',marketingStatus:previous?.marketingStatus||'not_subscribed',consentVersion:previous?.consentVersion||null,breakdownRequestedAt:now};
+ if(data.marketingConsent===true&&record.marketingStatus!=='subscribed'){
+  record.marketingStatus='pending';record.consentRequestedAt=now;record.consentVersion='2026-10-16';record.consentText=CONSENT_COPY;
+  record.confirmToken=record.confirmToken||randomToken();
+  await env.FOLLOWUPS.put('contact-confirm:'+await digestHex(record.confirmToken),key);
+ }
+ record.unsubscribeToken=record.unsubscribeToken||randomToken();
+ await env.FOLLOWUPS.put('contact-unsubscribe:'+await digestHex(record.unsubscribeToken),key);
+ await env.FOLLOWUPS.put('contact:'+key,JSON.stringify(record));
+ return record;
+}
+async function contactPreference(request,env){
+ const u=new URL(request.url),confirm=u.pathname==='/confirm-subscription',token=u.searchParams.get('token')||'';
+ const headers={'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Referrer-Policy':'no-referrer','X-Robots-Tag':'noindex, nofollow','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"};
+ const page=(title,body,status=200)=>new Response('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BOOKED AF email preferences</title><body style="font:18px Arial;max-width:600px;margin:60px auto;padding:24px"><h1>'+title+'</h1>'+body+'<p><a href="https://bookedandfabulous.com/">Back to BOOKED AF</a></p></body></html>',{status,headers});
+ if(!env.FOLLOWUPS)return page('Please try again shortly.','<p>Email preferences are temporarily unavailable.</p>',503);
+ if(!/^[a-f0-9]{64}$/.test(token))return page('This link is not valid.','<p>Use the link in your BOOKED AF email.</p>',400);
+ const key=await env.FOLLOWUPS.get((confirm?'contact-confirm:':'contact-unsubscribe:')+await digestHex(token));
+ const record=key?await kvJSON(env.FOLLOWUPS,'contact:'+key):null;
+ if(!record)return page('This link is not valid.','<p>Email hello@bookedandfabulous.com for help.</p>',400);
+ if(request.method==='GET')return page(confirm?'Confirm your BOOKED AF emails.':'Unsubscribe from BOOKED AF updates.', '<p>'+(confirm?'Choose confirm to receive BOOKED AF updates and offers.':'This stops marketing emails. You can still request a Breakdown.')+'</p><form method="post"><button type="submit">'+(confirm?'Confirm subscription':'Unsubscribe')+'</button></form>');
+ if(request.method!=='POST')return page('Method not allowed.','',405);
+ if(confirm){
+  if(record.marketingStatus!=='pending'&&record.marketingStatus!=='subscribed')return page('Please sign up again.','<p>Request a fresh confirmation through the optional signup on your Breakdown.</p>',400);
+  record.marketingStatus='subscribed';record.consentConfirmedAt=record.consentConfirmedAt||new Date().toISOString();
+ }else{record.marketingStatus='unsubscribed';record.unsubscribedAt=new Date().toISOString();}
+ record.updatedAt=new Date().toISOString();await env.FOLLOWUPS.put('contact:'+key,JSON.stringify(record));
+ return page(confirm?'Your subscription is confirmed.':'You’re unsubscribed.','<p>'+(confirm?'You can unsubscribe anytime using the link in your email.':'You will not receive BOOKED AF marketing emails.')+'</p>');
+}
+
 export default {
   async fetch(request, env, ctx) {
+    if(['/confirm-subscription','/unsubscribe'].includes(new URL(request.url).pathname))return contactPreference(request,env);
     if(new URL(request.url).pathname==='/conversion-summary')return conversionSummary(request,env);
     if(['/profile','/events'].includes(new URL(request.url).pathname))return lifecycleAPI(request,env);
     if (new URL(request.url).pathname === '/stripe-webhook') return stripeWelcome(request, env);
@@ -1334,6 +1371,7 @@ export default {
       if (!['breakdown','founding'].includes(data.type)) throw new Error('type');
       if (typeof data.email !== 'string' || data.email.length > 254 || !/^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,}$/.test(data.email.trim())) throw new Error('email');
       if (typeof data.name !== 'string' || !data.name.trim() || !/\p{L}/u.test(data.name) || data.name.length > 60 || !/^[\p{L}\p{M} '\u2019-]*$/u.test(data.name)) throw new Error('name');
+      if(data.marketingConsent!==undefined&&typeof data.marketingConsent!=='boolean')throw new Error('consent');
       if (typeof data.token !== 'string' || !data.token || data.token.length > 2048) throw new Error('token');
       if(data.schema!==undefined&&!['legacy',SHORT_SCHEMA].includes(data.schema))throw new Error('schema');
       answers = data.schema===SHORT_SCHEMA?validateShortAnswers(data.answers):validateAnswers(data.answers);
@@ -1350,6 +1388,7 @@ export default {
       const email = data.email.trim().toLowerCase();
       const name = data.name.trim();
       const result = data.schema===SHORT_SCHEMA?buildShortBreakdown(answers):read(answers);
+      const contact=await saveLaunchContact(env,email,name,data);
       const title = data.type === 'breakdown' ? 'Your BOOKED AF Breakdown' : 'You’re on the founding list';
       let text = data.type === 'breakdown' ? emailCopy(result, name) : `${name ? name + ', you’re' : 'You’re'} on the BOOKED AF: Your Next 30 founding list.\n\nWe’ve received your request for the $49 founding offer. No payment has been taken. We’ll contact you when checkout is ready.\n\nBradley\nBOOKED AF`;
       if(data.type==='breakdown'&&data.schema===SHORT_SCHEMA&&(env.FOLLOWUPS||isStudent(answers))){
@@ -1358,7 +1397,9 @@ export default {
         if(isStudent(answers))text+='\n\nBOOKED AF: FIRST 90 is coming. No payment has been taken.'+(data.first90Interest===true?' You asked us to email you when it is available.':'');
 
       }
-      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify([email,name,data.type,data.schema||'legacy',answers,!!data.first90Interest])));
+      if(data.marketingConsent===true&&contact.marketingStatus==='pending')text+='\n\nCONFIRM YOUR EMAIL UPDATES\nYou asked for BOOKED AF updates and offers. Confirm your subscription: https://booked-af-email.wild-recipe-42df.workers.dev/confirm-subscription?token='+contact.confirmToken;
+      text+='\n\nEMAIL PREFERENCES\nYour Breakdown is a requested email. Marketing is optional. Unsubscribe from updates: https://booked-af-email.wild-recipe-42df.workers.dev/unsubscribe?token='+contact.unsubscribeToken;
+      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify([email,name,data.type,data.schema||'legacy',answers,!!data.first90Interest,!!data.marketingConsent,text])));
       const key = 'booked-v5-short-' + [...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
       const response = await fetch('https://api.resend.com/emails', {
         method:'POST', headers:{'Authorization':`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':key},
@@ -1371,6 +1412,7 @@ export default {
       }
       const sent = await response.json();
       if (!sent.id) return reply({success:false}, 502);
+      const contactKey='contact:'+await digestHex(email),latestContact=await kvJSON(env.FOLLOWUPS,contactKey);latestContact.breakdownEmailId=sent.id;latestContact.breakdownEmailAcceptedAt=new Date().toISOString();await env.FOLLOWUPS.put(contactKey,JSON.stringify(latestContact));
       try{
         const session=/^[-a-zA-Z0-9]{16,80}$/.test(data.analyticsSession||'')?data.analyticsSession:crypto.randomUUID();
         if(data.type==='breakdown'&&isStudent(answers)){
