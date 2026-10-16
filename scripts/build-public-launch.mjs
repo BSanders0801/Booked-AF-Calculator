@@ -5,8 +5,9 @@ const out=new URL('../.website-preview/',import.meta.url).pathname;
 const notice='<section class="baf-section"><p class="baf-kicker">YOUR NEXT 30 · $49 ONE TIME</p><h1>NOT TAKING PAYMENTS YET.</h1><p>We’re finishing the paid experience before opening checkout. Start with your free Breakdown to understand what needs attention first.</p><button class="primary" data-nav="question">Get my free Breakdown →</button><p class="baf-small">Already purchased? Your existing access link still works. For help, email <a href="mailto:hello@bookedandfabulous.com">hello@bookedandfabulous.com</a>.</p></section>';
 await buildSecureSite(out,new URL('../.private-assets/',import.meta.url).pathname,(s,name)=>{
  if(name==='app.js')s=s.replace("const next30CheckoutUrl = 'https://buy.stripe.com/6oU9AU5F72l05pA4RTaAw01';","const next30CheckoutUrl = '#deep-dive';");
+ if(name==='app.js'||name==='site-content.js')s=s.replace(/https:\/\/buy\.stripe\.com\/[A-Za-z0-9]+/g,'#deep-dive');
  if(name==='site-content.js')s+='\nsitePages.paid='+JSON.stringify(notice)+';\n';
- if(name==='index.html')s=s.replace('data-product-nav>Your Next 30 · $49','data-product-nav>Your Next 30').replace(/((?:src|href)="[a-z-]+\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=public-20261016-1"');
+ if(name==='index.html')s=s.replace('data-product-nav>Your Next 30 · $49','data-product-nav>Your Next 30').replace(/((?:src|href)="[a-z-]+\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=public-20261016-2"');
  return s;
 });
 for(const [name,body] of Object.entries({
@@ -15,5 +16,5 @@ for(const [name,body] of Object.entries({
  'sitemap.xml':'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://bookedandfabulous.com/</loc></url></urlset>\n'
 }))await writeFile(out+name,body);
 const app=await readFile(out+'app.js','utf8');
-if(app.includes('https://buy.stripe.com/'))throw Error('Public checkout remains enabled');
+for(const name of ['app.js','site-content.js'])if((await readFile(out+name,'utf8')).includes('https://buy.stripe.com/'))throw Error('Public checkout URL remains in '+name);
 console.log('Public launch built; new checkout disabled; existing paid-access recovery preserved.');
