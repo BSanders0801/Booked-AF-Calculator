@@ -1,0 +1,57 @@
+name: BOOKED AF public launch smoke check
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/public-launch-smoke.yml'
+permissions:
+  contents: read
+jobs:
+  verify-public:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check website, launch scripts, and Worker readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import urllib.request, urllib.error, sys
+          base='https://bookedandfabulous.com'
+          endpoints=[
+            ('homepage',base+'/',b'BOOKED AF'),
+            ('questionnaire',base+'/app.js',b'emailServiceUrl'),
+            ('free experience',base+'/site-ui.js',b'marketing'),
+            ('styling',base+'/site.css',None),
+          ]
+          errors=[]
+          for label,url,needle in endpoints:
+            try:
+              req=urllib.request.Request(url,headers={'User-Agent':'BookedAF-LaunchCheck/1.0','Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=15) as resp:
+                body=resp.read(2_000_000)
+                if resp.status!=200: raise RuntimeError('HTTP '+str(resp.status))
+                if needle and needle.lower() not in body.lower(): raise RuntimeError('expected content absent')
+                print('PASS',label,resp.status,len(body))
+            except Exception as exc:
+              errors.append(label+': '+str(exc))
+              print('FAIL',label,exc)
+          url='https://booked-af-email.wild-recipe-42df.workers.dev/'
+          try:
+            with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'BookedAF-LaunchCheck/1.0'}),timeout=15) as resp:
+              data=resp.read(10000)
+              import json
+              status=json.loads(data)
+              if status.get('ready') is not True: raise RuntimeError('Worker does not report ready=true')
+              if 'short' not in str(status.get('schemas',[])).lower():
+                print('NOTE Worker ready, inspect advertised schemas:',status.get('schemas'))
+              print('PASS email Worker health',resp.status)
+          except Exception as exc:
+            errors.append('email Worker: '+str(exc))
+            print('FAIL email Worker',exc)
+          if errors:
+            print('Launch checks failed:', '; '.join(errors))
+            sys.exit(1)
+          print('Public GET smoke tests passed. Live email POST/delivery and DNS configuration still require separate verification.')
+          PY
