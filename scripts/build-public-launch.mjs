@@ -8,6 +8,7 @@ await buildSecureSite(out,new URL('../.private-assets/',import.meta.url).pathnam
  if(name==='app.js'||name==='site-content.js')s=s.replace(/https:\/\/buy\.stripe\.com\/[A-Za-z0-9]+/g,'#deep-dive');
  if(name==='site-content.js')s+='\nsitePages.paid='+JSON.stringify(notice)+';\n';
  if(name==='index.html')s=s.replace('data-product-nav>Your Next 30 · $49','data-product-nav>Your Next 30').replace(/((?:src|href)="[a-z-]+\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=public-20261016-2"');
+ if(name==='index.html')s=s.replace('site-ui.js?v=public-20261016-2','site-ui.js?v=public-20261016-3');
  return s;
 });
 for(const [name,body] of Object.entries({
