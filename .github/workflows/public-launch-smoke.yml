@@ -20,10 +20,11 @@ jobs:
           import urllib.request, urllib.error, sys
           base='https://bookedandfabulous.com'
           endpoints=[
-            ('homepage',base+'/',b'BOOKED AF'),
+            ('homepage/current release',base+'/',b'site-ui.js?v=public-20261016-3'),
             ('questionnaire',base+'/app.js',b'emailServiceUrl'),
-            ('free experience',base+'/site-ui.js',b'marketing'),
+            ('free experience/consent',base+'/site-ui.js',b'Your email is required to unlock'),
             ('styling',base+'/site.css',None),
+            ('free questions',base+'/breakdown-core.js',None),
           ]
           errors=[]
           for label,url,needle in endpoints:
