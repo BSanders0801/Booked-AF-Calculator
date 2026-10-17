@@ -21,3 +21,5 @@ jobs:
           node-version: 24
       - name: Verify destination and current public host after nameserver update
         run: node scripts/complete-host-cutover.mjs
+      - name: Switch website hosting only after validated Cloudflare TLS
+        run: node scripts/route-public-host.mjs
