@@ -1,0 +1,23 @@
+name: BOOKED AF October 17 nameserver cutover verification
+on:
+  push:
+    branches: [launch/free-consent-20261016]
+    paths: [.github/workflows/cutover-20261017.yml]
+permissions:
+  contents: read
+concurrency:
+  group: booked-af-production-release
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.BOOKED_AF_LAUNCH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify current email records and elapsed DNSSEC trust cache
+        run: node scripts/prepare-launch-dns.mjs
