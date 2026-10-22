@@ -17,6 +17,40 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Validate JavaScript syntax and free result paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in app.js breakdown-core.js site-ui.js site-content.js paid-loader.js lifecycle-ui.js; do
+            node --check "$file"
+          done
+          node <<'JS'
+          const fs=require('fs'),vm=require('vm'),assert=require('assert');
+          const code=fs.readFileSync('breakdown-core.js','utf8');
+          const cx=vm.createContext({});
+          vm.runInContext(code,cx);
+          const stages=['BUILDING','GETTING BUSY','IN DEMAND','BOOKED AF'];
+          for(const stage of stages){
+            const result=vm.runInContext('publicBreakdown({stage:'+JSON.stringify(stage)+',top:{id:"fill"}})',cx);
+            assert.strictEqual(result.stage,stage);
+            const tips=vm.runInContext('freeActionTips('+JSON.stringify(result)+')',cx);
+            assert.strictEqual(tips.length,3);
+            assert(tips.every(t=>typeof t==='string'&&t.length>20));
+            const email=vm.runInContext('publicBreakdownEmail({stage:'+JSON.stringify(stage)+',top:{id:"fill"}},"Test")',cx);
+            assert(email.includes('THREE THINGS YOU CAN DO THIS WEEK'));
+            tips.forEach(t=>assert(email.includes(t)));
+            console.log('PASS career stage:',stage);
+          }
+          const student=vm.runInContext('publicBreakdown({audience:"student",category:"salon",stage:"IN SCHOOL",top:{id:"salon"}})',cx);
+          const studentTips=vm.runInContext('freeActionTips('+JSON.stringify(student)+')',cx);
+          assert.strictEqual(studentTips.length,3);
+          assert(student.offer.includes('nothing to buy'));
+          console.log('PASS student free advice and no purchase');
+          const app=fs.readFileSync('app.js','utf8');
+          assert(app.includes('free-action-list'));
+          assert(app.indexOf('free-action-list')<app.indexOf('checkout-link'));
+          console.log('PASS tips displayed ahead of paid offer');
+          JS
       - name: Check website, launch scripts, and Worker readiness
         shell: bash
         run: |
