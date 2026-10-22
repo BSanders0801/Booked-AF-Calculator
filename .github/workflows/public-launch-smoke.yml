@@ -22,7 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import urllib.request, urllib.error, sys
+          import urllib.request, urllib.error, sys, os, time
           base='https://bookedandfabulous.com'
           endpoints=[
             ('homepage/current release',base+'/',b'site-ui.js?v=public-20261016-3'),
@@ -36,7 +36,7 @@ jobs:
           errors=[]
           for label,url,needle in endpoints:
             try:
-              req=urllib.request.Request(url,headers={'User-Agent':'BookedAF-LaunchCheck/1.0','Cache-Control':'no-cache'})
+              req=urllib.request.Request(url+('?' if '?' not in url else '&')+'qa='+os.environ.get('GITHUB_SHA','unknown'),headers={'User-Agent':'BookedAF-LaunchCheck/1.0','Cache-Control':'no-cache'})
               with urllib.request.urlopen(req,timeout=15) as resp:
                 body=resp.read(2_000_000)
                 if resp.status!=200: raise RuntimeError('HTTP '+str(resp.status))
