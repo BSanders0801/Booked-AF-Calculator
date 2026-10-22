@@ -225,9 +225,20 @@ function publicBreakdown(r) { if(r.publicCopy)return r.publicCopy;
   offer:student?'FIRST 90 is in development. Join the optional updates list to hear when it is ready. There is nothing to buy yet.':'YOUR NEXT 30 turns your answers into a four-week plan, with scripts, practical tools and a way to check what changed. $49 once.',
   url:student?'https://bookedandfabulous.com/#first-90':'https://bookedandfabulous.com/#deep-dive'};
 }
+function freeActionTips(p) {
+ const stage=String(p.stage||'').toUpperCase(), title=String(p.title||'');
+ if(p.student)return ['Ask a salon how its supervised training and feedback work.','Photograph a finished service and write down what you learned.','Practice explaining maintenance, cost and timing in a consultation.'];
+ if(/SECOND VISIT/.test(title))return ['Check how many of your last five clients rebooked.','Explain when and why each client should return.','Find out who follows up when someone leaves without booking.'];
+ if(/MONEY|TICKET|PAID/.test(title))return ['Review revenue and costs for five recent services.','Record how long each took including setup and cleanup.','Identify one fee or service worth a closer look.'];
+ if(/TIME|LIFE|LIMITS/.test(title))return ['Track all work hours this week, including unpaid admin.','Find the recurring task or booking gap costing you time.','Set one realistic boundary for next week.'];
+ if(stage==='BOOKED AF')return ['Find which services gave you the best return on your time last month.','Identify a boundary your full calendar has made harder to keep.','Protect breathing room before adding any more appointments.'];
+ if(stage==='IN DEMAND')return ['Review which appointments have been running late.','Check whether your busiest services pay enough for the time.','Protect one block of personal time on your calendar.'];
+ if(stage==='GETTING BUSY')return ['Ask your last five new clients how they found you.','Look at which services have the most openings next week.','Offer a specific maintenance appointment before each client leaves.'];
+ return ['Find out where your last five new clients came from. Track bookings, not likes.','Make sure your profile shows your work, location, services and how to book.','Explain when each client needs maintenance and offer their next appointment.'];
+}
 function publicBreakdownEmail(r,name) {
  const p=publicBreakdown(r);
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nThis is a starting point for understanding the problem, not a personalized action plan or an income forecast.\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nThis is a starting point for understanding the problem, not a personalized action plan or an income forecast.\n\nTHREE THINGS YOU CAN DO THIS WEEK\n'+freeActionTips(p).map((t,i)=>(i+1)+'. '+t).join('\n')+'\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
 }
 function shortEmailCopy(r,name) { return publicBreakdownEmail(r,name); }
 
