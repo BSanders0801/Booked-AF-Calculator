@@ -312,3 +312,26 @@ body footer .baf-foot-links a:hover{color:#ff2986}
 }
 @media(prefers-reduced-motion:reduce){body button,body a{transition:none!important}}
 @media print{body .brand-hero:after{display:none}body .baf-card{background:#fff;color:#111}}
+
+
+/* Editorial hero v2: intentionally unmistakable change, no image replacement. */
+body .brand-hero{min-height:760px;display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,.32fr);padding:0!important;align-items:stretch;background:#f5f2ef!important;border:0!important;overflow:hidden}
+body .brand-hero:after{display:none!important}
+body .brand-hero .hero-copy{max-width:none;width:100%;padding:clamp(55px,7vw,112px) clamp(30px,6vw,104px);background:#f5f2ef;color:#101010;align-self:center}
+body .brand-hero .baf-kicker{color:#161616;font-weight:850;letter-spacing:.19em;border-top:2px solid #111;padding-top:18px;max-width:max-content}
+body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(62px,7.7vw,128px);line-height:.88;color:#090909!important;letter-spacing:-.092em;max-width:950px;margin:40px 0 38px;font-weight:900}
+body .brand-hero h1 span{color:#f0267d!important}
+body .brand-hero .hero-subline{font-size:clamp(20px,2vw,27px);color:#242024;max-width:33ch;line-height:1.32}
+body .brand-hero .hero-small{color:#4f4b4d}
+body .brand-hero details{border:0;background:transparent;padding:0;color:#222}
+body .brand-hero details summary{color:#242024}
+body .brand-hero details .story-body p{color:#393538}
+body .brand-hero .student-entry{color:#671333}
+body .brand-hero a.text-link{color:#131313}
+body .brand-hero .primary{background:#090909;color:#fff;border:2px solid #090909;font-weight:850;letter-spacing:.025em;padding:20px 28px;min-height:60px}
+body .brand-hero .primary:hover{background:#f0267d;border-color:#f0267d;color:#090909}
+body .brand-hero::before{content:"MAKE MORE.\\A WORK LESS.\\A LIVE BETTER.";white-space:pre;grid-column:2;grid-row:1;display:flex;align-items:flex-end;justify-content:flex-start;writing-mode:vertical-rl;transform:none;background:#f0267d;color:#090909;font:900 clamp(25px,3.1vw,48px)/1.08 "Helvetica Neue",Arial,sans-serif;letter-spacing:-.05em;padding:52px 24px}
+body .brand-hero .hero-copy{grid-column:1;grid-row:1}
+@media(max-width:850px){body .brand-hero{grid-template-columns:1fr 100px;min-height:690px}body .brand-hero::before{font-size:25px;padding:35px 15px}body .brand-hero .hero-copy{padding:70px 30px}body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(56px,8.5vw,85px)}}
+@media(max-width:600px){body .brand-hero{grid-template-columns:1fr;min-height:0}body .brand-hero .hero-copy{grid-row:1;grid-column:1;padding:54px 23px 55px}body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(51px,11.7vw,78px);line-height:.9;margin:32px 0}body .brand-hero::before{grid-row:2;grid-column:1;writing-mode:horizontal-tb;min-height:100px;display:block;padding:23px;font-size:clamp(22px,6vw,33px);line-height:1.05}body .brand-hero .hero-subline{font-size:20px}body .brand-hero .primary{width:100%}}
+@media print{body .brand-hero::before{display:none}}
