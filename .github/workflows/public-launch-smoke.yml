@@ -31,7 +31,7 @@ jobs:
             ('styling',base+'/site.css',None),
             ('free questions',base+'/breakdown-core.js',b'THREE THINGS YOU CAN DO THIS WEEK'),
             ('free results',base+'/app.js',b'free-action-list'),
-            ('paid page status',base+'/site-content.js',b'NOT TAKING PAYMENTS YET'),
+            ('paid page status',base+'/site-content.js',b'THE NEXT STEP IS COMING.'),
           ]
           errors=[]
           for label,url,needle in endpoints:
