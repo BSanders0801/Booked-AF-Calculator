@@ -5,6 +5,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/public-launch-smoke.yml'
+      - 'app.js'
+      - 'breakdown-core.js'
+      - 'site-content.js'
+      - 'site-ui.js'
+      - 'index.html'
 permissions:
   contents: read
 jobs:
@@ -24,7 +29,9 @@ jobs:
             ('questionnaire',base+'/app.js',b'emailServiceUrl'),
             ('free experience/consent',base+'/site-ui.js',b'Your email is required to unlock'),
             ('styling',base+'/site.css',None),
-            ('free questions',base+'/breakdown-core.js',None),
+            ('free questions',base+'/breakdown-core.js',b'THREE THINGS YOU CAN DO THIS WEEK'),
+            ('free results',base+'/app.js',b'free-action-list'),
+            ('paid page status',base+'/site-content.js',b'NOT TAKING PAYMENTS YET'),
           ]
           errors=[]
           for label,url,needle in endpoints:
