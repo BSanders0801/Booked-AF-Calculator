@@ -377,3 +377,8 @@ body .brand-how .baf-kicker,body .brand-how .baf-number{color:#9a164b!important}
 body .brand-how article{border-top-color:#8f8589!important}
 body .brand-how .baf-grid{color:#151313}
 @media(max-width:600px){body .brand-hero .hero-copy{padding:58px 23px 56px!important}body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(46px,11vw,68px)!important;line-height:.97!important}}
+
+/* Free Breakdown: explanation before the primary action */
+.breakdown-explainer{margin:22px 0 20px;max-width:640px}
+.breakdown-explainer h2{font-size:clamp(20px,3vw,27px);line-height:1.15;letter-spacing:-.025em;font-weight:850;margin:0 0 12px;color:#fff}
+.breakdown-explainer p{font-size:clamp(15px,2vw,17px);line-height:1.55;color:#e2dce0;margin:0}
