@@ -234,3 +234,81 @@ body .bradley-lessons .story-body{padding-top:16px}
 
 /* Keep functional labels readable inside the light career example card. */
 body .baf-sample-panel .secondary{color:#1b171a;border-color:#66505e;background:transparent}
+
+
+/* BOOKED AF — editorial identity / October 2026.
+   Design-only layer. Preserve routes, survey, payments and real photographs. */
+:root{--baf-bg:#090909;--baf-panel:#121212;--baf-ink:#f8f7f5;--baf-muted:#aaa8a8;--baf-pink:#ff2986;--baf-line:#343132;--bg:#090909;--panel:#121212;--ink:#f8f7f5;--muted:#aaa8a8;--pink:#ff2986;--line:#343132}
+body{--baf-bg:#090909;--baf-panel:#121212;--baf-ink:#f8f7f5;--baf-muted:#aaa8a8;--baf-pink:#ff2986;--baf-line:#343132;background:#090909;color:#f8f7f5;font-family:Inter,"Helvetica Neue",Arial,sans-serif;letter-spacing:-.012em}
+body header{max-width:1440px;padding:17px clamp(22px,4vw,72px);border-color:#343132;gap:32px}
+body header .brand-logo{width:142px}
+body header nav{gap:clamp(4px,1.4vw,20px)}
+body header nav a{font-size:12px;font-weight:750;letter-spacing:.035em;text-transform:uppercase;border-radius:0;transition:color .2s ease,background .2s ease}
+body header nav a:hover,body header nav a[aria-current=page]{color:#ff2986;background:transparent}
+body header nav a[data-nav=question]{border:1px solid #ff2986;padding-inline:18px}
+body header nav a[data-nav=question]:hover{background:#ff2986;color:#090909}
+body main{max-width:1440px}
+body .baf-kicker,body .eyebrow{color:#ff2986;letter-spacing:.22em;font-weight:850;font-size:11px;line-height:1.5;text-transform:uppercase}
+body h1,body h2,body h3{font-family:"Helvetica Neue",Arial,sans-serif;text-wrap:balance}
+body h1{font-weight:900;letter-spacing:-.075em;line-height:.94}
+body h2{font-weight:850;letter-spacing:-.066em;line-height:1}
+body h3{font-weight:800;letter-spacing:-.04em}
+body .baf-section{padding:clamp(70px,9vw,138px) clamp(22px,6vw,100px);border-color:#302d2e}
+body .baf-section h2{font-size:clamp(39px,5.2vw,78px);max-width:940px}
+body .brand-hero{position:relative;min-height:min(750px,85svh);display:flex;align-items:center;padding:clamp(80px,10vw,164px) clamp(22px,6vw,100px);background:#090909;border-color:#343132;overflow:hidden}
+body .brand-hero:after{content:"AF";position:absolute;z-index:0;right:-.065em;bottom:-.22em;font:900 clamp(250px,36vw,550px)/1 "Helvetica Neue",Arial,sans-serif;letter-spacing:-.13em;color:rgba(255,255,255,.025);pointer-events:none}
+body .brand-hero .hero-copy{position:relative;z-index:1;max-width:1070px}
+body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(62px,10vw,148px);line-height:.88;letter-spacing:-.085em;font-weight:900;max-width:1070px;margin:16px 0 33px}
+body .brand-hero h1 span{color:#ff2986}
+body .hero-subline{font-size:clamp(19px,2.15vw,27px);max-width:35ch;line-height:1.32;color:#f0edef}
+body .hero-philosophy{margin:16px 0 0;max-width:45ch;color:#aaa8a8}
+body .baf-actions{gap:16px;margin-top:34px}
+body button,body a.primary,body a.baf-outline,body .primary,body .secondary{border-radius:2px;transition:background-color .2s ease,color .2s ease,border-color .2s ease,transform .2s ease}
+body button.primary,body .primary,body a.primary{background:#ff2986;color:#090909;font-weight:850}
+body button.primary:hover,body a.primary:hover,body .primary:hover{background:#ff5fa4;transform:translateY(-2px)}
+body .baf-outline:hover,body .secondary:hover{border-color:#f8f7f5;background:#242124}
+body .text-link{font-weight:850;text-decoration-thickness:1px;text-underline-offset:6px}
+body .baf-grid{gap:0}
+body .brand-how{background:#0e0e0e}
+body .brand-how .baf-grid{gap:clamp(20px,4vw,64px)}
+body .brand-how article{border-top:1px solid #666063;padding-top:22px}
+body .brand-how .baf-number{font-size:12px;letter-spacing:.15em}
+body .baf-card,body .screen .card{border:1px solid #333031;background:#141414;border-radius:2px;box-shadow:none}
+body .baf-card.baf-featured{border-top:3px solid #ff2986}
+body .baf-career-section{background:#0e0e0e}
+body .baf-career-section .baf-sample-tab{background:transparent;border:1px solid #5c585a;color:#f8f7f5;border-radius:2px}
+body .baf-career-section .baf-sample-tab[aria-pressed=true]{background:#ff2986;color:#090909;border-color:#ff2986}
+body .baf-career-stage .baf-sample-panel,body .baf-sheet,body .baf-career-sample{box-shadow:none;border-radius:2px;background:#eceae8;color:#171517}
+body .baf-career-stage .baf-sample-panel p{color:#514b4d}
+body .baf-founder{align-items:center}
+body .founder-crop{border-radius:2px;background:#141414}
+body .baf-founder-photo figcaption{border-color:#ff2986}
+body .brand-next{background:#101010}
+body .screen:not(.marketing-screen){max-width:780px}
+body .screen .choice{background:#141414;border:1px solid #50494c;border-radius:2px}
+body .screen .choice:hover,body .screen .choice.selected{border-color:#ff2986;background:#22131b}
+body .screen details,body .capture-shell{border-radius:2px;background:#121212;border-color:#343132}
+body .screen input:not([type=checkbox]):not([type=radio]):not([type=hidden]),body select,body textarea{border-radius:2px;background:#141414;border-color:#565052}
+body footer{max-width:1440px;padding:55px clamp(22px,6vw,100px);border-color:#343132}
+body footer .baf-foot-links a{font-weight:700;text-decoration:none}
+body footer .baf-foot-links a:hover{color:#ff2986}
+@media(max-width:900px){body .brand-hero{min-height:650px}}
+@media(max-width:650px){
+ body header{padding:16px 20px;gap:10px}
+ body header .brand-logo{width:118px}
+ body header nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px}
+ body header nav a{font-size:11px;padding:9px 2px;letter-spacing:.01em}
+ body header nav a[data-nav=question]{padding-left:8px;border-color:#ff2986}
+ body .brand-hero{min-height:65svh;padding:80px 23px 84px;align-items:center}
+ body .brand-hero:after{font-size:64vw;bottom:-.09em}
+ body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(52px,12.1vw,85px);margin:16px 0 28px;letter-spacing:-.075em;line-height:.91}
+ body .hero-subline{font-size:20px}
+ body .baf-section{padding:70px 23px}
+ body .baf-section h2{font-size:clamp(38px,10.5vw,60px)}
+ body .brand-how .baf-grid{gap:38px}
+ body .baf-grid{grid-template-columns:1fr}
+ body .baf-actions .primary{width:100%}
+ body footer{padding:42px 23px}
+}
+@media(prefers-reduced-motion:reduce){body button,body a{transition:none!important}}
+@media print{body .brand-hero:after{display:none}body .baf-card{background:#fff;color:#111}}
