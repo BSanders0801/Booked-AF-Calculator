@@ -353,3 +353,27 @@ body .brand-hero h1,body .brand-hero .hero-copy h1{overflow-wrap:normal;word-bre
  body .brand-hero .baf-kicker{max-width:100%;white-space:normal;overflow-wrap:break-word}
  body .brand-hero .primary{white-space:normal}
 }
+
+
+/* BOOKED AF — black-first luxury editorial homepage. */
+body .brand-hero{background:#090909!important;color:#f8f7f5!important;border-bottom:1px solid #393337!important}
+body .brand-hero .hero-copy{background:#090909!important;color:#f8f7f5!important}
+body .brand-hero .baf-kicker{color:#ff77b4!important;border-top-color:#f8f7f5!important}
+body .brand-hero h1,body .brand-hero .hero-copy h1{color:#f8f7f5!important}
+body .brand-hero h1 span{color:#ff2986!important}
+body .brand-hero .hero-subline{color:#e4dee1!important}
+body .brand-hero .hero-small{color:#bcb3b8!important}
+body .brand-hero details,body .brand-hero details summary{color:#f8f7f5!important}
+body .brand-hero details .story-body p{color:#c9c0c5!important}
+body .brand-hero .student-entry{color:#ff9ec9!important}
+body .brand-hero a.text-link{color:#f8f7f5!important}
+body .brand-hero .primary{background:#ff2986!important;border-color:#ff2986!important;color:#0a0909!important}
+body .brand-hero .primary:hover{background:#ff69ac!important;border-color:#ff69ac!important}
+body .brand-hero::before{background:#ff2986!important;color:#090909!important}
+body .brand-how{background:#eeece9!important;color:#151313}
+body .brand-how h2,body .brand-how h3,body .brand-how article{color:#151313!important}
+body .brand-how p:not(.baf-kicker){color:#484246!important}
+body .brand-how .baf-kicker,body .brand-how .baf-number{color:#9a164b!important}
+body .brand-how article{border-top-color:#8f8589!important}
+body .brand-how .baf-grid{color:#151313}
+@media(max-width:600px){body .brand-hero .hero-copy{padding:58px 23px 56px!important}body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(46px,11vw,68px)!important;line-height:.97!important}}
