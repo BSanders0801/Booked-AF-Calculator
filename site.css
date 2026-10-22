@@ -335,3 +335,21 @@ body .brand-hero .hero-copy{grid-column:1;grid-row:1}
 @media(max-width:850px){body .brand-hero{grid-template-columns:1fr 100px;min-height:690px}body .brand-hero::before{font-size:25px;padding:35px 15px}body .brand-hero .hero-copy{padding:70px 30px}body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(56px,8.5vw,85px)}}
 @media(max-width:600px){body .brand-hero{grid-template-columns:1fr;min-height:0}body .brand-hero .hero-copy{grid-row:1;grid-column:1;padding:54px 23px 55px}body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(51px,11.7vw,78px);line-height:.9;margin:32px 0}body .brand-hero::before{grid-row:2;grid-column:1;writing-mode:horizontal-tb;min-height:100px;display:block;padding:23px;font-size:clamp(22px,6vw,33px);line-height:1.05}body .brand-hero .hero-subline{font-size:20px}body .brand-hero .primary{width:100%}}
 @media print{body .brand-hero::before{display:none}}
+
+
+/* Mobile legibility correction — no CSS escape sequences or clipped copy. */
+body .brand-hero,body .brand-hero *{min-width:0}
+body .brand-hero::before{content:"MAKE MORE.  WORK LESS.  LIVE BETTER.";white-space:normal;overflow-wrap:normal;word-break:normal;letter-spacing:-.045em}
+body .brand-hero .hero-small{max-width:100%;white-space:normal;overflow-wrap:break-word;font-size:13px;line-height:1.5}
+body .brand-hero h1,body .brand-hero .hero-copy h1{overflow-wrap:normal;word-break:normal}
+@media(max-width:850px){
+ body .brand-hero::before{writing-mode:vertical-rl;text-orientation:mixed;align-items:center;justify-content:center;overflow-wrap:break-word}
+}
+@media(max-width:600px){
+ body .brand-hero::before{writing-mode:horizontal-tb;display:flex;justify-content:flex-start;align-items:center;min-height:0;padding:23px 24px;font-size:clamp(20px,5.2vw,27px);line-height:1.15;overflow-wrap:normal}
+ body .brand-hero .hero-copy{overflow:visible}
+ body .brand-hero .hero-small{font-size:12px;letter-spacing:0;max-width:100%;line-height:1.5}
+ body .brand-hero h1,body .brand-hero .hero-copy h1{font-size:clamp(46px,11vw,68px);letter-spacing:-.065em;line-height:.97}
+ body .brand-hero .baf-kicker{max-width:100%;white-space:normal;overflow-wrap:break-word}
+ body .brand-hero .primary{white-space:normal}
+}
