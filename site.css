@@ -339,7 +339,7 @@ body .brand-hero .hero-copy{grid-column:1;grid-row:1}
 
 /* Mobile legibility correction — no CSS escape sequences or clipped copy. */
 body .brand-hero,body .brand-hero *{min-width:0}
-body .brand-hero::before{content:"MAKE MORE.  WORK LESS.  LIVE BETTER.";white-space:normal;overflow-wrap:normal;word-break:normal;letter-spacing:-.045em}
+body .brand-hero::before{content:"YOUR CAREER OWES YOU A LIFE.";white-space:normal;overflow-wrap:normal;word-break:normal;letter-spacing:-.045em}
 body .brand-hero .hero-small{max-width:100%;white-space:normal;overflow-wrap:break-word;font-size:13px;line-height:1.5}
 body .brand-hero h1,body .brand-hero .hero-copy h1{overflow-wrap:normal;word-break:normal}
 @media(max-width:850px){
