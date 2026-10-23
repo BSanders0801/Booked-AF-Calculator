@@ -178,6 +178,10 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
    button.textContent = label;
   }
  };
+ // Keep typed details when visitors review privacy or edit their answers.
+ form.addEventListener('input', () => {
+  try { sessionStorage.setItem('booked-af-email-draft', JSON.stringify({form:form.id, name:form.elements.namedItem('name').value, email:form.elements.namedItem('email').value, schema:state.schema, answers:state.answers})); } catch (_) {}
+ });
  // Recover an unfinished attempt after a refresh, without submitting it automatically.
  try {
   const draft = JSON.parse(sessionStorage.getItem('booked-af-email-draft') || 'null');

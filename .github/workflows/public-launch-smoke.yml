@@ -10,6 +10,10 @@ on:
       - 'site-content.js'
       - 'site-ui.js'
       - 'index.html'
+      - 'site.css'
+      - 'lifecycle-ui.js'
+      - 'paid-loader.js'
+      - 'tests/**'
 permissions:
   contents: read
 jobs:
@@ -19,6 +23,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Test visitor flow without sending email
+        run: |
+          npm install --prefix tests --ignore-scripts --no-audit --no-fund --no-package-lock
+          node tests/visitor-flow.cjs
+          node tests/result-paths.cjs
       - name: Validate JavaScript syntax and free result paths
         shell: bash
         run: |
@@ -61,7 +73,7 @@ jobs:
           import urllib.request, urllib.error, sys, os, time
           base='https://bookedandfabulous.com'
           endpoints=[
-            ('homepage/current release',base+'/',b'site-ui.js?v=public-20261016-3'),
+            ('homepage/current release',base+'/',b'site-ui.js?v=visitor-20261023'),
             ('questionnaire',base+'/app.js',b'emailServiceUrl'),
             ('free experience/consent',base+'/site-ui.js',b'Your email is required to unlock'),
             ('styling',base+'/site.css',None),
@@ -69,6 +81,17 @@ jobs:
             ('free results',base+'/app.js',b'free-action-list'),
             ('paid page status',base+'/site-content.js',b'THE NEXT STEP IS COMING.'),
           ]
+          # Pages builds separately from this check; wait for this release's asset version.
+          expected=b'site-ui.js?v=visitor-20261023'
+          for attempt in range(12):
+            try:
+              req=urllib.request.Request(base+'/?release='+os.environ.get('GITHUB_SHA','unknown'),headers={'Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=15) as resp:
+                if expected in resp.read(2_000_000): break
+            except Exception: pass
+            time.sleep(10)
+          else:
+            sys.exit('Pages has not served the expected release yet. Check the Pages deployment before retrying.')
           errors=[]
           for label,url,needle in endpoints:
             try:
