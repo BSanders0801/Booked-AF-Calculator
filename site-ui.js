@@ -36,6 +36,9 @@
   }
   function hasCompleteResult() {
     if (!Object.keys(state.answers).length) return false;
+    if (state.schema === SHORT_SCHEMA) {
+      try { validateShortAnswers(state.answers); return true; } catch (_) { return false; }
+    }
     return questions.filter(q => !q.when || q.when(state.answers)).every(q => state.answers[q.id] !== undefined);
   }
   function restore() {
@@ -216,6 +219,14 @@
       }
     }
     if (state.view === 'email') {
+      const form = app.querySelector('#form');
+      if (form) {
+        const back = document.createElement('button');
+        back.type = 'button'; back.className = 'subtle'; back.id = 'edit-email-answers';
+        back.textContent = '← Edit my answers';
+        back.onclick = () => { state.index = 0; go('question'); };
+        form.after(back);
+      }
       const note = app.querySelector('.capture-note');
       if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. We’ll also send a few check-ins over the next 90 days so you can revisit your career and priorities. This does not subscribe you to a promotional mailing list. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
       const heading = app.querySelector('.capture-wordmark');
