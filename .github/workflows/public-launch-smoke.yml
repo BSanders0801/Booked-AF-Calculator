@@ -7,6 +7,7 @@ on:
       - '.github/workflows/public-launch-smoke.yml'
       - 'app.js'
       - 'breakdown-core.js'
+      - 'personalization.js'
       - 'site-content.js'
       - 'site-ui.js'
       - 'index.html'
@@ -19,7 +20,7 @@ permissions:
 jobs:
   verify-public:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -31,11 +32,14 @@ jobs:
           npm install --prefix tests --ignore-scripts --no-audit --no-fund --no-package-lock
           node tests/visitor-flow.cjs
           node tests/result-paths.cjs
+          node tests/personalization.cjs
+          npx --prefix tests playwright install --with-deps chromium
+          node tests/browser-journeys.cjs
       - name: Validate JavaScript syntax and free result paths
         shell: bash
         run: |
           set -euo pipefail
-          for file in app.js breakdown-core.js site-ui.js site-content.js paid-loader.js lifecycle-ui.js; do
+          for file in app.js breakdown-core.js personalization.js site-ui.js site-content.js paid-loader.js lifecycle-ui.js; do
             node --check "$file"
           done
           node <<'JS'
@@ -73,16 +77,17 @@ jobs:
           import urllib.request, urllib.error, sys, os, time
           base='https://bookedandfabulous.com'
           endpoints=[
-            ('homepage/current release',base+'/',b'site-ui.js?v=visitor-20261023'),
+            ('homepage/current release',base+'/',b'site-ui.js?v=free-20261023-1'),
             ('questionnaire',base+'/app.js',b'emailServiceUrl'),
             ('free experience/consent',base+'/site-ui.js',b'Your email is required to unlock'),
             ('styling',base+'/site.css',None),
+            ('personalized results',base+'/personalization.js',b'free-20261023-1'),
             ('free questions',base+'/breakdown-core.js',b'THREE THINGS YOU CAN DO THIS WEEK'),
             ('free results',base+'/app.js',b'free-action-list'),
             ('paid page status',base+'/site-content.js',b'THE NEXT STEP IS COMING.'),
           ]
           # Pages builds separately from this check; wait for this release's asset version.
-          expected=b'site-ui.js?v=visitor-20261023'
+          expected=b'site-ui.js?v=free-20261023-1'
           for attempt in range(12):
             try:
               req=urllib.request.Request(base+'/?release='+os.environ.get('GITHUB_SHA','unknown'),headers={'Cache-Control':'no-cache'})
@@ -122,3 +127,4 @@ jobs:
             sys.exit(1)
           print('Public GET smoke tests passed. Live email POST/delivery and DNS configuration still require separate verification.')
           PY
+

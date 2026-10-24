@@ -228,7 +228,7 @@
         form.after(back);
       }
       const note = app.querySelector('.capture-note');
-      if (note) note.innerHTML = 'Your email is required to unlock and send your Breakdown. BOOKED AF receives a copy with your email and answers. Marketing updates are optional and require your separate consent and email confirmation. You can unsubscribe from marketing at any time. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
+      if (note) note.innerHTML = 'Your email is required to unlock your full results here and send a summary. Save the full three steps from your results page. BOOKED AF receives your email and core answers. The extra inquiry and price-check answers stay in this browser. Marketing updates are optional and require your separate consent and email confirmation. You can unsubscribe from marketing at any time. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
       const heading = app.querySelector('.capture-wordmark');
       if (heading) heading.innerHTML = '<img src="assets/booked-af-logo.webp" alt="BOOKED AF - Booked & Fabulous" width="230" height="109" style="max-width:100%;height:auto">';
     }
@@ -293,8 +293,8 @@
     const nav = e.target.closest('[data-nav]');
     if (nav) { e.preventDefault(); go(nav.dataset.nav); return; }
     if (e.target.closest('[data-clear-progress]')) {
-      BookedLifecycle.clear();state.careerData=null;state.first90Interest=false;state.answers = {}; state.done = {}; state.name = ''; state.index = 0; state.emailSent = false;
-      try { localStorage.removeItem(key); localStorage.removeItem('booked-af-career-next30-v2'); sessionStorage.removeItem('booked-af-career-next30-v1'); sessionStorage.removeItem(deliveryKey); sessionStorage.removeItem('booked-af-email-draft'); } catch (_) {}
+      BookedLifecycle.clear();state.careerData=null;state.freePublicCopy=null;state.first90Interest=false;state.answers = {}; state.done = {}; state.name = ''; state.index = 0; state.emailSent = false;
+      try { localStorage.removeItem(key); localStorage.removeItem('booked-af-career-next30-v2'); sessionStorage.removeItem('booked-af-career-next30-v1'); sessionStorage.removeItem(deliveryKey); sessionStorage.removeItem('booked-af-email-draft'); sessionStorage.removeItem('booked-free-copy'); } catch (_) {}
       go('intro');
     }
     if (preview && e.target.closest('.checkout-link')) {
@@ -322,4 +322,5 @@
   }
   render();
 })();
+
 

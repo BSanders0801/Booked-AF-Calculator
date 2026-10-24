@@ -15,7 +15,7 @@ function boot(saved){
   return {ok:true,json:async()=>({ready:true,schemas:['short-v5']})};
  };
  if(saved)w.localStorage.setItem('booked-af-free-progress-v1',JSON.stringify(saved));
- for(const f of ['breakdown-core.js','site-content.js','paid-loader.js','app.js','lifecycle-ui.js','site-ui.js'])vm.runInContext(fs.readFileSync(f,'utf8'),ctx,{filename:f});
+ for(const f of ['breakdown-core.js','personalization.js','site-content.js','paid-loader.js','app.js','lifecycle-ui.js','site-ui.js'])vm.runInContext(fs.readFileSync(f,'utf8'),ctx,{filename:f});
  const $=s=>w.document.querySelector(s);
  const click=s=>{assert($(s),'Missing '+s);$(s).click();assert.equal(errors.length,0,errors.map(e=>e.stack).join('\n'));};
  return {dom,w,ctx,$,click,requests,accept:()=>accept=true};
@@ -51,3 +51,4 @@ function boot(saved){
  console.log('PASS saved progress recovery');
  }finally{d.dom.window.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
+
