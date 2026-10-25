@@ -242,10 +242,20 @@ function freeActionTips(p) {
   'Add appointment time, setup and cleanup time; compare what remains per hour rather than comparing ticket prices alone.',
   'Pick the lowest-return service to investigate. Check timing, costs and demand before changing its price.'
  ];
- if(/TIME|LIFE|LIMITS/.test(title))return [
+ if(/TIME|LIFE|LIMITS|SUCCESS SHOULD LEAVE ROOM|FULL CALENDAR/.test(title))return [
   'Track your working hours for seven days, including unpaid messages, scheduling and cleanup.',
   'Identify one repeated task or gap that takes time without adding value for clients.',
   'Choose one boundary for next week, such as a last booking time, and communicate it before accepting appointments.'
+ ];
+ if(/GOOD WORK STARTS WITH CLEAR EXPECTATIONS/.test(title))return [
+  'Choose one recent consultation where expectations were unclear; note which question would have revealed the mismatch.',
+  'Before the next service, agree on the result, maintenance, price range and what cannot safely be achieved in one visit.',
+  'At checkout, ask whether the result matches the agreed goal and note one thing to clarify next time.'
+ ];
+ if(/THE FIRST SALON SHAPES THE START/.test(title))return [
+  'Ask a potential salon who trains new hires, how often feedback happens and whether there is a clear education plan.',
+  'Speak with one current team member about realistic client-building support rather than judging the salon by appearances.',
+  'Compare two opportunities using training, mentorship, clientele and actual pay terms before deciding.'
  ];
  if(/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))return [
   'List the source of your last five new bookings; if there were none, write down the last five inquiries instead.',
@@ -275,7 +285,7 @@ function freeActionTips(p) {
 }
 function publicBreakdownEmail(r,name) {
  const p=publicBreakdown(r);
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nThis is a starting point for understanding the problem, not a personalized action plan or an income forecast.\n\nTHREE THINGS YOU CAN DO THIS WEEK\n'+freeActionTips(p).map((t,i)=>(i+1)+'. '+t).join('\n')+'\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nThese steps respond to the issue highlighted by your answers. They are starting actions, not an income forecast.\n\nTHREE THINGS YOU CAN DO THIS WEEK\n'+freeActionTips(p).map((t,i)=>(i+1)+'. '+t).join('\n')+'\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
 }
 function shortEmailCopy(r,name) { return publicBreakdownEmail(r,name); }
 
