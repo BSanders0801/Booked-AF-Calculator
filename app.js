@@ -153,7 +153,7 @@ function bindLeadForm(form, {errorId, pendingText, failureText, prepare, complet
    try { sessionStorage.removeItem('booked-af-email-draft'); } catch (err) {}
    // A visitor may leave the form while the request is pending.
    if (!form.isConnected) return;
-   if(result.breakdown){state.freePublicCopy={schema:state.schema,answers:JSON.stringify(state.answers),copy:result.breakdown};try{sessionStorage.setItem('booked-free-copy',JSON.stringify(state.freePublicCopy))}catch{}}complete(values);
+   if(result.breakdown&&verifiedPublicCopy(result.breakdown,state.answers)){state.freePublicCopy={schema:state.schema,answers:JSON.stringify(state.answers),copy:result.breakdown};try{sessionStorage.setItem('booked-free-copy',JSON.stringify(state.freePublicCopy))}catch{}}complete(values);
    if(data.get('first90Interest')==='on')state.first90Interest=true;
    try { sessionStorage.setItem(deliveryKey, JSON.stringify({schema: state.schema, answers: state.answers, name: state.name, emailSent: !!state.emailSent, deepJoined: !!state.deepJoined})); } catch (err) {}
    state.view = 'result';
@@ -244,5 +244,13 @@ function renderServiceTimeQuestion(q){
 
 
 try{state.freePublicCopy=JSON.parse(sessionStorage.getItem('booked-free-copy')||'null')}catch{}
+function verifiedPublicCopy(copy,answers){
+ if(!copy||typeof copy!=='object')return false;
+ const offered=String(answers?.days??'');
+ const text=[copy.title,copy.body,...(Array.isArray(copy.actions)?copy.actions:[]),...(Array.isArray(copy.steps)?copy.steps:[])].join(' ');
+ // An empty book does not mean the stylist stopped accepting clients.
+ if(/^[1-6]$/.test(offered)&&/not taking (?:clients|appointments)|not accepting (?:clients|appointments)|no appointments (?:available|offered)/i.test(text))return false;
+ return true;
+}
 function read(){if(state.schema===SHORT_SCHEMA)return buildShortBreakdown(state.answers);if(state.freePublicCopy?.schema===state.schema&&state.freePublicCopy.answers===JSON.stringify(state.answers))return {stage:state.freePublicCopy.copy.stage,publicCopy:state.freePublicCopy.copy};if(state.schema===SHORT_SCHEMA)return buildShortBreakdown(state.answers);return {stage:({building:'BUILDING',busy:'GETTING BUSY',demand:'IN DEMAND',booked:'BOOKED AF'})[state.answers.stage]||'BUILDING',top:{id:state.answers.goal||'money'}};}
 
