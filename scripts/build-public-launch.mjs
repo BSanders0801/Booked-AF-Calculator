@@ -15,5 +15,13 @@ for(const [name,body] of Object.entries({
  'sitemap.xml':'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://bookedandfabulous.com/</loc></url></urlset>\n'
 }))await writeFile(out+name,body);
 const app=await readFile(out+'app.js','utf8');
+const breakdown=await readFile(out+'breakdown-core.js','utf8');
+// The public branch has moved ahead with answer-specific three-step advice.
+// Refuse to replace it with this older development implementation until merged.
+if(!app.includes('freeActionTips(p)') ||
+   !app.includes('THREE THINGS YOU CAN DO THIS WEEK') ||
+   !breakdown.includes('function freeActionTips(p)')) {
+ throw Error('Release blocked: this development branch is missing the current public three-action Breakdown. Reconcile public results before publishing.');
+}
 if(app.includes('https://buy.stripe.com/'))throw Error('Public checkout remains enabled');
 console.log('Public launch built; new checkout disabled; existing paid-access recovery preserved.');
