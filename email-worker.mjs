@@ -225,7 +225,7 @@ function shortStage(a) {
  if(a.careerstage==='considering')return {key:'considering',label:'EXPLORING A HAIR CAREER'};
  if(isStudent(a))return {key:'school',label:'IN SCHOOL'};
  const chair=shortLane(a)==='chair';
- const stopped=chair?a.days==='0'||a.full==='notyet':a.workdays==='0'||a.workload==='notyet';
+ const stopped=chair?a.days==='0':a.workdays==='0'||a.workload==='notyet';
  const load=chair?a.full:a.workload;
  const key=stopped?'building':chair?({under25:'building',half:'busy',threequarters:'demand',full:'booked'})[load]||'building':({light:'building',half:'busy',busy:'demand',full:'booked'})[load]||'building';
  return {key,label:({building:'BUILDING',busy:'GETTING BUSY',demand:'IN DEMAND',booked:'BOOKED AF'})[key]};
