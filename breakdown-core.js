@@ -227,14 +227,51 @@ function publicBreakdown(r) { if(r.publicCopy)return r.publicCopy;
 }
 function freeActionTips(p) {
  const stage=String(p.stage||'').toUpperCase(), title=String(p.title||'');
- if(p.student)return ['Ask a salon how its supervised training and feedback work.','Photograph a finished service and write down what you learned.','Practice explaining maintenance, cost and timing in a consultation.'];
- if(/SECOND VISIT/.test(title))return ['Check how many of your last five clients rebooked.','Explain when and why each client should return.','Find out who follows up when someone leaves without booking.'];
- if(/MONEY|TICKET|PAID/.test(title))return ['Review revenue and costs for five recent services.','Record how long each took including setup and cleanup.','Identify one fee or service worth a closer look.'];
- if(/TIME|LIFE|LIMITS/.test(title))return ['Track all work hours this week, including unpaid admin.','Find the recurring task or booking gap costing you time.','Set one realistic boundary for next week.'];
- if(stage==='BOOKED AF')return ['Find which services gave you the best return on your time last month.','Identify a boundary your full calendar has made harder to keep.','Protect breathing room before adding any more appointments.'];
- if(stage==='IN DEMAND')return ['Review which appointments have been running late.','Check whether your busiest services pay enough for the time.','Protect one block of personal time on your calendar.'];
- if(stage==='GETTING BUSY')return ['Ask your last five new clients how they found you.','Look at which services have the most openings next week.','Offer a specific maintenance appointment before each client leaves.'];
- return ['Find out where your last five new clients came from. Track bookings, not likes.','Make sure your profile shows your work, location, services and how to book.','Explain when each client needs maintenance and offer their next appointment.'];
+ if(p.student)return [
+  'Ask one prospective salon who supervises new stylists, how often they give feedback, and what training looks like in the first month.',
+  'Photograph one completed service, note what worked and what you would change, and ask an educator for feedback.',
+  'Practice telling a guest what maintenance will cost, when to return, and what their next appointment includes.'
+ ];
+ if(/SECOND VISIT/.test(title))return [
+  'Review your last five first-time clients. Count how many already have a second appointment booked.',
+  'At the end of each consultation, explain the expected maintenance interval and price before offering the next appointment.',
+  'Ask who handles follow-up when a client leaves without rebooking; agree on one clear process and respect contact preferences.'
+ ];
+ if(/MONEY|TICKET|PAID/.test(title))return [
+  'Choose five recent appointments. For each, write down the service price and direct product or supply cost.',
+  'Add appointment time, setup and cleanup time; compare what remains per hour rather than comparing ticket prices alone.',
+  'Pick the lowest-return service to investigate. Check timing, costs and demand before changing its price.'
+ ];
+ if(/TIME|LIFE|LIMITS/.test(title))return [
+  'Track your working hours for seven days, including unpaid messages, scheduling and cleanup.',
+  'Identify one repeated task or gap that takes time without adding value for clients.',
+  'Choose one boundary for next week, such as a last booking time, and communicate it before accepting appointments.'
+ ];
+ if(/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))return [
+  'List the source of your last five new bookings; if there were none, write down the last five inquiries instead.',
+  'Check that your booking page or profile names your location, services, price starting points and a working way to book.',
+  'Pick one existing source of inquiries and make one specific improvement this week; count inquiries that become appointments.'
+ ];
+ if(stage==='BOOKED AF')return [
+  'Compare your three most common services by the money left after direct costs and the hours they require.',
+  'Identify one booking request or schedule exception you accepted even though it crossed a personal boundary.',
+  'Block one nonworking period on next week’s calendar before accepting additional appointments.'
+ ];
+ if(stage==='IN DEMAND')return [
+  'Review your last five late-running appointments and note which step took longer than scheduled.',
+  'Compare your two busiest services by time spent and money left after direct costs.',
+  'Protect one clearly defined personal-time block before opening additional appointments.'
+ ];
+ if(stage==='GETTING BUSY')return [
+  'For the next five inquiries, record where each person found you and whether they book.',
+  'Check next week’s gaps by service type and offer appointments you can realistically complete on time.',
+  'Tell each guest their recommended maintenance interval and offer a date before checkout.'
+ ];
+ return [
+  'Write down where your five most recent inquiries came from and which became paid bookings.',
+  'Open your public profile as a stranger would: confirm your work, location, services and booking link are easy to find.',
+  'Explain maintenance timing and typical cost to your next client, then offer an appropriate next appointment.'
+ ];
 }
 function publicBreakdownEmail(r,name) {
  const p=publicBreakdown(r);
