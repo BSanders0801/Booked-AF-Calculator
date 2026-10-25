@@ -252,5 +252,10 @@ function verifiedPublicCopy(copy,answers){
  if(/^[1-6]$/.test(offered)&&/not taking (?:clients|appointments)|not accepting (?:clients|appointments)|no appointments (?:available|offered)/i.test(text))return false;
  return true;
 }
-function read(){if(state.schema===SHORT_SCHEMA)return buildShortBreakdown(state.answers);if(state.freePublicCopy?.schema===state.schema&&state.freePublicCopy.answers===JSON.stringify(state.answers))return {stage:state.freePublicCopy.copy.stage,publicCopy:state.freePublicCopy.copy};if(state.schema===SHORT_SCHEMA)return buildShortBreakdown(state.answers);return {stage:({building:'BUILDING',busy:'GETTING BUSY',demand:'IN DEMAND',booked:'BOOKED AF'})[state.answers.stage]||'BUILDING',top:{id:state.answers.goal||'money'}};}
+function read(){
+ if(state.freePublicCopy?.schema===state.schema&&state.freePublicCopy.answers===JSON.stringify(state.answers)&&verifiedPublicCopy(state.freePublicCopy.copy,state.answers))
+   return {stage:state.freePublicCopy.copy.stage,publicCopy:state.freePublicCopy.copy};
+ if(state.schema===SHORT_SCHEMA)return buildShortBreakdown(state.answers);
+ return {stage:({building:'BUILDING',busy:'GETTING BUSY',demand:'IN DEMAND',booked:'BOOKED AF'})[state.answers.stage]||'BUILDING',top:{id:state.answers.goal||'money'}};
+}
 
