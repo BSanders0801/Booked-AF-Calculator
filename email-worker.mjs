@@ -322,7 +322,7 @@ function buildShortBreakdown(input) {
  if(isStudent(a))return buildStudentBreakdown(a);
  if(shortLane(a)!=='chair'){const r=buildOutsideChairBreakdown(a);return ['owner','manager'].includes(shortLane(a))?leadershipBreakdown(a,r):r;}
  const stage=shortStage(a).label;
- const starting=a.days==='0'||a.full==='notyet'||a.spend==='notyet';
+ const starting=a.days==='0'; // An empty book or no recent service ticket does not mean appointments are unavailable.
  const room=['under25','half'].includes(a.full), packed=a.full==='full';
  const steps=[], reasons=[];
  const step=(title,body)=>steps.push({id:'short-'+shortFocusGoal(a)+'-'+steps.length,day:['1','2-3','4-6'][steps.length],title,body});
