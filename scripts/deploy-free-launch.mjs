@@ -12,6 +12,7 @@ if(JSON.stringify(before.bindings.map(b=>b.name).sort())!==JSON.stringify(expect
 if(before.bindings.find(b=>b.name==='FOLLOWUPS')?.namespace_id!=='c1030f222e4047ba8fc03636900a14fc')throw Error('Wrong contact store');
 if(!before.bindings.some(b=>b.name==='FULFILLMENT'&&b.class_name==='PurchaseFulfillment'))throw Error('Existing buyer binding changed');
 if(active?.length!==1||active[0].percentage!==100)throw Error('Concurrent rollout');
+if(process.env.EXPECTED_PRODUCTION_VERSION&&active[0].version_id!==process.env.EXPECTED_PRODUCTION_VERSION)throw Error('Production revision changed since audit');
 if(!Array.isArray(schedules.schedules))throw Error('Schedule response changed');
 const cfg=JSON.parse(await readFile('.release-review/api.config.json','utf8'));cfg.triggers={crons:schedules.schedules.map(s=>s.cron)};cfg.observability=before.observability||{enabled:false};
 await writeFile('.release-review/api.config.json',JSON.stringify(cfg));
@@ -21,13 +22,7 @@ if(process.env.VERIFY_ONLY!=='true'){try{execFileSync('npx',['--yes','wrangler@4
 const after=await api(base+'/settings');
 for(const name of expected)if(!after.bindings.some(b=>b.name===name))throw Error('Missing preserved binding');
 if(JSON.stringify((await api(base+'/schedules')).schedules.map(s=>s.cron))!==JSON.stringify(cfg.triggers.crons))throw Error('Schedule changed');
-let healthy=false;for(let i=0;i<5;i++){try{const h=await(await fetch('https://booked-af-email.wild-recipe-42df.workers.dev',{signal:AbortSignal.timeout(10000)})).json();if(h.launchReady){healthy=true;break;}}catch{}await new Promise(r=>setTimeout(r,2000));}if(!healthy)throw Error('Live health failed');
+let healthy=false;for(let i=0;i<5;i++){try{const h=await(await fetch('https://booked-af-email.wild-recipe-42df.workers.dev',{signal:AbortSignal.timeout(10000)})).json();if(h.launchReady&&h.personalizationVersion==='free-20261025-2'){healthy=true;break;}}catch{}await new Promise(r=>setTimeout(r,2000));}if(!healthy)throw Error('Live health failed');
 for(const [path,status] of [['/paid-content',401],['/verify-checkout?session_id=invalid',400],['/unsubscribe?token=invalid',400]]){const r=await fetch('https://booked-af-email.wild-recipe-42df.workers.dev'+path);if(r.status!==status||!r.headers.get('cache-control')?.includes('no-store'))throw Error('Live guard failed '+path);}
-console.log('Free-launch API verified. Marketing remains paused; paid guards verified.');
-const zones=await api('/zones?name=bookedandfabulous.com');
-console.log('Domain zone:',JSON.stringify(zones.map(z=>({name:z.name,status:z.status,name_servers:z.name_servers}))));
-if(zones.length===1){try{const records=await api('/zones/'+zones[0].id+'/dns_records?per_page=100');console.log('DNS inventory:',JSON.stringify(records.map(r=>({type:r.type,name:r.name,content:r.content,priority:r.priority,proxied:r.proxied}))));}catch{console.log('DNS record inventory BLOCKED: token cannot read zone records. No DNS changed.');}}
-try{
- const keys=await api('/accounts/'+account+'/storage/kv/namespaces/c1030f222e4047ba8fc03636900a14fc/keys?prefix=contact%3A&limit=100');
- console.log('Persistent contact store admin retrieval:',JSON.stringify({readable:true,contactKeysOnFirstPage:keys.length}));
-}catch{console.log('Persistent contact store admin retrieval BLOCKED: current deployment token lacks KV read access. Runtime storage is covered by behavior tests.');}
+console.log('Free-launch API verified at free-20261025-2. Marketing remains paused; paid guards verified.');
+console.log('Active deployment:',JSON.stringify((await api(base+'/deployments')).deployments?.[0]));

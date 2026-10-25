@@ -19,7 +19,8 @@ jobs:
       - run: npm --prefix tests test && npm --prefix tests run test:security
       - name: Verify public answers and browser journeys
         run: |
-          cp tests/public/* public/tests/ 2>/dev/null || { mkdir -p public/tests; cp tests/public/* public/tests/; }
+          mkdir -p public/tests
+          cp tests/public/* public/tests/
           ln -s ../../tests/node_modules public/tests/node_modules
           cd public
           node tests/personalization.cjs
@@ -33,3 +34,24 @@ jobs:
           name: beta-public-browser-review
           path: /tmp/booked-result-*.png
           if-no-files-found: warn
+
+  deploy-api:
+    if: github.ref == 'refs/heads/build/next30-shell-p04'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: booked-af-production-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Build API with existing paid access preserved
+        run: node scripts/prepare-release.mjs && node scripts/sync-free-engine.mjs --check && node scripts/build-public-launch.mjs
+      - name: Deploy and verify production API
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFARE_API_TOKEN }}
+          EXPECTED_PRODUCTION_VERSION: 157d9e3d-9e66-44eb-aeb3-f424cc297546
+        run: node scripts/deploy-free-launch.mjs
