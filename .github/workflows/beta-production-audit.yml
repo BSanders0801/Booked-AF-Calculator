@@ -1,0 +1,26 @@
+name: Beta production deployment audit
+on:
+  push:
+    branches: [build/next30-shell-p04]
+    paths: [.github/workflows/beta-production-audit.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Read deployment metadata without secret values
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFARE_API_TOKEN }}
+        run: |
+          node --input-type=module <<'JS'
+          const base='https://api.cloudflare.com/client/v4/accounts/30ec5e35d67ddd1a1bab06c2263b2159/workers/scripts/booked-af-email';
+          async function get(p){const r=await fetch(base+p,{headers:{Authorization:'Bearer '+process.env.CLOUDFLARE_API_TOKEN}});const d=await r.json();if(!r.ok||!d.success)throw Error('Read failed '+r.status);return d.result;}
+          const settings=await get('/settings');
+          console.log(JSON.stringify({main_module:settings.main_module,migration_tag:settings.migration_tag,bindings:settings.bindings.map(b=>({name:b.name,type:b.type,class_name:b.class_name,namespace_id:b.namespace_id})),compatibility_date:settings.compatibility_date}));
+          console.log('deployments',JSON.stringify(await get('/deployments')));
+          console.log('schedules',JSON.stringify(await get('/schedules')));
+          JS
