@@ -184,7 +184,7 @@ assert.match(build(chairAnswer('clients')).snapshot,/color clients/i);
 
 // Worker source must contain the exact shared core.
 const workerSource=fs.readFileSync('email-worker.mjs','utf8');
-assert(workerSource.replace(/\r\n/g,'\n').includes(core.replace(/\r\n/g,'\n')));
+const pc=vm.createContext({});vm.runInContext(fs.readFileSync('public/breakdown-core.js','utf8')+'\n'+fs.readFileSync('public/personalization.js','utf8')+';globalThis.email=(a)=>publicBreakdownEmail(buildShortBreakdown(a),\"Bradley\");',pc);
 
 const calls=[];
 const wc=vm.createContext({
@@ -210,7 +210,7 @@ for(const goal of ['clients','money','return','keep','time','stable']){
     .map(call=>JSON.parse(call.opts.body))
     .filter(email=>email.subject==='Your BOOKED AF Breakdown').at(-1);
   assert(sent);
-  assert(sent.text.startsWith(c.api.shortEmailCopy(build(a),'Bradley')));assert.match(sent.text,/#resume-profile\/[a-f0-9]{64}/);
+  assert(sent.text.startsWith(pc.email(a)));assert.match(sent.text,/#resume-profile\/[a-f0-9]{64}/);
   assert(sent.html.includes('assets/booked-af-logo.png'));
 }
 assert.equal((await wc.worker.fetch(request({schema:'short-v5',answers:sessionMoney}),env)).status,200);

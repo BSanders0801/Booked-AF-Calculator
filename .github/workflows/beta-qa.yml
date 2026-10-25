@@ -1,0 +1,35 @@
+name: BOOKED AF beta verification
+on:
+  push:
+    branches: [fix/beta-launch-20261025, build/next30-shell-p04]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm --prefix tests ci --ignore-scripts --no-audit --no-fund
+      - run: npm --prefix tests audit --audit-level=high
+      - run: npm --prefix tests test && npm --prefix tests run test:security
+      - name: Verify public answers and browser journeys
+        run: |
+          cp tests/public/* public/tests/ 2>/dev/null || { mkdir -p public/tests; cp tests/public/* public/tests/; }
+          ln -s ../../tests/node_modules public/tests/node_modules
+          cd public
+          node tests/personalization.cjs
+          node tests/result-paths.cjs
+          node tests/visitor-flow.cjs
+          ../tests/node_modules/.bin/playwright install --with-deps chromium
+          node tests/browser-journeys.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: beta-public-browser-review
+          path: /tmp/booked-result-*.png
+          if-no-files-found: warn
