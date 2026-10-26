@@ -1,5 +1,7 @@
 # BOOKED AF — Product Standard (approved direction, 2026-10-26)
 
+Current implementation and verification handoff: [October 26 build handoff](BOOKED_AF_BUILD_HANDOFF_2026-10-26.md). Read it before resuming work; this document remains the product standard.
+
 ## Promise
 GET BOOKED. MAKE MONEY. HAVE A LIFE.
 
