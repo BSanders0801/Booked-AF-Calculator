@@ -27,3 +27,25 @@ assert.match(result({...base,goal:['stable'],savings:'solid'}).title,/CUSHION/);
 const clean=complete({...base,goal:['time'],overrun:'gaps'});const stale=run(`publicBreakdown(buildShortBreakdown(${JSON.stringify({...clean,inquiries:'lost',pricecheck:'short',costleak:'discount'})}))`);assert.deepEqual(JSON.parse(JSON.stringify(stale)),result(clean));
 assert.throws(()=>run(`validateShortAnswers(${JSON.stringify({...clean,overrun:'made-up'})})`));
 console.log('PASS '+count+' answer combinations; '+variants.size+' distinct recommendation sets; evidence, stage, secondary goals, student/lane guards, stale-answer exclusion, share-copy parity');
+
+// An empty calendar is not a statement that appointments are unavailable.
+for(const days of ['1','2','3','4','5','6'])for(const full of ['notyet','under25','half','threequarters','full'])for(const goal of ['clients','money','return','keep','time','stable']){
+ const p=result({...base,days,full,goal:[goal],spend:'275'});
+ assert.doesNotMatch([p.body,...p.actions].join(' '),/not taking (?:clients|appointments)|not offering appointments|before the first appointment/i);
+}
+console.log('PASS 180 appointment-availability regressions including empty books');
+
+// Older saved profiles must not invent the answers to newly introduced questions.
+const older=complete({...base,goal:['clients'],returning:'most'});delete older.inquiries;
+const prior=JSON.parse(JSON.stringify(run(`publicBreakdown(buildShortBreakdown(${JSON.stringify(older)}))`)));
+assert.match(prior.actions[0],/haven’t tracked/);
+assert.doesNotMatch(prior.actions.join(' '),/hardly anyone asks/);
+assert.match(prior.experiment.measure,/seven-day record/);
+const exploring=result({careerstage:'considering',readiness:'consultation'});
+assert.match(exploring.experiment.decision,/before enrolling/);
+assert.doesNotMatch(exploring.experiment.script,/watch me practice/);
+const gaps=result({...base,goal:['time'],overrun:'gaps'});
+assert.match(gaps.experiment.script,/beside existing appointments/);
+const fits=result({...base,goal:['time'],overrun:'none'});
+assert.match(fits.experiment.script,/pay and capacity/);
+console.log('PASS legacy unknown answers, prospective students, schedule gaps and on-time appointments receive consistent experiments');

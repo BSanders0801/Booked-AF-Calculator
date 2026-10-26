@@ -34,6 +34,6 @@ assert.equal(publicBreakdown({stage:'BUILDING',top:{id:'keep'}}).topicId,'keep')
 assert.equal(freeActionTips({student:true,stage:'BUILDING'}).length,3);
 count++;
 assert.ok(ui.includes('HERE’S THE MOVE'),'Public results missing steps');
-assert.ok(ui.includes('Here's the problem worth tackling first'),'Public results missing clear guidance');
+assert.ok(ui.includes("Here's the problem worth tackling first"),'Public results missing clear guidance');
 assert.ok(!ui.includes('Start with the check below'),'Old ambiguous guidance returned');
 console.log('PASS: '+count+' stage/topic cases plus public results consistency.');

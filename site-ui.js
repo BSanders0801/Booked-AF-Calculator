@@ -228,7 +228,7 @@
         form.after(back);
       }
       const note = app.querySelector('.capture-note');
-      if (note) note.innerHTML = 'Your email is required to unlock your full results here and send a summary. Save the full three steps from your results page. BOOKED AF receives your email and core answers. The extra inquiry and price-check answers stay in this browser. Marketing updates are optional and require your separate consent and email confirmation. You can unsubscribe from marketing at any time. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
+      if (note) note.innerHTML = 'Your email is required to unlock your results here and email the same three steps. BOOKED AF receives your email and the answers used for your Breakdown. Marketing updates are optional and require your separate consent and email confirmation. You can unsubscribe from marketing at any time. <a href="#privacy" data-nav="privacy">Read our Privacy Policy.</a>';
       const heading = app.querySelector('.capture-wordmark');
       if (heading) heading.innerHTML = '<img src="assets/booked-af-logo.webp" alt="BOOKED AF - Booked & Fabulous" width="230" height="109" style="max-width:100%;height:auto">';
     }

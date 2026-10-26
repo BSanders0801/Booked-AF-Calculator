@@ -15,6 +15,7 @@ on:
       - 'lifecycle-ui.js'
       - 'paid-loader.js'
       - 'tests/**'
+      - 'scripts/check-public-release.py'
 permissions:
   contents: read
 jobs:
@@ -29,102 +30,14 @@ jobs:
           node-version: '24'
       - name: Test visitor flow without sending email
         run: |
-          npm install --prefix tests --ignore-scripts --no-audit --no-fund --no-package-lock
+          npm ci --prefix tests --ignore-scripts --no-audit --no-fund
           node tests/visitor-flow.cjs
           node tests/result-paths.cjs
           node tests/personalization.cjs
-          npx --prefix tests playwright install --with-deps chromium
+          npx --prefix tests playwright install --with-deps chromium webkit
           node tests/browser-journeys.cjs
-      - name: Validate JavaScript syntax and free result paths
-        shell: bash
-        run: |
-          set -euo pipefail
-          for file in app.js breakdown-core.js personalization.js site-ui.js site-content.js paid-loader.js lifecycle-ui.js; do
-            node --check "$file"
-          done
-          node <<'JS'
-          const fs=require('fs'),vm=require('vm'),assert=require('assert');
-          const code=fs.readFileSync('breakdown-core.js','utf8');
-          const cx=vm.createContext({});
-          vm.runInContext(code,cx);
-          const stages=['BUILDING','GETTING BUSY','IN DEMAND','BOOKED AF'];
-          for(const stage of stages){
-            const result=vm.runInContext('publicBreakdown({stage:'+JSON.stringify(stage)+',top:{id:"fill"}})',cx);
-            assert.strictEqual(result.stage,stage);
-            const tips=vm.runInContext('freeActionTips('+JSON.stringify(result)+')',cx);
-            assert.strictEqual(tips.length,3);
-            assert(tips.every(t=>typeof t==='string'&&t.length>20));
-            const email=vm.runInContext('publicBreakdownEmail({stage:'+JSON.stringify(stage)+',top:{id:"fill"}},"Test")',cx);
-            assert(email.includes('THREE THINGS YOU CAN DO THIS WEEK'));
-            tips.forEach(t=>assert(email.includes(t)));
-            console.log('PASS career stage:',stage);
-          }
-          const student=vm.runInContext('publicBreakdown({audience:"student",category:"salon",stage:"IN SCHOOL",top:{id:"salon"}})',cx);
-          const studentTips=vm.runInContext('freeActionTips('+JSON.stringify(student)+')',cx);
-          assert.strictEqual(studentTips.length,3);
-          assert(student.offer.includes('nothing to buy'));
-          console.log('PASS student free advice and no purchase');
-          const app=fs.readFileSync('app.js','utf8');
-          assert(app.includes('free-action-list'));
-          assert(app.indexOf('free-action-list')<app.indexOf('checkout-link'));
-          console.log('PASS tips displayed ahead of paid offer');
-          JS
-      - name: Check website, launch scripts, and Worker readiness
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import urllib.request, urllib.error, sys, os, time
-          base='https://bookedandfabulous.com'
-          endpoints=[
-            ('homepage/current release',base+'/',b'site-ui.js?v=free-20261023-1'),
-            ('questionnaire',base+'/app.js',b'emailServiceUrl'),
-            ('free experience/consent',base+'/site-ui.js',b'Your email is required to unlock'),
-            ('styling',base+'/site.css',None),
-            ('personalized results',base+'/personalization.js',b'free-20261023-1'),
-            ('free questions',base+'/breakdown-core.js',b'THREE THINGS YOU CAN DO THIS WEEK'),
-            ('free results',base+'/app.js',b'free-action-list'),
-            ('paid page status',base+'/site-content.js',b'THE NEXT STEP IS COMING.'),
-          ]
-          # Pages builds separately from this check; wait for this release's asset version.
-          expected=b'site-ui.js?v=free-20261023-1'
-          for attempt in range(12):
-            try:
-              req=urllib.request.Request(base+'/?release='+os.environ.get('GITHUB_SHA','unknown'),headers={'Cache-Control':'no-cache'})
-              with urllib.request.urlopen(req,timeout=15) as resp:
-                if expected in resp.read(2_000_000): break
-            except Exception: pass
-            time.sleep(10)
-          else:
-            sys.exit('Pages has not served the expected release yet. Check the Pages deployment before retrying.')
-          errors=[]
-          for label,url,needle in endpoints:
-            try:
-              req=urllib.request.Request(url+('?' if '?' not in url else '&')+'qa='+os.environ.get('GITHUB_SHA','unknown'),headers={'User-Agent':'BookedAF-LaunchCheck/1.0','Cache-Control':'no-cache'})
-              with urllib.request.urlopen(req,timeout=15) as resp:
-                body=resp.read(2_000_000)
-                if resp.status!=200: raise RuntimeError('HTTP '+str(resp.status))
-                if needle and needle.lower() not in body.lower(): raise RuntimeError('expected content absent')
-                print('PASS',label,resp.status,len(body))
-            except Exception as exc:
-              errors.append(label+': '+str(exc))
-              print('FAIL',label,exc)
-          url='https://booked-af-email.wild-recipe-42df.workers.dev/'
-          try:
-            with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'BookedAF-LaunchCheck/1.0'}),timeout=15) as resp:
-              data=resp.read(10000)
-              import json
-              status=json.loads(data)
-              if status.get('ready') is not True: raise RuntimeError('Worker does not report ready=true')
-              if 'short' not in str(status.get('schemas',[])).lower():
-                print('NOTE Worker ready, inspect advertised schemas:',status.get('schemas'))
-              print('PASS email Worker health',resp.status)
-          except Exception as exc:
-            errors.append('email Worker: '+str(exc))
-            print('FAIL email Worker',exc)
-          if errors:
-            print('Launch checks failed:', '; '.join(errors))
-            sys.exit(1)
-          print('Public GET smoke tests passed. Live email POST/delivery and DNS configuration still require separate verification.')
-          PY
-
+          BROWSER_ENGINE=webkit node tests/browser-journeys.cjs
+      - name: Validate free result paths
+        run: node tests/check-free-breakdown.mjs
+      - name: Verify the exact deployed website and email engine
+        run: python3 scripts/check-public-release.py

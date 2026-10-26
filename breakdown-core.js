@@ -154,13 +154,13 @@ function chairPrimaryLabel(a) {
 function chairSnapshot(a) {
  const days=a.days==='6'?'6-7':a.days;
  const dayText=days&&days!=='0'?(days==='1'?'1 client day':days+' client days'):'no client days';
- const load=({notyet:'You’re starting from scratch.',under25:'There’s plenty of room in the book.',half:'Your book is about half full.',threequarters:'You’re busy, but there is still room.',full:'Your book is packed or close to it.'})[a.full]||'';
- return 'Most of your hair income comes from '+chairPrimaryLabel(a)+'. You have '+dayText+' available each week. '+load;
+ const load=({notyet:'You described your book as basically empty.',under25:'There’s plenty of room in the book.',half:'Your book is about half full.',threequarters:'You’re busy, but there is still room.',full:'Your book is packed or close to it.'})[a.full]||'';
+ return 'Your selected work is '+chairPrimaryLabel(a)+'. You offer '+dayText+' available each week. '+load;
 }
 function outsideSnapshot(a) {
  const role=({session:'session / editorial / commercial work',events:'bridal + event work',education:'education + beauty brand work',owner:'salon ownership',manager:'salon management',management:'salon leadership',mix:'a mix of hair work',other:'other hair work',notearning:'hair work that is not paying you right now'})[shortLane(a)]||'hair work';
  const load=({notyet:'You’re not booking paid work right now.',light:'You have a lot of open time.',half:'You’re working about half as much as you want.',busy:'You’re busy, with some room.',full:'You’re as busy as you want to be or close to it.'})[a.workload]||'';
- return 'Most of your hair income comes from '+role+'. '+load;
+ return 'Your selected work is '+role+'. '+load;
 }
 function shortVisibleQuestions(answers) {
  return shortQuestions.filter(q=>!q.when||q.when(answers));
@@ -316,7 +316,7 @@ function freeActionTips(p) {
 }
 function publicBreakdownEmail(r,name) {
  const p=publicBreakdown(r);
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nHere is one practical play to test against the problem your answers highlighted. Results depend on your circumstances.\n\nHERE’S THE MOVE\n'+freeActionTips(p).map((t,i)=>(i+1)+'. '+t).join('\n')+'\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nHere is one practical play to test against the problem your answers highlighted. Results depend on your circumstances.\n\nHERE’S THE MOVE\n'+freeActionTips(p).map((t,i)=>(i+1)+'. '+t).join('\n')+(p.experiment?'\n\nWHY THIS IS WORTH TESTING\n'+p.experiment.mechanism+'\n\nUSE THIS\n'+p.experiment.script+'\n\nMEASURE THIS\n'+p.experiment.measure+'\n\nKEEP, ADJUST OR STOP\n'+p.experiment.decision:'')+'\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
 }
 function shortEmailCopy(r,name) { return publicBreakdownEmail(r,name); }
 
