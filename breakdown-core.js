@@ -229,28 +229,28 @@ function publicBreakdown(r) { if(r.publicCopy)return r.publicCopy;
    local:['YOUR NEXT CLIENT MAY ALREADY TRUST SOMEONE NEARBY.','You chose local relationships. Borrow trust through a real, relevant business connection rather than another desperate promotion.'],
    models:['A MODEL IS ONLY USEFUL IF THE WORK ATTRACTS PAYING CLIENTS.','You chose portfolio building. Design the appointment to demonstrate a service you actually want to sell—not just to produce another pretty photo.']
   };
-  if(diagnoses[signals.network])return {student,stage:r.stage,title:diagnoses[signals.network][0],body:diagnoses[signals.network][1],signals,
+  if(diagnoses[signals.network])return {student,stage:r.stage,title:diagnoses[signals.network][0],body:diagnoses[signals.network][1],signals,topicId:id,
    offer:'YOUR NEXT 30 turns your answers into a four-week plan, with scripts, practical tools and a way to check what changed. $49 once.',
    url:'https://bookedandfabulous.com/#deep-dive'};
  }
  const topic=topics[id]||['YOUR CAREER DESERVES A CLOSER LOOK.','Clients, money, time and the life around the work do not always improve together.'];
- return {student,stage:r.stage,title:topic[0],body:topic[1],signals:r.signals||{},
+ return {student,stage:r.stage,title:topic[0],body:topic[1],signals:r.signals||{},topicId:id,
   offer:student?'FIRST 90 is in development. Join the optional updates list to hear when it is ready. There is nothing to buy yet.':'YOUR NEXT 30 turns your answers into a four-week plan, with scripts, practical tools and a way to check what changed. $49 once.',
   url:student?'https://bookedandfabulous.com/#first-90':'https://bookedandfabulous.com/#deep-dive'};
 }
 function freeActionTips(p) {
- const title=String(p.title||'').toUpperCase(), stage=String(p.stage||'').toUpperCase();
+ const title=String(p.title||'').toUpperCase(), stage=String(p.stage||'').toUpperCase(), topic=String(p.topicId||'');
  if(p.student)return [
   'Take two salon interviews. Ask each: “Who trains me, how often, and how do you know I’m ready for clients?” A pretty salon without a training plan is just expensive wallpaper.',
   'Choose one finished service and document the consultation, formula or technique, result and what you would do differently. That is a portfolio case study, not another random photo.',
   'Compare the two salons on supervision, actual paid opportunities and client-building support. Pick the stronger learning environment—not the prettier Instagram account.'
  ];
- if(/SECOND VISIT/.test(title))return [
+ if(['return','rebooking'].includes(topic)||/SECOND VISIT/.test(title))return [
   'Choose one service clients should maintain regularly. At consultation, name its realistic return window and explain what happens if they wait longer.',
   'Use this at checkout: “To keep this result looking right, I’d see you again in about [interval]. I have [date] or [date]. Which works?” Do not pretend the interval is identical for every guest.',
   'For the next five eligible clients, record how many leave with a return date. If they decline, record why—timing, price, or uncertainty. Fix the objection you actually hear.'
  ];
- if(/ROOM IN THE BOOK|ROOM TO BUILD/.test(title)&&p.signals&&p.signals.network){
+ if((['fill','clients'].includes(topic)||/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))&&p.signals&&p.signals.network){
   const move=p.signals.network, vis=new Set(p.signals.visibility||[]);
   if(move==='past')return [
    'Choose five former or happy clients you already have permission to contact. Ask for a personal introduction, not a mass referral blast.',
@@ -278,27 +278,27 @@ function freeActionTips(p) {
    'Count inquiries and confirmed bookings for seven days. Lots of views with no inquiries means the offer or audience needs adjusting.'
   ];
  }
- if(/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))return [
+ if(['fill','clients'].includes(topic)||/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))return [
   'Pick ONE service you want to book more of this week. Build a specific client-facing offer: who it suits, the result, realistic starting price and two genuine openings. A discount is not the strategy.',
   'Use a real client result with permission. Caption framework: “Want [specific result] without [common frustration]? I have [two real openings] in [area]. Message [booking instruction] for a consultation and appointment.” Adapt the promise to work you can deliver.',
   'For seven days, answer qualified inquiries with two actual appointment options and a clear price expectation. Count inquiries, appointments offered and confirmed bookings. If inquiries arrive but nobody books, investigate the objection—not your follower count.'
  ];
- if(/MONEY|TICKET|PAID|MONEY IN/.test(title))return [
+ if(['cheap','money','keep'].includes(topic)||/MONEY|TICKET|PAID|MONEY IN/.test(title))return [
   'Take two services you perform often. Calculate what you KEEP after direct product costs and salon commission or rent allocation—not what the client pays.',
   'Divide each service’s remaining money by its total chair time, including processing overlap and cleanup. Example: $120 left over 3 hours is $40 per hour; $95 left over 90 minutes is about $63 per hour.',
   'Choose ONE underperforming service and test a change: tighter booking time, better add-on structure where appropriate, or a carefully justified price adjustment. Compare the next three appointments before declaring victory.'
  ];
- if(/TIME|LIFE|LIMITS|SUCCESS SHOULD LEAVE ROOM|FULL CALENDAR/.test(title))return [
+ if(['time','life','boundaries'].includes(topic)||/TIME|LIFE|LIMITS|SUCCESS SHOULD LEAVE ROOM|FULL CALENDAR/.test(title))return [
   'Choose the one recurring appointment type or exception most responsible for extending your days. Name the real cost in hours, not just the annoyance.',
   'Write a boundary clients can understand: “My last appointment for [service] starts at [time] so I can give it the time it needs.” Apply it when offering new times; honor existing commitments.',
   'Protect one specific block of personal time next week. Track whether revenue changes before cutting more hours. Freedom is useful only if the math works.'
  ];
- if(/GOOD WORK STARTS WITH CLEAR EXPECTATIONS/.test(title))return [
+ if(topic==='consultation'||/GOOD WORK STARTS WITH CLEAR EXPECTATIONS/.test(title))return [
   'For your next consultation, ask for one inspiration photo AND one example of what they do not want. Agree on maintenance and what can safely happen today.',
   'Say: “Here’s what we can achieve in this appointment, what would take another visit, and the price range before we start.” Get agreement before mixing color or beginning the service.',
   'After three appointments, note whether the consultation prevented a surprise, redo or pricing misunderstanding. Tighten the question that clients keep finding confusing.'
  ];
- if(/THE FIRST SALON/.test(title))return [
+ if(topic==='salon'||/THE FIRST SALON/.test(title))return [
   'Ask two prospective salons for the exact training schedule, commission or hourly terms, and how new clients are allocated. “We’re like a family” is not an answer.',
   'Talk with a newer team member about the last month: how many clients they received and whether paid education actually happened.',
   'Compare both offers on expected take-home pay, mentorship and realistic opportunity. Get the important terms in writing.'
