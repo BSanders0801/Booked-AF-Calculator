@@ -1,6 +1,12 @@
 # BOOKED AF build handoff — October 26, 2026
 
-## Continue here
+## Later October 26 continuation
+
+The current authoritative implementation and beta-readiness record is now in the verified private repository: [BOOKED AF project status](https://github.com/BSanders0801/Booked-AF-Private/blob/main/docs/BOOKED_AF_PROJECT_STATUS.md). New proprietary paid code is committed there, not in this public repository. This update supersedes the unfinished paid-integration and browser-testing notes below; those remain as the earlier release handoff.
+
+The private connected experience has completed local Chromium/WebKit verification across ten contrasting fictional profiles. Fresh final-build provider purchase/inbox checks, private deployment access, physical iPhone testing, available approved footage and owner/beta review remain gates. Paid checkout and memberships remain closed. No new paid code was deployed by this continuation.
+
+## Earlier release handoff — continue here
 
 This is a continuation of the existing product. Preserve the approved black, white and hot-pink design, current pricing, locked content and existing buyer access. Read `BOOKED-AF-PRODUCT-STANDARD.md` before making product changes.
 
