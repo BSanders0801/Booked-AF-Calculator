@@ -26,7 +26,7 @@ for(const stage of stages)for(const id of topics){
 }
 assert.equal(freeActionTips({student:true,stage:'BUILDING'}).length,3);
 count++;
-assert.ok(ui.includes('THREE THINGS YOU CAN DO THIS WEEK'),'Public results missing steps');
-assert.ok(ui.includes('The three actions below are your starting point'),'Public results missing clear guidance');
+assert.ok(ui.includes('HERE’S THE MOVE'),'Public results missing steps');
+assert.ok(ui.includes('Here's the problem worth tackling first'),'Public results missing clear guidance');
 assert.ok(!ui.includes('Start with the check below'),'Old ambiguous guidance returned');
 console.log('PASS: '+count+' stage/topic cases plus public results consistency.');
