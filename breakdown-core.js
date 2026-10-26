@@ -275,7 +275,7 @@ function freeActionTips(p) {
 }
 function publicBreakdownEmail(r,name) {
  const p=publicBreakdown(r);
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nThese steps respond to the issue highlighted by your answers. They are starting actions, not an income forecast.\n\nTHREE THINGS YOU CAN DO THIS WEEK\n'+freeActionTips(p).map((t,i)=>(i+1)+'. '+t).join('\n')+'\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nHere is one practical play to test against the problem your answers highlighted. Results depend on your circumstances.\n\nHERE’S THE MOVE\n'+freeActionTips(p).map((t,i)=>(i+1)+'. '+t).join('\n')+'\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
 }
 function shortEmailCopy(r,name) { return publicBreakdownEmail(r,name); }
 
