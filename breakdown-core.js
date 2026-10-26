@@ -226,61 +226,51 @@ function publicBreakdown(r) { if(r.publicCopy)return r.publicCopy;
   url:student?'https://bookedandfabulous.com/#first-90':'https://bookedandfabulous.com/#deep-dive'};
 }
 function freeActionTips(p) {
- const stage=String(p.stage||'').toUpperCase(), title=String(p.title||'');
+ const title=String(p.title||'').toUpperCase(), stage=String(p.stage||'').toUpperCase();
  if(p.student)return [
-  'Ask one prospective salon who supervises new stylists, how often they give feedback, and what training looks like in the first month.',
-  'Photograph one completed service, note what worked and what you would change, and ask an educator for feedback.',
-  'Practice telling a guest what maintenance will cost, when to return, and what their next appointment includes.'
+  'Take two salon interviews. Ask each: “Who trains me, how often, and how do you know I’m ready for clients?” A pretty salon without a training plan is just expensive wallpaper.',
+  'Choose one finished service and document the consultation, formula or technique, result and what you would do differently. That is a portfolio case study, not another random photo.',
+  'Compare the two salons on supervision, actual paid opportunities and client-building support. Pick the stronger learning environment—not the prettier Instagram account.'
  ];
  if(/SECOND VISIT/.test(title))return [
-  'Review your last five first-time clients. Count how many already have a second appointment booked.',
-  'At the end of each consultation, explain the expected maintenance interval and price before offering the next appointment.',
-  'Ask who handles follow-up when a client leaves without rebooking; agree on one clear process and respect contact preferences.'
- ];
- if(/MONEY|TICKET|PAID/.test(title))return [
-  'Choose five recent appointments. For each, write down the service price and direct product or supply cost.',
-  'Add appointment time, setup and cleanup time; compare what remains per hour rather than comparing ticket prices alone.',
-  'Pick the lowest-return service to investigate. Check timing, costs and demand before changing its price.'
- ];
- if(/TIME|LIFE|LIMITS|SUCCESS SHOULD LEAVE ROOM|FULL CALENDAR/.test(title))return [
-  'Track your working hours for seven days, including unpaid messages, scheduling and cleanup.',
-  'Identify one repeated task or gap that takes time without adding value for clients.',
-  'Choose one boundary for next week, such as a last booking time, and communicate it before accepting appointments.'
- ];
- if(/GOOD WORK STARTS WITH CLEAR EXPECTATIONS/.test(title))return [
-  'Choose one recent consultation where expectations were unclear; note which question would have revealed the mismatch.',
-  'Before the next service, agree on the result, maintenance, price range and what cannot safely be achieved in one visit.',
-  'At checkout, ask whether the result matches the agreed goal and note one thing to clarify next time.'
- ];
- if(/THE FIRST SALON SHAPES THE START/.test(title))return [
-  'Ask a potential salon who trains new hires, how often feedback happens and whether there is a clear education plan.',
-  'Speak with one current team member about realistic client-building support rather than judging the salon by appearances.',
-  'Compare two opportunities using training, mentorship, clientele and actual pay terms before deciding.'
+  'Choose one service clients should maintain regularly. At consultation, name its realistic return window and explain what happens if they wait longer.',
+  'Use this at checkout: “To keep this result looking right, I’d see you again in about [interval]. I have [date] or [date]. Which works?” Do not pretend the interval is identical for every guest.',
+  'For the next five eligible clients, record how many leave with a return date. If they decline, record why—timing, price, or uncertainty. Fix the objection you actually hear.'
  ];
  if(/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))return [
-  'List the source of your last five new bookings; if there were none, write down the last five inquiries instead.',
-  'Check that your booking page or profile names your location, services, price starting points and a working way to book.',
-  'Pick one existing source of inquiries and make one specific improvement this week; count inquiries that become appointments.'
+  'Pick ONE service you want to book more of this week. Build a specific client-facing offer: who it suits, the result, realistic starting price and two genuine openings. A discount is not the strategy.',
+  'Use a real client result with permission. Caption framework: “Want [specific result] without [common frustration]? I have [two real openings] in [area]. Message [booking instruction] for a consultation and appointment.” Adapt the promise to work you can deliver.',
+  'For seven days, answer qualified inquiries with two actual appointment options and a clear price expectation. Count inquiries, appointments offered and confirmed bookings. If inquiries arrive but nobody books, investigate the objection—not your follower count.'
  ];
- if(stage==='BOOKED AF')return [
-  'Compare your three most common services by the money left after direct costs and the hours they require.',
-  'Identify one booking request or schedule exception you accepted even though it crossed a personal boundary.',
-  'Block one nonworking period on next week’s calendar before accepting additional appointments.'
+ if(/MONEY|TICKET|PAID|MONEY IN/.test(title))return [
+  'Take two services you perform often. Calculate what you KEEP after direct product costs and salon commission or rent allocation—not what the client pays.',
+  'Divide each service’s remaining money by its total chair time, including processing overlap and cleanup. Example: $120 left over 3 hours is $40 per hour; $95 left over 90 minutes is about $63 per hour.',
+  'Choose ONE underperforming service and test a change: tighter booking time, better add-on structure where appropriate, or a carefully justified price adjustment. Compare the next three appointments before declaring victory.'
  ];
- if(stage==='IN DEMAND')return [
-  'Review your last five late-running appointments and note which step took longer than scheduled.',
-  'Compare your two busiest services by time spent and money left after direct costs.',
-  'Protect one clearly defined personal-time block before opening additional appointments.'
+ if(/TIME|LIFE|LIMITS|SUCCESS SHOULD LEAVE ROOM|FULL CALENDAR/.test(title))return [
+  'Choose the one recurring appointment type or exception most responsible for extending your days. Name the real cost in hours, not just the annoyance.',
+  'Write a boundary clients can understand: “My last appointment for [service] starts at [time] so I can give it the time it needs.” Apply it when offering new times; honor existing commitments.',
+  'Protect one specific block of personal time next week. Track whether revenue changes before cutting more hours. Freedom is useful only if the math works.'
  ];
- if(stage==='GETTING BUSY')return [
-  'For the next five inquiries, record where each person found you and whether they book.',
-  'Check next week’s gaps by service type and offer appointments you can realistically complete on time.',
-  'Tell each guest their recommended maintenance interval and offer a date before checkout.'
+ if(/GOOD WORK STARTS WITH CLEAR EXPECTATIONS/.test(title))return [
+  'For your next consultation, ask for one inspiration photo AND one example of what they do not want. Agree on maintenance and what can safely happen today.',
+  'Say: “Here’s what we can achieve in this appointment, what would take another visit, and the price range before we start.” Get agreement before mixing color or beginning the service.',
+  'After three appointments, note whether the consultation prevented a surprise, redo or pricing misunderstanding. Tighten the question that clients keep finding confusing.'
+ ];
+ if(/THE FIRST SALON/.test(title))return [
+  'Ask two prospective salons for the exact training schedule, commission or hourly terms, and how new clients are allocated. “We’re like a family” is not an answer.',
+  'Talk with a newer team member about the last month: how many clients they received and whether paid education actually happened.',
+  'Compare both offers on expected take-home pay, mentorship and realistic opportunity. Get the important terms in writing.'
+ ];
+ if(stage==='BOOKED AF'||stage==='IN DEMAND')return [
+  'Take your three most-booked services and rank them by money left after costs per chair hour. Busy is not the same as profitable.',
+  'Look for one appointment type that consistently runs long or breaks your preferred schedule. Decide whether the timing, service structure or price needs to change.',
+  'Test ONE adjustment on the next three appropriate bookings, without springing surprise prices on existing clients. Compare hourly return and the time you got back.'
  ];
  return [
-  'Write down where your five most recent inquiries came from and which became paid bookings.',
-  'Open your public profile as a stranger would: confirm your work, location, services and booking link are easy to find.',
-  'Explain maintenance timing and typical cost to your next client, then offer an appropriate next appointment.'
+  'Choose the exact service you want more clients for and identify who it is for; “everyone who needs hair” is not a target market.',
+  'Show a real example of that service and offer two genuine appointment options with clear location and starting price.',
+  'Track the next five qualified conversations: what they requested, the price expectation and whether they booked. Use the most common objection to decide the next move.'
  ];
 }
 function publicBreakdownEmail(r,name) {
