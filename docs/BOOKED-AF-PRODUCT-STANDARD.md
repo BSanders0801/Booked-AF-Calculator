@@ -23,10 +23,10 @@ Dorothy Zbornak meets Julia Sugarbaker meets Dollar Shave Club: direct, clever, 
 - **Membership (target $40/month / $400/year):** New relevant decisions based on actual outcomes and refreshed context. Never charge for recycled generic tips.
 
 ## Signature modules to develop and validate
-- **Money Autopsy:** true service economics after costs/time/commission, not only ticket prices.
-- **Calendar Crime Scene:** opportunities and constraints in appointment timing, overlapping processing and boundaries, with quality and staffing guardrails.
-- **Client Pipeline Investigation:** separate discovery, inquiry, booking, repeat visit and salon referrals before prescribing marketing.
-- **What-If Machine:** transparent side-by-side scenarios; surface assumptions and uncertainty rather than guaranteeing savings or earnings.
+- **THE REAL NUMBER:** true service economics after costs/time/commission, not only ticket prices.
+- **TAKE BACK YOUR TIME:** opportunities and constraints in appointment timing, overlapping processing and boundaries, with quality and staffing guardrails.
+- **GET THEM IN THE CHAIR:** separate discovery, inquiry, booking, repeat visit and salon referrals before prescribing marketing.
+- **WHAT IF?:** transparent side-by-side scenarios; surface assumptions and uncertainty rather than guaranteeing savings or earnings.
 
 ## Beta acceptance gates
 - Contrast tests: pairs of answer profiles with materially different constraints must receive meaningfully different advice, not just swapped headlines.
