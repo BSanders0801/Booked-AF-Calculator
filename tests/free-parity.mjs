@@ -26,6 +26,7 @@ try{
   assert.equal(response.status,200,JSON.stringify(a));
   const body=await response.json();assert.deepEqual(body.breakdown,expected);
   const message=sent.at(-1);assert(message.text.startsWith(cx.api.email(a,'Tester')));
+  for(const key of ['mechanism','script','measure','decision'])assert(message.text.includes(expected.experiment[key]),'Experiment missing from email: '+key);
   assert.equal(expected.actions.length,3);assert(!('plan' in body.breakdown));
   if(work==='color')assert.doesNotMatch(JSON.stringify(body.breakdown),/not taking (?:appointments|clients)|not offering appointments/i);
   const token=message.text.match(/#resume-profile\/([a-f0-9]{64})/)[1];

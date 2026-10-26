@@ -1555,85 +1555,116 @@ function publicBreakdown(r) { if(r.publicCopy)return r.publicCopy;
  const student=r.audience==='student';
  const id=student?r.category:String(r.top?.id||'').replace(/^short-/, '');
  const topics={
-  fill:['ROOM IN THE BOOK.','An open calendar can make every quiet week feel personal. Visibility and reliable demand are different things.'],
-  clients:['ROOM TO BUILD.','Being good at the work and having people ready to book are different challenges.'],
-  cheap:['A BIG TICKET ISN’T THE WHOLE STORY.','Busy appointments can still leave disappointing income. The price on the menu never tells the whole story.'],
-  money:['BUSY AND WELL PAID ARE DIFFERENT THINGS.','Sales, pay and money left over can tell very different stories about the same career.'],
-  keep:['MONEY IN. MONEY LEFT.','A stronger sales month does not always feel like a stronger paycheck. Work costs can explain part of that gap.'],
-  return:['THE SECOND VISIT MATTERS.','New clients bring opportunity. Repeat visits bring consistency. A busy first appointment is only part of the picture.'],
-  rebooking:['THE SECOND VISIT MATTERS.','A great first visit and a dependable return are different parts of a lasting client relationship.'],
-  time:['A FULL CALENDAR CAN COST TOO MUCH.','A career can look successful while taking more time and energy than you want to give it.'],
-  life:['SUCCESS SHOULD LEAVE ROOM FOR YOU.','A full book does not automatically mean the career fits the life you want.'],
-  salon:['THE FIRST SALON SHAPES THE START.','A beautiful room and a supportive place to learn are not always the same thing.'],
-  consultation:['GOOD WORK STARTS WITH CLEAR EXPECTATIONS.','Unclear expectations can turn a technically good service into a disappointing experience.'],
-  boundaries:['A GOOD CAREER NEEDS LIMITS.','Saying yes to everything can cost confidence, time and the quality of the work.']
+  fill:['YOUR BOOK HAS OPENINGS. LET’S GIVE THEM A JOB.','The number of empty hours is not the diagnosis. The next useful question is whether suitable clients are finding you, asking about services, and actually booking.'],
+  clients:['GOOD HAIR IS NOT A CLIENT ACQUISITION PLAN.','Talent is the product. Getting the right person from “I love this” to an actual appointment is a different job. Let’s work on that part.'],
+  cheap:['THAT BIG TICKET MAY BE LYING TO YOU.','A high service price means nothing until you account for the time, salon share and costs. Your busiest service may not be pulling its weight.'],
+  money:['YOU CAN BE BUSY AND STILL UNDERPAID.','The calendar looks fabulous. The money has questions. Look at what each service leaves behind per hour, not just what it brings in.'],
+  keep:['REVENUE IS NOT YOUR PAYCHECK.','If sales look healthy and your bank account disagrees, the difference deserves an investigation—not another inspirational quote.'],
+  return:['THE FIRST VISIT ISN’T THE FINISH LINE.','A great result that never becomes a second appointment is an expensive way to keep meeting strangers. Find out where the return visit breaks down.'],
+  rebooking:['WHERE DID THE SECOND APPOINTMENT GO?','They loved the hair. Fantastic. If they leave without a clear next step, you’re rebuilding demand from scratch every time.'],
+  time:['YOUR CALENDAR IS RUNNING THE BUSINESS. YOU SHOULD BE.','If your work keeps eating the hours you meant to have for yourself, investigate the appointment types and exceptions responsible.'],
+  life:['FULLY BOOKED. STILL NO LIFE?','A packed calendar only counts as success when the numbers and your actual life agree. Something in the schedule may need to change.'],
+  salon:['THE PRETTY SALON ISN’T THE BUSINESS PLAN.','An attractive space tells you very little about mentorship, new client opportunities or what you will actually take home. Ask harder questions.'],
+  consultation:['THE CONSULTATION IS WHERE THE REDO STARTS.','A technically excellent result can still miss a client’s expectations. The fix may start before the first bowl is mixed.'],
+  boundaries:['EVERY YES HAS A PRICE.','That exception you keep making can become the schedule you never wanted. Decide which bookings earn the disruption and which do not.']
  };
+ const signals=r.signals||{};
+ if((id==='fill'||id==='clients')&&signals.network){
+  const diagnoses={
+   past:['YOU HAVE A REFERRAL OPPORTUNITY. NOT A SYSTEM.','You chose introductions from existing relationships as your move. That can be faster than chasing strangers, but only if people know exactly whom to send and for what service.'],
+   salon:['THE SALON HAS TRAFFIC. IS ANY OF IT YOURS?','You chose the salon team as your channel. A vague “send me clients” request is not a booking strategy; give the desk a service and openings they can actually match.'],
+   portfolio:['YOUR WORK IS THE AD. THE APPOINTMENT IS THE GOAL.','You chose your portfolio. The move is turning a real result into a specific service offer—not collecting compliments from people who never book.'],
+   local:['YOUR NEXT CLIENT MAY ALREADY TRUST SOMEONE NEARBY.','You chose local relationships. Borrow trust through a real, relevant business connection rather than another desperate promotion.'],
+   models:['A MODEL IS ONLY USEFUL IF THE WORK ATTRACTS PAYING CLIENTS.','You chose portfolio building. Design the appointment to demonstrate a service you actually want to sell—not just to produce another pretty photo.']
+  };
+  if(diagnoses[signals.network])return {student,stage:r.stage,title:diagnoses[signals.network][0],body:diagnoses[signals.network][1],signals,topicId:id,
+   offer:'YOUR NEXT 30 turns your answers into a four-week plan, with scripts, practical tools and a way to check what changed. $49 once.',
+   url:'https://bookedandfabulous.com/#deep-dive'};
+ }
  const topic=topics[id]||['YOUR CAREER DESERVES A CLOSER LOOK.','Clients, money, time and the life around the work do not always improve together.'];
- return {student,stage:r.stage,title:topic[0],body:topic[1],
+ return {student,stage:r.stage,title:topic[0],body:topic[1],signals:r.signals||{},topicId:id,
   offer:student?'FIRST 90 is in development. Join the optional updates list to hear when it is ready. There is nothing to buy yet.':'YOUR NEXT 30 turns your answers into a four-week plan, with scripts, practical tools and a way to check what changed. $49 once.',
   url:student?'https://bookedandfabulous.com/#first-90':'https://bookedandfabulous.com/#deep-dive'};
 }
 function freeActionTips(p) {
- const stage=String(p.stage||'').toUpperCase(), title=String(p.title||'');
+ const title=String(p.title||'').toUpperCase(), stage=String(p.stage||'').toUpperCase(), topic=String(p.topicId||'');
  if(p.student)return [
-  'Ask one prospective salon who supervises new stylists, how often they give feedback, and what training looks like in the first month.',
-  'Photograph one completed service, note what worked and what you would change, and ask an educator for feedback.',
-  'Practice telling a guest what maintenance will cost, when to return, and what their next appointment includes.'
+  'Take two salon interviews. Ask each: “Who trains me, how often, and how do you know I’m ready for clients?” A pretty salon without a training plan is just expensive wallpaper.',
+  'Choose one finished service and document the consultation, formula or technique, result and what you would do differently. That is a portfolio case study, not another random photo.',
+  'Compare the two salons on supervision, actual paid opportunities and client-building support. Pick the stronger learning environment—not the prettier Instagram account.'
  ];
- if(/SECOND VISIT/.test(title))return [
-  'Review your last five first-time clients. Count how many already have a second appointment booked.',
-  'At the end of each consultation, explain the expected maintenance interval and price before offering the next appointment.',
-  'Ask who handles follow-up when a client leaves without rebooking; agree on one clear process and respect contact preferences.'
+ if(['return','rebooking'].includes(topic)||/SECOND VISIT/.test(title))return [
+  'Choose one service clients should maintain regularly. At consultation, name its realistic return window and explain what happens if they wait longer.',
+  'Use this at checkout: “To keep this result looking right, I’d see you again in about [interval]. I have [date] or [date]. Which works?” Do not pretend the interval is identical for every guest.',
+  'For the next five eligible clients, record how many leave with a return date. If they decline, record why—timing, price, or uncertainty. Fix the objection you actually hear.'
  ];
- if(/MONEY|TICKET|PAID/.test(title))return [
-  'Choose five recent appointments. For each, write down the service price and direct product or supply cost.',
-  'Add appointment time, setup and cleanup time; compare what remains per hour rather than comparing ticket prices alone.',
-  'Pick the lowest-return service to investigate. Check timing, costs and demand before changing its price.'
+ if((['fill','clients'].includes(topic)||/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))&&p.signals&&p.signals.network){
+  const move=p.signals.network, vis=new Set(p.signals.visibility||[]);
+  if(move==='past')return [
+   'Choose five former or happy clients you already have permission to contact. Ask for a personal introduction, not a mass referral blast.',
+   'Message template: “I have room for more [service] guests this month. If someone comes to mind who wants [result], I’d appreciate an introduction. No pressure.” Only send with appropriate consent.',
+   'Count introductions, qualified inquiries and confirmed appointments over seven days. If nobody refers, ask whether the service you described was specific enough.'
+  ];
+  if(move==='salon')return [
+   'Ask the front desk or manager which requested services the salon turns away or cannot book quickly. Pick one you can competently offer.',
+   'Give the team a one-sentence booking description and two genuine open appointments. Ask them to use it when a matching inquiry comes in.',
+   'For one week, compare suitable inquiries sent to you with completed bookings. If the desk gets no matching requests, change the service positioning.'
+  ];
+  if(move==='local')return [
+   'Pick one nearby business with clientele that overlaps your ideal [service] guest. Propose a specific, mutually useful introduction—not an unsolicited discount stack.',
+   'Conversation opener: “I specialize in [result] for [client type]. Is there a natural way to introduce our services to people who already ask you about hair?”',
+   'Make one genuine connection this week and track introductions that lead to consultations or bookings; do not spam strangers.'
+  ];
+  if(move==='models')return [
+   'Pick one service your portfolio does not show well. Find a suitable, consenting model whose starting hair actually demonstrates that skill.',
+   'Agree on the price, timing, realistic outcome and photo permission before booking. Capture the starting point, finished result and maintenance explanation.',
+   'Publish one documented case with a clear booking pathway. Measure qualified service inquiries—not likes.'
+  ];
+  if(move==='portfolio')return [
+   vis.has('social')?'Use one real result people already respond to. Rework its caption around a specific desired outcome, likely maintenance and two actual appointment options.':'Choose one real client result with permission. Show the starting point, finished result, price expectations and a clear way to request an appointment.',
+   'Caption framework: “For [person wanting result], here is what [service] can achieve. Starts at [real price], in [area]. I have [actual openings]. Reply [clear booking method].”',
+   'Count inquiries and confirmed bookings for seven days. Lots of views with no inquiries means the offer or audience needs adjusting.'
+  ];
+ }
+ if(['fill','clients'].includes(topic)||/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))return [
+  'Pick ONE service you want to book more of this week. Build a specific client-facing offer: who it suits, the result, realistic starting price and two genuine openings. A discount is not the strategy.',
+  'Use a real client result with permission. Caption framework: “Want [specific result] without [common frustration]? I have [two real openings] in [area]. Message [booking instruction] for a consultation and appointment.” Adapt the promise to work you can deliver.',
+  'For seven days, answer qualified inquiries with two actual appointment options and a clear price expectation. Count inquiries, appointments offered and confirmed bookings. If inquiries arrive but nobody books, investigate the objection—not your follower count.'
  ];
- if(/TIME|LIFE|LIMITS|SUCCESS SHOULD LEAVE ROOM|FULL CALENDAR/.test(title))return [
-  'Track your working hours for seven days, including unpaid messages, scheduling and cleanup.',
-  'Identify one repeated task or gap that takes time without adding value for clients.',
-  'Choose one boundary for next week, such as a last booking time, and communicate it before accepting appointments.'
+ if(['cheap','money','keep'].includes(topic)||/MONEY|TICKET|PAID|MONEY IN/.test(title))return [
+  'Take two services you perform often. Calculate what you KEEP after direct product costs and salon commission or rent allocation—not what the client pays.',
+  'Divide each service’s remaining money by its total chair time, including processing overlap and cleanup. Example: $120 left over 3 hours is $40 per hour; $95 left over 90 minutes is about $63 per hour.',
+  'Choose ONE underperforming service and test a change: tighter booking time, better add-on structure where appropriate, or a carefully justified price adjustment. Compare the next three appointments before declaring victory.'
  ];
- if(/GOOD WORK STARTS WITH CLEAR EXPECTATIONS/.test(title))return [
-  'Choose one recent consultation where expectations were unclear; note which question would have revealed the mismatch.',
-  'Before the next service, agree on the result, maintenance, price range and what cannot safely be achieved in one visit.',
-  'At checkout, ask whether the result matches the agreed goal and note one thing to clarify next time.'
+ if(['time','life','boundaries'].includes(topic)||/TIME|LIFE|LIMITS|SUCCESS SHOULD LEAVE ROOM|FULL CALENDAR/.test(title))return [
+  'Choose the one recurring appointment type or exception most responsible for extending your days. Name the real cost in hours, not just the annoyance.',
+  'Write a boundary clients can understand: “My last appointment for [service] starts at [time] so I can give it the time it needs.” Apply it when offering new times; honor existing commitments.',
+  'Protect one specific block of personal time next week. Track whether revenue changes before cutting more hours. Freedom is useful only if the math works.'
  ];
- if(/THE FIRST SALON SHAPES THE START/.test(title))return [
-  'Ask a potential salon who trains new hires, how often feedback happens and whether there is a clear education plan.',
-  'Speak with one current team member about realistic client-building support rather than judging the salon by appearances.',
-  'Compare two opportunities using training, mentorship, clientele and actual pay terms before deciding.'
+ if(topic==='consultation'||/GOOD WORK STARTS WITH CLEAR EXPECTATIONS/.test(title))return [
+  'For your next consultation, ask for one inspiration photo AND one example of what they do not want. Agree on maintenance and what can safely happen today.',
+  'Say: “Here’s what we can achieve in this appointment, what would take another visit, and the price range before we start.” Get agreement before mixing color or beginning the service.',
+  'After three appointments, note whether the consultation prevented a surprise, redo or pricing misunderstanding. Tighten the question that clients keep finding confusing.'
  ];
- if(/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))return [
-  'List the source of your last five new bookings; if there were none, write down the last five inquiries instead.',
-  'Check that your booking page or profile names your location, services, price starting points and a working way to book.',
-  'Pick one existing source of inquiries and make one specific improvement this week; count inquiries that become appointments.'
+ if(topic==='salon'||/THE FIRST SALON/.test(title))return [
+  'Ask two prospective salons for the exact training schedule, commission or hourly terms, and how new clients are allocated. “We’re like a family” is not an answer.',
+  'Talk with a newer team member about the last month: how many clients they received and whether paid education actually happened.',
+  'Compare both offers on expected take-home pay, mentorship and realistic opportunity. Get the important terms in writing.'
  ];
- if(stage==='BOOKED AF')return [
-  'Compare your three most common services by the money left after direct costs and the hours they require.',
-  'Identify one booking request or schedule exception you accepted even though it crossed a personal boundary.',
-  'Block one nonworking period on next week’s calendar before accepting additional appointments.'
- ];
- if(stage==='IN DEMAND')return [
-  'Review your last five late-running appointments and note which step took longer than scheduled.',
-  'Compare your two busiest services by time spent and money left after direct costs.',
-  'Protect one clearly defined personal-time block before opening additional appointments.'
- ];
- if(stage==='GETTING BUSY')return [
-  'For the next five inquiries, record where each person found you and whether they book.',
-  'Check next week’s gaps by service type and offer appointments you can realistically complete on time.',
-  'Tell each guest their recommended maintenance interval and offer a date before checkout.'
+ if(stage==='BOOKED AF'||stage==='IN DEMAND')return [
+  'Take your three most-booked services and rank them by money left after costs per chair hour. Busy is not the same as profitable.',
+  'Look for one appointment type that consistently runs long or breaks your preferred schedule. Decide whether the timing, service structure or price needs to change.',
+  'Test ONE adjustment on the next three appropriate bookings, without springing surprise prices on existing clients. Compare hourly return and the time you got back.'
  ];
  return [
-  'Write down where your five most recent inquiries came from and which became paid bookings.',
-  'Open your public profile as a stranger would: confirm your work, location, services and booking link are easy to find.',
-  'Explain maintenance timing and typical cost to your next client, then offer an appropriate next appointment.'
+  'Choose the exact service you want more clients for and identify who it is for; “everyone who needs hair” is not a target market.',
+  'Show a real example of that service and offer two genuine appointment options with clear location and starting price.',
+  'Track the next five qualified conversations: what they requested, the price expectation and whether they booked. Use the most common objection to decide the next move.'
  ];
 }
 function publicBreakdownEmail(r,name) {
  const p=publicBreakdown(r);
- return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nThese steps respond to the issue highlighted by your answers. They are starting actions, not an income forecast.\n\nTHREE THINGS YOU CAN DO THIS WEEK\n'+freeActionTips(p).map((t,i)=>(i+1)+'. '+t).join('\n')+'\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
+ return 'THE BOOKED AF BREAKDOWN\n\n'+(name?name+', here’s':'Here’s')+' your Breakdown.\n\nYOUR CAREER RIGHT NOW\n'+p.stage+'\n\nWHAT MAY BE GETTING IN THE WAY\n'+p.title+'\n'+p.body+'\n\nHere is one practical play to test against the problem your answers highlighted. Results depend on your circumstances.\n\nHERE’S THE MOVE\n'+freeActionTips(p).map((t,i)=>(i+1)+'. '+t).join('\n')+(p.experiment?'\n\nWHY THIS IS WORTH TESTING\n'+p.experiment.mechanism+'\n\nUSE THIS\n'+p.experiment.script+'\n\nMEASURE THIS\n'+p.experiment.measure+'\n\nKEEP, ADJUST OR STOP\n'+p.experiment.decision:'')+'\n\n'+p.offer+'\n'+p.url+'\n\nBradley\nBOOKED AF';
 }
 function shortEmailCopy(r,name) { return publicBreakdownEmail(r,name); }
 
@@ -1677,12 +1708,12 @@ function legacyShortQuestionCopy(q,a) {
  return {...q,...(copies[q.id]||{})};
 }
 
-function buildShortBreakdown(a){return {audience:isStudent(a)?'student':'professional',category:a.readiness,stage:shortStage(a).label,top:{id:shortFocusGoal(a)||'money'}};}
+function buildShortBreakdown(a){return {audience:isStudent(a)?'student':'professional',category:a.readiness,stage:shortStage(a).label,top:{id:shortFocusGoal(a)||'money'},signals:{visibility:Array.isArray(a.visibility)?a.visibility.filter(v=>['social','salon','referrals','search','none','unknown'].includes(v)):[],marketing:Array.isArray(a.marketing)?a.marketing.filter(v=>['social','people','local','paid','none'].includes(v)):[],network:['past','salon','portfolio','local','models'].includes(a.network)?a.network:'',returning:['notyet','low','some','most','almostall','unknown'].includes(a.returning)?a.returning:''}};}
 
 
 // Public first steps only. No paid plans, scripts, worksheets, or financial forecasts.
-// Shared with the email Worker by the verified public-engine build.
-const PERSONALIZATION_VERSION = 'free-20261025-2';
+// Shared verbatim with the email Worker by scripts/sync-free-engine.mjs.
+const PERSONALIZATION_VERSION = 'beta-20261026-2';
 const supplementalQuestions = [
  {id:'inquiries',approvedCopy:true,when:a=>!isStudent(a)&&shortLane(a)==='chair'&&shortFocusGoal(a)==='clients',title:'When someone asks about booking, what usually happens?',note:'Think about recent inquiries, not likes or followers.',choices:[['few','Hardly anyone asks.'],['lost','People ask, but too many never book.'],['book','Most people who ask do book.'],['unknown','I haven’t kept track.']]},
  {id:'pricecheck',approvedCopy:true,when:a=>!isStudent(a)&&shortLane(a)==='chair'&&shortFocusGoal(a)==='money'&&a.paymodel!=='hourly',title:'What have you actually checked about your prices?',note:'A low ticket alone doesn’t tell us whether you’re undercharging.',choices:[['short','I checked the time, costs, and my share. The price leaves too little.'],['unchecked','I haven’t checked the price against all of that.'],['works','The price works. I want more from the hours I already offer.'],['fixed','The salon sets the prices. I can’t change them.']]}
@@ -1691,6 +1722,42 @@ shortQuestions.push(...supplementalQuestions);
 const legacyBuildShortBreakdown = buildShortBreakdown;
 const legacyFreeActionTips = freeActionTips;
 freeActionTips = function(p){return p.actions ? [...p.actions] : legacyFreeActionTips(p);};
+function freeExperiment(a) {
+ const goal=shortFocusGoal(a),lane=shortLane(a),student=isStudent(a);
+ const service=a.servicehours?.service||({ 'chair-color':'color service','chair-cut':'cutting and styling service','chair-extensions':'extension service'}[shortInferredPrimaryWork(a)]||'service you want to book');
+ let script='',measure='',decision='',mechanism='';
+ if(student){script='“Could you watch me practice this and name one specific thing to improve before I repeat it?”';measure='Record the first attempt, the feedback, and what changed on the second attempt.';decision='Repeat with supervision until you can explain and demonstrate the step. Feedback is the measure here, not bookings or income.';mechanism='One observed practice attempt exposes a specific skill gap that more general study may miss.';}
+ else if(lane==='chair'&&a.days==='0'){script='“Before I offer '+service+', can we confirm the scope, booking time, price and who approves the appointment?”';measure='One confirmed service, one permitted place to work, one tested booking route.';decision='If any part is unresolved, resolve it before promoting an opening. If all are ready, test one invitation through a permitted channel.';mechanism='An inquiry only helps if there is an appointment you can safely and actually deliver.';}
+ else if(goal==='clients'&&a.inquiries==='lost'){script='“For [agreed result], I recommend [service and scope] at [price or explained range]. I have [real opening A] or [real opening B]. Here is the booking step: [link].”';measure='Next five inquiries: source, reply time, service fit, quoted scope, availability, booked/not booked, and the reason actually given.';decision='Compare with your previous five. If people still stop at the same point, change that specific step. No reply is unknown, not proof your price is wrong. Five inquiries are a small test.';mechanism='Removing a documented booking obstacle can convert interest you already earned without buying more attention.';}
+ else if(goal==='return'||(goal==='clients'&&a.returning==='low')){script='“To maintain [agreed result], I recommend [service] around [appropriate window], because [service-specific reason]. Would you like to reserve that now?”'+(a.nextvisit==='desk'?' Give the desk the same service and timing; confirm that the handoff happened.':'');measure='Next five eligible clients: recommended window, booked ahead, then actually returned when due. Do not count clients who are not due yet.';decision='If clients book ahead but do not attend, investigate reminders or cancellations. If they decline, record their stated reason. Rebooking alone does not prove retention.';mechanism='A specific maintenance recommendation gives the next appointment a purpose; a working handoff makes it bookable.';}
+ else if(goal==='clients'){
+ const moves={salon:'“I have [real opening] for '+service+'. Here is who it suits, the agreed price and time, and one example you can show inquiries. Can we track which requests you send me this week?”',past:'“If someone you know is looking for '+service+', here is my work and booking link. Please share it only if it feels like a fit.”',local:'“I work with people looking for '+service+' in [location]. Here is one example and a direct booking route if a customer asks.”',models:'“I am creating a specific '+service+' example. The service, fee, appointment time and optional image permission are [terms].”',portfolio:'“[Specific result] · '+service+' · [location]. [Real availability]. Book through [working route].”'};
+ script=moves[a.network]||'Choose one source you already use. Show '+service+', one suitable result, your location and a working booking route. Do not add a new channel before checking this one.';
+ measure='For seven days, record the selected source, suitable inquiries, bookings and completed appointments separately. Record time and any spend too.';
+ decision=a.full==='full'?'Count suitable future requests, not extra squeeze-ins. Use a cancellation list only with permission. Do not promise capacity you lack.':'No inquiries: check whether the right people saw the offer. Inquiries without bookings: review fit, price, timing and the booking step. Bookings: check attendance and earnings before repeating or spending more.';
+ mechanism='A service-specific invitation lets you distinguish weak discovery from a booking problem. Posting more cannot make that distinction for you.';
+ }
+ else if(goal==='money'||goal==='keep'){
+ script=a.paymodel==='hourly'?'“Here are my recorded work hours and paid hours for the same week. Can we check how required setup, cleanup and messages are recorded?”':a.pricecheck==='fixed'?'“For this service, here is the charge, my pay, the costs I cover and actual time. Which change can we approve: scope, booking length, pay or price?”':'“Before we begin, [agreed price] covers [scope]. If [additional work] is needed, I will explain the added time and price and get your agreement first.”';
+ measure=a.paymodel==='hourly'?'One week of recorded work hours and actual pay, compared with the same payroll period.':'Two completed services: charge, personal pay, personally paid costs, total time and agreed scope. Keep tips and allocated overhead separate.';
+ decision=a.paymodel==='hourly'?'If the records differ, ask for an explanation and correction before assuming menu prices will change your wage.':'If lower earnings come from extra time or uncharged work, test scope or scheduling first. If direct contribution is weak even on time, review costs or an approved price. Compare the same service again before changing the entire menu.';
+ mechanism='The service with the largest ticket may leave less per working hour. Personal pay, time and costs identify which change is worth testing.';
+ }
+ else if(goal==='time'){
+ script=a.overrun==='squeeze'?'“That appointment needs [full duration]. I can offer [real opening] where we have enough time to do it properly.”':a.overrun==='messages'?'“I answer booking messages during [real reply window]. For appointments, please use [approved booking route].”':'“This service needs [observed duration], including setup and cleanup. Can we trial that booking time for the next three appointments?”';
+ measure='For three comparable working days, record occupied appointment time, setup, cleanup, gaps, admin, breaks and actual finish. Count any declined bookings or client inconvenience.';
+ decision='Keep the change only if work fits without lost quality, skipped breaks or hidden evening admin. If fewer days create a capacity or income gap, revise the scenario before changing availability.';
+ mechanism='An empty gap inside a long day and genuinely free time are different things. Measuring the whole day shows whether scheduling or service duration needs attention.';
+ }
+ else{script='Separate money already owed for taxes or business bills from savings available for living costs. Use your own records; no default tax rate.';measure='Available savings divided by essential monthly personal bills; record both amounts and the period measured.';decision='If there is no surplus after essential costs, do not set an automatic transfer that causes a shortfall. If there is, test an affordable amount for one pay cycle and check bills still clear.';mechanism='A savings balance can include money that already belongs to a bill. Separating it gives a more honest view of the cushion.';}
+ if(!student&&lane!=='chair'&&goal!=='stable'){
+ script=lane==='manager'?'“Which outcome am I responsible for, what can I change, and what requires the owner’s approval?”':goal==='clients'?'“For [specific brief], I can provide [agreed scope] on [real availability]. Here is relevant work and the next step to confirm the booking.”':goal==='return'?'“Thank you for [completed job]. For your next [relevant brief], here is the best way to check my availability.”':'“The fee covers [scope and hours]. Additional time, expenses and reimbursements need to be agreed before the job.”';
+ measure=goal==='clients'?'Next five inquiries: actual source, brief, availability, quoted terms and booking outcome.':goal==='return'?'Five past jobs eligible for repeat work: repeat booking, next project pending or no stated need yet.':'One completed job: money received, expenses paid, reimbursements outstanding and total prep, travel, work and admin hours.';
+ decision='Review the repeated documented obstacle. Change one term or handoff you control, with approval where needed, then compare the next similar jobs. A delayed or absent booking alone does not prove weak demand.';
+ mechanism='The paid job includes work around the visible service. Tracking the full brief and terms separates demand, payment and workload problems.';
+ }
+ return {service,mechanism,script,measure,decision};
+}
 function personalizedFreeResult(a) {
  const lane=shortLane(a),goal=shortFocusGoal(a),stage=shortStage(a),student=isStudent(a);
  const base=publicBreakdown(legacyBuildShortBreakdown(a));
@@ -1720,30 +1787,30 @@ function personalizedFreeResult(a) {
    else if(a.inquiries==='unknown') set('FIND WHERE BOOKING STOPS.','You haven’t tracked what happens after an inquiry, so we can’t tell whether reach or booking is the bigger problem.','For the next seven days, record each inquiry, its source, whether it booked, and any reason given for not booking.','Check your booking route on your phone today: service information, location, and the next available appointment should be easy to find.');
    else {
     const move={past:'Ask one happy client to introduce someone who wants the kind of service you want more of.',salon:'Ask the salon to spotlight one service and one real opening. Give the booking team the details.',portfolio:'Share one clear example of your work with the service, location, and a direct booking step.',local:'Introduce yourself to one nearby business whose customers suit your services. Give them a clear way to refer someone.',models:'Plan one portfolio service that fills a specific gap in your work photos. Agree on the fee and photo permission before booking.',none:'Choose one service with openings and make its result, location, and booking step clear in one post.'}[a.network];
-    set('GIVE THE RIGHT PEOPLE A REASON TO BOOK.',a.inquiries==='book'?'You said most inquiries turn into bookings. With room in your book, generating more suitable inquiries is a useful place to start.':a.inquiries==='few'?'You said hardly anyone asks to book. Start with one clear offer and a way to see whether it brings inquiries.':'Your earlier answers do not include inquiry outcomes. Track inquiries and bookings before deciding whether reach or conversion needs work.',move||'Check one place clients find you and make the service, location, and booking step clear.','For seven days, count the inquiries and booked appointments from that move separately. Likes are not appointments.');
+    set('GIVE THE RIGHT PEOPLE A REASON TO BOOK.',a.inquiries==='book'?'You said most inquiries turn into bookings. With room in your book, generating more suitable inquiries is a useful place to start.':'You said hardly anyone asks to book. Start with one clear offer and a way to see whether it brings inquiries.',move||'Check one place clients find you and make the service, location, and booking step clear.','For seven days, count the inquiries and booked appointments from that move separately. Likes are not appointments.');
    }
   } else if(goal==='return') {
    const strong=['most','almostall'].includes(a.returning);
    set(strong?'KEEP WHAT IS ALREADY WORKING.':a.returning==='unknown'?'CHECK RETURNS BEFORE CALLING IT A PROBLEM.':'MAKE THE NEXT VISIT EASIER.',strong?'You said most or almost all clients return. Your goal is greater consistency, not fixing a proven retention crisis.':a.returning==='notyet'?'You said it is too soon to judge returns. Build a clear next-visit habit before trying to measure retention.':a.returning==='unknown'?'You haven’t tracked returns. Leaving without rebooking and never returning are different things.':'You said some clients disappear or too few return. Check the next-visit process before assuming they need another ad.',a.nextvisit==='prescribe'?'Review five clients whose recommended return date has passed. Separate those who returned, booked ahead, or have not booked.':a.nextvisit==='desk'?'For your next three clients, give the front desk the recommended service and timing. Check whether the handoff led to a booking.':'For your next three clients, explain the service they will need next and an appropriate return window before asking them to book.',has('followup','none')||has('followup','unknown')?'Choose who owns follow-up when a client leaves without booking. Put one reminder in the approved salon system for when a client is due.':'Check one recent due-client reminder from the system or person already handling follow-up. Confirm it gives a working booking route; avoid duplicate messages.');
   } else if(goal==='money') {
    if(a.paymodel==='hourly')set('CHECK WHAT YOUR PAID HOURS COVER.',a.hourlytime==='no'?'You said your paid hours match your work. Raising menu prices alone would not necessarily change your hourly pay.':a.hourlytime==='unknown'?'You need to compare your working hours with your pay before deciding what needs to change.':'You reported work outside paid time. That deserves a closer look before adding more clients.','Compare one week of recorded work hours with your payslip. Include setup, cleanup, and required messages; note any mismatch.','Ask your manager to clarify how required work time is recorded and what responsibilities or milestones affect your pay.');
-   else if(noClients||a.spend==='notyet')set('PLAN THE SERVICE BEFORE JUDGING THE PAY.',noClients?'You said you are not offering appointments right now. Check the service plan before deciding what to change.':'You offer appointment days but selected that you are not taking clients yet in the spending question. Confirm your current situation before judging prices from completed work.','Write down the proposed price, expected service time, and who pays for supplies for one service you plan to offer.','Time one permitted practice or model service, including setup and cleanup, before finalizing the appointment length.');
+   else if(noClients)set('PLAN THE SERVICE BEFORE JUDGING THE PAY.','You said you are not taking clients yet. There are no completed appointments here to diagnose as underpriced.','Write down the proposed price, expected service time, and who pays for supplies for one service you plan to offer.','Time one permitted practice or model service, including setup and cleanup, before finalizing the appointment length.');
    else {
     const fixed=a.pricecheck==='fixed';
-    set(a.pricecheck==='short'?'YOUR PRICE NEEDS A CLOSER LOOK.':fixed?'START WITH WHAT YOU CAN CONTROL.':a.pricecheck==='works'?'MAKE THE AVAILABLE HOURS WORK HARDER.':'CHECK THE SERVICE, NOT JUST THE TICKET.',a.pricecheck==='short'?'You said you checked time, costs, and your share, and the price leaves too little. That supports reviewing the service price; it does not tell us the right increase.':fixed?'You said the salon sets prices. The useful next move is a service-and-pay review with the person who can change them.':a.pricecheck==='works'?'You said the price works. Look at how your available hours are used before assuming you need to charge more.':a.pricecheck==='unchecked'?'You haven’t checked the price against time, costs, and your share. A ticket range cannot establish that you are undercharging.':'Your earlier answers do not establish whether the price covers time, costs, and your share. Check those before deciding on an increase.',a.pricecheck==='works'?'Review your last five working days. Count unfilled appointment hours and compare planned with actual finish times.':'For one completed appointment ('+(a.servicehours?.service||'your regular service')+'), record the actual charge, your share, supplies you paid for, and total time. Keep tips separate.',fixed?'Take that example to your manager and ask which part you can change: timing, service scope, booking mix, or compensation.':a.pricecheck==='works'?'Pick one repeated gap or overrun from that review. Test one booking adjustment next week and check whether paid time improves.':'Compare that service with a second service you offer. Identify whether price, uncharged extras, costs, or time deserves the next review.');
+    set(a.pricecheck==='short'?'YOUR PRICE NEEDS A CLOSER LOOK.':fixed?'START WITH WHAT YOU CAN CONTROL.':a.pricecheck==='works'?'MAKE THE AVAILABLE HOURS WORK HARDER.':'CHECK THE SERVICE, NOT JUST THE TICKET.',a.pricecheck==='short'?'You said you checked time, costs, and your share, and the price leaves too little. That supports reviewing the service price; it does not tell us the right increase.':fixed?'You said the salon sets prices. The useful next move is a service-and-pay review with the person who can change them.':a.pricecheck==='works'?'You said the price works. Look at how your available hours are used before assuming you need to charge more.':'You haven’t checked the price against time, costs, and your share. A ticket range cannot establish that you are undercharging.',a.pricecheck==='works'?'Review your last five working days. Count unfilled appointment hours and compare planned with actual finish times.':'For one completed appointment ('+(a.servicehours?.service||'your regular service')+'), record the actual charge, your share, supplies you paid for, and total time. Keep tips separate.',fixed?'Take that example to your manager and ask which part you can change: timing, service scope, booking mix, or compensation.':a.pricecheck==='works'?'Pick one repeated gap or overrun from that review. Test one booking adjustment next week and check whether paid time improves.':'Compare that service with a second service you offer. Identify whether price, uncharged extras, costs, or time deserves the next review.');
    }
   } else if(goal==='keep'){
    const targets={space:['your salon share, rent, or salon fees','one statement or rental invoice'],product:['products and supplies','five completed services and the supplies used'],discount:['discounts and uncharged extras','five recent tickets against what was actually performed'],fees:['apps, card fees, and subscriptions','one month of statements'],team:['staffing and salon bills','one week of staffing costs against the appointments covered'],unknown:['where work money goes','one week of income and work expenses']};
    const [target,record]=targets[a.costleak]||targets.unknown;
-   set('CHECK WHAT LEAVES BEFORE YOU SPEND WHAT IS LEFT.',a.costs==='clear'?'You said you know what you keep and it is enough. This is a review for improvement, not proof that your costs are out of control.':'You want to keep more, and chose '+target+' as the first place to look. That is a lead to investigate, not a confirmed leak.','Review '+record+'. Write down the actual amount going to '+target+'.',a.costleak==='discount'?'If that review finds an uncharged extra or discount, check how its price and scope were agreed. Choose one change before the next service.':'Mark one cost that is necessary, one you can question, and any you still cannot explain. Check those questions before cutting anything clients rely on.');
+   set('CHECK WHAT LEAVES BEFORE YOU SPEND WHAT IS LEFT.',a.costs==='clear'?'You said you know what you keep and it is enough. This is a review for improvement, not proof that your costs are out of control.':'You want to keep more, and chose '+target+' as the first place to look. That is a lead to investigate, not a confirmed leak.','Review '+record+'. Write down the actual amount going to '+target+'.',a.costleak==='discount'?'Identify one extra you routinely leave off the bill. Decide how its price and scope should be agreed before the next service.':'Mark one cost that is necessary, one you can question, and any you still cannot explain. Check those questions before cutting anything clients rely on.');
   } else if(goal==='time'){
-   const d={gaps:['GAPS ARE TAKING YOUR DAY.','You identified gaps between clients as your biggest time thief.','Review your next seven working days and mark the empty blocks between appointments. Count the hours.','For new bookings, test offering times beside existing appointments where service timing allows. Compare one week before changing your whole schedule.'],overrun:['BOOK THE TIME THE WORK ACTUALLY TAKES.','You said appointments regularly take longer than planned.','Time your next three appointments from setup through cleanup. Compare each with the slot booked.','Adjust one repeat offender’s future booking slot using those observed times. Do not shorten the service just to make the calendar look better.'],squeeze:['THE EXTRA CLIENT IS NOT EXTRA TIME.','You identified squeezing people in as the biggest time thief.','Set a last appointment start time for one working day next week, based on the full service length.','Offer the next suitable opening when a request would run past that finish time. Count how often you keep the boundary.'],messages:['THE WORKDAY IS FOLLOWING YOU HOME.','You said messages and paperwork pile up after the last client.','Track the minutes spent on after-hours admin for three working days. Identify the task that repeats most.','Give that task a defined block inside one working day and set a clear reply window. Check whether evening work drops.'],none:['YOU FINISH ON TIME. DOES THE WEEK FIT?','You said you usually finish as planned and selected more time back as a goal. Check whether the current week fits what you want.','Compare next week’s appointments with the days you want to work. Identify what would need to move.','Before changing availability, check whether those appointments fit safely into the remaining days and what income would be affected.'],unknown:['FIND WHERE THE DAY GOES.','You are not sure what consumes the extra time. We should measure it before blaming gaps or boundaries.','For three working days, record client time, gaps, setup, cleanup, and admin separately.','Choose the largest avoidable block from that record and test one change next week.']};
+   const d={gaps:['GAPS ARE TAKING YOUR DAY.','You identified gaps between clients as your biggest time thief.','Review your next seven working days and mark the empty blocks between appointments. Count the hours.','For new bookings, test offering times beside existing appointments where service timing allows. Compare one week before changing your whole schedule.'],overrun:['BOOK THE TIME THE WORK ACTUALLY TAKES.','You said appointments regularly take longer than planned.','Time your next three appointments from setup through cleanup. Compare each with the slot booked.','Adjust one repeat offender’s future booking slot using those observed times. Do not shorten the service just to make the calendar look better.'],squeeze:['THE EXTRA CLIENT IS NOT EXTRA TIME.','You identified squeezing people in as the biggest time thief.','Set a last appointment start time for one working day next week, based on the full service length.','Offer the next suitable opening when a request would run past that finish time. Count how often you keep the boundary.'],messages:['THE WORKDAY IS FOLLOWING YOU HOME.','You said messages and paperwork pile up after the last client.','Track the minutes spent on after-hours admin for three working days. Identify the task that repeats most.','Give that task a defined block inside one working day and set a clear reply window. Check whether evening work drops.'],none:['YOU FINISH ON TIME. DOES THE WEEK FIT?','You said you usually finish as planned, but want a different work schedule.','Compare next week’s appointments with the days you want to work. Identify what would need to move.','Before changing availability, check whether those appointments fit safely into the remaining days and what income would be affected.'],unknown:['FIND WHERE THE DAY GOES.','You are not sure what consumes the extra time. We should measure it before blaming gaps or boundaries.','For three working days, record client time, gaps, setup, cleanup, and admin separately.','Choose the largest avoidable block from that record and test one change next week.']};
    set(...(d[a.overrun]||d.unknown));
    if(Number(a.targetdays)>0&&Number(a.targetdays)<Number(a.days))next+=' You want '+a.targetdays+(a.targetdays==='1'?' day':' days')+' instead of '+(a.days==='6'?'6–7':a.days)+'. Check that appointments and take-home pay can fit before removing a day.';
   }
  } else if(goal!=='stable') {
   const leadership=['owner','manager'].includes(lane), noun=leadership?'salon bookings':'paid jobs';
-  if(goal==='clients')set('CHECK WHAT ACTUALLY BRINGS PAID WORK.','You chose more '+noun+'. '+(has('jobsource','unknown')?'You haven’t tracked the source yet.':has('jobsource','none')?'You said paid work is not coming in consistently yet. Track inquiries before choosing a source to focus on.':a.workload==='full'?'You also said the calendar is full; focus on the work you want to replace or future openings.':'Start with the sources you said already bring work.'),has('jobsource','unknown')||has('jobsource','none')?'Record the source and outcome of each inquiry for seven days. Separate inquiries from confirmed bookings.':'Review your last five '+noun+' and count which of your selected sources brought them.','Choose one source from that review for a single, specific booking effort. Track inquiries and confirmed work separately.');
+  if(goal==='clients')set('CHECK WHAT ACTUALLY BRINGS PAID WORK.','You chose more '+noun+'. '+(has('jobsource','unknown')?'You haven’t tracked the source yet.':a.workload==='full'?'You also said the calendar is full; focus on the work you want to replace or future openings.':'Start with the sources you said already bring work.'),has('jobsource','unknown')||has('jobsource','none')?'Record the source and outcome of each inquiry for seven days. Separate inquiries from confirmed bookings.':'Review your last five '+noun+' and count which of your selected sources brought them.','Choose one source from that review for a single, specific booking effort. Track inquiries and confirmed work separately.');
   if(goal==='return')set(a.repeatwork==='most'?'KEEP THE REPEAT WORK STRONG.':'CHECK WHAT HAPPENS AFTER THE JOB.',a.repeatwork==='most'?'You said most of the right clients return. Improve consistency without treating that as a failure.':a.repeatwork==='unknown'||a.repeatwork==='new'?'You do not yet have enough return information to call this a retention problem.':'You said repeat work is less consistent than you want.','Review five completed '+noun+' old enough for a repeat booking to be relevant. Note who returned and who has another date booked.',has('repeatfollow','none')?'Choose one appropriate follow-up point and the person responsible. Follow client permissions and avoid duplicate contact.':'Review one example of your existing follow-up. Check that it offers a relevant next step and that only one person owns it.');
   if(goal==='money'||goal==='keep')set(lane==='manager'?'MATCH THE REVIEW TO YOUR RESPONSIBILITY.':'LOOK BEYOND THE QUOTED RATE.',lane==='manager'?'You manage the salon; its revenue is not your personal take-home pay.':goal==='keep'?'You want more money left after the work. Check the expenses you selected against completed jobs.':'You want better pay from existing work. The agreed fee and the money left after doing it can differ.',lane==='manager'?'Write down your current pay, responsibilities, and the numbers you are expected to improve. Ask the owner to confirm that list.':has('workexpenses','none')?'Review one completed job’s agreed fee, payment received, and total time including prep and travel.':'Review one completed job’s fee, expenses you paid, reimbursements, and total time. Separate money owed from money received.',lane==='manager'?'Choose one responsibility to discuss at your next pay or workload review. Agree how progress will be assessed.':['60','90','long','varies','month'].includes(a.paywait)?'You reported a payment wait or inconsistent timing. Check one unpaid invoice’s due date, approval status, and agreed reimbursement terms.':'Check the next quote states what the fee includes and how extra time or expenses are agreed before work begins.');
   if(goal==='time'){
@@ -1755,13 +1822,13 @@ function personalizedFreeResult(a) {
  // A secondary selected goal is evidence of a concern, not proof of its cause.
  const secondary=(Array.isArray(a.goal)?a.goal:[]).find(g=>g!==goal);
  if(!student&&goal==='stable'){const purpose={emergency:'slow months or emergencies',timeoff:'time off',retire:'later life',body:'moving toward work that is easier on your body',unknown:'choosing a first savings goal'}[a.futurefear];if(purpose)diagnosis+=' You want that money to help with '+purpose+'.';}
- if(goal==='clients'&&a.inquiries==='lost'&&a.returning==='low')next='Test the main inquiry sticking point and track the next five inquiries. You also reported too few returns; keep that separate when reviewing bookings.';
+ if(goal==='clients'&&a.inquiries==='lost'&&a.returning==='low')next='You also said too few clients return. Check five clients whose maintenance window has passed and separate returned, booked ahead, and not yet booked.';
  if(!student&&secondary){
   const second={clients:lane==='chair'?'You also want more clients. Count inquiries and completed bookings separately for seven days before choosing a marketing change.':'You also want more paid work. Record where the next five inquiries come from and whether they book.',return:'You also want more repeat business. Check five past clients who are due for another visit or job; distinguish booked, returned, and not yet booked.',money:lane==='manager'?'You also want better pay. List one responsibility to discuss at your next pay review.':'You also want better pay. Review the actual pay and full time involved in one completed service or job; keep sales separate from what you receive.',keep:'You also want to keep more money. Separate work income and work costs for one week before assuming a stronger sales month will solve it.',time:'You also want more time back. Record one week’s paid work and admin hours separately before changing your availability.',stable:'You also want a safety net. Compare one month of essential bills with savings available for those bills, excluding money already owed.'};
   next=second[secondary];
-  if(noClients&&['money','return'].includes(secondary))next='You also chose '+(secondary==='money'?'better pay':'repeat visits')+'. Before offering appointments again, confirm the service scope, price, and appropriate maintenance timing.';
+  if(noClients&&['money','return'].includes(secondary))next='You also chose '+(secondary==='money'?'better pay':'repeat visits')+'. Before the first appointment, confirm the service scope, price, and appropriate maintenance timing.';
  }
- return {...base,version:PERSONALIZATION_VERSION,title,body:student?'Your first steps focus on the skill you chose to practice.':lane==='chair'?(noClients?'You said you are not taking appointments yet. These steps prepare the work before you judge its results.':chairSnapshot(a)):outsideSnapshot(a),stageNote:student?'Your learning stage, based on your answers.':'This stage describes how full your available calendar is—not your talent, profit, or quality of life.',actions:[diagnosis,action,next]};
+ return {...base,version:PERSONALIZATION_VERSION,title,body:student?'Your first steps focus on the skill you chose to practice.':lane==='chair'?(noClients?'You said you are not taking appointments yet. These steps prepare the work before you judge its results.':chairSnapshot(a)):outsideSnapshot(a),stageNote:student?'Your learning stage, based on your answers.':'This stage describes how full your available calendar is—not your talent, profit, or quality of life.',actions:[diagnosis,action,next],experiment:freeExperiment(a)};
 }
 buildShortBreakdown = function(input){
  // Ignore hidden answers left over after editing a goal or work lane.

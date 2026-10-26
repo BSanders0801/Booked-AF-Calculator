@@ -1,7 +1,7 @@
 name: BOOKED AF beta verification
 on:
   push:
-    branches: [fix/beta-launch-20261025, build/next30-shell-p04]
+    branches: [fix/beta-launch-20261025, fix/reconcile-beta-20261026, build/next30-shell-p04]
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,8 +26,9 @@ jobs:
           node tests/personalization.cjs
           node tests/result-paths.cjs
           node tests/visitor-flow.cjs
-          ../tests/node_modules/.bin/playwright install --with-deps chromium
+          ../tests/node_modules/.bin/playwright install --with-deps chromium webkit
           node tests/browser-journeys.cjs
+          BROWSER_ENGINE=webkit node tests/browser-journeys.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -36,7 +37,7 @@ jobs:
           if-no-files-found: warn
 
   deploy-api:
-    if: github.ref == 'refs/heads/build/next30-shell-p04'
+    if: github.ref == 'refs/heads/fix/reconcile-beta-20261026'
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 10

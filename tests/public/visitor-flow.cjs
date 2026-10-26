@@ -44,6 +44,16 @@ function boot(saved){
  d.$('#email').value='invalid';await d.$('#form').onsubmit({preventDefault(){}});assert.equal(d.requests.filter(x=>x.type==='breakdown').length,0);
  d.$('#email').value='test@example.test';await d.$('#form').onsubmit({preventDefault(){}});assert.match(d.$('#error').textContent,/temporarily unavailable/);assert(!d.$('button[type="submit"]').disabled);assert(d.$('#form'));
  d.accept();await d.$('#form').onsubmit({preventDefault(){}});assert(!d.$('#form'));assert(d.$('.free-action-list'));snapshot(d,'result-qa');assert.equal(d.requests.filter(x=>x.type==='breakdown').at(-1).marketingConsent,false);
+ const verify=code=>vm.runInContext(code,d.ctx);
+ verify("globalThis.currentResult=publicBreakdown(buildShortBreakdown(state.answers))");
+ assert.equal(verify("verifiedPublicCopy(currentResult,state.answers)"),true);
+ for(const key of ["mechanism","script","measure","decision"])assert(d.$("#app").textContent.includes(verify("currentResult.experiment["+JSON.stringify(key)+"]")));
+ assert.equal(verify("verifiedPublicCopy({...currentResult,title:'STALE SERVER COPY'},state.answers)"),false);
+ assert.equal(verify("verifiedPublicCopy({...currentResult,version:'old'},state.answers)"),false);
+ assert.equal(verify("verifiedPublicCopy({...currentResult,experiment:{...currentResult.experiment,decision:'OLD DECISION'}},state.answers)"),false);
+ verify("state.freePublicCopy={schema:state.schema,answers:JSON.stringify(state.answers),copy:{...currentResult,title:'STALE SERVER COPY'}}");
+ assert.notEqual(verify("read().publicCopy.title"),'STALE SERVER COPY');
+ console.log('PASS current server copy accepted; stale title, version, experiment and cached result rejected');
  d.click('#edit');d.click('#next');assert(d.$('.choice.selected'));
  console.log('PASS navigation, multi-select, required email, privacy return, answer editing, validation, failed submission recovery, successful results, separate consent');
  const stored=JSON.parse(d.w.localStorage.getItem('booked-af-free-progress-v1'));
