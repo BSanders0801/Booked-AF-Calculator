@@ -254,7 +254,7 @@ function verifiedPublicCopy(copy,answers){
 }
 function read(){
  if(state.freePublicCopy?.schema===state.schema&&state.freePublicCopy.answers===JSON.stringify(state.answers)&&verifiedPublicCopy(state.freePublicCopy.copy,state.answers))
-   return {stage:state.freePublicCopy.copy.stage,publicCopy:{...state.freePublicCopy.copy,signals:state.schema===SHORT_SCHEMA?buildShortBreakdown(state.answers).signals:{}}};
+   return {stage:state.freePublicCopy.copy.stage,publicCopy:{...state.freePublicCopy.copy,signals:state.schema===SHORT_SCHEMA?buildShortBreakdown(state.answers).signals:{},topicId:state.schema===SHORT_SCHEMA?String(buildShortBreakdown(state.answers).top.id).replace(/^short-/,''):''}};
  if(state.schema===SHORT_SCHEMA)return buildShortBreakdown(state.answers);
  return {stage:({building:'BUILDING',busy:'GETTING BUSY',demand:'IN DEMAND',booked:'BOOKED AF'})[state.answers.stage]||'BUILDING',top:{id:state.answers.goal||'money'}};
 }
