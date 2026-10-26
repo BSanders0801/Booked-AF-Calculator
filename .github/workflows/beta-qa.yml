@@ -54,5 +54,5 @@ jobs:
       - name: Deploy and verify production API
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFARE_API_TOKEN }}
-          EXPECTED_PRODUCTION_VERSION: 157d9e3d-9e66-44eb-aeb3-f424cc297546
+          EXPECTED_PRODUCTION_VERSION: 4cd70b6e-d9fa-45a9-ad58-e6cb99d96d7c
         run: node scripts/deploy-free-launch.mjs

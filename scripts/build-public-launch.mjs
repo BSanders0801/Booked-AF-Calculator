@@ -6,6 +6,6 @@ await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});
 for(const f of files)await cp(new URL(f,source),new URL(f,out));
 await cp(new URL('assets/',source),new URL('assets/',out),{recursive:true});
 const app=await readFile(new URL('app.js',out),'utf8'),core=await readFile(new URL('personalization.js',out),'utf8');
-if(app.includes('https://buy.stripe.com/')||!app.includes('freeActionTips(p)')||!core.includes('beta-20261026-2'))throw Error('Public launch guard failed');
+if(app.includes('https://buy.stripe.com/')||!app.includes('freeActionTips(p)')||!core.includes('beta-20261026-3'))throw Error('Public launch guard failed');
 if((await readdir(out)).some(f=>f.startsWith('next30-')||f==='email-worker.mjs'))throw Error('Private source in public output');
 console.log('Preserved current website and personalized Breakdown; checkout closed; paid modules excluded.');

@@ -22,7 +22,7 @@ if(process.env.VERIFY_ONLY!=='true'){try{execFileSync('npx',['--yes','wrangler@4
 const after=await api(base+'/settings');
 for(const name of expected)if(!after.bindings.some(b=>b.name===name))throw Error('Missing preserved binding');
 if(JSON.stringify((await api(base+'/schedules')).schedules.map(s=>s.cron))!==JSON.stringify(cfg.triggers.crons))throw Error('Schedule changed');
-let healthy=false;for(let i=0;i<5;i++){try{const h=await(await fetch('https://booked-af-email.wild-recipe-42df.workers.dev',{signal:AbortSignal.timeout(10000)})).json();if(h.launchReady&&h.personalizationVersion==='beta-20261026-2'){healthy=true;break;}}catch{}await new Promise(r=>setTimeout(r,2000));}if(!healthy)throw Error('Live health failed');
+let healthy=false;for(let i=0;i<5;i++){try{const h=await(await fetch('https://booked-af-email.wild-recipe-42df.workers.dev',{signal:AbortSignal.timeout(10000)})).json();if(h.launchReady&&h.personalizationVersion==='beta-20261026-3'){healthy=true;break;}}catch{}await new Promise(r=>setTimeout(r,2000));}if(!healthy)throw Error('Live health failed');
 for(const [path,status] of [['/paid-content',401],['/verify-checkout?session_id=invalid',400],['/unsubscribe?token=invalid',400]]){const r=await fetch('https://booked-af-email.wild-recipe-42df.workers.dev'+path);if(r.status!==status||!r.headers.get('cache-control')?.includes('no-store'))throw Error('Live guard failed '+path);}
-console.log('Free-launch API verified at beta-20261026-2. Marketing remains paused; paid guards verified.');
+console.log('Free-launch API verified at beta-20261026-3. Marketing remains paused; paid guards verified.');
 console.log('Active deployment:',JSON.stringify((await api(base+'/deployments')).deployments?.[0]));
