@@ -24,6 +24,11 @@ for(const stage of stages)for(const id of topics){
  assert.ok(!tips.join(' ').match(/start with the check below/i),stage+'/'+id+' ambiguous advice');
  count++;
 }
+// Same diagnosis, different stated client-acquisition move: different advice.
+const variants=['past','salon','portfolio','local','models'].map(network=>
+ freeActionTips({stage:'BUILDING',title:'ROOM IN THE BOOK.',signals:{network,visibility:['social']}}));
+assert.equal(new Set(variants.map(v=>v.join('|'))).size,5,'Client acquisition recommendations must respond to selected move');
+assert.ok(variants.every(v=>v.length===3&&v.every(Boolean)));
 assert.equal(freeActionTips({student:true,stage:'BUILDING'}).length,3);
 count++;
 assert.ok(ui.includes('HERE’S THE MOVE'),'Public results missing steps');
