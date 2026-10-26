@@ -24,11 +24,26 @@ Dorothy Zbornak meets Julia Sugarbaker meets Dollar Shave Club: direct, clever, 
 - **Your Next 30 ($49 one time):** Coordinated four-week plan, tools, scripts, financial and capacity analysis, decision checkpoints, scenarios and tradeoffs. Preserve current purchase restrictions until verified.
 - **Membership (target $40/month / $400/year):** New relevant decisions based on actual outcomes and refreshed context. Never charge for recycled generic tips.
 
-## Signature modules to develop and validate
-- **THE REAL NUMBER:** true service economics after costs/time/commission, not only ticket prices.
-- **TAKE BACK YOUR TIME:** opportunities and constraints in appointment timing, overlapping processing and boundaries, with quality and staffing guardrails.
-- **GET THEM IN THE CHAIR:** separate discovery, inquiry, booking, repeat visit and salon referrals before prescribing marketing.
-- **WHAT IF?:** transparent side-by-side scenarios; surface assumptions and uncertainty rather than guaranteeing savings or earnings.
+## Modules to develop and validate
+- **Service earnings:** true service economics after costs/time/commission, not only ticket prices.
+- **Weekly capacity:** opportunities and constraints in appointment timing, processing and boundaries, with quality and staffing guardrails. Do not assume processing creates free capacity.
+- **Bookings and returns:** separate discovery, inquiry, booking, repeat visit and salon referrals before prescribing marketing.
+- **Scenario comparisons:** transparent side-by-side options; surface assumptions and uncertainty rather than guaranteeing savings or earnings.
+
+## Paid-experience standard — October 26 owner direction
+
+Bradley's target is 10,000 paying hairdressers. The product must earn that ambition through useful, distinctive decisions and an experience that changes what a stylist can do. Novel language, more content and larger numbers are not evidence of value.
+
+1. Start with the person's desired result and protected commitments. Higher earnings, fewer occupied hours and a particular afternoon off are different goals; do not silently substitute one for another.
+2. Connect the tools. A recommendation must reconcile personal pay, full service time, available openings, demand evidence, career stage and control over the decision. A calculator result alone is not a plan.
+3. Show a consequential comparison. Explain the preferred option, a credible alternative, what doing nothing means and the tradeoff. The result may favor keeping the current approach or gathering missing evidence.
+4. Surface one useful discovery grounded in that person's inputs. Identify what would reverse the recommendation. Do not manufacture a surprising answer or claim an idea has never existed before.
+5. Make the next move executable. Carry forward known answers, provide the relevant tool or language, identify the person who can authorize the change and set one measurable checkpoint. Do not burden the stylist with unrelated tasks.
+6. Remember the result. Subsequent guidance must use actual actions, completed visits, costs and time where available. Never label an assumed booking a completed visit or a before-and-after difference proof of causation.
+7. Make the life outcome visible alongside money. Show protected time, occupied time and the earnings basis together. Unallocated minutes are not automatically a day off; gross sales are not take-home pay.
+8. Earn repeat purchases with a new relevant decision. Preserve access to the purchased plan and its useful conclusions. Membership must respond to changed circumstances and measured outcomes, rather than repeat the initial advice or manufacture dependence.
+
+Before paid launch, demonstrate these standards with contrasting realistic profiles and owner review of the full buyer experience. Then evaluate perceived novelty, comprehension, actual action, measured tradeoffs and willingness to pay with real users. Calculation and browser tests alone cannot establish life-changing value or demand from 10,000 customers.
 
 ## Beta acceptance gates
 - Contrast tests: pairs of answer profiles with materially different constraints must receive meaningfully different advice, not just swapped headlines.
