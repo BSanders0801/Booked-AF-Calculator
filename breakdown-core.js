@@ -207,19 +207,32 @@ function publicBreakdown(r) { if(r.publicCopy)return r.publicCopy;
  const student=r.audience==='student';
  const id=student?r.category:String(r.top?.id||'').replace(/^short-/, '');
  const topics={
-  fill:['ROOM IN THE BOOK.','An open calendar can make every quiet week feel personal. Visibility and reliable demand are different things.'],
-  clients:['ROOM TO BUILD.','Being good at the work and having people ready to book are different challenges.'],
-  cheap:['A BIG TICKET ISN’T THE WHOLE STORY.','Busy appointments can still leave disappointing income. The price on the menu never tells the whole story.'],
-  money:['BUSY AND WELL PAID ARE DIFFERENT THINGS.','Sales, pay and money left over can tell very different stories about the same career.'],
-  keep:['MONEY IN. MONEY LEFT.','A stronger sales month does not always feel like a stronger paycheck. Work costs can explain part of that gap.'],
-  return:['THE SECOND VISIT MATTERS.','New clients bring opportunity. Repeat visits bring consistency. A busy first appointment is only part of the picture.'],
-  rebooking:['THE SECOND VISIT MATTERS.','A great first visit and a dependable return are different parts of a lasting client relationship.'],
-  time:['A FULL CALENDAR CAN COST TOO MUCH.','A career can look successful while taking more time and energy than you want to give it.'],
-  life:['SUCCESS SHOULD LEAVE ROOM FOR YOU.','A full book does not automatically mean the career fits the life you want.'],
-  salon:['THE FIRST SALON SHAPES THE START.','A beautiful room and a supportive place to learn are not always the same thing.'],
-  consultation:['GOOD WORK STARTS WITH CLEAR EXPECTATIONS.','Unclear expectations can turn a technically good service into a disappointing experience.'],
-  boundaries:['A GOOD CAREER NEEDS LIMITS.','Saying yes to everything can cost confidence, time and the quality of the work.']
+  fill:['YOUR BOOK HAS OPENINGS. LET’S GIVE THEM A JOB.','The number of empty hours is not the diagnosis. The next useful question is whether suitable clients are finding you, asking about services, and actually booking.'],
+  clients:['GOOD HAIR IS NOT A CLIENT ACQUISITION PLAN.','Talent is the product. Getting the right person from “I love this” to an actual appointment is a different job. Let’s work on that part.'],
+  cheap:['THAT BIG TICKET MAY BE LYING TO YOU.','A high service price means nothing until you account for the time, salon share and costs. Your busiest service may not be pulling its weight.'],
+  money:['YOU CAN BE BUSY AND STILL UNDERPAID.','The calendar looks fabulous. The money has questions. Look at what each service leaves behind per hour, not just what it brings in.'],
+  keep:['REVENUE IS NOT YOUR PAYCHECK.','If sales look healthy and your bank account disagrees, the difference deserves an investigation—not another inspirational quote.'],
+  return:['THE FIRST VISIT ISN’T THE FINISH LINE.','A great result that never becomes a second appointment is an expensive way to keep meeting strangers. Find out where the return visit breaks down.'],
+  rebooking:['WHERE DID THE SECOND APPOINTMENT GO?','They loved the hair. Fantastic. If they leave without a clear next step, you’re rebuilding demand from scratch every time.'],
+  time:['YOUR CALENDAR IS RUNNING THE BUSINESS. YOU SHOULD BE.','If your work keeps eating the hours you meant to have for yourself, investigate the appointment types and exceptions responsible.'],
+  life:['FULLY BOOKED. STILL NO LIFE?','A packed calendar only counts as success when the numbers and your actual life agree. Something in the schedule may need to change.'],
+  salon:['THE PRETTY SALON ISN’T THE BUSINESS PLAN.','An attractive space tells you very little about mentorship, new client opportunities or what you will actually take home. Ask harder questions.'],
+  consultation:['THE CONSULTATION IS WHERE THE REDO STARTS.','A technically excellent result can still miss a client’s expectations. The fix may start before the first bowl is mixed.'],
+  boundaries:['EVERY YES HAS A PRICE.','That exception you keep making can become the schedule you never wanted. Decide which bookings earn the disruption and which do not.']
  };
+ const signals=r.signals||{};
+ if((id==='fill'||id==='clients')&&signals.network){
+  const diagnoses={
+   past:['YOU HAVE A REFERRAL OPPORTUNITY. NOT A SYSTEM.','You chose introductions from existing relationships as your move. That can be faster than chasing strangers, but only if people know exactly whom to send and for what service.'],
+   salon:['THE SALON HAS TRAFFIC. IS ANY OF IT YOURS?','You chose the salon team as your channel. A vague “send me clients” request is not a booking strategy; give the desk a service and openings they can actually match.'],
+   portfolio:['YOUR WORK IS THE AD. THE APPOINTMENT IS THE GOAL.','You chose your portfolio. The move is turning a real result into a specific service offer—not collecting compliments from people who never book.'],
+   local:['YOUR NEXT CLIENT MAY ALREADY TRUST SOMEONE NEARBY.','You chose local relationships. Borrow trust through a real, relevant business connection rather than another desperate promotion.'],
+   models:['A MODEL IS ONLY USEFUL IF THE WORK ATTRACTS PAYING CLIENTS.','You chose portfolio building. Design the appointment to demonstrate a service you actually want to sell—not just to produce another pretty photo.']
+  };
+  if(diagnoses[signals.network])return {student,stage:r.stage,title:diagnoses[signals.network][0],body:diagnoses[signals.network][1],signals,
+   offer:'YOUR NEXT 30 turns your answers into a four-week plan, with scripts, practical tools and a way to check what changed. $49 once.',
+   url:'https://bookedandfabulous.com/#deep-dive'};
+ }
  const topic=topics[id]||['YOUR CAREER DESERVES A CLOSER LOOK.','Clients, money, time and the life around the work do not always improve together.'];
  return {student,stage:r.stage,title:topic[0],body:topic[1],signals:r.signals||{},
   offer:student?'FIRST 90 is in development. Join the optional updates list to hear when it is ready. There is nothing to buy yet.':'YOUR NEXT 30 turns your answers into a four-week plan, with scripts, practical tools and a way to check what changed. $49 once.',
