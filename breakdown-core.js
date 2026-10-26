@@ -221,7 +221,7 @@ function publicBreakdown(r) { if(r.publicCopy)return r.publicCopy;
   boundaries:['A GOOD CAREER NEEDS LIMITS.','Saying yes to everything can cost confidence, time and the quality of the work.']
  };
  const topic=topics[id]||['YOUR CAREER DESERVES A CLOSER LOOK.','Clients, money, time and the life around the work do not always improve together.'];
- return {student,stage:r.stage,title:topic[0],body:topic[1],
+ return {student,stage:r.stage,title:topic[0],body:topic[1],signals:r.signals||{},
   offer:student?'FIRST 90 is in development. Join the optional updates list to hear when it is ready. There is nothing to buy yet.':'YOUR NEXT 30 turns your answers into a four-week plan, with scripts, practical tools and a way to check what changed. $49 once.',
   url:student?'https://bookedandfabulous.com/#first-90':'https://bookedandfabulous.com/#deep-dive'};
 }
@@ -237,6 +237,34 @@ function freeActionTips(p) {
   'Use this at checkout: “To keep this result looking right, I’d see you again in about [interval]. I have [date] or [date]. Which works?” Do not pretend the interval is identical for every guest.',
   'For the next five eligible clients, record how many leave with a return date. If they decline, record why—timing, price, or uncertainty. Fix the objection you actually hear.'
  ];
+ if(/ROOM IN THE BOOK|ROOM TO BUILD/.test(title)&&p.signals&&p.signals.network){
+  const move=p.signals.network, vis=new Set(p.signals.visibility||[]);
+  if(move==='past')return [
+   'Choose five former or happy clients you already have permission to contact. Ask for a personal introduction, not a mass referral blast.',
+   'Message template: “I have room for more [service] guests this month. If someone comes to mind who wants [result], I’d appreciate an introduction. No pressure.” Only send with appropriate consent.',
+   'Count introductions, qualified inquiries and confirmed appointments over seven days. If nobody refers, ask whether the service you described was specific enough.'
+  ];
+  if(move==='salon')return [
+   'Ask the front desk or manager which requested services the salon turns away or cannot book quickly. Pick one you can competently offer.',
+   'Give the team a one-sentence booking description and two genuine open appointments. Ask them to use it when a matching inquiry comes in.',
+   'For one week, compare suitable inquiries sent to you with completed bookings. If the desk gets no matching requests, change the service positioning.'
+  ];
+  if(move==='local')return [
+   'Pick one nearby business with clientele that overlaps your ideal [service] guest. Propose a specific, mutually useful introduction—not an unsolicited discount stack.',
+   'Conversation opener: “I specialize in [result] for [client type]. Is there a natural way to introduce our services to people who already ask you about hair?”',
+   'Make one genuine connection this week and track introductions that lead to consultations or bookings; do not spam strangers.'
+  ];
+  if(move==='models')return [
+   'Pick one service your portfolio does not show well. Find a suitable, consenting model whose starting hair actually demonstrates that skill.',
+   'Agree on the price, timing, realistic outcome and photo permission before booking. Capture the starting point, finished result and maintenance explanation.',
+   'Publish one documented case with a clear booking pathway. Measure qualified service inquiries—not likes.'
+  ];
+  if(move==='portfolio')return [
+   vis.has('social')?'Use one real result people already respond to. Rework its caption around a specific desired outcome, likely maintenance and two actual appointment options.':'Choose one real client result with permission. Show the starting point, finished result, price expectations and a clear way to request an appointment.',
+   'Caption framework: “For [person wanting result], here is what [service] can achieve. Starts at [real price], in [area]. I have [actual openings]. Reply [clear booking method].”',
+   'Count inquiries and confirmed bookings for seven days. Lots of views with no inquiries means the offer or audience needs adjusting.'
+  ];
+ }
  if(/ROOM IN THE BOOK|ROOM TO BUILD/.test(title))return [
   'Pick ONE service you want to book more of this week. Build a specific client-facing offer: who it suits, the result, realistic starting price and two genuine openings. A discount is not the strategy.',
   'Use a real client result with permission. Caption framework: “Want [specific result] without [common frustration]? I have [two real openings] in [area]. Message [booking instruction] for a consultation and appointment.” Adapt the promise to work you can deliver.',
@@ -319,5 +347,5 @@ function legacyShortQuestionCopy(q,a) {
  return {...q,...(copies[q.id]||{})};
 }
 
-function buildShortBreakdown(a){return {audience:isStudent(a)?'student':'professional',category:a.readiness,stage:shortStage(a).label,top:{id:shortFocusGoal(a)||'money'}};}
+function buildShortBreakdown(a){return {audience:isStudent(a)?'student':'professional',category:a.readiness,stage:shortStage(a).label,top:{id:shortFocusGoal(a)||'money'},signals:{visibility:Array.isArray(a.visibility)?a.visibility.filter(v=>['social','salon','referrals','search','none','unknown'].includes(v)):[],marketing:Array.isArray(a.marketing)?a.marketing.filter(v=>['social','people','local','paid','none'].includes(v)):[],network:['past','salon','portfolio','local','models'].includes(a.network)?a.network:'',returning:['notyet','low','some','most','almostall','unknown'].includes(a.returning)?a.returning:''}};}
 
